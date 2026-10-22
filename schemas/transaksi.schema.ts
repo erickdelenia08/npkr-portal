@@ -23,11 +23,34 @@ export const voidPembayaranSchema = z.object({
 
 export type VoidPembayaranInput = z.infer<typeof voidPembayaranSchema>;
 
+export const StatusPernikahanEnum = z.enum([
+  "MENIKAH",
+  "BELUM_MENIKAH",
+  "CERAI",
+]);
+export type StatusPernikahanType = z.infer<typeof StatusPernikahanEnum>;
+
+export const StatusPekerjaanEnum = z.enum(["TETAP", "TIDAK_TETAP"]);
+export type StatusPekerjaanType = z.infer<typeof StatusPekerjaanEnum>;
+
+export const updateProfilPemberkasanSchema = z.object({
+  transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
+  statusPernikahan: StatusPernikahanEnum,
+  statusPekerjaan: StatusPekerjaanEnum.optional().nullable(),
+});
+export type UpdateProfilPemberkasanInput = z.infer<
+  typeof updateProfilPemberkasanSchema
+>;
+
 export const JenisDokumenEnum = z.enum([
   "KTP_SUAMI_ISTRI",
+  "KTP_PEMOHON",
+  "KTP_PASANGAN",
   "KARTU_KELUARGA",
   "NPWP",
   "BUKU_NIKAH",
+  "SURAT_PERNYATAAN_BELUM_MENIKAH",
+  "AKTA_CERAI",
   "SLIP_GAJI",
   "SURAT_KET_KERJA",
   "REKENING_KORAN",
@@ -47,7 +70,8 @@ export const StatusDokumenEnum = z.enum([
 export const verifyDokumenSchema = z.object({
   transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
   jenis: JenisDokumenEnum,
-  status: StatusDokumenEnum,
+  status: StatusDokumenEnum.optional(),
+  verified: z.boolean().optional(),
   catatan: z.string().trim().optional().nullable(),
 });
 

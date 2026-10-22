@@ -98,7 +98,7 @@ export const MACRO_STAGES: { key: TahapTransaksi; label: string }[] = [
   { key: "PEMBERKASAN", label: "Pemberkasan" },
   { key: "PROSES_BANK", label: "Proses Bank" },
   { key: "PEMBAYARAN", label: "Pembayaran" },
-  { key: "AKAD_AJB", label: "Akad / AJB" },
+  { key: "AKAD_AJB", label: "Akad" },
   { key: "SERAH_TERIMA", label: "Serah Terima" },
   { key: "BATAL", label: "Batal" },
 ];
@@ -121,7 +121,7 @@ export const STAGES_CASH_KERAS: StageOption[] = [
   { detail: "PEMBERKASAN_LEGALITAS", macro: "PEMBERKASAN", label: "Pemberkasan legalitas" },
   { detail: "MENUNGGU_PELUNASAN", macro: "PEMBAYARAN", label: "Menunggu pelunasan" },
   { detail: "PELUNASAN", macro: "PEMBAYARAN", label: "Pelunasan" },
-  { detail: "AJB", macro: "AKAD_AJB", label: "Akta jual beli (AJB)" },
+  { detail: "AJB", macro: "AKAD_AJB", label: "Akad" },
   { detail: "BAST", macro: "SERAH_TERIMA", label: "Serah terima (BAST)" },
   { detail: "BATAL", macro: "BATAL", label: "Pembatalan transaksi" },
 ];
@@ -131,7 +131,7 @@ export const STAGES_CASH_TEMPO: StageOption[] = [
   { detail: "PEMBAYARAN_DP", macro: "PEMBAYARAN", label: "Pembayaran DP" },
   { detail: "CICILAN_BERJALAN", macro: "PEMBAYARAN", label: "Cicilan berjalan" },
   { detail: "PELUNASAN", macro: "PEMBAYARAN", label: "Pelunasan" },
-  { detail: "AJB", macro: "AKAD_AJB", label: "Akta jual beli (AJB)" },
+  { detail: "AJB", macro: "AKAD_AJB", label: "Akad" },
   { detail: "BAST", macro: "SERAH_TERIMA", label: "Serah terima (BAST)" },
   { detail: "BATAL", macro: "BATAL", label: "Pembatalan transaksi" },
 ];
@@ -195,3 +195,14 @@ export function isTransaksiClosing(trx: {
 }): boolean {
   return trx.closing_at != null && trx.status_transaksi !== "BATAL";
 }
+
+export const MACRO_STAGE_LABELS: Record<TahapTransaksi, string> = {
+  PEMBERKASAN: "Pemberkasan",
+  PROSES_BANK: "Proses KPR",
+  PEMBAYARAN: "Pembayaran",
+  AKAD_AJB: "Akad",
+  PEMBANGUNAN: "Pembangunan",
+  SERAH_TERIMA: "Serah Terima (BAST)",
+  BATAL: "Dibatalkan",
+};
+

@@ -81,6 +81,23 @@ export const StatusItj = {
 export type StatusItj = (typeof StatusItj)[keyof typeof StatusItj]
 
 
+export const StatusPernikahan = {
+  MENIKAH: 'MENIKAH',
+  BELUM_MENIKAH: 'BELUM_MENIKAH',
+  CERAI: 'CERAI'
+} as const
+
+export type StatusPernikahan = (typeof StatusPernikahan)[keyof typeof StatusPernikahan]
+
+
+export const StatusPekerjaan = {
+  TETAP: 'TETAP',
+  TIDAK_TETAP: 'TIDAK_TETAP'
+} as const
+
+export type StatusPekerjaan = (typeof StatusPekerjaan)[keyof typeof StatusPekerjaan]
+
+
 export const MetodeBayar = {
   KPR: 'KPR',
   CASH_KERAS: 'CASH_KERAS',
@@ -149,9 +166,13 @@ export type KategoriDokumen = (typeof KategoriDokumen)[keyof typeof KategoriDoku
 
 export const JenisDokumen = {
   KTP_SUAMI_ISTRI: 'KTP_SUAMI_ISTRI',
+  KTP_PEMOHON: 'KTP_PEMOHON',
+  KTP_PASANGAN: 'KTP_PASANGAN',
   KARTU_KELUARGA: 'KARTU_KELUARGA',
   NPWP: 'NPWP',
   BUKU_NIKAH: 'BUKU_NIKAH',
+  SURAT_PERNYATAAN_BELUM_MENIKAH: 'SURAT_PERNYATAAN_BELUM_MENIKAH',
+  AKTA_CERAI: 'AKTA_CERAI',
   SLIP_GAJI: 'SLIP_GAJI',
   SURAT_KET_KERJA: 'SURAT_KET_KERJA',
   REKENING_KORAN: 'REKENING_KORAN',

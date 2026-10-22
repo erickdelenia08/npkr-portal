@@ -27,11 +27,14 @@ import {
   voidPembayaranSchema,
   verifyDokumenSchema,
   updateTransactionStatusSchema,
+  updateProfilPemberkasanSchema,
   type CreatePembayaranInput,
   type VoidPembayaranInput,
   type VerifyDokumenInput,
   type UpdateTransactionStatusInput,
+  type UpdateProfilPemberkasanInput,
 } from "@/schemas/transaksi.schema";
+import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -340,17 +343,13 @@ export async function voidPembayaran(
 
 /**
  * Explicitly verifies or updates a document status for a transaction.
- * Role required: Active ADMIN
+ * Role required: Active ADMIN or Marketing PIC
  */
 export async function verifyDokumenTransaksi(
-  input: unknown
+  input: VerifyDokumenInput
 ): Promise<ActionResponse> {
   try {
-    const { adminId } = await requireCanEditTransaksi(
-      typeof input === "object" && input !== null && "transaksiId" in input
-        ? Number((input as { transaksiId: unknown }).transaksiId)
-        : undefined
-    );
+    const { adminId } = await requireCanEditTransaksi(input?.transaksiId);
 
     const parsed = verifyDokumenSchema.safeParse(input);
     if (!parsed.success) {
@@ -360,7 +359,10 @@ export async function verifyDokumenTransaksi(
       };
     }
 
-    const { transaksiId, jenis, status, catatan } = parsed.data;
+    const { transaksiId, jenis, catatan } = parsed.data;
+    const status: StatusDokumen =
+      parsed.data.status ??
+      (parsed.data.verified ? "TERVERIFIKASI" : "BELUM_DIUNGGAH");
 
     const result = await prisma.$transaction(async (tx) => {
       const trx = await tx.transaksi.findUnique({
@@ -376,6 +378,10 @@ export async function verifyDokumenTransaksi(
         throw new Error("Tidak dapat memverifikasi dokumen pada transaksi yang sudah BATAL.");
       }
 
+      const isVerified = status === "TERVERIFIKASI";
+      const verifiedBy = isVerified ? adminId : null;
+      const verifiedAt = isVerified ? new Date() : null;
+
       const updatedDoc = await tx.dokumenTransaksi.upsert({
         where: {
           transaksi_id_jenis: {
@@ -388,14 +394,14 @@ export async function verifyDokumenTransaksi(
           jenis,
           kategori: "PEMBERKASAN",
           status,
-          verified_by: adminId,
-          verified_at: new Date(),
+          verified_by: verifiedBy,
+          verified_at: verifiedAt,
           catatan_verifikasi: catatan?.trim() || null,
         },
         update: {
           status,
-          verified_by: adminId,
-          verified_at: new Date(),
+          verified_by: verifiedBy,
+          verified_at: verifiedAt,
           catatan_verifikasi: catatan?.trim() || null,
         },
       });
@@ -412,6 +418,78 @@ export async function verifyDokumenTransaksi(
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Gagal memverifikasi dokumen.";
+    return { success: false, error: message };
+  }
+}
+
+/**
+ * Updates marital and employment profile for customer attached to transaction.
+ * Creates audit log in Aktivitas.
+ */
+export async function updateProfilPemberkasan(
+  input: UpdateProfilPemberkasanInput
+): Promise<ActionResponse> {
+  try {
+    const parsed = updateProfilPemberkasanSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message ?? "Data profil pemberkasan tidak valid.",
+      };
+    }
+
+    const { transaksiId, statusPernikahan, statusPekerjaan } = parsed.data;
+    const { adminId } = await requireCanEditTransaksi(transaksiId);
+
+    const result = await prisma.$transaction(async (tx) => {
+      const trx = await tx.transaksi.findUnique({
+        where: { id: transaksiId },
+        include: { customer: true, itj: true },
+      });
+
+      if (!trx) {
+        throw new Error("Transaksi tidak ditemukan.");
+      }
+
+      if (trx.status_transaksi === "BATAL") {
+        throw new Error("Tidak dapat mengubah profil pada transaksi yang sudah BATAL.");
+      }
+
+      const updatedCustomer = await tx.customer.update({
+        where: { id: trx.customer_id },
+        data: {
+          status_pernikahan: statusPernikahan,
+          status_pekerjaan: statusPekerjaan || null,
+        },
+      });
+
+      const auditText = `[PROFIL PEMBERKASAN] Status Pernikahan: ${statusPernikahan}, Status Pekerjaan: ${statusPekerjaan || "-"}`;
+      const leadId = trx.itj?.lead_id;
+
+      if (leadId) {
+        await tx.aktivitas.create({
+          data: {
+            lead_id: leadId,
+            user_id: adminId,
+            jenis: "LAINNYA",
+            hasil: "TERTARIK",
+            catatan: auditText,
+          },
+        });
+      }
+
+      return updatedCustomer;
+    });
+
+    revalidatePath(`/admin/transaksi/${transaksiId}`);
+    return {
+      success: true,
+      message: "Profil pemberkasan konsumen berhasil diperbarui.",
+      data: result,
+    };
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Gagal memperbarui profil pemberkasan.";
     return { success: false, error: message };
   }
 }
@@ -473,9 +551,7 @@ export async function updateTransactionStatus(
             where: { is_void: false },
           },
           pengajuan_kpr: {
-            where: {
-              status: { notIn: ["DITOLAK", "DIBATALKAN"] },
-            },
+            orderBy: { nomor_pengajuan: "desc" },
             include: { bank: true },
           },
           inspeksi_bast: true,
@@ -535,22 +611,12 @@ export async function updateTransactionStatus(
 
       // Check for illegal forward jumps (skipping intermediate stages)
       if (isAdvancing) {
-        // Normal sequential steps cannot jump ahead by more than 1 step without prerequisites
-        // Except within KPR bank progress if synchronized through PengajuanKPR
         const stepDifference = targetIndex - currentIndex;
         if (stepDifference > 1) {
-          // Allow jump within KPR bank progress and into AKAD_KREDIT if active KPR exists
-          const isKprBankSkip =
-            existingTrx.metode_bayar === "KPR" &&
-            ["WAWANCARA", "OTS", "VERIFIKASI", "SP3K", "AKAD_KREDIT"].includes(targetDetail) &&
-            existingTrx.pengajuan_kpr.length > 0;
-
-          if (!isKprBankSkip) {
-            const nextExpected = allowedList[currentIndex + 1];
-            throw new Error(
-              `Perpindahan tahap tidak valid: Tidak dapat melompati tahap. Tahap berikutnya adalah "${nextExpected}".`
-            );
-          }
+          const nextExpected = allowedList[currentIndex + 1];
+          throw new Error(
+            `Perpindahan tahap tidak valid: Tidak dapat melompati tahap. Tahap berikutnya adalah "${nextExpected}".`
+          );
         }
       }
 
@@ -620,25 +686,30 @@ export async function updateTransactionStatus(
         }
       }
 
-      // If advancing beyond initial documentation stage, enforce essential verified documents
-      if (isAdvancing && targetIndex > 0) {
-        const requiredDocs: JenisDokumen[] = [
-          "KTP_SUAMI_ISTRI",
-          "KARTU_KELUARGA",
-          "NPWP",
-        ];
+      // If leaving documentation stage (index 0), enforce required verified documents
+      if (isAdvancing && currentIndex === 0 && targetIndex > 0) {
+        const docEvaluation = getRequiredDocuments({
+          metode: existingTrx.metode_bayar,
+          kategori: existingTrx.unit.tipe.kategori,
+          statusPernikahan: existingTrx.customer.status_pernikahan,
+          statusPekerjaan: existingTrx.customer.status_pekerjaan,
+        });
 
-        if (existingTrx.unit.tipe.kategori === "SUBSIDI") {
-          requiredDocs.push("SURAT_KET_BELUM_PUNYA_RUMAH");
+        if (!docEvaluation.isProfileComplete) {
+          throw new Error(`Pemberkasan belum lengkap: ${docEvaluation.message}`);
         }
 
-        const missingRequiredDocs = requiredDocs.filter(
-          (doc) => !verifiedDocKeys.has(doc)
-        );
+        const requiredDocs = docEvaluation.documents.filter((d) => d.required);
+        const missingRequiredDocs = requiredDocs.filter((doc) => {
+          if (doc.key === "KTP_PEMOHON") {
+            return !verifiedDocKeys.has("KTP_PEMOHON") && !verifiedDocKeys.has("KTP_SUAMI_ISTRI");
+          }
+          return !verifiedDocKeys.has(doc.key);
+        });
 
         if (missingRequiredDocs.length > 0) {
           const missingLabels = missingRequiredDocs
-            .map((d) => d.replace(/_/g, " "))
+            .map((d) => d.label)
             .join(", ");
           throw new Error(
             `Dokumen pemberkasan belum lengkap: Dokumen [${missingLabels}] wajib diverifikasi sebelum dapat melanjutkan tahap transaksi.`
@@ -731,34 +802,40 @@ export async function updateTransactionStatus(
       }
 
       // 6. Specific Stage Prerequisites
-      // A. KPR Stage Validations & Auto-Sync
+      // A. KPR Stage Validations & Active Bank Invariant
       if (existingTrx.metode_bayar === "KPR") {
-        const activeKpr = existingTrx.pengajuan_kpr[0] || null;
+        const activePengajuanList = existingTrx.pengajuan_kpr.filter(
+          (p) => p.status !== "DITOLAK" && p.status !== "DIBATALKAN"
+        );
+        if (activePengajuanList.length > 1) {
+          throw new Error(
+            `Integritas data KPR tidak valid: Terdapat ${activePengajuanList.length} pengajuan KPR aktif secara bersamaan pada transaksi #${existingTrx.id}. Harap periksa pengajuan bank.`
+          );
+        }
+        const activeKpr = activePengajuanList[0] || null;
 
-        if (["WAWANCARA", "OTS", "VERIFIKASI", "SP3K"].includes(targetDetail)) {
-          if (!activeKpr) {
-            throw new Error(
-              `Tahap "${targetDetail}" memerlukan Pengajuan KPR yang aktif ke Bank. Silakan buat pengajuan ke Bank terlebih dahulu pada kartu Pengajuan Bank.`
-            );
-          }
+        // Reject advancing directly into KPR micro stages via this action
+        if (isAdvancing && ["WAWANCARA", "OTS", "VERIFIKASI", "SP3K"].includes(targetDetail)) {
+          throw new Error(
+            `Perpindahan tahap ke "${targetDetail}" hanya dapat dilakukan melalui modul Pengajuan Bank KPR.`
+          );
+        }
 
-          // Sinkronisasi status pengajuan bank aktif agar selalu selaras dengan tahap transaksi
-          if (activeKpr.status !== targetDetail) {
+        // Regression from AKAD_KREDIT into SP3K
+        if (isRegression && existingTrx.tahap_detail === "AKAD_KREDIT" && targetDetail === "SP3K") {
+          if (activeKpr && activeKpr.status === "DISETUJUI") {
             await tx.pengajuanKPR.update({
               where: { id: activeKpr.id },
-              data: {
-                status: targetDetail as StatusPengajuanKPR,
-                tanggal_keputusan: targetDetail === "SP3K" ? new Date() : activeKpr.tanggal_keputusan,
-              },
+              data: { status: "SP3K" },
             });
 
             await tx.pengajuanKPRLog.create({
               data: {
                 pengajuan_id: activeKpr.id,
-                status_sebelum: activeKpr.status,
-                status_sesudah: targetDetail as StatusPengajuanKPR,
+                status_sebelum: "DISETUJUI",
+                status_sesudah: "SP3K",
                 admin_id: adminId,
-                catatan: `Status KPR diselaraskan ke ${targetDetail} seiring pembaruan progres transaksi`,
+                catatan: `Status KPR di ${activeKpr.bank.nama} dikembalikan ke SP3K seiring pemunduran tahap dari Akad Kredit. Alasan: ${validData.catatanAdmin?.trim() || "-"}`,
               },
             });
           }
@@ -768,6 +845,13 @@ export async function updateTransactionStatus(
           if (!activeKpr) {
             throw new Error(
               "Akad Kredit KPR memerlukan data Pengajuan KPR yang aktif ke Bank. Silakan buat pengajuan ke Bank terlebih dahulu."
+            );
+          }
+
+          const isValidStatus = activeKpr.status === "SP3K" || (isSameStage && activeKpr.status === "DISETUJUI");
+          if (!isValidStatus) {
+            throw new Error(
+              `Akad Kredit KPR belum dapat diproses: Status pengajuan KPR di ${activeKpr.bank.nama} saat ini adalah "${activeKpr.status}". Status harus SP3K Terbit sebelum dapat melanjutkan ke Akad Kredit.`
             );
           }
 
@@ -840,14 +924,15 @@ export async function updateTransactionStatus(
       if (targetDetail === "AJB") {
         if (totalPaid < hargaDeal) {
           throw new Error(
-            `Akta Jual Beli (AJB) belum dapat diproses: Pembayaran belum lunas 100%. Sisa tagihan: Rp ${(
+            `Akad (Cash) belum dapat diproses: Pembayaran belum lunas 100%. Sisa tagihan: Rp ${(
               hargaDeal - totalPaid
             ).toLocaleString("id-ID")}.`
           );
         }
 
-        if (!validData.tglAjb?.trim()) {
-          throw new Error("Tanggal Akta Jual Beli (AJB) wajib diisi.");
+        const dateStr = validData.tglAkad?.trim() || validData.tglAjb?.trim();
+        if (!dateStr && !existingTrx.tgl_akad && !existingTrx.tgl_ajb) {
+          throw new Error("Tanggal Akad wajib diisi.");
         }
 
         if (!validData.namaNotaris?.trim()) {
@@ -897,10 +982,13 @@ export async function updateTransactionStatus(
       }
 
       if (targetDetail === "AJB") {
-        const ajbDate = validData.tglAjb
-          ? parseDateOnlyUTC(validData.tglAjb)
-          : (existingTrx.tgl_ajb || todayDateOnlyUTC());
-        updateData.tgl_ajb = ajbDate;
+        const akadDate = validData.tglAkad
+          ? parseDateOnlyUTC(validData.tglAkad)
+          : validData.tglAjb
+            ? parseDateOnlyUTC(validData.tglAjb)
+            : (existingTrx.tgl_akad || existingTrx.tgl_ajb || todayDateOnlyUTC());
+        updateData.tgl_akad = akadDate;
+        updateData.tgl_ajb = akadDate; // Keep tgl_ajb populated for backwards compatibility
       }
 
       if (targetDetail === "PELUNASAN") {

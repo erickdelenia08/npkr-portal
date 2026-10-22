@@ -410,7 +410,7 @@ export async function getManagerDashboardData(
 
     // Marketing Performance queries
     prisma.user.findMany({
-      where: { role: "MARKETING" },
+      where: { role: { in: ["MARKETING", "ADMIN"] } },
       select: {
         id: true,
         nama: true,

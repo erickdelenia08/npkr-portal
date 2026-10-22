@@ -206,6 +206,8 @@ export const CustomerScalarFieldEnum = {
   tgl_lahir: 'tgl_lahir',
   alamat_ktp: 'alamat_ktp',
   no_hp: 'no_hp',
+  status_pernikahan: 'status_pernikahan',
+  status_pekerjaan: 'status_pekerjaan',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const

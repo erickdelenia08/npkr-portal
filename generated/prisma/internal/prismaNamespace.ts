@@ -1714,6 +1714,8 @@ export const CustomerScalarFieldEnum = {
   tgl_lahir: 'tgl_lahir',
   alamat_ktp: 'alamat_ktp',
   no_hp: 'no_hp',
+  status_pernikahan: 'status_pernikahan',
+  status_pekerjaan: 'status_pekerjaan',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -2124,6 +2126,20 @@ export type EnumStatusItjFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'MetodeBayar'
  */
 export type EnumMetodeBayarFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MetodeBayar'>
+    
+
+
+/**
+ * Reference to a field of type 'StatusPernikahan'
+ */
+export type EnumStatusPernikahanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusPernikahan'>
+    
+
+
+/**
+ * Reference to a field of type 'StatusPekerjaan'
+ */
+export type EnumStatusPekerjaanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusPekerjaan'>
     
 
 

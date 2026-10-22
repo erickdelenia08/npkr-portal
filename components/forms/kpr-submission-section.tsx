@@ -68,6 +68,10 @@ interface KprSubmissionSectionProps {
   masterBanks: BankItem[];
   currentTahapDetail?: string;
   canEdit?: boolean;
+  disabledNew?: boolean;
+  disabledNewReason?: string;
+  readOnlyActions?: boolean;
+  hideHeader?: boolean;
 }
 
 const STATUS_LABEL: Record<StatusPengajuanKPR, string> = {
@@ -125,8 +129,11 @@ export function KprSubmissionSection({
   transaksiId,
   initialPengajuan,
   masterBanks,
-  currentTahapDetail,
   canEdit = true,
+  disabledNew = false,
+  disabledNewReason,
+  readOnlyActions = false,
+  hideHeader = false,
 }: KprSubmissionSectionProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -323,38 +330,40 @@ export function KprSubmissionSection({
   return (
     <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
       {/* ─── 1. HEADER RINGKASAN PENGAJUAN BANK ─── */}
-      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-200/60">
-            <Building2 className="h-5 w-5" aria-hidden="true" />
+      {!hideHeader && (
+        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-200/60">
+              <Building2 className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">
+                Ringkasan Pengajuan Bank
+              </h3>
+              <p className="text-xs text-slate-600">
+                Kelola status pengajuan KPR per bank. Riwayat status dan penolakan
+                tercatat tersendiri.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-slate-900">
-              Ringkasan Pengajuan Bank
-            </h3>
-            <p className="text-xs text-slate-600">
-              Kelola status pengajuan KPR per bank. Riwayat status dan penolakan
-              tercatat tersendiri.
-            </p>
-          </div>
-        </div>
 
-        {pastSubmissions.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setShowPastList((v) => !v)}
-            aria-expanded={showPastList}
-            className="inline-flex items-center gap-1.5 self-start rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 sm:self-auto"
-          >
-            <History className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
-            <span>
-              {showPastList
-                ? "Sembunyikan riwayat lalu"
-                : `Riwayat pengajuan lalu (${pastSubmissions.length})`}
-            </span>
-          </button>
-        )}
-      </div>
+          {pastSubmissions.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowPastList((v) => !v)}
+              aria-expanded={showPastList}
+              className="inline-flex items-center gap-1.5 self-start rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 sm:self-auto"
+            >
+              <History className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
+              <span>
+                {showPastList
+                  ? "Sembunyikan riwayat lalu"
+                  : `Riwayat pengajuan lalu (${pastSubmissions.length})`}
+              </span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Warning jika ada multiple active submission */}
       {hasMultipleActive && (
@@ -465,7 +474,7 @@ export function KprSubmissionSection({
                 </div>
 
                 {/* Status Action Buttons Bar */}
-                {!isRejectingThis && canEdit && (
+                {!isRejectingThis && canEdit && !readOnlyActions && (
                   <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="text-xs font-semibold text-slate-700 mr-1">
@@ -734,15 +743,22 @@ export function KprSubmissionSection({
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-1">
-            <p className="text-xs text-slate-500">
-              Setelah diajukan, pengajuan bank akan diproses dan status transaksi
-              diselaraskan ke tahap Wawancara.
-            </p>
+            <div className="space-y-1">
+              <p className="text-xs text-slate-500">
+                Setelah diajukan, pengajuan bank akan diproses dan status transaksi
+                diselaraskan ke tahap Wawancara.
+              </p>
+              {disabledNew && disabledNewReason && (
+                <p className="text-xs font-medium text-amber-700">
+                  {disabledNewReason}
+                </p>
+              )}
+            </div>
             <Button
               type="submit"
               size="sm"
-              disabled={isPending}
-              className="h-8.5 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
+              disabled={isPending || disabledNew}
+              className="h-8.5 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
             >
               {isPending ? (
                 <>
@@ -866,13 +882,6 @@ export function KprSubmissionSection({
         onConfirm={confirmUpdateStatus}
         onCancel={() => setPendingStatus(null)}
       />
-
-      {/* Accessibility Context */}
-      {currentTahapDetail ? (
-        <p className="sr-only">
-          Tahap transaksi utama saat ini: {currentTahapDetail.replace(/_/g, " ")}
-        </p>
-      ) : null}
     </div>
   );
 }

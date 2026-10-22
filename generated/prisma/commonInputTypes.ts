@@ -392,6 +392,40 @@ export type EnumMetodeBayarWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumMetodeBayarFilter<$PrismaModel>
 }
 
+export type EnumStatusPernikahanNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPernikahan | Prisma.EnumStatusPernikahanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPernikahan[] | null
+  notIn?: $Enums.StatusPernikahan[] | null
+  not?: Prisma.NestedEnumStatusPernikahanNullableFilter<$PrismaModel> | $Enums.StatusPernikahan | null
+}
+
+export type EnumStatusPekerjaanNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPekerjaan | Prisma.EnumStatusPekerjaanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPekerjaan[] | null
+  notIn?: $Enums.StatusPekerjaan[] | null
+  not?: Prisma.NestedEnumStatusPekerjaanNullableFilter<$PrismaModel> | $Enums.StatusPekerjaan | null
+}
+
+export type EnumStatusPernikahanNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPernikahan | Prisma.EnumStatusPernikahanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPernikahan[] | null
+  notIn?: $Enums.StatusPernikahan[] | null
+  not?: Prisma.NestedEnumStatusPernikahanNullableWithAggregatesFilter<$PrismaModel> | $Enums.StatusPernikahan | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPernikahanNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPernikahanNullableFilter<$PrismaModel>
+}
+
+export type EnumStatusPekerjaanNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPekerjaan | Prisma.EnumStatusPekerjaanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPekerjaan[] | null
+  notIn?: $Enums.StatusPekerjaan[] | null
+  not?: Prisma.NestedEnumStatusPekerjaanNullableWithAggregatesFilter<$PrismaModel> | $Enums.StatusPekerjaan | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPekerjaanNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPekerjaanNullableFilter<$PrismaModel>
+}
+
 export type EnumTahapTransaksiFilter<$PrismaModel = never> = {
   equals?: $Enums.TahapTransaksi | Prisma.EnumTahapTransaksiFieldRefInput<$PrismaModel>
   in?: $Enums.TahapTransaksi[]
@@ -1023,6 +1057,40 @@ export type NestedEnumMetodeBayarWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMetodeBayarFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMetodeBayarFilter<$PrismaModel>
+}
+
+export type NestedEnumStatusPernikahanNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPernikahan | Prisma.EnumStatusPernikahanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPernikahan[] | null
+  notIn?: $Enums.StatusPernikahan[] | null
+  not?: Prisma.NestedEnumStatusPernikahanNullableFilter<$PrismaModel> | $Enums.StatusPernikahan | null
+}
+
+export type NestedEnumStatusPekerjaanNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPekerjaan | Prisma.EnumStatusPekerjaanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPekerjaan[] | null
+  notIn?: $Enums.StatusPekerjaan[] | null
+  not?: Prisma.NestedEnumStatusPekerjaanNullableFilter<$PrismaModel> | $Enums.StatusPekerjaan | null
+}
+
+export type NestedEnumStatusPernikahanNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPernikahan | Prisma.EnumStatusPernikahanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPernikahan[] | null
+  notIn?: $Enums.StatusPernikahan[] | null
+  not?: Prisma.NestedEnumStatusPernikahanNullableWithAggregatesFilter<$PrismaModel> | $Enums.StatusPernikahan | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPernikahanNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPernikahanNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumStatusPekerjaanNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.StatusPekerjaan | Prisma.EnumStatusPekerjaanFieldRefInput<$PrismaModel> | null
+  in?: $Enums.StatusPekerjaan[] | null
+  notIn?: $Enums.StatusPekerjaan[] | null
+  not?: Prisma.NestedEnumStatusPekerjaanNullableWithAggregatesFilter<$PrismaModel> | $Enums.StatusPekerjaan | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumStatusPekerjaanNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumStatusPekerjaanNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumTahapTransaksiFilter<$PrismaModel = never> = {

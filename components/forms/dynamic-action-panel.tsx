@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useTransition } from "react";
+import React, { useMemo, useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Workflow,
@@ -12,10 +12,20 @@ import {
   Ban,
   LockKeyhole,
   Check,
+  ChevronDown,
+  UserCheck,
+  Edit2,
+  Undo2,
+  Building2,
+  Calendar,
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { updateTransactionStatus } from "@/actions/transaksi.action";
+import {
+  updateTransactionStatus,
+  verifyDokumenTransaksi,
+  updateProfilPemberkasan,
+} from "@/actions/transaksi.action";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
@@ -30,23 +40,24 @@ import type {
   MetodeBayar,
   JenisDokumen,
   ItemBAST,
+  StatusPernikahan,
+  StatusPekerjaan,
 } from "@/generated/prisma";
 import {
   type StageOption,
   getStagesByMetode,
   getFallbackStage,
+  MACRO_STAGE_LABELS,
 } from "@/lib/transaksi/stage-map";
-import { todayWIB } from "@/lib/date/wib";
+import {
+  getRequiredDocuments,
+  isProfilPemberkasanLengkap,
+  isDokumenTerverifikasi,
+} from "@/lib/transaksi/document-rules";
 
 // --------------------------------------------------
-// Types
+// Types & Defaults
 // --------------------------------------------------
-
-interface DokumenItemDef {
-  key: JenisDokumen;
-  label: string;
-  kategoriUnit?: "SUBSIDI" | "KOMERSIL" | "SEMUA";
-}
 
 interface DynamicActionPanelProps {
   transaksiId: number;
@@ -66,11 +77,9 @@ interface DynamicActionPanelProps {
   initialPengajuanKpr?: PengajuanKPRItem[];
   masterBanks?: BankItem[];
   canEdit?: boolean;
+  statusPernikahan?: StatusPernikahan | null;
+  statusPekerjaan?: StatusPekerjaan | null;
 }
-
-type FieldKey = "catatan" | "notaris" | "tglAkad" | "tglAjb" | "tglLunas" | "tglBast";
-type FormErrors = Partial<Record<FieldKey | "stage", string>>;
-type StepState = "done" | "current" | "next" | "locked";
 
 interface BastItemDef {
   key: ItemBAST;
@@ -121,32 +130,9 @@ const MASTER_BAST_ITEMS: BastItemDef[] = [
   },
 ];
 
-// Konstanta stabil: default `= []` di destructuring membuat referensi baru tiap render
 const EMPTY_STRINGS: string[] = [];
 const EMPTY_PENGAJUAN: PengajuanKPRItem[] = [];
 const EMPTY_BANKS: BankItem[] = [];
-
-// --------------------------------------------------
-// Master checklist dokumen
-// --------------------------------------------------
-
-const BERKAS_ITEMS: DokumenItemDef[] = [
-  { key: "KTP_SUAMI_ISTRI", label: "KTP suami dan istri", kategoriUnit: "SEMUA" },
-  { key: "KARTU_KELUARGA", label: "Kartu Keluarga (KK)", kategoriUnit: "SEMUA" },
-  { key: "NPWP", label: "NPWP pribadi", kategoriUnit: "SEMUA" },
-  { key: "BUKU_NIKAH", label: "Buku nikah / akta cerai", kategoriUnit: "SEMUA" },
-  { key: "SLIP_GAJI", label: "Slip gaji 3 bulan terakhir", kategoriUnit: "SEMUA" },
-  { key: "SURAT_KET_KERJA", label: "Surat keterangan kerja", kategoriUnit: "SEMUA" },
-  { key: "REKENING_KORAN", label: "Rekening koran 3–6 bulan", kategoriUnit: "SEMUA" },
-  {
-    key: "SURAT_KET_BELUM_PUNYA_RUMAH",
-    label: "Surat keterangan belum memiliki rumah",
-    kategoriUnit: "SUBSIDI",
-  },
-  { key: "SKU_WIRAUSAHA", label: "Surat keterangan usaha", kategoriUnit: "SEMUA" },
-  { key: "LAPORAN_KEUANGAN", label: "Laporan keuangan usaha", kategoriUnit: "KOMERSIL" },
-  { key: "LEGALITAS_LAINNYA", label: "Dokumen legalitas tambahan", kategoriUnit: "SEMUA" },
-];
 
 // --------------------------------------------------
 // Helpers
@@ -158,10 +144,8 @@ const humanize = (value: string): string =>
     .replace(/_/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
-/** Ambil tanggal kalender tersimpan tanpa konversi UTC. */
 function toDateInput(value?: string | null): string {
   if (!value) return "";
-
   const datePart = value.slice(0, 10);
   if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) return datePart;
 
@@ -171,7 +155,6 @@ function toDateInput(value?: string | null): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-
   return `${year}-${month}-${day}`;
 }
 
@@ -235,16 +218,18 @@ export function DynamicActionPanel({
   initialPengajuanKpr = EMPTY_PENGAJUAN,
   masterBanks = EMPTY_BANKS,
   canEdit = true,
+  statusPernikahan: initialStatusPernikahan,
+  statusPekerjaan: initialStatusPekerjaan,
 }: DynamicActionPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
+  // ---------- Stages Map ----------
   const stages = useMemo(() => getStagesByMetode(metodeBayar), [metodeBayar]);
   const mainStages = useMemo(
     () => stages.filter((stage) => stage.detail !== "BATAL"),
     [stages]
   );
-  const hasCancelStage = stages.some((stage) => stage.detail === "BATAL");
 
   const { stage: currentStage, isUnknown: isUnknownDbStage } = useMemo(() => {
     if (currentTahapDetail) {
@@ -258,43 +243,92 @@ export function DynamicActionPanel({
     (stage) => stage.detail === currentStage.detail
   );
   const nextStage = currentIndex >= 0 ? stages[currentIndex + 1] : undefined;
-  const nextMainStage =
-    nextStage && nextStage.detail !== "BATAL" ? nextStage : undefined;
 
   const isTerminal =
     currentStage.detail === "BATAL" || currentStage.detail === "BAST";
   const isCompleted = currentStage.detail === "BAST";
   const isCancelled = currentStage.detail === "BATAL";
+  const isKpr = metodeBayar === "KPR";
+  const isKavling = kategoriUnit === "KAVLING";
 
-  // ---------- Local form state ----------
-  const [selectedDetail, setSelectedDetail] = useState<TahapDetail>(
-    currentStage.detail
+  // Macro stages de-duplicated in order
+  const macroSteps = useMemo(() => {
+    const seen = new Set<TahapTransaksi>();
+    const steps: {
+      macro: TahapTransaksi;
+      label: string;
+      microStages: StageOption[];
+    }[] = [];
+    for (const s of mainStages) {
+      if (!seen.has(s.macro)) {
+        seen.add(s.macro);
+        steps.push({
+          macro: s.macro,
+          label: MACRO_STAGE_LABELS[s.macro] || humanize(s.macro),
+          microStages: mainStages.filter((m) => m.macro === s.macro),
+        });
+      }
+    }
+    return steps;
+  }, [mainStages]);
+
+  const currentMacroIndex = macroSteps.findIndex(
+    (s) => s.macro === currentStage.macro
   );
+
+  // ---------- State: Profile Konsumen ----------
+  const [statusPernikahan, setStatusPernikahan] = useState<StatusPernikahan | null>(
+    initialStatusPernikahan ?? null
+  );
+  const [statusPekerjaan, setStatusPekerjaan] = useState<StatusPekerjaan | null>(
+    initialStatusPekerjaan ?? null
+  );
+  const [profileDialogOpen, setProfileDialogOpen] = useState(false);
+  const [profileFormPernikahan, setProfileFormPernikahan] = useState<StatusPernikahan | "">(
+    initialStatusPernikahan ?? ""
+  );
+  const [profileFormPekerjaan, setProfileFormPekerjaan] = useState<StatusPekerjaan | "">(
+    initialStatusPekerjaan ?? ""
+  );
+
+  // ---------- State: Form Data ----------
   const [namaNotaris, setNamaNotaris] = useState(initialNotaris ?? "");
-  const [tglAkadKredit, setTglAkadKredit] = useState(() =>
-    initialTglAkad ? toDateInput(initialTglAkad) : todayWIB()
-  );
-  const [tglAjb, setTglAjb] = useState(() =>
-    initialTglAjb ? toDateInput(initialTglAjb) : todayWIB()
+  const [tglAkad, setTglAkad] = useState(() =>
+    initialTglAkad ? toDateInput(initialTglAkad) : (initialTglAjb ? toDateInput(initialTglAjb) : "")
   );
   const [tglPelunasan, setTglPelunasan] = useState(() =>
-    initialLunasAt ? toDateInput(initialLunasAt) : todayWIB()
+    initialLunasAt ? toDateInput(initialLunasAt) : ""
   );
   const [tglBast, setTglBast] = useState(() =>
-    initialTglBast ? toDateInput(initialTglBast) : todayWIB()
+    initialTglBast ? toDateInput(initialTglBast) : ""
   );
   const [catatanAdmin, setCatatanAdmin] = useState(initialCatatan ?? "");
-  const [selectedDocs, setSelectedDocs] = useState<string[]>(initialVerifiedDocs);
+  const [verifiedDocs, setVerifiedDocs] = useState<string[]>(initialVerifiedDocs);
   const [selectedBastItems, setSelectedBastItems] = useState<string[]>(initialBastItems);
-  const [lahanChecked, setLahanChecked] = useState(true);
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [lahanChecked, setLahanChecked] = useState(false); // default false for Kavling BAST
 
-  // Sinkronisasi dengan server berdasarkan ISI data, bukan referensi array.
-  // Dengan begitu router.refresh() tidak mereset input yang belum disimpan
-  // selama data tersimpan di server memang tidak berubah.
+  // ---------- State: Opsi Lainnya (Mundur / Batal) ----------
+  const [showOtherOptions, setShowOtherOptions] = useState(false);
+  const [selectedRegressionDetail, setSelectedRegressionDetail] = useState<TahapDetail | "">("");
+  const [catatanMundur, setCatatanMundur] = useState("");
+  const [catatanBatal, setCatatanBatal] = useState("");
+
+  // ---------- State: Confirmation Dialog ----------
+  const [pendingConfirm, setPendingConfirm] = useState<{
+    action: () => void;
+    title: string;
+    description: React.ReactNode;
+    confirmLabel: string;
+    tone?: "default" | "danger";
+  } | null>(null);
+
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  // Sync state if server data changes
   const serverKey = JSON.stringify([
     currentStage.detail,
+    initialStatusPernikahan,
+    initialStatusPekerjaan,
     initialNotaris,
     initialTglAkad,
     initialTglAjb,
@@ -308,230 +342,350 @@ export function DynamicActionPanel({
 
   if (prevServerKey !== serverKey) {
     setPrevServerKey(serverKey);
-    setSelectedDetail(currentStage.detail);
+    setStatusPernikahan(initialStatusPernikahan ?? null);
+    setStatusPekerjaan(initialStatusPekerjaan ?? null);
     setNamaNotaris(initialNotaris ?? "");
-    setTglAkadKredit(initialTglAkad ? toDateInput(initialTglAkad) : todayWIB());
-    setTglAjb(initialTglAjb ? toDateInput(initialTglAjb) : todayWIB());
-    setTglPelunasan(initialLunasAt ? toDateInput(initialLunasAt) : todayWIB());
-    setTglBast(initialTglBast ? toDateInput(initialTglBast) : todayWIB());
+    setTglAkad(initialTglAkad ? toDateInput(initialTglAkad) : (initialTglAjb ? toDateInput(initialTglAjb) : ""));
+    setTglPelunasan(initialLunasAt ? toDateInput(initialLunasAt) : "");
+    setTglBast(initialTglBast ? toDateInput(initialTglBast) : "");
     setCatatanAdmin(initialCatatan ?? "");
-    setSelectedDocs(initialVerifiedDocs);
+    setVerifiedDocs(initialVerifiedDocs);
     setSelectedBastItems(initialBastItems);
-    setLahanChecked(true);
-    setErrors({});
-    setConfirmOpen(false);
+    setLahanChecked(false);
   }
 
-  // ---------- Derived ----------
-  const selectedIndex = stages.findIndex((stage) => stage.detail === selectedDetail);
-  const selectedStage =
-    stages.find((stage) => stage.detail === selectedDetail) ?? currentStage;
-
-  const isPemberkasan = [
-    "PENGUMPULAN_DOKUMEN",
-    "PEMBERKASAN_LEGALITAS",
-    "PEMBERKASAN_PPJB",
-  ].includes(selectedDetail);
-  const isAkadKredit = selectedDetail === "AKAD_KREDIT";
-  const isAjb = selectedDetail === "AJB";
-  const isAkadOrAjb = isAkadKredit || isAjb;
-  const isPelunasan = selectedDetail === "PELUNASAN";
-  const isBast = selectedDetail === "BAST";
-  const isBatal = selectedDetail === "BATAL";
-  const isKpr = metodeBayar === "KPR";
-
-  const isKavling = kategoriUnit === "KAVLING";
-
-  const filteredDocs = BERKAS_ITEMS.filter(
-    (item) => item.kategoriUnit === "SEMUA" || item.kategoriUnit === kategoriUnit
+  // Active KPR Pengajuan
+  const activePengajuan = useMemo(
+    () => initialPengajuanKpr.find((p) => p.status !== "DITOLAK" && p.status !== "DIBATALKAN"),
+    [initialPengajuanKpr]
   );
-  const verifiedDocCount = filteredDocs.filter((doc) =>
-    selectedDocs.includes(doc.key)
-  ).length;
 
+  // ---------- Rule-based Documents Calculation ----------
+  const ruleResult = useMemo(() => {
+    return getRequiredDocuments({
+      metode: metodeBayar,
+      kategori: kategoriUnit,
+      statusPernikahan,
+      statusPekerjaan,
+    });
+  }, [metodeBayar, kategoriUnit, statusPernikahan, statusPekerjaan]);
+
+  const isProfileComplete = ruleResult.isProfileComplete;
+  const ruleDocs = ruleResult.documents;
+
+  const requiredDocs = useMemo(() => ruleDocs.filter((d) => d.required), [ruleDocs]);
+  const verifiedRequiredCount = useMemo(
+    () => requiredDocs.filter((d) => isDokumenTerverifikasi(d.key, verifiedDocs)).length,
+    [requiredDocs, verifiedDocs]
+  );
+  const allRequiredVerified = isProfileComplete && verifiedRequiredCount >= requiredDocs.length;
+
+  // ---------- Stage Identifiers ----------
+  const isPemberkasan = currentStage.macro === "PEMBERKASAN";
+  const isKprMicroStage = isKpr && ["WAWANCARA", "OTS", "VERIFIKASI"].includes(currentStage.detail);
+  const isKprSp3k = isKpr && currentStage.detail === "SP3K";
+  const isAkadStage = currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB";
+
+  // BAST completeness check
   const verifiedBastCount = selectedBastItems.length;
-  const isBastComplete = isKavling
+  const isBastFormComplete = isKavling
     ? lahanChecked
     : verifiedBastCount >= MASTER_BAST_ITEMS.length;
 
-  const isCurrentStage = selectedDetail === currentStage.detail;
-  const isNextStage = selectedDetail === nextStage?.detail;
-  const isRegression = currentIndex >= 0 && selectedIndex < currentIndex && !isBatal;
-  const isAllowedSelection =
-    !isTerminal && (isCurrentStage || isNextStage || isRegression || isBatal);
-  const needsConfirm = isBatal || isBast || isRegression;
+  // ---------- Handlers: Document Toggle (Optimistic) ----------
+  const handleToggleDoc = async (docKey: JenisDokumen, currentChecked: boolean) => {
+    if (!canEdit || isPending) return;
+    const newVerified = !currentChecked;
 
-  const getStepState = (index: number): StepState => {
-    if (index < currentIndex) return "done";
-    if (index === currentIndex) return isCompleted ? "done" : "current";
-    if (index === currentIndex + 1) return "next";
-    return "locked";
-  };
-
-  // ---------- Handlers ----------
-  const clearError = (key: FieldKey) =>
-    setErrors((previous) => {
-      if (!previous[key]) return previous;
-      const { [key]: _removed, ...rest } = previous;
-      void _removed;
-      return rest;
-    });
-
-  const selectStage = (detail: TahapDetail) => {
-    setSelectedDetail(detail);
-    setErrors({});
-  };
-
-  const toggleDoc = (key: string) => {
-    setSelectedDocs((previous) =>
-      previous.includes(key)
-        ? previous.filter((item) => item !== key)
-        : [...previous, key]
+    // Optimistic UI update
+    setVerifiedDocs((prev) =>
+      newVerified ? [...prev, docKey] : prev.filter((k) => k !== docKey)
     );
-  };
 
-  const toggleBastItem = (key: string) => {
-    setSelectedBastItems((previous) =>
-      previous.includes(key)
-        ? previous.filter((item) => item !== key)
-        : [...previous, key]
-    );
-  };
+    try {
+      const res = await verifyDokumenTransaksi({
+        transaksiId,
+        jenis: docKey,
+        status: newVerified ? "TERVERIFIKASI" : "BELUM_DIUNGGAH",
+        verified: newVerified,
+      });
 
-  const validate = (): boolean => {
-    const next: FormErrors = {};
-    const note = catatanAdmin.trim();
-
-    if (isTerminal) {
-      next.stage = "Transaksi sudah selesai atau dibatalkan dan tidak bisa diubah.";
-    } else if (!isAllowedSelection) {
-      next.stage = "Tahap yang dipilih tidak tersedia dari progres saat ini.";
-    }
-
-    if ((isRegression || isBatal) && note.length < 5) {
-      next.catatan = isBatal
-        ? "Tulis alasan pembatalan, minimal 5 karakter."
-        : "Tulis alasan memundurkan tahap, minimal 5 karakter.";
-    }
-
-    if (isAkadKredit && !tglAkadKredit) next.tglAkad = "Tanggal akad kredit wajib diisi.";
-    if (isAjb && !tglAjb) next.tglAjb = "Tanggal AJB wajib diisi.";
-    if (isAkadOrAjb && !namaNotaris.trim()) next.notaris = "Nama notaris/PPAT wajib diisi.";
-    if (isPelunasan && !tglPelunasan) next.tglLunas = "Tanggal pelunasan wajib diisi.";
-
-    if (isBast) {
-      if (!tglBast) {
-        next.tglBast = "Tanggal serah terima (BAST) wajib diisi.";
+      if (res.success) {
+        toast.success(res.message);
+        router.refresh();
+      } else {
+        // Rollback
+        setVerifiedDocs((prev) =>
+          currentChecked ? [...prev, docKey] : prev.filter((k) => k !== docKey)
+        );
+        toast.error(res.error || "Gagal memperbarui verifikasi dokumen.");
       }
-      if (!isBastComplete) {
-        next.stage = isKavling
-          ? "Centang konfirmasi serah terima fisik lahan terlebih dahulu."
-          : `Serah terima belum bisa dilakukan: ${MASTER_BAST_ITEMS.length - verifiedBastCount} dari ${MASTER_BAST_ITEMS.length} item checklist BAST belum dicentang.`;
-      }
-    }
-
-    setErrors(next);
-
-    const order: FieldKey[] = ["notaris", "tglAkad", "tglAjb", "tglLunas", "tglBast", "catatan"];
-    const firstInvalid = order.find((key) => next[key]);
-    if (firstInvalid) {
-      requestAnimationFrame(() =>
-        document.getElementById(`fld-${firstInvalid}`)?.focus()
+    } catch (err: unknown) {
+      // Rollback
+      setVerifiedDocs((prev) =>
+        currentChecked ? [...prev, docKey] : prev.filter((k) => k !== docKey)
       );
+      toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
     }
-
-    return Object.keys(next).length === 0;
   };
 
-  const runSave = () => {
+  // ---------- Handlers: Update Profil Konsumen ----------
+  const handleSaveProfile = () => {
+    if (!profileFormPernikahan || !profileFormPekerjaan) {
+      toast.error("Pilih status pernikahan dan status pekerjaan konsumen.");
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        const res = await updateProfilPemberkasan({
+          transaksiId,
+          statusPernikahan: profileFormPernikahan as StatusPernikahan,
+          statusPekerjaan: profileFormPekerjaan as StatusPekerjaan,
+        });
+
+        if (res.success) {
+          setStatusPernikahan(profileFormPernikahan as StatusPernikahan);
+          setStatusPekerjaan(profileFormPekerjaan as StatusPekerjaan);
+          setProfileDialogOpen(false);
+          toast.success(res.message);
+          router.refresh();
+        } else {
+          toast.error(res.error || "Gagal memperbarui profil konsumen.");
+        }
+      } catch (err: unknown) {
+        toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
+      }
+    });
+  };
+
+  // ---------- Handlers: BAST Checklist Toggle ----------
+  const toggleBastItem = (key: string) => {
+    if (!canEdit || isPending) return;
+    setSelectedBastItems((prev) =>
+      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
+    );
+  };
+
+  // ---------- Handlers: Advance Stage ----------
+  const executeAdvance = (targetDetail: TahapDetail) => {
     startTransition(async () => {
       try {
         const result = await updateTransactionStatus({
           transaksiId,
           leadId,
-          tahapDetail: selectedDetail,
-          namaNotaris: isAkadOrAjb ? namaNotaris.trim() : null,
-          tglAkad: isAkadKredit ? tglAkadKredit : null,
-          tglAjb: isAjb ? tglAjb : null,
-          lunasAt: isPelunasan ? tglPelunasan : null,
-          tglBast: isBast ? tglBast || todayWIB() : null,
+          tahapDetail: targetDetail,
+          namaNotaris: isAkadStage || isKprSp3k ? namaNotaris.trim() : null,
+          tglAkad: (isAkadStage || isKprSp3k) && tglAkad ? tglAkad : null,
+          tglAjb: currentStage.detail === "AJB" && tglAkad ? tglAkad : null,
+          lunasAt: currentStage.detail === "PELUNASAN" ? tglPelunasan : null,
+          tglBast: targetDetail === "BAST" ? tglBast : null,
           catatanAdmin: catatanAdmin.trim() || null,
-          documents: isPemberkasan ? selectedDocs : null,
-          bastItems: isBast && !isKavling ? selectedBastItems : null,
+          bastItems: targetDetail === "BAST" && !isKavling ? selectedBastItems : null,
         });
 
         if (!result.success) {
-          setConfirmOpen(false);
+          setPendingConfirm(null);
           toast.error(result.error || "Gagal memperbarui transaksi.");
           return;
         }
 
-        setConfirmOpen(false);
+        setPendingConfirm(null);
         toast.success(result.message || "Progres transaksi berhasil disimpan.");
         router.refresh();
-      } catch (error: unknown) {
-        setConfirmOpen(false);
-        toast.error(
-          error instanceof Error ? error.message : "Terjadi kesalahan sistem."
-        );
+      } catch (err: unknown) {
+        setPendingConfirm(null);
+        toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
       }
     });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // Validate and submit for primary action
+  const handlePrimarySubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!validate()) return;
+    if (!nextStage) return;
 
-    if (needsConfirm) {
-      setConfirmOpen(true);
+    const errors: Record<string, string> = {};
+
+    // Validation for KPR SP3K -> AKAD_KREDIT
+    if (isKprSp3k) {
+      if (!namaNotaris.trim()) errors.notaris = "Nama notaris/PPAT wajib diisi.";
+      if (!tglAkad) errors.tglAkad = "Tanggal akad kredit wajib diisi.";
+    }
+
+    // Validation for Cash PELUNASAN -> AJB
+    if (currentStage.detail === "PELUNASAN") {
+      if (!tglPelunasan) errors.tglPelunasan = "Tanggal pelunasan wajib diisi.";
+    }
+
+    // Validation for Cash AJB -> BAST
+    if (currentStage.detail === "AJB") {
+      if (!namaNotaris.trim()) errors.notaris = "Nama notaris/PPAT wajib diisi.";
+      if (!tglAkad) errors.tglAkad = "Tanggal akad wajib diisi.";
+    }
+
+    // Validation for Akad -> BAST
+    if (nextStage.detail === "BAST") {
+      if (!tglBast) errors.tglBast = "Tanggal serah terima (BAST) wajib diisi.";
+      if (!isBastFormComplete) {
+        errors.bast = isKavling
+          ? "Centang konfirmasi serah terima fisik lahan terlebih dahulu."
+          : `Lengkapi seluruh ${MASTER_BAST_ITEMS.length} item checklist inspeksi BAST.`;
+      }
+    }
+
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0];
+      document.getElementById(`fld-${firstKey}`)?.focus();
       return;
     }
 
-    runSave();
+    // Confirm dialog for critical next stage (Akad or BAST)
+    if (nextStage.detail === "BAST") {
+      setPendingConfirm({
+        action: () => executeAdvance(nextStage.detail),
+        title: "Selesaikan Serah Terima (BAST)?",
+        description: (
+          <p>
+            Setelah BAST disimpan, transaksi dinyatakan <strong>SELESAI</strong> dan tidak dapat diubah lagi. Pastikan serah terima fisik unit telah dilakukan.
+          </p>
+        ),
+        confirmLabel: "Ya, Selesaikan BAST",
+        tone: "default",
+      });
+      return;
+    }
+
+    executeAdvance(nextStage.detail);
   };
 
-  // ---------- Dynamic copy ----------
-  const submitLabel = isBatal
-    ? "Batalkan transaksi"
-    : isRegression
-      ? `Mundur ke ${selectedStage.label}`
-      : isNextStage
-        ? `Lanjut ke ${selectedStage.label}`
-        : "Simpan perubahan";
-
-  const confirmCopy = isBatal
-    ? {
-      title: "Batalkan transaksi ini?",
-      description:
-        "Pembatalan bersifat final dan tidak bisa diubah lagi. Status unit akan ditentukan sistem berdasarkan kondisi transaksi.",
-      label: "Ya, batalkan transaksi",
-      tone: "danger" as const,
-    }
-    : isBast
-      ? {
-        title: "Selesaikan serah terima?",
-        description:
-          "Setelah BAST disimpan, transaksi dinyatakan selesai dan tidak bisa diubah lagi.",
-        label: "Ya, selesaikan",
-        tone: "default" as const,
+  // ---------- Handlers: Regression (Mundur Tahap) ----------
+  const availableRegressionStages = useMemo(() => {
+    if (currentIndex <= 0) return [];
+    // Only return stages prior to currentIndex that are allowed
+    return stages.slice(0, currentIndex).filter((s) => {
+      // Direct move into WAWANCARA, OTS, VERIFIKASI, SP3K via updateTransactionStatus is not allowed
+      // except regression from AKAD_KREDIT to SP3K
+      if (isKpr) {
+        if (["WAWANCARA", "OTS", "VERIFIKASI"].includes(s.detail)) return false;
+        if (s.detail === "SP3K" && currentStage.detail !== "AKAD_KREDIT") return false;
       }
-      : {
-        title: `Mundurkan ke ${selectedStage.label}?`,
-        description:
-          "Progres transaksi akan kembali ke tahap tersebut. Alasan yang Anda tulis tercatat di riwayat audit.",
-        label: "Ya, mundurkan tahap",
-        tone: "default" as const,
-      };
+      return true;
+    });
+  }, [stages, currentIndex, isKpr, currentStage.detail]);
 
-  const stepClass = (state: StepState, selected: boolean) => {
-    const base =
-      "flex min-h-14 w-full items-center gap-2.5 rounded-lg border p-3 text-left text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600";
+  const handleRegressionSubmit = () => {
+    if (!selectedRegressionDetail) {
+      toast.error("Pilih tahap tujuan mundur terlebih dahulu.");
+      return;
+    }
+    if (catatanMundur.trim().length < 5) {
+      toast.error("Alasan memundurkan tahap wajib diisi, minimal 5 karakter.");
+      return;
+    }
 
-    if (selected) return `${base} border-teal-700 bg-teal-700 text-white`;
-    if (state === "current") return `${base} border-teal-600 bg-teal-50 text-teal-900`;
-    if (state === "next") return `${base} border-teal-300 bg-white text-slate-800 hover:bg-teal-50`;
-    if (state === "done") return `${base} border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100`;
-    return `${base} cursor-not-allowed border-dashed border-slate-200 bg-white text-slate-500`;
+    const targetStageObj = stages.find((s) => s.detail === selectedRegressionDetail);
+    setPendingConfirm({
+      action: () => {
+        startTransition(async () => {
+          try {
+            const res = await updateTransactionStatus({
+              transaksiId,
+              leadId,
+              tahapDetail: selectedRegressionDetail,
+              catatanAdmin: catatanMundur.trim(),
+            });
+
+            if (!res.success) {
+              setPendingConfirm(null);
+              toast.error(res.error || "Gagal memundurkan tahap.");
+              return;
+            }
+
+            setPendingConfirm(null);
+            setShowOtherOptions(false);
+            setCatatanMundur("");
+            toast.success(res.message || "Tahap transaksi berhasil dimundurkan.");
+            router.refresh();
+          } catch (err: unknown) {
+            setPendingConfirm(null);
+            toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
+          }
+        });
+      },
+      title: `Konfirmasi Mundur ke ${targetStageObj?.label}?`,
+      description: (
+        <div className="space-y-2 text-sm text-slate-700">
+          <p>
+            Progres transaksi akan dikembalikan ke tahap{" "}
+            <strong>{targetStageObj?.label}</strong>.
+          </p>
+          <p className="rounded bg-slate-100 p-2 text-xs italic text-slate-600">
+            &quot;{catatanMundur.trim()}&quot;
+          </p>
+          {isKpr && currentStage.detail === "AKAD_KREDIT" && selectedRegressionDetail === "SP3K" && (
+            <p className="text-xs text-amber-800">
+              Pengajuan KPR bank akan dikembalikan ke status SP3K dan status unit dikembalikan ke BOOKED.
+            </p>
+          )}
+        </div>
+      ),
+      confirmLabel: "Ya, Mundurkan Tahap",
+      tone: "default",
+    });
+  };
+
+  // ---------- Handlers: Cancellation (Batal Transaksi) ----------
+  const handleCancelSubmit = () => {
+    if (catatanBatal.trim().length < 5) {
+      toast.error("Alasan pembatalan transaksi wajib diisi, minimal 5 karakter.");
+      return;
+    }
+
+    setPendingConfirm({
+      action: () => {
+        startTransition(async () => {
+          try {
+            const res = await updateTransactionStatus({
+              transaksiId,
+              leadId,
+              tahapDetail: "BATAL",
+              catatanAdmin: catatanBatal.trim(),
+            });
+
+            if (!res.success) {
+              setPendingConfirm(null);
+              toast.error(res.error || "Gagal membatalkan transaksi.");
+              return;
+            }
+
+            setPendingConfirm(null);
+            setShowOtherOptions(false);
+            setCatatanBatal("");
+            toast.success(res.message || "Transaksi berhasil dibatalkan.");
+            router.refresh();
+          } catch (err: unknown) {
+            setPendingConfirm(null);
+            toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
+          }
+        });
+      },
+      title: "Batalkan Transaksi Ini?",
+      description: (
+        <div className="space-y-2 text-sm text-slate-700">
+          <p className="font-semibold text-rose-700">
+            Pembatalan bersifat permanen dan tidak dapat diubah kembali.
+          </p>
+          <p>Status unit akan otomatis diperbarui dan dicatat dalam riwayat audit.</p>
+          <p className="rounded bg-slate-100 p-2 text-xs italic text-slate-600">
+            &quot;{catatanBatal.trim()}&quot;
+          </p>
+        </div>
+      ),
+      confirmLabel: "Ya, Batalkan Transaksi",
+      tone: "danger",
+    });
   };
 
   // --------------------------------------------------
@@ -539,24 +693,25 @@ export function DynamicActionPanel({
   // --------------------------------------------------
 
   return (
-    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+    <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm space-y-5">
+      {/* Read-Only Notice */}
       {!canEdit && (
         <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-50 p-3 text-xs font-medium text-amber-900">
           <LockKeyhole className="h-4 w-4 shrink-0 text-amber-600" aria-hidden="true" />
           <span>
-            Mode Baca Saja: Hanya PIC Marketing penanggung jawab atau Admin yang dapat memperbarui tahapan transaksi ini.
+            Mode Baca Saja: Hanya PIC Marketing atau Admin yang dapat memperbarui tahapan transaksi ini.
           </span>
         </div>
       )}
 
-      {/* Header: satu-satunya tempat "tahap saat ini" ditampilkan */}
+      {/* Header Panel */}
       <header className="flex flex-col gap-3 border-b border-slate-200 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-700">
             <Workflow className="h-5 w-5" aria-hidden="true" />
           </div>
           <div>
-            <h2 className="font-semibold text-slate-900">Progress transaksi</h2>
+            <h2 className="font-semibold text-slate-900">Progress Transaksi</h2>
             <p className="mt-0.5 text-xs text-slate-600">
               Skema {humanize(metodeBayar)} · Unit {humanize(kategoriUnit)}
             </p>
@@ -564,16 +719,14 @@ export function DynamicActionPanel({
         </div>
 
         <div className="sm:text-right">
-          <p className="text-xs text-slate-600">Tahap saat ini</p>
-          <p className="text-sm font-semibold text-slate-900">
-            {currentStage.label}
-          </p>
+          <p className="text-xs text-slate-600">Tahap Saat Ini</p>
+          <p className="text-sm font-semibold text-slate-900">{currentStage.label}</p>
           <p className="text-xs text-slate-600">{humanize(currentStage.macro)}</p>
         </div>
       </header>
 
-      <div className="space-y-5 p-5">
-        {/* Banner status akhir */}
+      <div className="space-y-6 px-5 pb-5">
+        {/* Terminal Banners */}
         {isCompleted && (
           <div className="space-y-4">
             <div
@@ -582,9 +735,9 @@ export function DynamicActionPanel({
             >
               <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-teal-700" aria-hidden="true" />
               <div className="text-sm leading-6 text-teal-950">
-                <p className="font-semibold">Transaksi selesai — serah terima (BAST)</p>
+                <p className="font-semibold">Transaksi Selesai — Serah Terima (BAST)</p>
                 <p className="text-teal-900">
-                  Unit sudah diserahterimakan. Data transaksi ini final.
+                  Unit telah resmi diserahterimakan kepada konsumen. Seluruh tahapan selesai.
                 </p>
               </div>
             </div>
@@ -598,13 +751,13 @@ export function DynamicActionPanel({
                 </h4>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                  {isKavling ? "Lahan Terverifikasi" : `${initialBastItems.length}/${MASTER_BAST_ITEMS.length} Item Sesuai`}
+                  {isKavling ? "Lahan Terverifikasi" : `${initialBastItems.length}/${MASTER_BAST_ITEMS.length} Item Selesai`}
                 </span>
               </div>
 
               {isKavling ? (
                 <p className="text-xs text-slate-600">
-                  Unit kategori Kavling/Tanah telah selesai diserahterimakan kepada konsumen beserta pengecekan patok batas lahan.
+                  Unit kavling telah selesai diserahterimakan beserta verifikasi patok batas lahan.
                 </p>
               ) : (
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -613,16 +766,14 @@ export function DynamicActionPanel({
                     return (
                       <div
                         key={item.key}
-                        className={`flex items-start gap-2.5 rounded-lg border p-2.5 text-xs ${
-                          isPassed
-                            ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
-                            : "border-slate-200 bg-slate-50 text-slate-500"
-                        }`}
+                        className={`flex items-start gap-2.5 rounded-lg border p-2.5 text-xs ${isPassed
+                          ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
+                          : "border-slate-200 bg-slate-50 text-slate-500"
+                          }`}
                       >
                         <CheckCircle2
-                          className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${
-                            isPassed ? "text-emerald-600" : "text-slate-400"
-                          }`}
+                          className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${isPassed ? "text-emerald-600" : "text-slate-400"
+                            }`}
                         />
                         <div>
                           <p className="font-semibold">{item.title}</p>
@@ -644,15 +795,15 @@ export function DynamicActionPanel({
           >
             <Ban className="mt-0.5 h-5 w-5 shrink-0 text-red-700" aria-hidden="true" />
             <div className="text-sm leading-6 text-red-950">
-              <p className="font-semibold">Transaksi dibatalkan</p>
+              <p className="font-semibold">Transaksi Dibatalkan</p>
               <p className="text-red-900">
-                Transaksi ini final. Alasan pembatalan ada di riwayat audit.
+                Transaksi ini telah dibatalkan. Riwayat alasan pembatalan tercatat di audit log.
               </p>
             </div>
           </div>
         )}
 
-        {/* Peringatan tahap tidak dikenal */}
+        {/* Warning Tahap Tidak Dikenal */}
         {isUnknownDbStage && !isTerminal && (
           <div
             role="alert"
@@ -662,353 +813,451 @@ export function DynamicActionPanel({
             <div className="text-sm leading-6 text-amber-950">
               <p className="font-semibold">Tahap di database perlu disesuaikan</p>
               <p className="text-amber-900">
-                Nilai tersimpan <code>{currentTahapDetail || currentStatus}</code>{" "}
-                tidak terdaftar pada skema {humanize(metodeBayar)}. Panel
-                menampilkan <strong>{currentStage.label}</strong> sebagai
-                acuan. Periksa lalu pilih tahap yang benar dan simpan.
+                Nilai tersimpan <code>{currentTahapDetail || currentStatus}</code> tidak cocok dengan alur {humanize(metodeBayar)}.
               </p>
             </div>
           </div>
         )}
 
-        {/* Stepper */}
+        {/* ─── 1. READ-ONLY MACRO PROGRESS TRACKER (NO CLICK HANDLERS) ─── */}
         {!isCancelled && (
-          <section aria-labelledby="stage-heading">
-            <h3 id="stage-heading" className="text-sm font-semibold text-slate-900">
-              Alur tahapan
+          <section aria-labelledby="macro-stepper-heading" className="space-y-2">
+            <h3 id="macro-stepper-heading" className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              Alur Tahapan Utama
             </h3>
-            <p className="mt-0.5 text-xs text-slate-600">
-              {isTerminal
-                ? "Semua tahap sudah selesai."
-                : "Pilih tahap berikutnya untuk maju, atau tahap sebelumnya untuk revisi."}
-            </p>
 
-            <ol className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {mainStages.map((stage, index) => {
-                const state = getStepState(index);
-                const clickable = !isTerminal && state !== "locked" && canEdit;
-                const selected = selectedDetail === stage.detail;
-
-                const title =
-                  state === "locked"
-                    ? "Selesaikan tahap sebelumnya terlebih dahulu"
-                    : state === "done" && !isTerminal
-                      ? "Kembali ke tahap ini (wajib menulis alasan)"
-                      : undefined;
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+              {macroSteps.map((step, idx) => {
+                const isStepDone = idx < currentMacroIndex || isCompleted;
+                const isStepCurrent = idx === currentMacroIndex && !isCompleted;
 
                 return (
-                  <li key={stage.detail}>
-                    <button
-                      type="button"
-                      disabled={!clickable || isPending}
-                      onClick={() => selectStage(stage.detail)}
-                      aria-pressed={selected}
-                      aria-current={state === "current" ? "step" : undefined}
-                      title={title}
-                      className={stepClass(state, selected)}
+                  <div
+                    key={step.macro}
+                    className={`flex min-h-14 items-center gap-2.5 rounded-lg border p-3 text-sm transition-colors ${isStepCurrent
+                      ? "border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600/30"
+                      : isStepDone
+                        ? "border-slate-200 bg-slate-50/80 text-slate-700"
+                        : "border-slate-200 bg-white text-slate-400"
+                      }`}
+                  >
+                    <span
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isStepDone
+                        ? "bg-teal-700 text-white"
+                        : isStepCurrent
+                          ? "bg-teal-600 text-white"
+                          : "bg-slate-100 text-slate-500"
+                        }`}
                     >
-                      <span
-                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${selected ? "bg-white/20" : "bg-black/5"
-                          }`}
-                      >
-                        {state === "done" ? (
-                          <Check className="h-3.5 w-3.5" aria-label="Selesai" />
-                        ) : state === "locked" ? (
-                          <LockKeyhole className="h-3 w-3" aria-label="Terkunci" />
-                        ) : (
-                          index + 1
-                        )}
-                      </span>
-
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-medium">{stage.label}</span>
-                        <span
-                          className={`block text-xs ${selected ? "text-white/80" : "text-slate-600"
-                            }`}
-                        >
-                          {humanize(stage.macro)}
-                        </span>
-                      </span>
-
-                      {state === "current" && !selected && (
-                        <span className="shrink-0 rounded-full bg-teal-700 px-2 py-0.5 text-xs font-semibold text-white">
-                          Saat ini
-                        </span>
+                      {isStepDone ? (
+                        <Check className="h-3.5 w-3.5" aria-label="Selesai" />
+                      ) : (
+                        idx + 1
                       )}
-                      {state === "next" && !selected && (
-                        <span className="shrink-0 rounded-full border border-teal-300 px-2 py-0.5 text-xs font-semibold text-teal-800">
-                          Berikutnya
-                        </span>
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-xs leading-4">{step.label}</p>
+                      {isStepCurrent && (
+                        <p className="text-[11px] font-medium text-teal-700 mt-0.5 truncate">
+                          {currentStage.label}
+                        </p>
                       )}
-                    </button>
-                  </li>
+                    </div>
+                    {isStepCurrent && (
+                      <span className="shrink-0 rounded-full bg-teal-700 px-2 py-0.5 text-[10px] font-semibold text-white">
+                        Aktif
+                      </span>
+                    )}
+                  </div>
                 );
               })}
-            </ol>
-
-            {isKpr && !isTerminal && (
-              <p className="mt-2 text-xs text-slate-600">
-                Status tiap bank dikelola pada kartu Pengajuan KPR di bawah.
-                Tahap di atas adalah progres transaksi secara keseluruhan.
-              </p>
-            )}
+            </div>
           </section>
         )}
 
-        {/* Aksi pembatalan dipisah dari alur normal */}
-        {!isTerminal && hasCancelStage && canEdit && (
-          <div className="flex flex-col gap-2 rounded-lg border border-red-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-slate-700">
-              Transaksi tidak dilanjutkan oleh konsumen atau developer?
-            </p>
-            {isBatal ? (
-              <button
-                type="button"
-                onClick={() => selectStage(currentStage.detail)}
-                className="self-start text-xs font-semibold text-slate-700 underline underline-offset-2 hover:text-slate-900 sm:self-auto"
-              >
-                Tidak jadi membatalkan
-              </button>
-            ) : (
-              <button
-                type="button"
-                disabled={isPending}
-                onClick={() => selectStage("BATAL")}
-                className="inline-flex items-center gap-1.5 self-start rounded-md border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 sm:self-auto"
-              >
-                <Ban className="h-3.5 w-3.5" aria-hidden="true" />
-                Batalkan transaksi
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Notice sesuai pilihan */}
-        {isRegression && !isTerminal && (
-          <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" aria-hidden="true" />
-            <p className="text-sm leading-6 text-amber-900">
-              <span className="font-semibold">
-                Mundur ke {selectedStage.label}.
-              </span>{" "}
-              Tulis alasannya di catatan progress (misal bank menolak atau
-              berkas perlu revisi).
-            </p>
-          </div>
-        )}
-
-        {isBatal && !isTerminal && (
-          <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-700" aria-hidden="true" />
-            <p className="text-sm leading-6 text-red-900">
-              <span className="font-semibold">Pembatalan bersifat final.</span>{" "}
-              Tulis alasan yang jelas di catatan progress.
-            </p>
-          </div>
-        )}
-
-        {/* Pengajuan KPR (di luar <form> agar tidak ada form bersarang) */}
-        {isKpr && !isCancelled && (
-          <KprSubmissionSection
-            transaksiId={transaksiId}
-            initialPengajuan={initialPengajuanKpr}
-            masterBanks={masterBanks}
-            currentTahapDetail={currentStage.detail}
-            canEdit={canEdit}
-          />
-        )}
-
-        {/* Form progres */}
+        {/* ─── 2. "AKSI BERIKUTNYA" CARD (ONE PRIMARY ACTION AREA PER STAGE) ─── */}
         {!isTerminal && (
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
-            {/* Checklist dokumen */}
+          <section className="rounded-xl border border-teal-200/80 bg-white p-5 shadow-sm space-y-5 ring-1 ring-teal-600/10">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-teal-700">
+                  Aksi Berikutnya
+                </span>
+                <h3 className="text-base font-bold text-slate-900">
+                  {isPemberkasan
+                    ? "Kelengkapan Dokumen Pemberkasan"
+                    : isKprMicroStage
+                      ? "Proses Pengajuan Bank (Wawancara / Verifikasi / SP3K)"
+                      : isKprSp3k
+                        ? "Pelaksanaan Akad Kredit"
+                        : currentStage.detail === "PELUNASAN"
+                          ? "Konfirmasi Pelunasan & Persiapan Akad"
+                          : currentStage.detail === "AJB"
+                            ? "Pelaksanaan Akad (Cash)"
+                            : nextStage?.detail === "BAST"
+                              ? "Serah Terima Bangunan & Lahan (BAST)"
+                              : `Lanjut ke ${nextStage?.label ?? "Tahap Berikutnya"}`}
+                </h3>
+              </div>
+            </div>
+
+            {/* ── STAGE A: PEMBERKASAN (ALL METHODS) ── */}
             {isPemberkasan && (
-              <fieldset className="rounded-lg border border-slate-200 p-4">
-                <legend className="px-1 text-sm font-semibold text-slate-900">
-                  <span className="inline-flex items-center gap-1.5">
-                    <FileCheck className="h-4 w-4 text-teal-700" aria-hidden="true" />
-                    Dokumen pemberkasan
-                  </span>
-                </legend>
+              <div className="space-y-4">
+                {/* Profile Summary & Edit Control */}
+                <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="h-4 w-4 text-teal-700 shrink-0" />
+                    <span className="text-xs text-slate-600 font-medium">Profil Konsumen:</span>
+                    <span className="text-xs font-bold text-slate-900">
+                      {metodeBayar === "KPR" ? "KPR" : humanize(metodeBayar)} · {humanize(kategoriUnit)} ·{" "}
+                      {statusPernikahan ? humanize(statusPernikahan) : "Pernikahan (?)"} ·{" "}
+                      {statusPekerjaan ? (statusPekerjaan === "TETAP" ? "Pegawai Tetap" : "Wirausaha") : "Pekerjaan (?)"}
+                    </span>
+                  </div>
 
-                <p className="mb-3 text-xs text-slate-600">
-                  Centang dokumen yang sudah diterima dan diverifikasi.{" "}
-                  <span className="font-semibold text-slate-800">
-                    {verifiedDocCount} dari {filteredDocs.length} terverifikasi.
-                  </span>
-                </p>
-
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {filteredDocs.map((document) => {
-                    const checked = selectedDocs.includes(document.key);
-                    const id = `doc-${document.key}`;
-
-                    return (
-                      <label
-                        key={document.key}
-                        htmlFor={id}
-                        className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors ${checked
-                            ? "border-teal-300 bg-teal-50/60"
-                            : "border-slate-200 bg-white hover:bg-slate-50"
-                          }`}
-                      >
-                        <input
-                          id={id}
-                          type="checkbox"
-                          checked={checked}
-                          disabled={!canEdit || isPending}
-                          onChange={() => toggleDoc(document.key)}
-                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
-                        />
-                        <span className="leading-5 text-slate-800">
-                          {document.label}
-                        </span>
-                      </label>
-                    );
-                  })}
+                  {canEdit && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setProfileFormPernikahan(statusPernikahan ?? "");
+                        setProfileFormPekerjaan(statusPekerjaan ?? "");
+                        setProfileDialogOpen(true);
+                      }}
+                      className="h-7 text-xs font-semibold border-slate-300 text-teal-700 hover:bg-teal-50"
+                    >
+                      <Edit2 className="mr-1 h-3 w-3" />
+                      Ubah Profil
+                    </Button>
+                  )}
                 </div>
-              </fieldset>
+
+                {/* Profile Incomplete Gate */}
+                {!isProfileComplete ? (
+                  <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 space-y-3">
+                    <div className="flex items-start gap-2.5">
+                      <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="text-sm font-bold text-amber-950">
+                          Profil Konsumen Belum Lengkap
+                        </h4>
+                        <p className="text-xs text-amber-900 mt-0.5 leading-relaxed">
+                          Daftar dokumen persyaratan bersifat dinamis berdasarkan status pernikahan dan status pekerjaan konsumen. Lengkapi profil terlebih dahulu untuk menampilkan daftar checklist berkas yang sesuai.
+                        </p>
+                      </div>
+                    </div>
+
+                    {canEdit && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => {
+                          setProfileFormPernikahan(statusPernikahan ?? "");
+                          setProfileFormPekerjaan(statusPekerjaan ?? "");
+                          setProfileDialogOpen(true);
+                        }}
+                        className="bg-amber-700 text-xs font-semibold text-white hover:bg-amber-800"
+                      >
+                        Lengkapi Profil Konsumen
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  /* Rule-based Checklist */
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-slate-600">
+                        Centang berkas yang telah diverifikasi fisik dan validitasnya.
+                      </p>
+                      <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800">
+                        {verifiedRequiredCount} dari {requiredDocs.length} Wajib Terverifikasi
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                      {ruleDocs.map((doc) => {
+                        const checked = isDokumenTerverifikasi(doc.key, verifiedDocs);
+                        const id = `doc-${doc.key}`;
+
+                        return (
+                          <label
+                            key={doc.key}
+                            htmlFor={id}
+                            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${checked
+                              ? "border-teal-300 bg-teal-50/50"
+                              : "border-slate-200 bg-white hover:bg-slate-50"
+                              }`}
+                          >
+                            <input
+                              id={id}
+                              type="checkbox"
+                              checked={checked}
+                              disabled={!canEdit || isPending}
+                              onChange={() => handleToggleDoc(doc.key, checked)}
+                              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="font-semibold text-slate-900">{doc.label}</span>
+                                {doc.required ? (
+                                  <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-bold text-rose-700 border border-rose-200">
+                                    Wajib
+                                  </span>
+                                ) : (
+                                  <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">
+                                    Opsional
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+
+                    {/* CTA Area for Pemberkasan */}
+                    {isKpr ? (
+                      <div className="mt-4 pt-4 border-t border-slate-100">
+                        <KprSubmissionSection
+                          transaksiId={transaksiId}
+                          initialPengajuan={initialPengajuanKpr}
+                          masterBanks={masterBanks}
+                          currentTahapDetail={currentStage.detail}
+                          canEdit={canEdit}
+                          hideHeader={true}
+                          disabledNew={!allRequiredVerified}
+                          disabledNewReason={
+                            !allRequiredVerified
+                              ? `Lengkapi dan verifikasi seluruh ${requiredDocs.length} dokumen wajib di atas sebelum mengajukan berkas ke Bank.`
+                              : undefined
+                          }
+                        />
+                      </div>
+                    ) : (
+                      /* CTA for Cash */
+                      <div className="pt-4 border-t border-slate-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="text-xs text-slate-500">
+                          Setelah berkas lengkap, transaksi dapat dilanjutkan ke tahap berikutnya.
+                        </p>
+                        {canEdit && nextStage && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            disabled={!allRequiredVerified || isPending}
+                            onClick={() => executeAdvance(nextStage.detail)}
+                            className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                          >
+                            {isPending ? (
+                              <>
+                                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                Memproses...
+                              </>
+                            ) : (
+                              `Lanjut ke ${nextStage.label}`
+                            )}
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             )}
 
-            {/* Akad kredit / AJB */}
-            {isAkadOrAjb && (
-              <fieldset className="rounded-lg border border-slate-200 p-4">
-                <legend className="px-1 text-sm font-semibold text-slate-900">
-                  {isAkadKredit ? "Data akad kredit" : "Data akta jual beli (AJB)"}
-                </legend>
-
-                <p className="mb-4 text-xs text-slate-600">
-                  {isAkadKredit
-                    ? "Akad kredit adalah closing penjualan resmi untuk KPR. Unit otomatis ditandai SOLD, pengajuan bank disetujui, dan tanggal closing tercatat."
-                    : "AJB adalah closing penjualan resmi untuk Cash. Unit otomatis ditandai SOLD dan tanggal closing tercatat (pembayaran harus lunas 100%)."}
+            {/* ── STAGE B: KPR WAWANCARA / OTS / VERIFIKASI ── */}
+            {isKprMicroStage && (
+              <div className="space-y-4">
+                <p className="text-xs text-slate-600">
+                  Tahapan proses bank dikelola secara langsung melalui kartu pengajuan bank di bawah. Klik tombol aksi status bank untuk memajukan, mencatat penolakan, atau membatalkan pengajuan.
                 </p>
+
+                <KprSubmissionSection
+                  transaksiId={transaksiId}
+                  initialPengajuan={initialPengajuanKpr}
+                  masterBanks={masterBanks}
+                  currentTahapDetail={currentStage.detail}
+                  canEdit={canEdit}
+                  hideHeader={true}
+                />
+              </div>
+            )}
+
+            {/* ── STAGE C: KPR SP3K (AKAD FORM) ── */}
+            {isKprSp3k && (
+              <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
+                <div className="rounded-lg border border-teal-200 bg-teal-50/60 p-3.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <Building2 className="h-5 w-5 text-teal-700" />
+                    <div>
+                      <p className="text-xs font-semibold text-teal-900">
+                        Bank Pembiaya KPR Disetujui (SP3K Terbit)
+                      </p>
+                      <p className="text-sm font-bold text-slate-900">
+                        {activePengajuan ? activePengajuan.bank.nama : "Bank Utama"}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="rounded-md border border-teal-300 bg-white px-2 py-0.5 text-xs font-bold text-teal-800">
+                    SP3K Terbit
+                  </span>
+                </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field id="fld-notaris" label="Notaris / PPAT" required error={errors.notaris}>
+                  <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
                     <input
                       id="fld-notaris"
                       type="text"
                       value={namaNotaris}
                       disabled={!canEdit || isPending}
-                      onChange={(event) => {
-                        setNamaNotaris(event.target.value);
-                        clearError("notaris");
+                      onChange={(e) => {
+                        setNamaNotaris(e.target.value);
+                        if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
                       }}
-                      placeholder="Nama notaris / PPAT"
-                      maxLength={150}
-                      aria-invalid={Boolean(errors.notaris)}
-                      aria-describedby={errors.notaris ? "fld-notaris-error" : undefined}
-                      className={`${inputClass(Boolean(errors.notaris))} disabled:bg-slate-100 disabled:cursor-not-allowed`}
+                      placeholder="Nama Notaris / PPAT Rekanan"
+                      className={inputClass(Boolean(formErrors.notaris))}
                     />
                   </Field>
 
-                  {isAkadKredit ? (
-                    <Field id="fld-tglAkad" label="Tanggal akad kredit" required error={errors.tglAkad}>
+                  <Field id="fld-tglAkad" label="Tanggal Akad Kredit" required error={formErrors.tglAkad}>
+                    <input
+                      id="fld-tglAkad"
+                      type="date"
+                      value={tglAkad}
+                      disabled={!canEdit || isPending}
+                      onChange={(e) => {
+                        setTglAkad(e.target.value);
+                        if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
+                      }}
+                      className={inputClass(Boolean(formErrors.tglAkad))}
+                    />
+                  </Field>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                  {canEdit && (
+                    <Button
+                      type="submit"
+                      disabled={isPending}
+                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          Menyimpan...
+                        </>
+                      ) : (
+                        "Lanjut ke Akad Kredit"
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </form>
+            )}
+
+            {/* ── STAGE D: CASH PELUNASAN / AKAD (AJB) ── */}
+            {!isKpr && (currentStage.detail === "PELUNASAN" || currentStage.detail === "AJB") && (
+              <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
+                {currentStage.detail === "PELUNASAN" && (
+                  <div className="max-w-sm">
+                    <Field id="fld-tglPelunasan" label="Tanggal Pelunasan (100%)" required error={formErrors.tglPelunasan}>
+                      <input
+                        id="fld-tglPelunasan"
+                        type="date"
+                        value={tglPelunasan}
+                        disabled={!canEdit || isPending}
+                        onChange={(e) => {
+                          setTglPelunasan(e.target.value);
+                          if (formErrors.tglPelunasan) setFormErrors((p) => ({ ...p, tglPelunasan: "" }));
+                        }}
+                        className={inputClass(Boolean(formErrors.tglPelunasan))}
+                      />
+                    </Field>
+                  </div>
+                )}
+
+                {currentStage.detail === "AJB" && (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
+                      <input
+                        id="fld-notaris"
+                        type="text"
+                        value={namaNotaris}
+                        disabled={!canEdit || isPending}
+                        onChange={(e) => {
+                          setNamaNotaris(e.target.value);
+                          if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
+                        }}
+                        placeholder="Nama Notaris / PPAT"
+                        className={inputClass(Boolean(formErrors.notaris))}
+                      />
+                    </Field>
+
+                    <Field id="fld-tglAkad" label="Tanggal Akad" required error={formErrors.tglAkad}>
                       <input
                         id="fld-tglAkad"
                         type="date"
-                        value={tglAkadKredit}
+                        value={tglAkad}
                         disabled={!canEdit || isPending}
-                        onChange={(event) => {
-                          setTglAkadKredit(event.target.value);
-                          clearError("tglAkad");
+                        onChange={(e) => {
+                          setTglAkad(e.target.value);
+                          if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
                         }}
-                        aria-invalid={Boolean(errors.tglAkad)}
-                        aria-describedby={errors.tglAkad ? "fld-tglAkad-error" : undefined}
-                        className={`${inputClass(Boolean(errors.tglAkad))} disabled:bg-slate-100 disabled:cursor-not-allowed`}
+                        className={inputClass(Boolean(formErrors.tglAkad))}
                       />
                     </Field>
-                  ) : (
-                    <Field id="fld-tglAjb" label="Tanggal AJB" required error={errors.tglAjb}>
-                      <input
-                        id="fld-tglAjb"
-                        type="date"
-                        value={tglAjb}
-                        disabled={!canEdit || isPending}
-                        onChange={(event) => {
-                          setTglAjb(event.target.value);
-                          clearError("tglAjb");
-                        }}
-                        aria-invalid={Boolean(errors.tglAjb)}
-                        aria-describedby={errors.tglAjb ? "fld-tglAjb-error" : undefined}
-                        className={`${inputClass(Boolean(errors.tglAjb))} disabled:bg-slate-100 disabled:cursor-not-allowed`}
-                      />
-                    </Field>
+                  </div>
+                )}
+
+                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                  {canEdit && nextStage && (
+                    <Button
+                      type="submit"
+                      disabled={isPending}
+                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          Menyimpan...
+                        </>
+                      ) : (
+                        `Lanjut ke ${nextStage.label}`
+                      )}
+                    </Button>
                   )}
                 </div>
-              </fieldset>
+              </form>
             )}
 
-            {/* Pelunasan */}
-            {isPelunasan && (
-              <fieldset className="rounded-lg border border-slate-200 p-4">
-                <legend className="px-1 text-sm font-semibold text-slate-900">
-                  Konfirmasi pelunasan
-                </legend>
-                <p className="mb-3 text-xs text-slate-600">
-                  Hanya bisa dicatat jika pembayaran konsumen sudah masuk 100%
-                  dari harga deal.
-                </p>
+            {/* ── STAGE E: AKAD -> BAST ── */}
+            {(currentStage.detail === "AKAD_KREDIT" || (currentStage.detail === "AJB" && nextStage?.detail === "BAST")) && (
+              <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
                 <div className="max-w-sm">
-                  <Field id="fld-tglLunas" label="Tanggal pelunasan" required error={errors.tglLunas}>
-                    <input
-                      id="fld-tglLunas"
-                      type="date"
-                      value={tglPelunasan}
-                      disabled={!canEdit || isPending}
-                      onChange={(event) => {
-                        setTglPelunasan(event.target.value);
-                        clearError("tglLunas");
-                      }}
-                      aria-invalid={Boolean(errors.tglLunas)}
-                      aria-describedby={errors.tglLunas ? "fld-tglLunas-error" : undefined}
-                      className={`${inputClass(Boolean(errors.tglLunas))} disabled:bg-slate-100 disabled:cursor-not-allowed`}
-                    />
-                  </Field>
-                </div>
-              </fieldset>
-            )}
-
-            {/* Verifikasi & Checklist BAST */}
-            {isBast && (
-              <fieldset className="space-y-4 rounded-lg border border-slate-200 bg-white p-4">
-                <legend className="px-1 text-sm font-semibold text-slate-900">
-                  <span className="inline-flex items-center gap-1.5">
-                    <Home className="h-4 w-4 text-teal-700" aria-hidden="true" />
-                    Serah Terima Bangunan & Lahan (BAST)
-                  </span>
-                </legend>
-
-                {/* Input Tanggal BAST */}
-                <div className="max-w-sm">
-                  <Field id="fld-tglBast" label="Tanggal Serah Terima (BAST)" required error={errors.tglBast}>
+                  <Field id="fld-tglBast" label="Tanggal Serah Terima (BAST)" required error={formErrors.tglBast}>
                     <input
                       id="fld-tglBast"
                       type="date"
                       value={tglBast}
                       disabled={!canEdit || isPending}
-                      onChange={(event) => {
-                        setTglBast(event.target.value);
-                        clearError("tglBast");
+                      onChange={(e) => {
+                        setTglBast(e.target.value);
+                        if (formErrors.tglBast) setFormErrors((p) => ({ ...p, tglBast: "" }));
                       }}
-                      aria-invalid={Boolean(errors.tglBast)}
-                      aria-describedby={errors.tglBast ? "fld-tglBast-error" : undefined}
-                      className={`${inputClass(Boolean(errors.tglBast))} disabled:bg-slate-100 disabled:cursor-not-allowed`}
+                      className={inputClass(Boolean(formErrors.tglBast))}
                     />
                   </Field>
                 </div>
 
-                {/* KAVLING EXCEPTION */}
                 {isKavling ? (
                   <div className="rounded-lg border border-teal-200 bg-teal-50/60 p-4 space-y-3">
                     <div className="flex items-start gap-2.5">
                       <CheckCircle2 className="h-5 w-5 text-teal-700 shrink-0 mt-0.5" />
                       <div>
-                        <h4 className="text-sm font-bold text-teal-950">
-                          Unit Kategori Kavling / Tanah
-                        </h4>
+                        <h4 className="text-sm font-bold text-teal-950">Unit Kategori Kavling / Tanah</h4>
                         <p className="text-xs text-teal-900 mt-0.5">
-                          Unit kavling tidak memiliki struktur bangunan fisik. Pengecekan difokuskan pada patok batas lahan dan aksesibilitas.
+                          Unit kavling tidak memiliki struktur bangunan fisik. Verifikasi difokuskan pada patok batas lahan dan aksesibilitas.
                         </p>
                       </div>
                     </div>
@@ -1036,20 +1285,16 @@ export function DynamicActionPanel({
                     </label>
                   </div>
                 ) : (
-                  /* PHYSICAL BUILDING CHECKLIST (SUBSIDI / KOMERSIL) */
                   <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-xs text-slate-600">
-                          Centang seluruh 8 item fisik bangunan yang telah lolos inspeksi mutu.
-                        </p>
-                      </div>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-slate-600">
+                        Centang seluruh 8 item fisik bangunan yang telah lolos inspeksi mutu sebelum serah terima.
+                      </p>
                       <span
-                        className={`shrink-0 rounded-md border px-2.5 py-1 text-xs font-bold ${
-                          isBastComplete
-                            ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                            : "border-amber-200 bg-amber-50 text-amber-900"
-                        }`}
+                        className={`rounded-md border px-2.5 py-1 text-xs font-bold ${isBastFormComplete
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                          : "border-amber-200 bg-amber-50 text-amber-900"
+                          }`}
                       >
                         {verifiedBastCount}/{MASTER_BAST_ITEMS.length} Item Terverifikasi
                       </span>
@@ -1064,11 +1309,10 @@ export function DynamicActionPanel({
                           <label
                             key={item.key}
                             htmlFor={id}
-                            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors ${
-                              checked
-                                ? "border-teal-300 bg-teal-50/60"
-                                : "border-slate-200 bg-white hover:bg-slate-50"
-                            }`}
+                            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${checked
+                              ? "border-teal-300 bg-teal-50/60"
+                              : "border-slate-200 bg-white hover:bg-slate-50"
+                              }`}
                           >
                             <input
                               id={id}
@@ -1079,134 +1323,273 @@ export function DynamicActionPanel({
                               className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
                             />
                             <div className="min-w-0 flex-1">
-                              <span className="block font-medium text-slate-800">
-                                {item.title}
-                              </span>
-                              <span className="block text-xs text-slate-500">
-                                {item.description}
-                              </span>
+                              <span className="block font-semibold text-slate-900">{item.title}</span>
+                              <span className="block text-[11px] text-slate-500">{item.description}</span>
                             </div>
                           </label>
                         );
                       })}
                     </div>
-
-                    {!isBastComplete && (
-                      <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-2">
-                        Tombol simpan serah terima akan aktif setelah seluruh 8 item fisik bangunan di atas dicentang (100% lolos).
-                      </p>
-                    )}
                   </div>
                 )}
-              </fieldset>
-            )}
 
-            {/* Catatan progress */}
-            <Field
-              id="fld-catatan"
-              label={
-                isBatal || isRegression
-                  ? "Catatan progress (wajib, minimal 5 karakter)"
-                  : "Catatan progress (opsional)"
-              }
-              error={errors.catatan}
-            >
-              <textarea
-                id="fld-catatan"
-                value={catatanAdmin}
-                disabled={!canEdit || isPending}
-                onChange={(event) => {
-                  setCatatanAdmin(event.target.value);
-                  clearError("catatan");
-                }}
-                placeholder={
-                  !canEdit
-                    ? "Tidak ada catatan progres baru"
-                    : isBatal
-                      ? "Tulis alasan pembatalan"
-                      : isRegression
-                        ? "Tulis alasan mundur, misal: bank menolak atau berkas kurang"
-                        : "Catatan progres atau instruksi tindak lanjut"
-                }
-                rows={3}
-                maxLength={3000}
-                aria-invalid={Boolean(errors.catatan)}
-                aria-describedby={errors.catatan ? "fld-catatan-error" : undefined}
-                className={`${inputClass(Boolean(errors.catatan))} resize-y placeholder:text-slate-500 disabled:bg-slate-100 disabled:cursor-not-allowed`}
-              />
-              <p className="mt-1 text-right text-xs text-slate-600">
-                {catatanAdmin.length}/3000
-              </p>
-            </Field>
+                {formErrors.bast && (
+                  <p className="text-xs font-medium text-red-700 bg-red-50 p-2.5 rounded-md border border-red-200">
+                    {formErrors.bast}
+                  </p>
+                )}
 
-            {errors.stage && (
-              <p
-                role="alert"
-                className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800"
-              >
-                {errors.stage}
-              </p>
-            )}
-
-            {/* Footer */}
-            <footer className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-slate-600">
-                {!canEdit
-                  ? "Panel dalam mode hanya baca (Read-Only). Anda tidak memiliki otorisasi untuk mengubah transaksi ini."
-                  : isBast && !isBastComplete
-                    ? (isKavling
-                        ? "Centang konfirmasi serah terima lahan untuk mengaktifkan tombol simpan."
-                        : `Centang seluruh ${MASTER_BAST_ITEMS.length} item fisik BAST (${verifiedBastCount}/${MASTER_BAST_ITEMS.length}) untuk mengaktifkan tombol serah terima.`)
-                    : "Setiap perubahan tercatat di riwayat audit transaksi dan aktivitas lead."}
-              </p>
-
-              {canEdit && (
-                <Button
-                  type="submit"
-                  disabled={isPending || !isAllowedSelection || (isBast && !isBastComplete)}
-                  className={
-                    isBatal
-                      ? "bg-red-600 text-white hover:bg-red-700"
-                      : "bg-teal-700 text-white hover:bg-teal-800"
-                  }
-                >
-                  {isPending && !confirmOpen ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Menyimpan...
-                    </>
-                  ) : (
-                    <>
-                      {isBatal ? (
-                        <Ban className="mr-2 h-4 w-4" aria-hidden="true" />
+                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                  {canEdit && (
+                    <Button
+                      type="submit"
+                      disabled={isPending || !isBastFormComplete}
+                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          Menyimpan...
+                        </>
                       ) : (
-                        <CheckCircle2 className="mr-2 h-4 w-4" aria-hidden="true" />
+                        "Selesaikan Serah Terima (BAST)"
                       )}
-                      {submitLabel}
-                    </>
+                    </Button>
                   )}
-                </Button>
-              )}
-            </footer>
-          </form>
+                </div>
+              </form>
+            )}
+
+            {/* ─── 3. "⋯ OPSI LAINNYA" (MUNDUR TAHAP & BATALKAN TRANSAKSI) ─── */}
+            {canEdit && (
+              <div className="border-t border-slate-100 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowOtherOptions((v) => !v)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                >
+                  <span>⋯ Opsi lainnya</span>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${showOtherOptions ? "rotate-180" : ""
+                      }`}
+                  />
+                </button>
+
+                {showOtherOptions && (
+                  <div className="mt-3 space-y-4 rounded-lg border border-slate-200 bg-slate-50/70 p-4">
+                    {/* Opsi 1: Mundur ke Tahap Sebelumnya */}
+                    {availableRegressionStages.length > 0 && (
+                      <div className="space-y-3 pb-3 border-b border-slate-200">
+                        <div className="flex items-center gap-2">
+                          <Undo2 className="h-4 w-4 text-amber-700 shrink-0" />
+                          <h4 className="text-xs font-bold text-slate-900">
+                            Mundur ke Tahap Sebelumnya
+                          </h4>
+                        </div>
+                        <p className="text-xs text-slate-600">
+                          Gunakan jika berkas perlu revisi atau hasil keputusan perbankan mengharuskan evaluasi ulang.
+                        </p>
+
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                          <div>
+                            <label className="mb-1 block text-xs font-semibold text-slate-700">
+                              Pilih Tahap Mundur <span className="text-red-600">*</span>
+                            </label>
+                            <select
+                              value={selectedRegressionDetail}
+                              onChange={(e) =>
+                                setSelectedRegressionDetail(e.target.value as TahapDetail)
+                              }
+                              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs focus:border-teal-600 focus:outline-none"
+                            >
+                              <option value="">Pilih tahap sebelumnya</option>
+                              {availableRegressionStages.map((s) => (
+                                <option key={s.detail} value={s.detail}>
+                                  {s.label} ({humanize(s.macro)})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="mb-1 block text-xs font-semibold text-slate-700">
+                              Alasan Mundur (min 5 karakter) <span className="text-red-600">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              value={catatanMundur}
+                              onChange={(e) => setCatatanMundur(e.target.value)}
+                              placeholder="Misal: berkas SP3K revisi atau syarat bank belum lengkap"
+                              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs focus:border-teal-600 focus:outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex justify-end pt-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={
+                              !selectedRegressionDetail ||
+                              catatanMundur.trim().length < 5 ||
+                              isPending
+                            }
+                            onClick={handleRegressionSubmit}
+                            className="h-8 text-xs font-semibold border-amber-300 text-amber-800 hover:bg-amber-50"
+                          >
+                            <Undo2 className="mr-1 h-3.5 w-3.5" />
+                            Mundur ke Tahap Dipilih
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Opsi 2: Batalkan Transaksi */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Ban className="h-4 w-4 text-rose-700 shrink-0" />
+                        <h4 className="text-xs font-bold text-slate-900">
+                          Batalkan Transaksi
+                        </h4>
+                      </div>
+                      <p className="text-xs text-slate-600">
+                        Pembatalan bersifat permanen. Tuliskan alasan pembatalan secara jelas untuk pencatatan audit log.
+                      </p>
+
+                      <div>
+                        <label className="mb-1 block text-xs font-semibold text-slate-700">
+                          Alasan Pembatalan (min 5 karakter) <span className="text-red-600">*</span>
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={catatanBatal}
+                          onChange={(e) => setCatatanBatal(e.target.value)}
+                          placeholder="Misal: konsumen mengundurkan diri atau BI checking ditolak seluruh bank"
+                          className="w-full rounded-md border border-slate-300 bg-white p-2.5 text-xs focus:border-rose-500 focus:outline-none"
+                        />
+                      </div>
+
+                      <div className="flex justify-end pt-1">
+                        <Button
+                          type="button"
+                          size="sm"
+                          disabled={catatanBatal.trim().length < 5 || isPending}
+                          onClick={handleCancelSubmit}
+                          className="h-8 bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+                        >
+                          <Ban className="mr-1 h-3.5 w-3.5" />
+                          Batalkan Transaksi
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
         )}
       </div>
 
-      <ConfirmDialog
-        open={confirmOpen}
-        pending={isPending}
-        title={confirmCopy.title}
-        description={confirmCopy.description}
-        confirmLabel={confirmCopy.label}
-        tone={confirmCopy.tone}
-        onConfirm={runSave}
-        onCancel={() => setConfirmOpen(false)}
-      />
+      {/* ─── 4. DIALOG EDIT PROFIL PEMBERKASAN KONSUMEN ─── */}
+      {profileDialogOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        >
+          <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-lg space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <UserCheck className="h-5 w-5 text-teal-700" />
+                <h4 className="text-sm font-bold text-slate-900">
+                  Profil Pemberkasan Konsumen
+                </h4>
+              </div>
+            </div>
 
-      {/* nextMainStage dipakai agar tidak ada warning variabel tak terpakai bila stepper diubah */}
-      <span className="sr-only">
-        {nextMainStage ? `Tahap berikutnya: ${nextMainStage.label}` : ""}
-      </span>
+            <p className="text-xs text-slate-600">
+              Tentukan status pernikahan dan pekerjaan konsumen untuk memuat aturan kelengkapan berkas yang akurat.
+            </p>
+
+            <div className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">
+                  Status Pernikahan <span className="text-red-600">*</span>
+                </label>
+                <select
+                  value={profileFormPernikahan}
+                  onChange={(e) => setProfileFormPernikahan(e.target.value as StatusPernikahan)}
+                  className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs focus:border-teal-600 focus:outline-none"
+                >
+                  <option value="">Pilih status pernikahan</option>
+                  <option value="BELUM_MENIKAH">Belum Menikah</option>
+                  <option value="MENIKAH">Menikah</option>
+                  <option value="CERAI">Cerai</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">
+                  Status Pekerjaan <span className="text-red-600">*</span>
+                </label>
+                <select
+                  value={profileFormPekerjaan}
+                  onChange={(e) => setProfileFormPekerjaan(e.target.value as StatusPekerjaan)}
+                  className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs focus:border-teal-600 focus:outline-none"
+                >
+                  <option value="">Pilih status pekerjaan</option>
+                  <option value="TETAP">Pegawai Tetap (Karyawan)</option>
+                  <option value="TIDAK_TETAP">Wirausaha / Tidak Tetap / Profesional</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isPending}
+                onClick={() => setProfileDialogOpen(false)}
+                className="h-8 text-xs"
+              >
+                Batal
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                disabled={!profileFormPernikahan || !profileFormPekerjaan || isPending}
+                onClick={handleSaveProfile}
+                className="h-8 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                    Menyimpan...
+                  </>
+                ) : (
+                  "Simpan Profil"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── 5. DIALOG KONFIRMASI GLOBAL ─── */}
+      <ConfirmDialog
+        open={pendingConfirm !== null}
+        pending={isPending}
+        title={pendingConfirm?.title ?? ""}
+        description={pendingConfirm?.description ?? null}
+        confirmLabel={pendingConfirm?.confirmLabel ?? "Ya, Lanjutkan"}
+        tone={pendingConfirm?.tone ?? "default"}
+        onConfirm={() => {
+          if (pendingConfirm) pendingConfirm.action();
+        }}
+        onCancel={() => setPendingConfirm(null)}
+      />
     </section>
   );
 }

@@ -42,6 +42,8 @@ export type CustomerMinAggregateOutputType = {
   tgl_lahir: Date | null
   alamat_ktp: string | null
   no_hp: string | null
+  status_pernikahan: $Enums.StatusPernikahan | null
+  status_pekerjaan: $Enums.StatusPekerjaan | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -54,6 +56,8 @@ export type CustomerMaxAggregateOutputType = {
   tgl_lahir: Date | null
   alamat_ktp: string | null
   no_hp: string | null
+  status_pernikahan: $Enums.StatusPernikahan | null
+  status_pekerjaan: $Enums.StatusPekerjaan | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -66,6 +70,8 @@ export type CustomerCountAggregateOutputType = {
   tgl_lahir: number
   alamat_ktp: number
   no_hp: number
+  status_pernikahan: number
+  status_pekerjaan: number
   created_at: number
   updated_at: number
   _all: number
@@ -88,6 +94,8 @@ export type CustomerMinAggregateInputType = {
   tgl_lahir?: true
   alamat_ktp?: true
   no_hp?: true
+  status_pernikahan?: true
+  status_pekerjaan?: true
   created_at?: true
   updated_at?: true
 }
@@ -100,6 +108,8 @@ export type CustomerMaxAggregateInputType = {
   tgl_lahir?: true
   alamat_ktp?: true
   no_hp?: true
+  status_pernikahan?: true
+  status_pekerjaan?: true
   created_at?: true
   updated_at?: true
 }
@@ -112,6 +122,8 @@ export type CustomerCountAggregateInputType = {
   tgl_lahir?: true
   alamat_ktp?: true
   no_hp?: true
+  status_pernikahan?: true
+  status_pekerjaan?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -211,6 +223,8 @@ export type CustomerGroupByOutputType = {
   tgl_lahir: Date
   alamat_ktp: string
   no_hp: string
+  status_pernikahan: $Enums.StatusPernikahan | null
+  status_pekerjaan: $Enums.StatusPekerjaan | null
   created_at: Date
   updated_at: Date
   _count: CustomerCountAggregateOutputType | null
@@ -246,6 +260,8 @@ export type CustomerWhereInput = {
   tgl_lahir?: Prisma.DateTimeFilter<"Customer"> | Date | string
   alamat_ktp?: Prisma.StringFilter<"Customer"> | string
   no_hp?: Prisma.StringFilter<"Customer"> | string
+  status_pernikahan?: Prisma.EnumStatusPernikahanNullableFilter<"Customer"> | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.EnumStatusPekerjaanNullableFilter<"Customer"> | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
   transaksi?: Prisma.TransaksiListRelationFilter
@@ -260,6 +276,8 @@ export type CustomerOrderByWithRelationInput = {
   tgl_lahir?: Prisma.SortOrder
   alamat_ktp?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
+  status_pernikahan?: Prisma.SortOrderInput | Prisma.SortOrder
+  status_pekerjaan?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   transaksi?: Prisma.TransaksiOrderByRelationAggregateInput
@@ -278,6 +296,8 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   tgl_lahir?: Prisma.DateTimeFilter<"Customer"> | Date | string
   alamat_ktp?: Prisma.StringFilter<"Customer"> | string
   no_hp?: Prisma.StringFilter<"Customer"> | string
+  status_pernikahan?: Prisma.EnumStatusPernikahanNullableFilter<"Customer"> | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.EnumStatusPekerjaanNullableFilter<"Customer"> | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
   transaksi?: Prisma.TransaksiListRelationFilter
@@ -292,6 +312,8 @@ export type CustomerOrderByWithAggregationInput = {
   tgl_lahir?: Prisma.SortOrder
   alamat_ktp?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
+  status_pernikahan?: Prisma.SortOrderInput | Prisma.SortOrder
+  status_pekerjaan?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.CustomerCountOrderByAggregateInput
@@ -312,6 +334,8 @@ export type CustomerScalarWhereWithAggregatesInput = {
   tgl_lahir?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   alamat_ktp?: Prisma.StringWithAggregatesFilter<"Customer"> | string
   no_hp?: Prisma.StringWithAggregatesFilter<"Customer"> | string
+  status_pernikahan?: Prisma.EnumStatusPernikahanNullableWithAggregatesFilter<"Customer"> | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.EnumStatusPekerjaanNullableWithAggregatesFilter<"Customer"> | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
 }
@@ -323,6 +347,8 @@ export type CustomerCreateInput = {
   tgl_lahir: Date | string
   alamat_ktp: string
   no_hp: string
+  status_pernikahan?: $Enums.StatusPernikahan | null
+  status_pekerjaan?: $Enums.StatusPekerjaan | null
   created_at?: Date | string
   updated_at?: Date | string
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutCustomerInput
@@ -337,6 +363,8 @@ export type CustomerUncheckedCreateInput = {
   tgl_lahir: Date | string
   alamat_ktp: string
   no_hp: string
+  status_pernikahan?: $Enums.StatusPernikahan | null
+  status_pekerjaan?: $Enums.StatusPekerjaan | null
   created_at?: Date | string
   updated_at?: Date | string
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutCustomerInput
@@ -350,6 +378,8 @@ export type CustomerUpdateInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUpdateManyWithoutCustomerNestedInput
@@ -364,6 +394,8 @@ export type CustomerUncheckedUpdateInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutCustomerNestedInput
@@ -378,6 +410,8 @@ export type CustomerCreateManyInput = {
   tgl_lahir: Date | string
   alamat_ktp: string
   no_hp: string
+  status_pernikahan?: $Enums.StatusPernikahan | null
+  status_pekerjaan?: $Enums.StatusPekerjaan | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -389,6 +423,8 @@ export type CustomerUpdateManyMutationInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -401,6 +437,8 @@ export type CustomerUncheckedUpdateManyInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -424,6 +462,8 @@ export type CustomerCountOrderByAggregateInput = {
   tgl_lahir?: Prisma.SortOrder
   alamat_ktp?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
+  status_pernikahan?: Prisma.SortOrder
+  status_pekerjaan?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -440,6 +480,8 @@ export type CustomerMaxOrderByAggregateInput = {
   tgl_lahir?: Prisma.SortOrder
   alamat_ktp?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
+  status_pernikahan?: Prisma.SortOrder
+  status_pekerjaan?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -452,6 +494,8 @@ export type CustomerMinOrderByAggregateInput = {
   tgl_lahir?: Prisma.SortOrder
   alamat_ktp?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
+  status_pernikahan?: Prisma.SortOrder
+  status_pekerjaan?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -481,6 +525,14 @@ export type CustomerUpdateOneWithoutLeadsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutLeadsInput, Prisma.CustomerUpdateWithoutLeadsInput>, Prisma.CustomerUncheckedUpdateWithoutLeadsInput>
 }
 
+export type NullableEnumStatusPernikahanFieldUpdateOperationsInput = {
+  set?: $Enums.StatusPernikahan | null
+}
+
+export type NullableEnumStatusPekerjaanFieldUpdateOperationsInput = {
+  set?: $Enums.StatusPekerjaan | null
+}
+
 export type CustomerCreateNestedOneWithoutTransaksiInput = {
   create?: Prisma.XOR<Prisma.CustomerCreateWithoutTransaksiInput, Prisma.CustomerUncheckedCreateWithoutTransaksiInput>
   connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutTransaksiInput
@@ -502,6 +554,8 @@ export type CustomerCreateWithoutLeadsInput = {
   tgl_lahir: Date | string
   alamat_ktp: string
   no_hp: string
+  status_pernikahan?: $Enums.StatusPernikahan | null
+  status_pekerjaan?: $Enums.StatusPekerjaan | null
   created_at?: Date | string
   updated_at?: Date | string
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutCustomerInput
@@ -515,6 +569,8 @@ export type CustomerUncheckedCreateWithoutLeadsInput = {
   tgl_lahir: Date | string
   alamat_ktp: string
   no_hp: string
+  status_pernikahan?: $Enums.StatusPernikahan | null
+  status_pekerjaan?: $Enums.StatusPekerjaan | null
   created_at?: Date | string
   updated_at?: Date | string
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutCustomerInput
@@ -543,6 +599,8 @@ export type CustomerUpdateWithoutLeadsInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUpdateManyWithoutCustomerNestedInput
@@ -556,6 +614,8 @@ export type CustomerUncheckedUpdateWithoutLeadsInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutCustomerNestedInput
@@ -568,6 +628,8 @@ export type CustomerCreateWithoutTransaksiInput = {
   tgl_lahir: Date | string
   alamat_ktp: string
   no_hp: string
+  status_pernikahan?: $Enums.StatusPernikahan | null
+  status_pekerjaan?: $Enums.StatusPekerjaan | null
   created_at?: Date | string
   updated_at?: Date | string
   leads?: Prisma.LeadCreateNestedManyWithoutCustomerInput
@@ -581,6 +643,8 @@ export type CustomerUncheckedCreateWithoutTransaksiInput = {
   tgl_lahir: Date | string
   alamat_ktp: string
   no_hp: string
+  status_pernikahan?: $Enums.StatusPernikahan | null
+  status_pekerjaan?: $Enums.StatusPekerjaan | null
   created_at?: Date | string
   updated_at?: Date | string
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCustomerInput
@@ -609,6 +673,8 @@ export type CustomerUpdateWithoutTransaksiInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUpdateManyWithoutCustomerNestedInput
@@ -622,6 +688,8 @@ export type CustomerUncheckedUpdateWithoutTransaksiInput = {
   tgl_lahir?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   alamat_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  status_pernikahan?: Prisma.NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
+  status_pekerjaan?: Prisma.NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUncheckedUpdateManyWithoutCustomerNestedInput
@@ -675,6 +743,8 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   tgl_lahir?: boolean
   alamat_ktp?: boolean
   no_hp?: boolean
+  status_pernikahan?: boolean
+  status_pekerjaan?: boolean
   created_at?: boolean
   updated_at?: boolean
   transaksi?: boolean | Prisma.Customer$transaksiArgs<ExtArgs>
@@ -692,11 +762,13 @@ export type CustomerSelectScalar = {
   tgl_lahir?: boolean
   alamat_ktp?: boolean
   no_hp?: boolean
+  status_pernikahan?: boolean
+  status_pekerjaan?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nama_ktp" | "nik" | "tempat_lahir" | "tgl_lahir" | "alamat_ktp" | "no_hp" | "created_at" | "updated_at", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nama_ktp" | "nik" | "tempat_lahir" | "tgl_lahir" | "alamat_ktp" | "no_hp" | "status_pernikahan" | "status_pekerjaan" | "created_at" | "updated_at", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transaksi?: boolean | Prisma.Customer$transaksiArgs<ExtArgs>
   leads?: boolean | Prisma.Customer$leadsArgs<ExtArgs>
@@ -717,6 +789,8 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     tgl_lahir: Date
     alamat_ktp: string
     no_hp: string
+    status_pernikahan: $Enums.StatusPernikahan | null
+    status_pekerjaan: $Enums.StatusPekerjaan | null
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["customer"]>
@@ -1097,6 +1171,8 @@ export interface CustomerFieldRefs {
   readonly tgl_lahir: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly alamat_ktp: Prisma.FieldRef<"Customer", 'String'>
   readonly no_hp: Prisma.FieldRef<"Customer", 'String'>
+  readonly status_pernikahan: Prisma.FieldRef<"Customer", 'StatusPernikahan'>
+  readonly status_pekerjaan: Prisma.FieldRef<"Customer", 'StatusPekerjaan'>
   readonly created_at: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Customer", 'DateTime'>
 }

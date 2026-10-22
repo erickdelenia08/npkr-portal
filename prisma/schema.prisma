@@ -232,19 +232,32 @@ model ItjReview {
 // 5. CUSTOMER & TRANSAKSI
 // ==========================================
 model Customer {
-  id           Int      @id @default(autoincrement())
-  nama_ktp     String
-  nik          String   @unique
-  tempat_lahir String
-  tgl_lahir    DateTime @db.Date // CHANGED: tanggal murni
-  alamat_ktp   String   @db.Text
-  no_hp        String
+  id                Int               @id @default(autoincrement())
+  nama_ktp          String
+  nik               String            @unique
+  tempat_lahir      String
+  tgl_lahir         DateTime          @db.Date // CHANGED: tanggal murni
+  alamat_ktp        String            @db.Text
+  no_hp             String
+  status_pernikahan StatusPernikahan?
+  status_pekerjaan  StatusPekerjaan?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   transaksi Transaksi[]
   leads     Lead[]      @relation("CustomerLeads")
+}
+
+enum StatusPernikahan {
+  MENIKAH
+  BELUM_MENIKAH
+  CERAI
+}
+
+enum StatusPekerjaan {
+  TETAP
+  TIDAK_TETAP
 }
 
 enum MetodeBayar {
@@ -318,8 +331,8 @@ model Transaksi {
   nama_notaris String?
 
   // OPERATIONAL MILESTONES (tanggal murni, simpan sebagai UTC midnight)
-  tgl_akad DateTime? @db.Date // CHANGED
-  tgl_ajb  DateTime? @db.Date // CHANGED
+  tgl_akad DateTime? @db.Date // Tanggal akad/closing operasional untuk KPR maupun Cash
+  tgl_ajb  DateTime? @db.Date // DEPRECATED: dipertahankan untuk kompatibilitas data Cash lama
   lunas_at DateTime? @db.Date // CHANGED
   tgl_bast DateTime? @db.Date // CHANGED
 
@@ -440,10 +453,14 @@ enum KategoriDokumen {
 }
 
 enum JenisDokumen {
-  KTP_SUAMI_ISTRI
+  KTP_SUAMI_ISTRI // DEPRECATED: digantikan KTP_PEMOHON & KTP_PASANGAN
+  KTP_PEMOHON
+  KTP_PASANGAN
   KARTU_KELUARGA
   NPWP
   BUKU_NIKAH
+  SURAT_PERNYATAAN_BELUM_MENIKAH
+  AKTA_CERAI
   SLIP_GAJI
   SURAT_KET_KERJA
   REKENING_KORAN

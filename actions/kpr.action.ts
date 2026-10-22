@@ -10,6 +10,7 @@ import {
   ALLOWED_KPR_STATUS_TRANSITIONS,
 } from "@/schemas/kpr.schema";
 import type { StatusPengajuanKPR, TahapDetail } from "@/generated/prisma";
+import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
 
 export interface ServerActionResponse<T = unknown> {
   success: boolean;
@@ -143,11 +144,12 @@ export async function ajukanKPR(
       // 1. Verify transaction
       const trx = await tx.transaksi.findUnique({
         where: { id: transaksiId },
-        select: {
-          id: true,
-          metode_bayar: true,
-          status_transaksi: true,
-          tahap_detail: true,
+        include: {
+          customer: true,
+          unit: {
+            include: { tipe: true },
+          },
+          dokumen: true,
         },
       });
 
@@ -161,6 +163,41 @@ export async function ajukanKPR(
 
       if (trx.status_transaksi === "BATAL" || trx.tahap_detail === "BAST") {
         throw new Error("Transaksi sudah selesai atau telah dibatalkan.");
+      }
+
+      // Enforce document gate when advancing from PENGUMPULAN_DOKUMEN
+      if (trx.tahap_detail === "PENGUMPULAN_DOKUMEN") {
+        const docEvaluation = getRequiredDocuments({
+          metode: trx.metode_bayar,
+          kategori: trx.unit.tipe.kategori,
+          statusPernikahan: trx.customer.status_pernikahan,
+          statusPekerjaan: trx.customer.status_pekerjaan,
+        });
+
+        if (!docEvaluation.isProfileComplete) {
+          throw new Error(`Pengajuan KPR belum dapat dilakukan: ${docEvaluation.message}`);
+        }
+
+        const verifiedDocKeys = new Set(
+          trx.dokumen
+            .filter((d) => d.status === "TERVERIFIKASI")
+            .map((d) => d.jenis)
+        );
+
+        const requiredDocs = docEvaluation.documents.filter((d) => d.required);
+        const missingRequiredDocs = requiredDocs.filter((doc) => {
+          if (doc.key === "KTP_PEMOHON") {
+            return !verifiedDocKeys.has("KTP_PEMOHON") && !verifiedDocKeys.has("KTP_SUAMI_ISTRI");
+          }
+          return !verifiedDocKeys.has(doc.key);
+        });
+
+        if (missingRequiredDocs.length > 0) {
+          const missingLabels = missingRequiredDocs.map((d) => d.label).join(", ");
+          throw new Error(
+            `Pengajuan KPR belum dapat dilakukan: Dokumen pemberkasan wajib [${missingLabels}] belum lengkap/terverifikasi.`
+          );
+        }
       }
 
       // 2. Check invariant: Only ONE active PengajuanKPR allowed

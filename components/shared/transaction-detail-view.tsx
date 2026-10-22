@@ -547,6 +547,8 @@ export async function TransactionDetailView({
         canEdit={canEdit}
         metodeBayar={transaksi.metode_bayar}
         kategoriUnit={transaksi.unit.tipe.kategori}
+        statusPernikahan={transaksi.customer.status_pernikahan}
+        statusPekerjaan={transaksi.customer.status_pekerjaan}
         currentStatus={transaksi.status_transaksi}
         currentTahapDetail={transaksi.tahap_detail}
         initialNotaris={transaksi.nama_notaris}
