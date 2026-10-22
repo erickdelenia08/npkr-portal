@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { LoginForm } from "@/components/forms/login-form";
 import { Building2, Layers } from "lucide-react";
+import NpkrLogo from "@/components/npkr-logo";
 
 export const metadata: Metadata = {
   title: "Login Portal | PT. Simanduta Surya Sentosa",
@@ -25,8 +26,10 @@ export default function LoginPage() {
           {/* Company Branding & Logo Header */}
           <div className="text-center mb-6">
             {/* Logo Badge */}
-            <div className="w-12 h-12 rounded-xl bg-carbon-ink text-white flex items-center justify-center mx-auto mb-3 shadow-subtle border border-carbon-ink/10">
-              <Building2 className="w-6 h-6 text-prism-teal" />
+            <div className="w-12 h-12 rounded-xl bg-prism-teal/10 text-white flex items-center justify-center mx-auto mb-3 shadow-md border border-carbon-ink/10">
+              {/* <Building2 className="w-6 h-6 text-prism-teal" /> */}
+              <NpkrLogo className="w-6 h-6 text-prism-teal" />
+
             </div>
 
             {/* Company Name */}
@@ -54,7 +57,7 @@ export default function LoginPage() {
 
         {/* Footer info */}
         <div className="text-center mt-6 text-xs text-slate space-y-1">
-          <p>© {new Date().getFullYear()} PT. Simanduta Surya Sentosa. Hak Cipta Dilindungi.</p>
+          <p>© 2026 PT. Simanduta Surya Sentosa. Hak Cipta Dilindungi.</p>
           <p className="text-[11px] text-fog">
             Kendala akses akun? Hubungi Administrator TI Kantor Pusat.
           </p>

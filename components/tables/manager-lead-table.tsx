@@ -45,6 +45,7 @@ interface ManagerLeadTableProps {
   initialTotal: number;
   marketingUsers: MarketingUserOption[];
   userRole?: string;
+  basePath?: string;
 }
 
 export function ManagerLeadTable({
@@ -52,6 +53,7 @@ export function ManagerLeadTable({
   initialTotal,
   marketingUsers,
   userRole,
+  basePath = "/manager",
 }: ManagerLeadTableProps) {
   const [leads, setLeads] = useState<LeadCardData[]>(initialLeads);
   const [total, setTotal] = useState<number>(initialTotal);
@@ -93,21 +95,24 @@ export function ManagerLeadTable({
 
   // Helper for Tahap badge styling
   const getTahapBadge = (tahap: LeadTahap | string): string => {
-    switch (tahap) {
-      case "Lead Masuk":
+    const norm = (tahap || "").toUpperCase().trim();
+    switch (norm) {
+      case "LEAD MASUK":
       case "BARU":
       case "FOLLOW_UP":
         return "bg-sky-50 text-sky-700 border-sky-200";
-      case "Survei Dijadwalkan":
+      case "SURVEI DIJADWALKAN":
       case "SURVEI_DIJADWALKAN":
         return "bg-purple-50 text-purple-700 border-purple-200";
-      case "Sudah Survei":
+      case "SUDAH SURVEI":
       case "SUDAH_SURVEI":
         return "bg-indigo-50 text-indigo-700 border-indigo-200";
-      case "Closing":
+      case "ITJ DIAJUKAN":
+      case "ITJ_DIAJUKAN":
+        return "bg-amber-50 text-amber-700 border-amber-200";
+      case "CLOSING":
       case "ITJ":
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
-      case "Lost":
       case "LOST":
         return "bg-rose-50 text-rose-700 border-rose-200";
       default:
@@ -403,7 +408,7 @@ export function ManagerLeadTable({
                       <td className="px-5 py-3.5">
                         <div className="space-y-0.5">
                           <Link
-                            href={`/marketing/lead/${lead.id}`}
+                            href={`${basePath}/lead/${lead.id}`}
                             className="font-bold text-carbon-ink hover:text-prism-teal text-sm inline-flex items-center gap-1 group"
                           >
                             <span>{lead.nama}</span>
@@ -535,7 +540,7 @@ export function ManagerLeadTable({
                           </button>
 
                           <Link
-                            href={`/marketing/lead/${lead.id}`}
+                            href={`${basePath}/lead/${lead.id}`}
                             className="p-1.5 rounded-md text-slate hover:text-carbon-ink hover:bg-bone border border-transparent hover:border-mist transition-colors"
                             title="Buka Detail & Timeline Aktivitas"
                           >

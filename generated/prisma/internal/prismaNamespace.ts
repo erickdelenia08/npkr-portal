@@ -406,6 +406,13 @@ export const ModelName = {
   ItjReview: 'ItjReview',
   Customer: 'Customer',
   Transaksi: 'Transaksi',
+  Bank: 'Bank',
+  PengajuanKPR: 'PengajuanKPR',
+  PengajuanKPRLog: 'PengajuanKPRLog',
+  TransaksiTahapLog: 'TransaksiTahapLog',
+  DokumenTransaksi: 'DokumenTransaksi',
+  InspeksiBAST: 'InspeksiBAST',
+  InspeksiBASTLog: 'InspeksiBASTLog',
   Pembayaran: 'Pembayaran'
 } as const
 
@@ -422,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "masterTipe" | "masterUnit" | "lead" | "aktivitas" | "itj" | "itjReview" | "customer" | "transaksi" | "pembayaran"
+    modelProps: "user" | "masterTipe" | "masterUnit" | "lead" | "aktivitas" | "itj" | "itjReview" | "customer" | "transaksi" | "bank" | "pengajuanKPR" | "pengajuanKPRLog" | "transaksiTahapLog" | "dokumenTransaksi" | "inspeksiBAST" | "inspeksiBASTLog" | "pembayaran"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1020,6 +1027,468 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Bank: {
+      payload: Prisma.$BankPayload<ExtArgs>
+      fields: Prisma.BankFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BankFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BankFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload>
+        }
+        findFirst: {
+          args: Prisma.BankFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BankFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload>
+        }
+        findMany: {
+          args: Prisma.BankFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload>[]
+        }
+        create: {
+          args: Prisma.BankCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload>
+        }
+        createMany: {
+          args: Prisma.BankCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.BankDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload>
+        }
+        update: {
+          args: Prisma.BankUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload>
+        }
+        deleteMany: {
+          args: Prisma.BankDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BankUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.BankUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BankPayload>
+        }
+        aggregate: {
+          args: Prisma.BankAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBank>
+        }
+        groupBy: {
+          args: Prisma.BankGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BankGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BankCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BankCountAggregateOutputType> | number
+        }
+      }
+    }
+    PengajuanKPR: {
+      payload: Prisma.$PengajuanKPRPayload<ExtArgs>
+      fields: Prisma.PengajuanKPRFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PengajuanKPRFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PengajuanKPRFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload>
+        }
+        findFirst: {
+          args: Prisma.PengajuanKPRFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PengajuanKPRFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload>
+        }
+        findMany: {
+          args: Prisma.PengajuanKPRFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload>[]
+        }
+        create: {
+          args: Prisma.PengajuanKPRCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload>
+        }
+        createMany: {
+          args: Prisma.PengajuanKPRCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.PengajuanKPRDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload>
+        }
+        update: {
+          args: Prisma.PengajuanKPRUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload>
+        }
+        deleteMany: {
+          args: Prisma.PengajuanKPRDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PengajuanKPRUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.PengajuanKPRUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRPayload>
+        }
+        aggregate: {
+          args: Prisma.PengajuanKPRAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePengajuanKPR>
+        }
+        groupBy: {
+          args: Prisma.PengajuanKPRGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PengajuanKPRGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PengajuanKPRCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PengajuanKPRCountAggregateOutputType> | number
+        }
+      }
+    }
+    PengajuanKPRLog: {
+      payload: Prisma.$PengajuanKPRLogPayload<ExtArgs>
+      fields: Prisma.PengajuanKPRLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PengajuanKPRLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PengajuanKPRLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload>
+        }
+        findFirst: {
+          args: Prisma.PengajuanKPRLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PengajuanKPRLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload>
+        }
+        findMany: {
+          args: Prisma.PengajuanKPRLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload>[]
+        }
+        create: {
+          args: Prisma.PengajuanKPRLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload>
+        }
+        createMany: {
+          args: Prisma.PengajuanKPRLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.PengajuanKPRLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload>
+        }
+        update: {
+          args: Prisma.PengajuanKPRLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.PengajuanKPRLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PengajuanKPRLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.PengajuanKPRLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PengajuanKPRLogPayload>
+        }
+        aggregate: {
+          args: Prisma.PengajuanKPRLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePengajuanKPRLog>
+        }
+        groupBy: {
+          args: Prisma.PengajuanKPRLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PengajuanKPRLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PengajuanKPRLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PengajuanKPRLogCountAggregateOutputType> | number
+        }
+      }
+    }
+    TransaksiTahapLog: {
+      payload: Prisma.$TransaksiTahapLogPayload<ExtArgs>
+      fields: Prisma.TransaksiTahapLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TransaksiTahapLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TransaksiTahapLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload>
+        }
+        findFirst: {
+          args: Prisma.TransaksiTahapLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TransaksiTahapLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload>
+        }
+        findMany: {
+          args: Prisma.TransaksiTahapLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload>[]
+        }
+        create: {
+          args: Prisma.TransaksiTahapLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload>
+        }
+        createMany: {
+          args: Prisma.TransaksiTahapLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.TransaksiTahapLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload>
+        }
+        update: {
+          args: Prisma.TransaksiTahapLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.TransaksiTahapLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TransaksiTahapLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.TransaksiTahapLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TransaksiTahapLogPayload>
+        }
+        aggregate: {
+          args: Prisma.TransaksiTahapLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTransaksiTahapLog>
+        }
+        groupBy: {
+          args: Prisma.TransaksiTahapLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TransaksiTahapLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TransaksiTahapLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TransaksiTahapLogCountAggregateOutputType> | number
+        }
+      }
+    }
+    DokumenTransaksi: {
+      payload: Prisma.$DokumenTransaksiPayload<ExtArgs>
+      fields: Prisma.DokumenTransaksiFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DokumenTransaksiFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DokumenTransaksiFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload>
+        }
+        findFirst: {
+          args: Prisma.DokumenTransaksiFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DokumenTransaksiFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload>
+        }
+        findMany: {
+          args: Prisma.DokumenTransaksiFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload>[]
+        }
+        create: {
+          args: Prisma.DokumenTransaksiCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload>
+        }
+        createMany: {
+          args: Prisma.DokumenTransaksiCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.DokumenTransaksiDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload>
+        }
+        update: {
+          args: Prisma.DokumenTransaksiUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload>
+        }
+        deleteMany: {
+          args: Prisma.DokumenTransaksiDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DokumenTransaksiUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.DokumenTransaksiUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DokumenTransaksiPayload>
+        }
+        aggregate: {
+          args: Prisma.DokumenTransaksiAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDokumenTransaksi>
+        }
+        groupBy: {
+          args: Prisma.DokumenTransaksiGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DokumenTransaksiGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DokumenTransaksiCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DokumenTransaksiCountAggregateOutputType> | number
+        }
+      }
+    }
+    InspeksiBAST: {
+      payload: Prisma.$InspeksiBASTPayload<ExtArgs>
+      fields: Prisma.InspeksiBASTFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InspeksiBASTFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InspeksiBASTFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+        }
+        findFirst: {
+          args: Prisma.InspeksiBASTFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InspeksiBASTFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+        }
+        findMany: {
+          args: Prisma.InspeksiBASTFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>[]
+        }
+        create: {
+          args: Prisma.InspeksiBASTCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+        }
+        createMany: {
+          args: Prisma.InspeksiBASTCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.InspeksiBASTDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+        }
+        update: {
+          args: Prisma.InspeksiBASTUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+        }
+        deleteMany: {
+          args: Prisma.InspeksiBASTDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InspeksiBASTUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.InspeksiBASTUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+        }
+        aggregate: {
+          args: Prisma.InspeksiBASTAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInspeksiBAST>
+        }
+        groupBy: {
+          args: Prisma.InspeksiBASTGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InspeksiBASTGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InspeksiBASTCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InspeksiBASTCountAggregateOutputType> | number
+        }
+      }
+    }
+    InspeksiBASTLog: {
+      payload: Prisma.$InspeksiBASTLogPayload<ExtArgs>
+      fields: Prisma.InspeksiBASTLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InspeksiBASTLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InspeksiBASTLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
+        }
+        findFirst: {
+          args: Prisma.InspeksiBASTLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InspeksiBASTLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
+        }
+        findMany: {
+          args: Prisma.InspeksiBASTLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>[]
+        }
+        create: {
+          args: Prisma.InspeksiBASTLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
+        }
+        createMany: {
+          args: Prisma.InspeksiBASTLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.InspeksiBASTLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
+        }
+        update: {
+          args: Prisma.InspeksiBASTLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.InspeksiBASTLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InspeksiBASTLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.InspeksiBASTLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
+        }
+        aggregate: {
+          args: Prisma.InspeksiBASTLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInspeksiBASTLog>
+        }
+        groupBy: {
+          args: Prisma.InspeksiBASTLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InspeksiBASTLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InspeksiBASTLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InspeksiBASTLogCountAggregateOutputType> | number
+        }
+      }
+    }
     Pembayaran: {
       payload: Prisma.$PembayaranPayload<ExtArgs>
       fields: Prisma.PembayaranFieldRefs
@@ -1156,6 +1625,8 @@ export const MasterUnitScalarFieldEnum = {
   id: 'id',
   tipe_id: 'tipe_id',
   blok: 'blok',
+  blok_prefix: 'blok_prefix',
+  blok_nomor: 'blok_nomor',
   status_unit: 'status_unit',
   harga_khusus: 'harga_khusus'
 } as const
@@ -1166,15 +1637,17 @@ export type MasterUnitScalarFieldEnum = (typeof MasterUnitScalarFieldEnum)[keyof
 export const LeadScalarFieldEnum = {
   id: 'id',
   marketing_id: 'marketing_id',
+  customer_id: 'customer_id',
   nama: 'nama',
   no_hp: 'no_hp',
   sumber: 'sumber',
   minat_tipe: 'minat_tipe',
   survei_jadwal_at: 'survei_jadwal_at',
   survei_selesai_at: 'survei_selesai_at',
-  closing_at: 'closing_at',
   lost_at: 'lost_at',
   lost_reason: 'lost_reason',
+  last_activity_at: 'last_activity_at',
+  next_follow_up_at: 'next_follow_up_at',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -1185,6 +1658,7 @@ export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof Lead
 export const AktivitasScalarFieldEnum = {
   id: 'id',
   lead_id: 'lead_id',
+  user_id: 'user_id',
   jenis: 'jenis',
   hasil: 'hasil',
   catatan: 'catatan',
@@ -1199,11 +1673,15 @@ export const ItjScalarFieldEnum = {
   id: 'id',
   lead_id: 'lead_id',
   unit_id: 'unit_id',
+  marketing_id: 'marketing_id',
   status: 'status',
   nik: 'nik',
   nama_ktp: 'nama_ktp',
   nominal: 'nominal',
+  harga_deal: 'harga_deal',
+  target_itj: 'target_itj',
   target_dp: 'target_dp',
+  nominal_dibayar: 'nominal_dibayar',
   metode_bayar: 'metode_bayar',
   tenor: 'tenor',
   diajukan_at: 'diajukan_at',
@@ -1230,7 +1708,6 @@ export type ItjReviewScalarFieldEnum = (typeof ItjReviewScalarFieldEnum)[keyof t
 
 export const CustomerScalarFieldEnum = {
   id: 'id',
-  lead_id: 'lead_id',
   nama_ktp: 'nama_ktp',
   nik: 'nik',
   tempat_lahir: 'tempat_lahir',
@@ -1249,19 +1726,25 @@ export const TransaksiScalarFieldEnum = {
   customer_id: 'customer_id',
   unit_id: 'unit_id',
   marketing_id: 'marketing_id',
+  itj_id: 'itj_id',
   metode_bayar: 'metode_bayar',
   harga_deal: 'harga_deal',
   target_itj: 'target_itj',
   target_dp: 'target_dp',
   tenor_bulan: 'tenor_bulan',
   status_transaksi: 'status_transaksi',
+  tahap_detail: 'tahap_detail',
   nama_bank: 'nama_bank',
   nama_notaris: 'nama_notaris',
   tgl_akad: 'tgl_akad',
+  tgl_ajb: 'tgl_ajb',
+  lunas_at: 'lunas_at',
   tgl_bast: 'tgl_bast',
+  closing_at: 'closing_at',
+  closed_at: 'closed_at',
+  cancelled_at: 'cancelled_at',
+  alasan_batal: 'alasan_batal',
   catatan_admin: 'catatan_admin',
-  berkas_json: 'berkas_json',
-  bast_json: 'bast_json',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -1269,14 +1752,123 @@ export const TransaksiScalarFieldEnum = {
 export type TransaksiScalarFieldEnum = (typeof TransaksiScalarFieldEnum)[keyof typeof TransaksiScalarFieldEnum]
 
 
+export const BankScalarFieldEnum = {
+  id: 'id',
+  nama: 'nama',
+  kode: 'kode',
+  is_active: 'is_active',
+  catatan: 'catatan',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type BankScalarFieldEnum = (typeof BankScalarFieldEnum)[keyof typeof BankScalarFieldEnum]
+
+
+export const PengajuanKPRScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  bank_id: 'bank_id',
+  nomor_pengajuan: 'nomor_pengajuan',
+  status: 'status',
+  tanggal_ajukan: 'tanggal_ajukan',
+  tanggal_keputusan: 'tanggal_keputusan',
+  alasan_penolakan: 'alasan_penolakan',
+  catatan: 'catatan',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type PengajuanKPRScalarFieldEnum = (typeof PengajuanKPRScalarFieldEnum)[keyof typeof PengajuanKPRScalarFieldEnum]
+
+
+export const PengajuanKPRLogScalarFieldEnum = {
+  id: 'id',
+  pengajuan_id: 'pengajuan_id',
+  status_sebelum: 'status_sebelum',
+  status_sesudah: 'status_sesudah',
+  admin_id: 'admin_id',
+  catatan: 'catatan',
+  created_at: 'created_at'
+} as const
+
+export type PengajuanKPRLogScalarFieldEnum = (typeof PengajuanKPRLogScalarFieldEnum)[keyof typeof PengajuanKPRLogScalarFieldEnum]
+
+
+export const TransaksiTahapLogScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  tahap_sebelum: 'tahap_sebelum',
+  tahap_sesudah: 'tahap_sesudah',
+  detail_sebelum: 'detail_sebelum',
+  detail_sesudah: 'detail_sesudah',
+  admin_id: 'admin_id',
+  catatan: 'catatan',
+  created_at: 'created_at'
+} as const
+
+export type TransaksiTahapLogScalarFieldEnum = (typeof TransaksiTahapLogScalarFieldEnum)[keyof typeof TransaksiTahapLogScalarFieldEnum]
+
+
+export const DokumenTransaksiScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  jenis: 'jenis',
+  kategori: 'kategori',
+  status: 'status',
+  file_url: 'file_url',
+  catatan_verifikasi: 'catatan_verifikasi',
+  verified_by: 'verified_by',
+  verified_at: 'verified_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type DokumenTransaksiScalarFieldEnum = (typeof DokumenTransaksiScalarFieldEnum)[keyof typeof DokumenTransaksiScalarFieldEnum]
+
+
+export const InspeksiBASTScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  item: 'item',
+  status: 'status',
+  catatan: 'catatan',
+  inspektur_id: 'inspektur_id',
+  diperiksa_at: 'diperiksa_at'
+} as const
+
+export type InspeksiBASTScalarFieldEnum = (typeof InspeksiBASTScalarFieldEnum)[keyof typeof InspeksiBASTScalarFieldEnum]
+
+
+export const InspeksiBASTLogScalarFieldEnum = {
+  id: 'id',
+  inspeksi_bast_id: 'inspeksi_bast_id',
+  status_sebelum: 'status_sebelum',
+  status_sesudah: 'status_sesudah',
+  catatan: 'catatan',
+  inspektur_id: 'inspektur_id',
+  created_at: 'created_at'
+} as const
+
+export type InspeksiBASTLogScalarFieldEnum = (typeof InspeksiBASTLogScalarFieldEnum)[keyof typeof InspeksiBASTLogScalarFieldEnum]
+
+
 export const PembayaranScalarFieldEnum = {
   id: 'id',
   transaksi_id: 'transaksi_id',
   admin_id: 'admin_id',
+  no_kwitansi: 'no_kwitansi',
   jenis_pembayaran: 'jenis_pembayaran',
+  cara_bayar: 'cara_bayar',
   nominal: 'nominal',
+  tgl_bayar: 'tgl_bayar',
   catatan: 'catatan',
-  created_at: 'created_at'
+  is_void: 'is_void',
+  void_at: 'void_at',
+  void_by: 'void_by',
+  void_reason: 'void_reason',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
 export type PembayaranScalarFieldEnum = (typeof PembayaranScalarFieldEnum)[keyof typeof PembayaranScalarFieldEnum]
@@ -1290,14 +1882,6 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const NullableJsonNullValueInput = {
-  DbNull: DbNull,
-  JsonNull: JsonNull
-} as const
-
-export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
 export const UserOrderByRelevanceFieldEnum = {
   username: 'username',
   nama: 'nama',
@@ -1308,6 +1892,13 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+export const MasterTipeOrderByRelevanceFieldEnum = {
+  nama_tipe: 'nama_tipe'
+} as const
+
+export type MasterTipeOrderByRelevanceFieldEnum = (typeof MasterTipeOrderByRelevanceFieldEnum)[keyof typeof MasterTipeOrderByRelevanceFieldEnum]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
@@ -1316,15 +1907,9 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
-export const MasterTipeOrderByRelevanceFieldEnum = {
-  nama_tipe: 'nama_tipe'
-} as const
-
-export type MasterTipeOrderByRelevanceFieldEnum = (typeof MasterTipeOrderByRelevanceFieldEnum)[keyof typeof MasterTipeOrderByRelevanceFieldEnum]
-
-
 export const MasterUnitOrderByRelevanceFieldEnum = {
-  blok: 'blok'
+  blok: 'blok',
+  blok_prefix: 'blok_prefix'
 } as const
 
 export type MasterUnitOrderByRelevanceFieldEnum = (typeof MasterUnitOrderByRelevanceFieldEnum)[keyof typeof MasterUnitOrderByRelevanceFieldEnum]
@@ -1333,7 +1918,6 @@ export type MasterUnitOrderByRelevanceFieldEnum = (typeof MasterUnitOrderByRelev
 export const LeadOrderByRelevanceFieldEnum = {
   nama: 'nama',
   no_hp: 'no_hp',
-  sumber: 'sumber',
   minat_tipe: 'minat_tipe',
   lost_reason: 'lost_reason'
 } as const
@@ -1374,35 +1958,73 @@ export const CustomerOrderByRelevanceFieldEnum = {
 export type CustomerOrderByRelevanceFieldEnum = (typeof CustomerOrderByRelevanceFieldEnum)[keyof typeof CustomerOrderByRelevanceFieldEnum]
 
 
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
 export const TransaksiOrderByRelevanceFieldEnum = {
-  status_transaksi: 'status_transaksi',
   nama_bank: 'nama_bank',
   nama_notaris: 'nama_notaris',
+  alasan_batal: 'alasan_batal',
   catatan_admin: 'catatan_admin'
 } as const
 
 export type TransaksiOrderByRelevanceFieldEnum = (typeof TransaksiOrderByRelevanceFieldEnum)[keyof typeof TransaksiOrderByRelevanceFieldEnum]
 
 
-export const PembayaranOrderByRelevanceFieldEnum = {
+export const BankOrderByRelevanceFieldEnum = {
+  nama: 'nama',
+  kode: 'kode',
   catatan: 'catatan'
+} as const
+
+export type BankOrderByRelevanceFieldEnum = (typeof BankOrderByRelevanceFieldEnum)[keyof typeof BankOrderByRelevanceFieldEnum]
+
+
+export const PengajuanKPROrderByRelevanceFieldEnum = {
+  alasan_penolakan: 'alasan_penolakan',
+  catatan: 'catatan'
+} as const
+
+export type PengajuanKPROrderByRelevanceFieldEnum = (typeof PengajuanKPROrderByRelevanceFieldEnum)[keyof typeof PengajuanKPROrderByRelevanceFieldEnum]
+
+
+export const PengajuanKPRLogOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type PengajuanKPRLogOrderByRelevanceFieldEnum = (typeof PengajuanKPRLogOrderByRelevanceFieldEnum)[keyof typeof PengajuanKPRLogOrderByRelevanceFieldEnum]
+
+
+export const TransaksiTahapLogOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type TransaksiTahapLogOrderByRelevanceFieldEnum = (typeof TransaksiTahapLogOrderByRelevanceFieldEnum)[keyof typeof TransaksiTahapLogOrderByRelevanceFieldEnum]
+
+
+export const DokumenTransaksiOrderByRelevanceFieldEnum = {
+  file_url: 'file_url',
+  catatan_verifikasi: 'catatan_verifikasi'
+} as const
+
+export type DokumenTransaksiOrderByRelevanceFieldEnum = (typeof DokumenTransaksiOrderByRelevanceFieldEnum)[keyof typeof DokumenTransaksiOrderByRelevanceFieldEnum]
+
+
+export const InspeksiBASTOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type InspeksiBASTOrderByRelevanceFieldEnum = (typeof InspeksiBASTOrderByRelevanceFieldEnum)[keyof typeof InspeksiBASTOrderByRelevanceFieldEnum]
+
+
+export const InspeksiBASTLogOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type InspeksiBASTLogOrderByRelevanceFieldEnum = (typeof InspeksiBASTLogOrderByRelevanceFieldEnum)[keyof typeof InspeksiBASTLogOrderByRelevanceFieldEnum]
+
+
+export const PembayaranOrderByRelevanceFieldEnum = {
+  no_kwitansi: 'no_kwitansi',
+  catatan: 'catatan',
+  void_reason: 'void_reason'
 } as const
 
 export type PembayaranOrderByRelevanceFieldEnum = (typeof PembayaranOrderByRelevanceFieldEnum)[keyof typeof PembayaranOrderByRelevanceFieldEnum]
@@ -1471,6 +2093,13 @@ export type EnumStatusUnitFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 
 
 /**
+ * Reference to a field of type 'SumberLead'
+ */
+export type EnumSumberLeadFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SumberLead'>
+    
+
+
+/**
  * Reference to a field of type 'JenisAktivitas'
  */
 export type EnumJenisAktivitasFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JenisAktivitas'>
@@ -1499,16 +2128,58 @@ export type EnumMetodeBayarFieldRefInput<$PrismaModel> = FieldRefInputType<$Pris
 
 
 /**
- * Reference to a field of type 'Json'
+ * Reference to a field of type 'TahapTransaksi'
  */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+export type EnumTahapTransaksiFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TahapTransaksi'>
     
 
 
 /**
- * Reference to a field of type 'QueryMode'
+ * Reference to a field of type 'TahapDetail'
  */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+export type EnumTahapDetailFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TahapDetail'>
+    
+
+
+/**
+ * Reference to a field of type 'StatusPengajuanKPR'
+ */
+export type EnumStatusPengajuanKPRFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusPengajuanKPR'>
+    
+
+
+/**
+ * Reference to a field of type 'JenisDokumen'
+ */
+export type EnumJenisDokumenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JenisDokumen'>
+    
+
+
+/**
+ * Reference to a field of type 'KategoriDokumen'
+ */
+export type EnumKategoriDokumenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KategoriDokumen'>
+    
+
+
+/**
+ * Reference to a field of type 'StatusDokumen'
+ */
+export type EnumStatusDokumenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusDokumen'>
+    
+
+
+/**
+ * Reference to a field of type 'ItemBAST'
+ */
+export type EnumItemBASTFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ItemBAST'>
+    
+
+
+/**
+ * Reference to a field of type 'StatusInspeksi'
+ */
+export type EnumStatusInspeksiFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusInspeksi'>
     
 
 
@@ -1516,6 +2187,13 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'JenisBayar'
  */
 export type EnumJenisBayarFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'JenisBayar'>
+    
+
+
+/**
+ * Reference to a field of type 'CaraBayar'
+ */
+export type EnumCaraBayarFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CaraBayar'>
     
 
 
@@ -1685,6 +2363,13 @@ export type GlobalOmitConfig = {
   itjReview?: Prisma.ItjReviewOmit
   customer?: Prisma.CustomerOmit
   transaksi?: Prisma.TransaksiOmit
+  bank?: Prisma.BankOmit
+  pengajuanKPR?: Prisma.PengajuanKPROmit
+  pengajuanKPRLog?: Prisma.PengajuanKPRLogOmit
+  transaksiTahapLog?: Prisma.TransaksiTahapLogOmit
+  dokumenTransaksi?: Prisma.DokumenTransaksiOmit
+  inspeksiBAST?: Prisma.InspeksiBASTOmit
+  inspeksiBASTLog?: Prisma.InspeksiBASTLogOmit
   pembayaran?: Prisma.PembayaranOmit
 }
 

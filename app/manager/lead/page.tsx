@@ -27,6 +27,7 @@ export default async function ManagerLeadPage() {
       initialTotal={initialTotal}
       marketingUsers={marketingUsers}
       userRole={session?.user?.role}
+      basePath="/manager"
     />
   );
 }

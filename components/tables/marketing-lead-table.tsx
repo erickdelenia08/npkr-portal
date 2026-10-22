@@ -71,17 +71,20 @@ export function MarketingLeadTable({ leads }: MarketingLeadTableProps) {
     }
   };
 
-  const getTahapBadgeClass = (tahap: LeadTahap): string => {
-    switch (tahap) {
-      case "Lead Masuk":
+  const getTahapBadgeClass = (tahap: LeadTahap | string): string => {
+    const norm = (tahap || "").toUpperCase();
+    switch (norm) {
+      case "LEAD MASUK":
         return "bg-sky-50 text-sky-700 border-sky-200";
-      case "Survei Dijadwalkan":
+      case "SURVEI DIJADWALKAN":
         return "bg-purple-50 text-purple-700 border-purple-200";
-      case "Sudah Survei":
+      case "SUDAH SURVEI":
         return "bg-indigo-50 text-indigo-700 border-indigo-200";
-      case "Closing":
+      case "ITJ DIAJUKAN":
+        return "bg-amber-50 text-amber-700 border-amber-200";
+      case "CLOSING":
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
-      case "Lost":
+      case "LOST":
         return "bg-rose-50 text-rose-700 border-rose-200";
       default:
         return "bg-bone text-graphite border-mist";

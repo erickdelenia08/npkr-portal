@@ -29,16 +29,19 @@ export type AggregateAktivitas = {
 export type AktivitasAvgAggregateOutputType = {
   id: number | null
   lead_id: number | null
+  user_id: number | null
 }
 
 export type AktivitasSumAggregateOutputType = {
   id: number | null
   lead_id: number | null
+  user_id: number | null
 }
 
 export type AktivitasMinAggregateOutputType = {
   id: number | null
   lead_id: number | null
+  user_id: number | null
   jenis: $Enums.JenisAktivitas | null
   hasil: $Enums.HasilAktivitas | null
   catatan: string | null
@@ -49,6 +52,7 @@ export type AktivitasMinAggregateOutputType = {
 export type AktivitasMaxAggregateOutputType = {
   id: number | null
   lead_id: number | null
+  user_id: number | null
   jenis: $Enums.JenisAktivitas | null
   hasil: $Enums.HasilAktivitas | null
   catatan: string | null
@@ -59,6 +63,7 @@ export type AktivitasMaxAggregateOutputType = {
 export type AktivitasCountAggregateOutputType = {
   id: number
   lead_id: number
+  user_id: number
   jenis: number
   hasil: number
   catatan: number
@@ -71,16 +76,19 @@ export type AktivitasCountAggregateOutputType = {
 export type AktivitasAvgAggregateInputType = {
   id?: true
   lead_id?: true
+  user_id?: true
 }
 
 export type AktivitasSumAggregateInputType = {
   id?: true
   lead_id?: true
+  user_id?: true
 }
 
 export type AktivitasMinAggregateInputType = {
   id?: true
   lead_id?: true
+  user_id?: true
   jenis?: true
   hasil?: true
   catatan?: true
@@ -91,6 +99,7 @@ export type AktivitasMinAggregateInputType = {
 export type AktivitasMaxAggregateInputType = {
   id?: true
   lead_id?: true
+  user_id?: true
   jenis?: true
   hasil?: true
   catatan?: true
@@ -101,6 +110,7 @@ export type AktivitasMaxAggregateInputType = {
 export type AktivitasCountAggregateInputType = {
   id?: true
   lead_id?: true
+  user_id?: true
   jenis?: true
   hasil?: true
   catatan?: true
@@ -198,6 +208,7 @@ export type AktivitasGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 export type AktivitasGroupByOutputType = {
   id: number
   lead_id: number
+  user_id: number
   jenis: $Enums.JenisAktivitas
   hasil: $Enums.HasilAktivitas
   catatan: string | null
@@ -231,23 +242,27 @@ export type AktivitasWhereInput = {
   NOT?: Prisma.AktivitasWhereInput | Prisma.AktivitasWhereInput[]
   id?: Prisma.IntFilter<"Aktivitas"> | number
   lead_id?: Prisma.IntFilter<"Aktivitas"> | number
+  user_id?: Prisma.IntFilter<"Aktivitas"> | number
   jenis?: Prisma.EnumJenisAktivitasFilter<"Aktivitas"> | $Enums.JenisAktivitas
   hasil?: Prisma.EnumHasilAktivitasFilter<"Aktivitas"> | $Enums.HasilAktivitas
   catatan?: Prisma.StringNullableFilter<"Aktivitas"> | string | null
   tgl_follow_up?: Prisma.DateTimeNullableFilter<"Aktivitas"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Aktivitas"> | Date | string
   lead?: Prisma.XOR<Prisma.LeadScalarRelationFilter, Prisma.LeadWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type AktivitasOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   jenis?: Prisma.SortOrder
   hasil?: Prisma.SortOrder
   catatan?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_follow_up?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   lead?: Prisma.LeadOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
   _relevance?: Prisma.AktivitasOrderByRelevanceInput
 }
 
@@ -257,17 +272,20 @@ export type AktivitasWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AktivitasWhereInput[]
   NOT?: Prisma.AktivitasWhereInput | Prisma.AktivitasWhereInput[]
   lead_id?: Prisma.IntFilter<"Aktivitas"> | number
+  user_id?: Prisma.IntFilter<"Aktivitas"> | number
   jenis?: Prisma.EnumJenisAktivitasFilter<"Aktivitas"> | $Enums.JenisAktivitas
   hasil?: Prisma.EnumHasilAktivitasFilter<"Aktivitas"> | $Enums.HasilAktivitas
   catatan?: Prisma.StringNullableFilter<"Aktivitas"> | string | null
   tgl_follow_up?: Prisma.DateTimeNullableFilter<"Aktivitas"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Aktivitas"> | Date | string
   lead?: Prisma.XOR<Prisma.LeadScalarRelationFilter, Prisma.LeadWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type AktivitasOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   jenis?: Prisma.SortOrder
   hasil?: Prisma.SortOrder
   catatan?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -286,6 +304,7 @@ export type AktivitasScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AktivitasScalarWhereWithAggregatesInput | Prisma.AktivitasScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Aktivitas"> | number
   lead_id?: Prisma.IntWithAggregatesFilter<"Aktivitas"> | number
+  user_id?: Prisma.IntWithAggregatesFilter<"Aktivitas"> | number
   jenis?: Prisma.EnumJenisAktivitasWithAggregatesFilter<"Aktivitas"> | $Enums.JenisAktivitas
   hasil?: Prisma.EnumHasilAktivitasWithAggregatesFilter<"Aktivitas"> | $Enums.HasilAktivitas
   catatan?: Prisma.StringNullableWithAggregatesFilter<"Aktivitas"> | string | null
@@ -300,11 +319,13 @@ export type AktivitasCreateInput = {
   tgl_follow_up?: Date | string | null
   created_at?: Date | string
   lead: Prisma.LeadCreateNestedOneWithoutAktivitasInput
+  user: Prisma.UserCreateNestedOneWithoutAktivitas_logInput
 }
 
 export type AktivitasUncheckedCreateInput = {
   id?: number
   lead_id: number
+  user_id: number
   jenis: $Enums.JenisAktivitas
   hasil: $Enums.HasilAktivitas
   catatan?: string | null
@@ -319,11 +340,13 @@ export type AktivitasUpdateInput = {
   tgl_follow_up?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lead?: Prisma.LeadUpdateOneRequiredWithoutAktivitasNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutAktivitas_logNestedInput
 }
 
 export type AktivitasUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  user_id?: Prisma.IntFieldUpdateOperationsInput | number
   jenis?: Prisma.EnumJenisAktivitasFieldUpdateOperationsInput | $Enums.JenisAktivitas
   hasil?: Prisma.EnumHasilAktivitasFieldUpdateOperationsInput | $Enums.HasilAktivitas
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -334,6 +357,7 @@ export type AktivitasUncheckedUpdateInput = {
 export type AktivitasCreateManyInput = {
   id?: number
   lead_id: number
+  user_id: number
   jenis: $Enums.JenisAktivitas
   hasil: $Enums.HasilAktivitas
   catatan?: string | null
@@ -352,6 +376,7 @@ export type AktivitasUpdateManyMutationInput = {
 export type AktivitasUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  user_id?: Prisma.IntFieldUpdateOperationsInput | number
   jenis?: Prisma.EnumJenisAktivitasFieldUpdateOperationsInput | $Enums.JenisAktivitas
   hasil?: Prisma.EnumHasilAktivitasFieldUpdateOperationsInput | $Enums.HasilAktivitas
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -378,6 +403,7 @@ export type AktivitasOrderByRelevanceInput = {
 export type AktivitasCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   jenis?: Prisma.SortOrder
   hasil?: Prisma.SortOrder
   catatan?: Prisma.SortOrder
@@ -388,11 +414,13 @@ export type AktivitasCountOrderByAggregateInput = {
 export type AktivitasAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
 }
 
 export type AktivitasMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   jenis?: Prisma.SortOrder
   hasil?: Prisma.SortOrder
   catatan?: Prisma.SortOrder
@@ -403,6 +431,7 @@ export type AktivitasMaxOrderByAggregateInput = {
 export type AktivitasMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
   jenis?: Prisma.SortOrder
   hasil?: Prisma.SortOrder
   catatan?: Prisma.SortOrder
@@ -413,6 +442,49 @@ export type AktivitasMinOrderByAggregateInput = {
 export type AktivitasSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
+  user_id?: Prisma.SortOrder
+}
+
+export type AktivitasCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.AktivitasCreateWithoutUserInput, Prisma.AktivitasUncheckedCreateWithoutUserInput> | Prisma.AktivitasCreateWithoutUserInput[] | Prisma.AktivitasUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AktivitasCreateOrConnectWithoutUserInput | Prisma.AktivitasCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.AktivitasCreateManyUserInputEnvelope
+  connect?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+}
+
+export type AktivitasUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.AktivitasCreateWithoutUserInput, Prisma.AktivitasUncheckedCreateWithoutUserInput> | Prisma.AktivitasCreateWithoutUserInput[] | Prisma.AktivitasUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AktivitasCreateOrConnectWithoutUserInput | Prisma.AktivitasCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.AktivitasCreateManyUserInputEnvelope
+  connect?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+}
+
+export type AktivitasUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.AktivitasCreateWithoutUserInput, Prisma.AktivitasUncheckedCreateWithoutUserInput> | Prisma.AktivitasCreateWithoutUserInput[] | Prisma.AktivitasUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AktivitasCreateOrConnectWithoutUserInput | Prisma.AktivitasCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.AktivitasUpsertWithWhereUniqueWithoutUserInput | Prisma.AktivitasUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.AktivitasCreateManyUserInputEnvelope
+  set?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  disconnect?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  delete?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  connect?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  update?: Prisma.AktivitasUpdateWithWhereUniqueWithoutUserInput | Prisma.AktivitasUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.AktivitasUpdateManyWithWhereWithoutUserInput | Prisma.AktivitasUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.AktivitasScalarWhereInput | Prisma.AktivitasScalarWhereInput[]
+}
+
+export type AktivitasUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.AktivitasCreateWithoutUserInput, Prisma.AktivitasUncheckedCreateWithoutUserInput> | Prisma.AktivitasCreateWithoutUserInput[] | Prisma.AktivitasUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AktivitasCreateOrConnectWithoutUserInput | Prisma.AktivitasCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.AktivitasUpsertWithWhereUniqueWithoutUserInput | Prisma.AktivitasUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.AktivitasCreateManyUserInputEnvelope
+  set?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  disconnect?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  delete?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  connect?: Prisma.AktivitasWhereUniqueInput | Prisma.AktivitasWhereUniqueInput[]
+  update?: Prisma.AktivitasUpdateWithWhereUniqueWithoutUserInput | Prisma.AktivitasUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.AktivitasUpdateManyWithWhereWithoutUserInput | Prisma.AktivitasUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.AktivitasScalarWhereInput | Prisma.AktivitasScalarWhereInput[]
 }
 
 export type AktivitasCreateNestedManyWithoutLeadInput = {
@@ -465,7 +537,18 @@ export type EnumHasilAktivitasFieldUpdateOperationsInput = {
   set?: $Enums.HasilAktivitas
 }
 
-export type AktivitasCreateWithoutLeadInput = {
+export type AktivitasCreateWithoutUserInput = {
+  jenis: $Enums.JenisAktivitas
+  hasil: $Enums.HasilAktivitas
+  catatan?: string | null
+  tgl_follow_up?: Date | string | null
+  created_at?: Date | string
+  lead: Prisma.LeadCreateNestedOneWithoutAktivitasInput
+}
+
+export type AktivitasUncheckedCreateWithoutUserInput = {
+  id?: number
+  lead_id: number
   jenis: $Enums.JenisAktivitas
   hasil: $Enums.HasilAktivitas
   catatan?: string | null
@@ -473,8 +556,58 @@ export type AktivitasCreateWithoutLeadInput = {
   created_at?: Date | string
 }
 
+export type AktivitasCreateOrConnectWithoutUserInput = {
+  where: Prisma.AktivitasWhereUniqueInput
+  create: Prisma.XOR<Prisma.AktivitasCreateWithoutUserInput, Prisma.AktivitasUncheckedCreateWithoutUserInput>
+}
+
+export type AktivitasCreateManyUserInputEnvelope = {
+  data: Prisma.AktivitasCreateManyUserInput | Prisma.AktivitasCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type AktivitasUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.AktivitasWhereUniqueInput
+  update: Prisma.XOR<Prisma.AktivitasUpdateWithoutUserInput, Prisma.AktivitasUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.AktivitasCreateWithoutUserInput, Prisma.AktivitasUncheckedCreateWithoutUserInput>
+}
+
+export type AktivitasUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.AktivitasWhereUniqueInput
+  data: Prisma.XOR<Prisma.AktivitasUpdateWithoutUserInput, Prisma.AktivitasUncheckedUpdateWithoutUserInput>
+}
+
+export type AktivitasUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.AktivitasScalarWhereInput
+  data: Prisma.XOR<Prisma.AktivitasUpdateManyMutationInput, Prisma.AktivitasUncheckedUpdateManyWithoutUserInput>
+}
+
+export type AktivitasScalarWhereInput = {
+  AND?: Prisma.AktivitasScalarWhereInput | Prisma.AktivitasScalarWhereInput[]
+  OR?: Prisma.AktivitasScalarWhereInput[]
+  NOT?: Prisma.AktivitasScalarWhereInput | Prisma.AktivitasScalarWhereInput[]
+  id?: Prisma.IntFilter<"Aktivitas"> | number
+  lead_id?: Prisma.IntFilter<"Aktivitas"> | number
+  user_id?: Prisma.IntFilter<"Aktivitas"> | number
+  jenis?: Prisma.EnumJenisAktivitasFilter<"Aktivitas"> | $Enums.JenisAktivitas
+  hasil?: Prisma.EnumHasilAktivitasFilter<"Aktivitas"> | $Enums.HasilAktivitas
+  catatan?: Prisma.StringNullableFilter<"Aktivitas"> | string | null
+  tgl_follow_up?: Prisma.DateTimeNullableFilter<"Aktivitas"> | Date | string | null
+  created_at?: Prisma.DateTimeFilter<"Aktivitas"> | Date | string
+}
+
+export type AktivitasCreateWithoutLeadInput = {
+  jenis: $Enums.JenisAktivitas
+  hasil: $Enums.HasilAktivitas
+  catatan?: string | null
+  tgl_follow_up?: Date | string | null
+  created_at?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutAktivitas_logInput
+}
+
 export type AktivitasUncheckedCreateWithoutLeadInput = {
   id?: number
+  user_id: number
   jenis: $Enums.JenisAktivitas
   hasil: $Enums.HasilAktivitas
   catatan?: string | null
@@ -508,21 +641,48 @@ export type AktivitasUpdateManyWithWhereWithoutLeadInput = {
   data: Prisma.XOR<Prisma.AktivitasUpdateManyMutationInput, Prisma.AktivitasUncheckedUpdateManyWithoutLeadInput>
 }
 
-export type AktivitasScalarWhereInput = {
-  AND?: Prisma.AktivitasScalarWhereInput | Prisma.AktivitasScalarWhereInput[]
-  OR?: Prisma.AktivitasScalarWhereInput[]
-  NOT?: Prisma.AktivitasScalarWhereInput | Prisma.AktivitasScalarWhereInput[]
-  id?: Prisma.IntFilter<"Aktivitas"> | number
-  lead_id?: Prisma.IntFilter<"Aktivitas"> | number
-  jenis?: Prisma.EnumJenisAktivitasFilter<"Aktivitas"> | $Enums.JenisAktivitas
-  hasil?: Prisma.EnumHasilAktivitasFilter<"Aktivitas"> | $Enums.HasilAktivitas
-  catatan?: Prisma.StringNullableFilter<"Aktivitas"> | string | null
-  tgl_follow_up?: Prisma.DateTimeNullableFilter<"Aktivitas"> | Date | string | null
-  created_at?: Prisma.DateTimeFilter<"Aktivitas"> | Date | string
+export type AktivitasCreateManyUserInput = {
+  id?: number
+  lead_id: number
+  jenis: $Enums.JenisAktivitas
+  hasil: $Enums.HasilAktivitas
+  catatan?: string | null
+  tgl_follow_up?: Date | string | null
+  created_at?: Date | string
+}
+
+export type AktivitasUpdateWithoutUserInput = {
+  jenis?: Prisma.EnumJenisAktivitasFieldUpdateOperationsInput | $Enums.JenisAktivitas
+  hasil?: Prisma.EnumHasilAktivitasFieldUpdateOperationsInput | $Enums.HasilAktivitas
+  catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_follow_up?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lead?: Prisma.LeadUpdateOneRequiredWithoutAktivitasNestedInput
+}
+
+export type AktivitasUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  jenis?: Prisma.EnumJenisAktivitasFieldUpdateOperationsInput | $Enums.JenisAktivitas
+  hasil?: Prisma.EnumHasilAktivitasFieldUpdateOperationsInput | $Enums.HasilAktivitas
+  catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_follow_up?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AktivitasUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  jenis?: Prisma.EnumJenisAktivitasFieldUpdateOperationsInput | $Enums.JenisAktivitas
+  hasil?: Prisma.EnumHasilAktivitasFieldUpdateOperationsInput | $Enums.HasilAktivitas
+  catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_follow_up?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AktivitasCreateManyLeadInput = {
   id?: number
+  user_id: number
   jenis: $Enums.JenisAktivitas
   hasil: $Enums.HasilAktivitas
   catatan?: string | null
@@ -536,10 +696,12 @@ export type AktivitasUpdateWithoutLeadInput = {
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_follow_up?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutAktivitas_logNestedInput
 }
 
 export type AktivitasUncheckedUpdateWithoutLeadInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  user_id?: Prisma.IntFieldUpdateOperationsInput | number
   jenis?: Prisma.EnumJenisAktivitasFieldUpdateOperationsInput | $Enums.JenisAktivitas
   hasil?: Prisma.EnumHasilAktivitasFieldUpdateOperationsInput | $Enums.HasilAktivitas
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -549,6 +711,7 @@ export type AktivitasUncheckedUpdateWithoutLeadInput = {
 
 export type AktivitasUncheckedUpdateManyWithoutLeadInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  user_id?: Prisma.IntFieldUpdateOperationsInput | number
   jenis?: Prisma.EnumJenisAktivitasFieldUpdateOperationsInput | $Enums.JenisAktivitas
   hasil?: Prisma.EnumHasilAktivitasFieldUpdateOperationsInput | $Enums.HasilAktivitas
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -561,12 +724,14 @@ export type AktivitasUncheckedUpdateManyWithoutLeadInput = {
 export type AktivitasSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   lead_id?: boolean
+  user_id?: boolean
   jenis?: boolean
   hasil?: boolean
   catatan?: boolean
   tgl_follow_up?: boolean
   created_at?: boolean
   lead?: boolean | Prisma.LeadDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["aktivitas"]>
 
 
@@ -574,6 +739,7 @@ export type AktivitasSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type AktivitasSelectScalar = {
   id?: boolean
   lead_id?: boolean
+  user_id?: boolean
   jenis?: boolean
   hasil?: boolean
   catatan?: boolean
@@ -581,19 +747,22 @@ export type AktivitasSelectScalar = {
   created_at?: boolean
 }
 
-export type AktivitasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "lead_id" | "jenis" | "hasil" | "catatan" | "tgl_follow_up" | "created_at", ExtArgs["result"]["aktivitas"]>
+export type AktivitasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "lead_id" | "user_id" | "jenis" | "hasil" | "catatan" | "tgl_follow_up" | "created_at", ExtArgs["result"]["aktivitas"]>
 export type AktivitasInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lead?: boolean | Prisma.LeadDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $AktivitasPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Aktivitas"
   objects: {
     lead: Prisma.$LeadPayload<ExtArgs>
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     lead_id: number
+    user_id: number
     jenis: $Enums.JenisAktivitas
     hasil: $Enums.HasilAktivitas
     catatan: string | null
@@ -940,6 +1109,7 @@ readonly fields: AktivitasFieldRefs;
 export interface Prisma__AktivitasClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   lead<T extends Prisma.LeadDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeadDefaultArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -971,6 +1141,7 @@ export interface Prisma__AktivitasClient<T, Null = never, ExtArgs extends runtim
 export interface AktivitasFieldRefs {
   readonly id: Prisma.FieldRef<"Aktivitas", 'Int'>
   readonly lead_id: Prisma.FieldRef<"Aktivitas", 'Int'>
+  readonly user_id: Prisma.FieldRef<"Aktivitas", 'Int'>
   readonly jenis: Prisma.FieldRef<"Aktivitas", 'JenisAktivitas'>
   readonly hasil: Prisma.FieldRef<"Aktivitas", 'HasilAktivitas'>
   readonly catatan: Prisma.FieldRef<"Aktivitas", 'String'>

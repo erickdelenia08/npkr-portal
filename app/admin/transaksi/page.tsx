@@ -78,6 +78,7 @@ export default async function AdminTransaksiPage() {
       nominal: Number(p.nominal),
       jenis_pembayaran: p.jenis_pembayaran,
       catatan: p.catatan,
+      is_void: p.is_void,
       created_at: p.created_at.toISOString(),
     })),
   }));

@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
-  allowedDevOrigins: ['tumble-scary-crown.ngrok-free.dev'],
+  allowedDevOrigins: ['retiree-urethane-dexterity.ngrok-free.dev'],
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

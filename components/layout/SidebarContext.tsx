@@ -17,9 +17,11 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Close the mobile drawer automatically when route changes
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setIsOpen(false);
-  }, [pathname]);
+  }
 
   const toggle = () => setIsOpen((prev) => !prev);
   const close = () => setIsOpen(false);

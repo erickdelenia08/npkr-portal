@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -12,10 +12,13 @@ import {
   Loader2,
   CheckCircle2,
   UserPlus,
-  Calendar,
 } from "lucide-react";
 import { leadSchema, LeadInput } from "@/schemas/lead.schema";
 import { createLead, CreateLeadResponse } from "@/actions/lead";
+import {
+  getMasterTipeList,
+  SerializedMasterTipe,
+} from "@/actions/master-unit.action";
 
 export interface CreateLeadFormProps {
   onSuccess?: (newLead: NonNullable<CreateLeadResponse["data"]>) => void;
@@ -23,6 +26,7 @@ export interface CreateLeadFormProps {
   className?: string;
   showTitle?: boolean;
   marketingUsers?: { id: number; nama: string; no_hp: string }[];
+  tipeList?: SerializedMasterTipe[];
 }
 
 const SUMBER_LEAD_OPTIONS = [
@@ -41,8 +45,40 @@ export function CreateLeadForm({
   className = "",
   showTitle = true,
   marketingUsers,
+  tipeList,
 }: CreateLeadFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [internalTipeList, setInternalTipeList] = useState<SerializedMasterTipe[]>(
+    tipeList || []
+  );
+  const [isLoadingTipe, setIsLoadingTipe] = useState(false);
+
+  // Auto fetch master tipe if not provided as props
+  useEffect(() => {
+    if (tipeList && tipeList.length > 0) {
+      setInternalTipeList(tipeList);
+      return;
+    }
+
+    let isMounted = true;
+    setIsLoadingTipe(true);
+    getMasterTipeList()
+      .then((res) => {
+        if (isMounted && res.success && res.data) {
+          setInternalTipeList(res.data);
+        }
+      })
+      .catch((err: unknown) => {
+        console.error("Gagal memuat master tipe:", err);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoadingTipe(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [tipeList]);
 
   const {
     register,
@@ -57,8 +93,8 @@ export function CreateLeadForm({
       sumber: "Walk-in",
       minat_tipe: "",
       marketing_id: null,
-      notes: "",
-      next_follow_up: "",
+      notes: null,
+      next_follow_up: null,
     },
   });
 
@@ -69,7 +105,6 @@ export function CreateLeadForm({
       const res = await createLead(data);
 
       if (!res.success) {
-        // Critical duplicate check handling
         const err = res.error || "Gagal menambahkan lead baru";
         setErrorMessage(err);
         toast.error(err);
@@ -83,8 +118,8 @@ export function CreateLeadForm({
         sumber: "Walk-in",
         minat_tipe: "",
         marketing_id: null,
-        notes: "",
-        next_follow_up: "",
+        notes: null,
+        next_follow_up: null,
       });
 
       if (res.data && onSuccess) {
@@ -107,7 +142,7 @@ export function CreateLeadForm({
             <UserPlus className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-carbon-ink tracking-tight">
+            <h2 className="text-base font-bold text-carbon-ink tracking-tight font-heading">
               Tambah Prospek Lead Baru
             </h2>
             <p className="text-xs text-slate mt-0.5">
@@ -177,6 +212,7 @@ export function CreateLeadForm({
             </div>
             <input
               id="no_hp"
+              autoComplete="off"
               type="tel"
               placeholder="Contoh: 081234567890"
               disabled={isSubmitting}
@@ -219,67 +255,43 @@ export function CreateLeadForm({
           )}
         </div>
 
-        {/* Minat Tipe Unit (Opsional) */}
+        {/* Minat Tipe Unit (Master Tipe Dropdown - No Manual Input) */}
         <div>
-          <label
-            htmlFor="minat_tipe"
-            className="block text-xs font-semibold text-graphite mb-1.5"
-          >
-            Minat Tipe Unit <span className="text-fog font-normal">(Opsional)</span>
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label
+              htmlFor="minat_tipe"
+              className="block text-xs font-semibold text-graphite"
+            >
+              Minat Tipe Unit <span className="text-fog font-normal">(Opsional)</span>
+            </label>
+            <span className="text-[10px] text-slate font-medium">
+              Dipilih dari Master Tipe
+            </span>
+          </div>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate">
               <Home className="w-4 h-4" />
             </div>
-            <input
+            <select
               id="minat_tipe"
-              type="text"
-              placeholder="Contoh: Subsidi 36/72, Kavling Hook, dll."
-              disabled={isSubmitting}
+              disabled={isSubmitting || isLoadingTipe}
               {...register("minat_tipe")}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-md border border-mist bg-white text-graphite placeholder:text-fog focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal disabled:bg-bone disabled:cursor-not-allowed transition-all"
-            />
+              className="w-full pl-9 pr-3 py-2 text-sm rounded-md border border-mist bg-white text-graphite focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal disabled:bg-bone disabled:cursor-not-allowed transition-all cursor-pointer font-medium"
+            >
+              <option value="">-- Belum Menentukan / Pilih Tipe Unit --</option>
+              {internalTipeList.map((t) => (
+                <option key={t.id} value={t.nama_tipe}>
+                  {t.nama_tipe} ({t.kategori}) — Rp {t.harga_dasar.toLocaleString("id-ID")}
+                </option>
+              ))}
+            </select>
           </div>
-        </div>
-
-        {/* Catatan / Notes (Opsional) */}
-        <div>
-          <label
-            htmlFor="notes"
-            className="block text-xs font-semibold text-graphite mb-1.5"
-          >
-            Catatan Awal / Notes <span className="text-fog font-normal">(Opsional)</span>
-          </label>
-          <textarea
-            id="notes"
-            rows={2}
-            placeholder="Contoh: Menanyakan promo DP 0%, minta dikirim brosur WA"
-            disabled={isSubmitting}
-            {...register("notes")}
-            className="w-full px-3 py-2 text-sm rounded-md border border-mist bg-white text-graphite placeholder:text-fog focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal disabled:bg-bone disabled:cursor-not-allowed transition-all"
-          />
-        </div>
-
-        {/* Jadwal Follow-Up Berikutnya (Opsional) */}
-        <div>
-          <label
-            htmlFor="next_follow_up"
-            className="block text-xs font-semibold text-graphite mb-1.5"
-          >
-            Jadwal Follow-Up Berikutnya <span className="text-fog font-normal">(Opsional)</span>
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate">
-              <Calendar className="w-4 h-4" />
-            </div>
-            <input
-              id="next_follow_up"
-              type="date"
-              disabled={isSubmitting}
-              {...register("next_follow_up")}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-md border border-mist bg-white text-graphite placeholder:text-fog focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal disabled:bg-bone disabled:cursor-not-allowed transition-all"
-            />
-          </div>
+          {isLoadingTipe && (
+            <p className="text-[11px] text-slate mt-1 flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin text-prism-teal" />
+              <span>Memuat daftar master tipe...</span>
+            </p>
+          )}
         </div>
 
         {/* Tugaskan Marketing (Tersedia jika dibuka oleh Admin/Manager) */}

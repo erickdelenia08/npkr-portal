@@ -27,6 +27,7 @@ export default async function AdminLeadPage() {
       initialTotal={initialTotal}
       marketingUsers={marketingUsers}
       userRole={session?.user?.role}
+      basePath="/admin"
     />
   );
 }

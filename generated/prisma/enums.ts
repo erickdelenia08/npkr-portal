@@ -30,29 +30,30 @@ export type KategoriUnit = (typeof KategoriUnit)[keyof typeof KategoriUnit]
 export const StatusUnit = {
   AVAILABLE: 'AVAILABLE',
   HOLD: 'HOLD',
+  BOOKED: 'BOOKED',
   SOLD: 'SOLD'
 } as const
 
 export type StatusUnit = (typeof StatusUnit)[keyof typeof StatusUnit]
 
 
-export const StatusItj = {
-  DIAJUKAN: 'DIAJUKAN',
-  PERLU_REVISI: 'PERLU_REVISI',
-  DISETUJUI: 'DISETUJUI',
-  DITOLAK: 'DITOLAK'
+export const SumberLead = {
+  WALK_IN: 'WALK_IN',
+  FACEBOOK_ADS: 'FACEBOOK_ADS',
+  TIKTOK: 'TIKTOK',
+  INSTAGRAM: 'INSTAGRAM',
+  WA_KANTOR: 'WA_KANTOR',
+  REFERRAL: 'REFERRAL',
+  LAINNYA: 'LAINNYA'
 } as const
 
-export type StatusItj = (typeof StatusItj)[keyof typeof StatusItj]
+export type SumberLead = (typeof SumberLead)[keyof typeof SumberLead]
 
 
 export const JenisAktivitas = {
   TELEPON: 'TELEPON',
   WHATSAPP: 'WHATSAPP',
   BERTEMU: 'BERTEMU',
-  SURVEI_LOKASI: 'SURVEI_LOKASI',
-  UPDATE_ADMIN: 'UPDATE_ADMIN',
-  SISTEM: 'SISTEM',
   LAINNYA: 'LAINNYA'
 } as const
 
@@ -70,6 +71,16 @@ export const HasilAktivitas = {
 export type HasilAktivitas = (typeof HasilAktivitas)[keyof typeof HasilAktivitas]
 
 
+export const StatusItj = {
+  DIAJUKAN: 'DIAJUKAN',
+  PERLU_REVISI: 'PERLU_REVISI',
+  DISETUJUI: 'DISETUJUI',
+  DITOLAK: 'DITOLAK'
+} as const
+
+export type StatusItj = (typeof StatusItj)[keyof typeof StatusItj]
+
+
 export const MetodeBayar = {
   KPR: 'KPR',
   CASH_KERAS: 'CASH_KERAS',
@@ -77,6 +88,114 @@ export const MetodeBayar = {
 } as const
 
 export type MetodeBayar = (typeof MetodeBayar)[keyof typeof MetodeBayar]
+
+
+export const TahapTransaksi = {
+  PEMBERKASAN: 'PEMBERKASAN',
+  PROSES_BANK: 'PROSES_BANK',
+  PEMBAYARAN: 'PEMBAYARAN',
+  AKAD_AJB: 'AKAD_AJB',
+  PEMBANGUNAN: 'PEMBANGUNAN',
+  SERAH_TERIMA: 'SERAH_TERIMA',
+  BATAL: 'BATAL'
+} as const
+
+export type TahapTransaksi = (typeof TahapTransaksi)[keyof typeof TahapTransaksi]
+
+
+export const TahapDetail = {
+  PENGUMPULAN_DOKUMEN: 'PENGUMPULAN_DOKUMEN',
+  WAWANCARA: 'WAWANCARA',
+  OTS: 'OTS',
+  VERIFIKASI: 'VERIFIKASI',
+  SP3K: 'SP3K',
+  AKAD_KREDIT: 'AKAD_KREDIT',
+  PEMBERKASAN_LEGALITAS: 'PEMBERKASAN_LEGALITAS',
+  MENUNGGU_PELUNASAN: 'MENUNGGU_PELUNASAN',
+  PEMBERKASAN_PPJB: 'PEMBERKASAN_PPJB',
+  PEMBAYARAN_DP: 'PEMBAYARAN_DP',
+  CICILAN_BERJALAN: 'CICILAN_BERJALAN',
+  PELUNASAN: 'PELUNASAN',
+  AJB: 'AJB',
+  BAST: 'BAST',
+  BATAL: 'BATAL'
+} as const
+
+export type TahapDetail = (typeof TahapDetail)[keyof typeof TahapDetail]
+
+
+export const StatusPengajuanKPR = {
+  DIAJUKAN: 'DIAJUKAN',
+  WAWANCARA: 'WAWANCARA',
+  OTS: 'OTS',
+  VERIFIKASI: 'VERIFIKASI',
+  SP3K: 'SP3K',
+  DISETUJUI: 'DISETUJUI',
+  DITOLAK: 'DITOLAK',
+  DIBATALKAN: 'DIBATALKAN'
+} as const
+
+export type StatusPengajuanKPR = (typeof StatusPengajuanKPR)[keyof typeof StatusPengajuanKPR]
+
+
+export const KategoriDokumen = {
+  PEMBERKASAN: 'PEMBERKASAN',
+  BAST: 'BAST',
+  LEGALITAS_LAINNYA: 'LEGALITAS_LAINNYA'
+} as const
+
+export type KategoriDokumen = (typeof KategoriDokumen)[keyof typeof KategoriDokumen]
+
+
+export const JenisDokumen = {
+  KTP_SUAMI_ISTRI: 'KTP_SUAMI_ISTRI',
+  KARTU_KELUARGA: 'KARTU_KELUARGA',
+  NPWP: 'NPWP',
+  BUKU_NIKAH: 'BUKU_NIKAH',
+  SLIP_GAJI: 'SLIP_GAJI',
+  SURAT_KET_KERJA: 'SURAT_KET_KERJA',
+  REKENING_KORAN: 'REKENING_KORAN',
+  SURAT_KET_BELUM_PUNYA_RUMAH: 'SURAT_KET_BELUM_PUNYA_RUMAH',
+  SKU_WIRAUSAHA: 'SKU_WIRAUSAHA',
+  LAPORAN_KEUANGAN: 'LAPORAN_KEUANGAN',
+  LEGALITAS_LAINNYA: 'LEGALITAS_LAINNYA'
+} as const
+
+export type JenisDokumen = (typeof JenisDokumen)[keyof typeof JenisDokumen]
+
+
+export const StatusDokumen = {
+  BELUM_DIUNGGAH: 'BELUM_DIUNGGAH',
+  MENUNGGU_VERIFIKASI: 'MENUNGGU_VERIFIKASI',
+  PERLU_REVISI: 'PERLU_REVISI',
+  TERVERIFIKASI: 'TERVERIFIKASI'
+} as const
+
+export type StatusDokumen = (typeof StatusDokumen)[keyof typeof StatusDokumen]
+
+
+export const ItemBAST = {
+  PONDASI_STRUKTUR: 'PONDASI_STRUKTUR',
+  DINDING_PLESTER_CAT: 'DINDING_PLESTER_CAT',
+  ATAP_PLAFON: 'ATAP_PLAFON',
+  LANTAI_KERAMIK: 'LANTAI_KERAMIK',
+  KUSEN_PINTU_JENDELA: 'KUSEN_PINTU_JENDELA',
+  KELISTRIKAN: 'KELISTRIKAN',
+  SANITASI_AIR_POMPA: 'SANITASI_AIR_POMPA',
+  FASAD_KEBERSIHAN: 'FASAD_KEBERSIHAN'
+} as const
+
+export type ItemBAST = (typeof ItemBAST)[keyof typeof ItemBAST]
+
+
+export const StatusInspeksi = {
+  BELUM_DICEK: 'BELUM_DICEK',
+  SESUAI: 'SESUAI',
+  PERLU_PERBAIKAN: 'PERLU_PERBAIKAN',
+  SELESAI_DIPERBAIKI: 'SELESAI_DIPERBAIKI'
+} as const
+
+export type StatusInspeksi = (typeof StatusInspeksi)[keyof typeof StatusInspeksi]
 
 
 export const JenisBayar = {
@@ -87,3 +206,11 @@ export const JenisBayar = {
 } as const
 
 export type JenisBayar = (typeof JenisBayar)[keyof typeof JenisBayar]
+
+
+export const CaraBayar = {
+  TUNAI: 'TUNAI',
+  TRANSFER: 'TRANSFER'
+} as const
+
+export type CaraBayar = (typeof CaraBayar)[keyof typeof CaraBayar]

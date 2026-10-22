@@ -39,12 +39,6 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
           colorClass: "bg-purple-50 text-purple-600 border-purple-200",
           label: "Pertemuan Tatap Muka",
         };
-      case "SURVEI_LOKASI":
-        return {
-          icon: MapPin,
-          colorClass: "bg-amber-50 text-amber-600 border-amber-200",
-          label: "Survei Lokasi / Perumahan",
-        };
       case "LAINNYA":
       default:
         return {

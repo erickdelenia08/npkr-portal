@@ -14,15 +14,11 @@ import {
   ShieldCheck,
   CheckCircle2,
   FileText,
-  Phone,
   MessageCircle,
   Eye,
   X,
   AlertCircle,
   Briefcase,
-  Layers,
-  ChevronRight,
-  ExternalLink,
 } from "lucide-react";
 
 export interface SerializedManagerTransaksi {
@@ -66,6 +62,7 @@ export interface SerializedManagerTransaksi {
     nominal: number;
     jenis_pembayaran: string;
     catatan: string | null;
+    is_void?: boolean;
     created_at: string;
   }[];
 }
@@ -141,6 +138,17 @@ export const getStatusBadgeStyle = (status: string) => {
     };
   }
 
+  // Indigo: Pembayaran (Cicilan / DP / Pelunasan)
+  if (s.includes("PEMBAYARAN")) {
+    return {
+      label: status,
+      bgClass: "bg-indigo-50 text-indigo-800 border-indigo-300",
+      dotClass: "bg-indigo-500",
+      icon: Banknote,
+      category: "PEMBAYARAN",
+    };
+  }
+
   // Purple: Notaris / AJB / Pajak
   if (s.includes("NOTARIS") || s.includes("AJB") || s.includes("PAJAK")) {
     return {
@@ -193,7 +201,7 @@ export const getStatusBadgeStyle = (status: string) => {
 export function ManagerTransaksiTable({ data }: ManagerTransaksiTableProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [metodeFilter, setMetodeFilter] = useState<"ALL" | "KPR" | "CASH_KERAS" | "CASH_TEMPO">("ALL");
-  const [statusFilterGroup, setStatusFilterGroup] = useState<"ALL" | "PEMBERKASAN" | "BANK" | "AKAD_BAST">("ALL");
+  const [statusFilterGroup, setStatusFilterGroup] = useState<"ALL" | "PEMBERKASAN" | "BANK" | "PEMBAYARAN" | "AKAD_BAST">("ALL");
 
   // Read-only modal state
   const [selectedTransaksi, setSelectedTransaksi] = useState<SerializedManagerTransaksi | null>(null);
@@ -341,6 +349,17 @@ export function ManagerTransaksiTable({ data }: ManagerTransaksiTableProps) {
             }`}
           >
             BI Checking &amp; SP3K (Blue)
+          </button>
+          <button
+            type="button"
+            onClick={() => setStatusFilterGroup("PEMBAYARAN")}
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+              statusFilterGroup === "PEMBAYARAN"
+                ? "bg-indigo-600 text-white"
+                : "bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100"
+            }`}
+          >
+            Pembayaran (Indigo)
           </button>
           <button
             type="button"

@@ -2,6 +2,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import {
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ManagerTransaksiPage() {
+  await connection();
   const session = await auth();
 
   // Strict RBAC Enforcement
@@ -40,23 +42,12 @@ export default async function ManagerTransaksiPage() {
   // Fetch all Transaksi records with required relations
   const rawTransaksi = await prisma.transaksi.findMany({
     include: {
-      customer: {
-        include: {
-          lead: {
-            include: {
-              itj: {
-                where: {
-                  status: "DISETUJUI",
-                },
-                take: 1,
-                select: {
-                  diajukan_at: true,
-                },
-              },
-            },
-          },
+      itj: {
+        select: {
+          diajukan_at: true,
         },
       },
+      customer: true,
       unit: {
         include: {
           tipe: true,
@@ -70,10 +61,19 @@ export default async function ManagerTransaksiPage() {
           no_hp: true,
         },
       },
-      pembayaran: {
-        orderBy: {
-          created_at: "asc",
+      pengajuan_kpr: {
+        include: {
+          bank: true,
         },
+        orderBy: {
+          nomor_pengajuan: "desc",
+        },
+      },
+      pembayaran: {
+        where: {
+          is_void: false,
+        },
+        orderBy: [{ tgl_bayar: "asc" }, { id: "asc" }],
       },
     },
     orderBy: {
@@ -84,10 +84,13 @@ export default async function ManagerTransaksiPage() {
   // Safe Serialization for Client Component
   const serialized: SerializedManagerTransaksi[] = rawTransaksi.map((trx) => {
     // Tanggal ITJ: ambil dari ITJ disetujui atau fallback ke trx.created_at
-    const approvedItjDate = trx.customer.lead?.itj?.[0]?.diajukan_at;
+    const approvedItjDate = trx.itj?.diajukan_at;
     const tglItjIso = approvedItjDate
       ? approvedItjDate.toISOString()
       : trx.created_at.toISOString();
+
+    const activeKpr = trx.pengajuan_kpr?.find((k) => k.status !== "DITOLAK");
+    const activeBank = activeKpr?.bank?.nama || trx.nama_bank;
 
     return {
       id: trx.id,
@@ -97,7 +100,7 @@ export default async function ManagerTransaksiPage() {
       target_dp: Number(trx.target_dp),
       tenor_bulan: trx.tenor_bulan,
       status_transaksi: trx.status_transaksi,
-      nama_bank: trx.nama_bank,
+      nama_bank: activeBank,
       nama_notaris: trx.nama_notaris,
       tgl_akad: trx.tgl_akad ? trx.tgl_akad.toISOString() : null,
       tgl_bast: trx.tgl_bast ? trx.tgl_bast.toISOString() : null,
@@ -130,6 +133,7 @@ export default async function ManagerTransaksiPage() {
         nominal: Number(p.nominal),
         jenis_pembayaran: p.jenis_pembayaran,
         catatan: p.catatan,
+        is_void: p.is_void,
         created_at: p.created_at.toISOString(),
       })),
     };

@@ -2,6 +2,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
 import { getLeadDetail } from "@/actions/activity";
 import { LeadDetailClient } from "@/components/leads/LeadDetailClient";
 
@@ -40,6 +41,10 @@ export default async function LeadDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const session = await auth();
+  const currentUserId = Number(session?.user?.id);
+  const currentUserRole = session?.user?.role;
+
   const res = await getLeadDetail(leadId);
 
   if (!res.success || !res.data) {
@@ -48,7 +53,12 @@ export default async function LeadDetailPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-slate-50/50 p-4 sm:p-6">
-      <LeadDetailClient initialLead={res.data} />
+      <LeadDetailClient
+        initialLead={res.data}
+        currentUserId={currentUserId}
+        currentUserRole={currentUserRole}
+        basePath="/marketing"
+      />
     </div>
   );
 }

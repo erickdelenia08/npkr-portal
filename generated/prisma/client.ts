@@ -87,6 +87,41 @@ export type Customer = Prisma.CustomerModel
  */
 export type Transaksi = Prisma.TransaksiModel
 /**
+ * Model Bank
+ * 
+ */
+export type Bank = Prisma.BankModel
+/**
+ * Model PengajuanKPR
+ * 
+ */
+export type PengajuanKPR = Prisma.PengajuanKPRModel
+/**
+ * Model PengajuanKPRLog
+ * 
+ */
+export type PengajuanKPRLog = Prisma.PengajuanKPRLogModel
+/**
+ * Model TransaksiTahapLog
+ * 
+ */
+export type TransaksiTahapLog = Prisma.TransaksiTahapLogModel
+/**
+ * Model DokumenTransaksi
+ * 
+ */
+export type DokumenTransaksi = Prisma.DokumenTransaksiModel
+/**
+ * Model InspeksiBAST
+ * 
+ */
+export type InspeksiBAST = Prisma.InspeksiBASTModel
+/**
+ * Model InspeksiBASTLog
+ * 
+ */
+export type InspeksiBASTLog = Prisma.InspeksiBASTLogModel
+/**
  * Model Pembayaran
  * 
  */

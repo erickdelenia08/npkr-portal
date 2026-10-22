@@ -30,8 +30,12 @@ export type ItjAvgAggregateOutputType = {
   id: number | null
   lead_id: number | null
   unit_id: number | null
+  marketing_id: number | null
   nominal: runtime.Decimal | null
+  harga_deal: runtime.Decimal | null
+  target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
+  nominal_dibayar: runtime.Decimal | null
   tenor: number | null
   diputuskan_oleh: number | null
 }
@@ -40,8 +44,12 @@ export type ItjSumAggregateOutputType = {
   id: number | null
   lead_id: number | null
   unit_id: number | null
+  marketing_id: number | null
   nominal: runtime.Decimal | null
+  harga_deal: runtime.Decimal | null
+  target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
+  nominal_dibayar: runtime.Decimal | null
   tenor: number | null
   diputuskan_oleh: number | null
 }
@@ -50,11 +58,15 @@ export type ItjMinAggregateOutputType = {
   id: number | null
   lead_id: number | null
   unit_id: number | null
+  marketing_id: number | null
   status: $Enums.StatusItj | null
   nik: string | null
   nama_ktp: string | null
   nominal: runtime.Decimal | null
+  harga_deal: runtime.Decimal | null
+  target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
+  nominal_dibayar: runtime.Decimal | null
   metode_bayar: $Enums.MetodeBayar | null
   tenor: number | null
   diajukan_at: Date | null
@@ -68,11 +80,15 @@ export type ItjMaxAggregateOutputType = {
   id: number | null
   lead_id: number | null
   unit_id: number | null
+  marketing_id: number | null
   status: $Enums.StatusItj | null
   nik: string | null
   nama_ktp: string | null
   nominal: runtime.Decimal | null
+  harga_deal: runtime.Decimal | null
+  target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
+  nominal_dibayar: runtime.Decimal | null
   metode_bayar: $Enums.MetodeBayar | null
   tenor: number | null
   diajukan_at: Date | null
@@ -86,11 +102,15 @@ export type ItjCountAggregateOutputType = {
   id: number
   lead_id: number
   unit_id: number
+  marketing_id: number
   status: number
   nik: number
   nama_ktp: number
   nominal: number
+  harga_deal: number
+  target_itj: number
   target_dp: number
+  nominal_dibayar: number
   metode_bayar: number
   tenor: number
   diajukan_at: number
@@ -106,8 +126,12 @@ export type ItjAvgAggregateInputType = {
   id?: true
   lead_id?: true
   unit_id?: true
+  marketing_id?: true
   nominal?: true
+  harga_deal?: true
+  target_itj?: true
   target_dp?: true
+  nominal_dibayar?: true
   tenor?: true
   diputuskan_oleh?: true
 }
@@ -116,8 +140,12 @@ export type ItjSumAggregateInputType = {
   id?: true
   lead_id?: true
   unit_id?: true
+  marketing_id?: true
   nominal?: true
+  harga_deal?: true
+  target_itj?: true
   target_dp?: true
+  nominal_dibayar?: true
   tenor?: true
   diputuskan_oleh?: true
 }
@@ -126,11 +154,15 @@ export type ItjMinAggregateInputType = {
   id?: true
   lead_id?: true
   unit_id?: true
+  marketing_id?: true
   status?: true
   nik?: true
   nama_ktp?: true
   nominal?: true
+  harga_deal?: true
+  target_itj?: true
   target_dp?: true
+  nominal_dibayar?: true
   metode_bayar?: true
   tenor?: true
   diajukan_at?: true
@@ -144,11 +176,15 @@ export type ItjMaxAggregateInputType = {
   id?: true
   lead_id?: true
   unit_id?: true
+  marketing_id?: true
   status?: true
   nik?: true
   nama_ktp?: true
   nominal?: true
+  harga_deal?: true
+  target_itj?: true
   target_dp?: true
+  nominal_dibayar?: true
   metode_bayar?: true
   tenor?: true
   diajukan_at?: true
@@ -162,11 +198,15 @@ export type ItjCountAggregateInputType = {
   id?: true
   lead_id?: true
   unit_id?: true
+  marketing_id?: true
   status?: true
   nik?: true
   nama_ktp?: true
   nominal?: true
+  harga_deal?: true
+  target_itj?: true
   target_dp?: true
+  nominal_dibayar?: true
   metode_bayar?: true
   tenor?: true
   diajukan_at?: true
@@ -267,11 +307,15 @@ export type ItjGroupByOutputType = {
   id: number
   lead_id: number
   unit_id: number
+  marketing_id: number | null
   status: $Enums.StatusItj
   nik: string
   nama_ktp: string
   nominal: runtime.Decimal
+  harga_deal: runtime.Decimal
+  target_itj: runtime.Decimal
   target_dp: runtime.Decimal
+  nominal_dibayar: runtime.Decimal
   metode_bayar: $Enums.MetodeBayar
   tenor: number | null
   diajukan_at: Date
@@ -308,11 +352,15 @@ export type ItjWhereInput = {
   id?: Prisma.IntFilter<"Itj"> | number
   lead_id?: Prisma.IntFilter<"Itj"> | number
   unit_id?: Prisma.IntFilter<"Itj"> | number
+  marketing_id?: Prisma.IntNullableFilter<"Itj"> | number | null
   status?: Prisma.EnumStatusItjFilter<"Itj"> | $Enums.StatusItj
   nik?: Prisma.StringFilter<"Itj"> | string
   nama_ktp?: Prisma.StringFilter<"Itj"> | string
   nominal?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFilter<"Itj"> | $Enums.MetodeBayar
   tenor?: Prisma.IntNullableFilter<"Itj"> | number | null
   diajukan_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
@@ -322,19 +370,25 @@ export type ItjWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
   lead?: Prisma.XOR<Prisma.LeadScalarRelationFilter, Prisma.LeadWhereInput>
   unit?: Prisma.XOR<Prisma.MasterUnitScalarRelationFilter, Prisma.MasterUnitWhereInput>
+  marketing?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   diputuskanUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   reviews?: Prisma.ItjReviewListRelationFilter
+  transaksi?: Prisma.XOR<Prisma.TransaksiNullableScalarRelationFilter, Prisma.TransaksiWhereInput> | null
 }
 
 export type ItjOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
+  marketing_id?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  harga_deal?: Prisma.SortOrder
+  target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
+  nominal_dibayar?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   tenor?: Prisma.SortOrderInput | Prisma.SortOrder
   diajukan_at?: Prisma.SortOrder
@@ -344,8 +398,10 @@ export type ItjOrderByWithRelationInput = {
   updated_at?: Prisma.SortOrder
   lead?: Prisma.LeadOrderByWithRelationInput
   unit?: Prisma.MasterUnitOrderByWithRelationInput
+  marketing?: Prisma.UserOrderByWithRelationInput
   diputuskanUser?: Prisma.UserOrderByWithRelationInput
   reviews?: Prisma.ItjReviewOrderByRelationAggregateInput
+  transaksi?: Prisma.TransaksiOrderByWithRelationInput
   _relevance?: Prisma.ItjOrderByRelevanceInput
 }
 
@@ -356,11 +412,15 @@ export type ItjWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ItjWhereInput | Prisma.ItjWhereInput[]
   lead_id?: Prisma.IntFilter<"Itj"> | number
   unit_id?: Prisma.IntFilter<"Itj"> | number
+  marketing_id?: Prisma.IntNullableFilter<"Itj"> | number | null
   status?: Prisma.EnumStatusItjFilter<"Itj"> | $Enums.StatusItj
   nik?: Prisma.StringFilter<"Itj"> | string
   nama_ktp?: Prisma.StringFilter<"Itj"> | string
   nominal?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFilter<"Itj"> | $Enums.MetodeBayar
   tenor?: Prisma.IntNullableFilter<"Itj"> | number | null
   diajukan_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
@@ -370,19 +430,25 @@ export type ItjWhereUniqueInput = Prisma.AtLeast<{
   updated_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
   lead?: Prisma.XOR<Prisma.LeadScalarRelationFilter, Prisma.LeadWhereInput>
   unit?: Prisma.XOR<Prisma.MasterUnitScalarRelationFilter, Prisma.MasterUnitWhereInput>
+  marketing?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   diputuskanUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   reviews?: Prisma.ItjReviewListRelationFilter
+  transaksi?: Prisma.XOR<Prisma.TransaksiNullableScalarRelationFilter, Prisma.TransaksiWhereInput> | null
 }, "id">
 
 export type ItjOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
+  marketing_id?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  harga_deal?: Prisma.SortOrder
+  target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
+  nominal_dibayar?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   tenor?: Prisma.SortOrderInput | Prisma.SortOrder
   diajukan_at?: Prisma.SortOrder
@@ -404,11 +470,15 @@ export type ItjScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Itj"> | number
   lead_id?: Prisma.IntWithAggregatesFilter<"Itj"> | number
   unit_id?: Prisma.IntWithAggregatesFilter<"Itj"> | number
+  marketing_id?: Prisma.IntNullableWithAggregatesFilter<"Itj"> | number | null
   status?: Prisma.EnumStatusItjWithAggregatesFilter<"Itj"> | $Enums.StatusItj
   nik?: Prisma.StringWithAggregatesFilter<"Itj"> | string
   nama_ktp?: Prisma.StringWithAggregatesFilter<"Itj"> | string
   nominal?: Prisma.DecimalWithAggregatesFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalWithAggregatesFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalWithAggregatesFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalWithAggregatesFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalWithAggregatesFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarWithAggregatesFilter<"Itj"> | $Enums.MetodeBayar
   tenor?: Prisma.IntNullableWithAggregatesFilter<"Itj"> | number | null
   diajukan_at?: Prisma.DateTimeWithAggregatesFilter<"Itj"> | Date | string
@@ -422,8 +492,11 @@ export type ItjCreateInput = {
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -432,19 +505,25 @@ export type ItjCreateInput = {
   updated_at?: Date | string
   lead: Prisma.LeadCreateNestedOneWithoutItjInput
   unit: Prisma.MasterUnitCreateNestedOneWithoutItjInput
+  marketing?: Prisma.UserCreateNestedOneWithoutItj_diajukanInput
   diputuskanUser?: Prisma.UserCreateNestedOneWithoutItj_diputuskanInput
   reviews?: Prisma.ItjReviewCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiCreateNestedOneWithoutItjInput
 }
 
 export type ItjUncheckedCreateInput = {
   id?: number
   lead_id: number
   unit_id: number
+  marketing_id?: number | null
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -453,6 +532,7 @@ export type ItjUncheckedCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedOneWithoutItjInput
 }
 
 export type ItjUpdateInput = {
@@ -460,7 +540,10 @@ export type ItjUpdateInput = {
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -469,19 +552,25 @@ export type ItjUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lead?: Prisma.LeadUpdateOneRequiredWithoutItjNestedInput
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutItjNestedInput
+  marketing?: Prisma.UserUpdateOneWithoutItj_diajukanNestedInput
   diputuskanUser?: Prisma.UserUpdateOneWithoutItj_diputuskanNestedInput
   reviews?: Prisma.ItjReviewUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUpdateOneWithoutItjNestedInput
 }
 
 export type ItjUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -490,17 +579,22 @@ export type ItjUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateOneWithoutItjNestedInput
 }
 
 export type ItjCreateManyInput = {
   id?: number
   lead_id: number
   unit_id: number
+  marketing_id?: number | null
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -515,7 +609,10 @@ export type ItjUpdateManyMutationInput = {
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -528,11 +625,15 @@ export type ItjUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -562,11 +663,15 @@ export type ItjCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
+  marketing_id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  harga_deal?: Prisma.SortOrder
+  target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
+  nominal_dibayar?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   tenor?: Prisma.SortOrder
   diajukan_at?: Prisma.SortOrder
@@ -580,8 +685,12 @@ export type ItjAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
+  marketing_id?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  harga_deal?: Prisma.SortOrder
+  target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
+  nominal_dibayar?: Prisma.SortOrder
   tenor?: Prisma.SortOrder
   diputuskan_oleh?: Prisma.SortOrder
 }
@@ -590,11 +699,15 @@ export type ItjMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
+  marketing_id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  harga_deal?: Prisma.SortOrder
+  target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
+  nominal_dibayar?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   tenor?: Prisma.SortOrder
   diajukan_at?: Prisma.SortOrder
@@ -608,11 +721,15 @@ export type ItjMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
+  marketing_id?: Prisma.SortOrder
   status?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  harga_deal?: Prisma.SortOrder
+  target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
+  nominal_dibayar?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   tenor?: Prisma.SortOrder
   diajukan_at?: Prisma.SortOrder
@@ -626,8 +743,12 @@ export type ItjSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   lead_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
+  marketing_id?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  harga_deal?: Prisma.SortOrder
+  target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
+  nominal_dibayar?: Prisma.SortOrder
   tenor?: Prisma.SortOrder
   diputuskan_oleh?: Prisma.SortOrder
 }
@@ -637,10 +758,24 @@ export type ItjScalarRelationFilter = {
   isNot?: Prisma.ItjWhereInput
 }
 
+export type ItjCreateNestedManyWithoutMarketingInput = {
+  create?: Prisma.XOR<Prisma.ItjCreateWithoutMarketingInput, Prisma.ItjUncheckedCreateWithoutMarketingInput> | Prisma.ItjCreateWithoutMarketingInput[] | Prisma.ItjUncheckedCreateWithoutMarketingInput[]
+  connectOrCreate?: Prisma.ItjCreateOrConnectWithoutMarketingInput | Prisma.ItjCreateOrConnectWithoutMarketingInput[]
+  createMany?: Prisma.ItjCreateManyMarketingInputEnvelope
+  connect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+}
+
 export type ItjCreateNestedManyWithoutDiputuskanUserInput = {
   create?: Prisma.XOR<Prisma.ItjCreateWithoutDiputuskanUserInput, Prisma.ItjUncheckedCreateWithoutDiputuskanUserInput> | Prisma.ItjCreateWithoutDiputuskanUserInput[] | Prisma.ItjUncheckedCreateWithoutDiputuskanUserInput[]
   connectOrCreate?: Prisma.ItjCreateOrConnectWithoutDiputuskanUserInput | Prisma.ItjCreateOrConnectWithoutDiputuskanUserInput[]
   createMany?: Prisma.ItjCreateManyDiputuskanUserInputEnvelope
+  connect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+}
+
+export type ItjUncheckedCreateNestedManyWithoutMarketingInput = {
+  create?: Prisma.XOR<Prisma.ItjCreateWithoutMarketingInput, Prisma.ItjUncheckedCreateWithoutMarketingInput> | Prisma.ItjCreateWithoutMarketingInput[] | Prisma.ItjUncheckedCreateWithoutMarketingInput[]
+  connectOrCreate?: Prisma.ItjCreateOrConnectWithoutMarketingInput | Prisma.ItjCreateOrConnectWithoutMarketingInput[]
+  createMany?: Prisma.ItjCreateManyMarketingInputEnvelope
   connect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
 }
 
@@ -649,6 +784,20 @@ export type ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput = {
   connectOrCreate?: Prisma.ItjCreateOrConnectWithoutDiputuskanUserInput | Prisma.ItjCreateOrConnectWithoutDiputuskanUserInput[]
   createMany?: Prisma.ItjCreateManyDiputuskanUserInputEnvelope
   connect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+}
+
+export type ItjUpdateManyWithoutMarketingNestedInput = {
+  create?: Prisma.XOR<Prisma.ItjCreateWithoutMarketingInput, Prisma.ItjUncheckedCreateWithoutMarketingInput> | Prisma.ItjCreateWithoutMarketingInput[] | Prisma.ItjUncheckedCreateWithoutMarketingInput[]
+  connectOrCreate?: Prisma.ItjCreateOrConnectWithoutMarketingInput | Prisma.ItjCreateOrConnectWithoutMarketingInput[]
+  upsert?: Prisma.ItjUpsertWithWhereUniqueWithoutMarketingInput | Prisma.ItjUpsertWithWhereUniqueWithoutMarketingInput[]
+  createMany?: Prisma.ItjCreateManyMarketingInputEnvelope
+  set?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  disconnect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  delete?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  connect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  update?: Prisma.ItjUpdateWithWhereUniqueWithoutMarketingInput | Prisma.ItjUpdateWithWhereUniqueWithoutMarketingInput[]
+  updateMany?: Prisma.ItjUpdateManyWithWhereWithoutMarketingInput | Prisma.ItjUpdateManyWithWhereWithoutMarketingInput[]
+  deleteMany?: Prisma.ItjScalarWhereInput | Prisma.ItjScalarWhereInput[]
 }
 
 export type ItjUpdateManyWithoutDiputuskanUserNestedInput = {
@@ -662,6 +811,20 @@ export type ItjUpdateManyWithoutDiputuskanUserNestedInput = {
   connect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
   update?: Prisma.ItjUpdateWithWhereUniqueWithoutDiputuskanUserInput | Prisma.ItjUpdateWithWhereUniqueWithoutDiputuskanUserInput[]
   updateMany?: Prisma.ItjUpdateManyWithWhereWithoutDiputuskanUserInput | Prisma.ItjUpdateManyWithWhereWithoutDiputuskanUserInput[]
+  deleteMany?: Prisma.ItjScalarWhereInput | Prisma.ItjScalarWhereInput[]
+}
+
+export type ItjUncheckedUpdateManyWithoutMarketingNestedInput = {
+  create?: Prisma.XOR<Prisma.ItjCreateWithoutMarketingInput, Prisma.ItjUncheckedCreateWithoutMarketingInput> | Prisma.ItjCreateWithoutMarketingInput[] | Prisma.ItjUncheckedCreateWithoutMarketingInput[]
+  connectOrCreate?: Prisma.ItjCreateOrConnectWithoutMarketingInput | Prisma.ItjCreateOrConnectWithoutMarketingInput[]
+  upsert?: Prisma.ItjUpsertWithWhereUniqueWithoutMarketingInput | Prisma.ItjUpsertWithWhereUniqueWithoutMarketingInput[]
+  createMany?: Prisma.ItjCreateManyMarketingInputEnvelope
+  set?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  disconnect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  delete?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  connect?: Prisma.ItjWhereUniqueInput | Prisma.ItjWhereUniqueInput[]
+  update?: Prisma.ItjUpdateWithWhereUniqueWithoutMarketingInput | Prisma.ItjUpdateWithWhereUniqueWithoutMarketingInput[]
+  updateMany?: Prisma.ItjUpdateManyWithWhereWithoutMarketingInput | Prisma.ItjUpdateManyWithWhereWithoutMarketingInput[]
   deleteMany?: Prisma.ItjScalarWhereInput | Prisma.ItjScalarWhereInput[]
 }
 
@@ -785,12 +948,29 @@ export type ItjUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ItjUpdateToOneWithWhereWithoutReviewsInput, Prisma.ItjUpdateWithoutReviewsInput>, Prisma.ItjUncheckedUpdateWithoutReviewsInput>
 }
 
-export type ItjCreateWithoutDiputuskanUserInput = {
+export type ItjCreateNestedOneWithoutTransaksiInput = {
+  create?: Prisma.XOR<Prisma.ItjCreateWithoutTransaksiInput, Prisma.ItjUncheckedCreateWithoutTransaksiInput>
+  connectOrCreate?: Prisma.ItjCreateOrConnectWithoutTransaksiInput
+  connect?: Prisma.ItjWhereUniqueInput
+}
+
+export type ItjUpdateOneRequiredWithoutTransaksiNestedInput = {
+  create?: Prisma.XOR<Prisma.ItjCreateWithoutTransaksiInput, Prisma.ItjUncheckedCreateWithoutTransaksiInput>
+  connectOrCreate?: Prisma.ItjCreateOrConnectWithoutTransaksiInput
+  upsert?: Prisma.ItjUpsertWithoutTransaksiInput
+  connect?: Prisma.ItjWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ItjUpdateToOneWithWhereWithoutTransaksiInput, Prisma.ItjUpdateWithoutTransaksiInput>, Prisma.ItjUncheckedUpdateWithoutTransaksiInput>
+}
+
+export type ItjCreateWithoutMarketingInput = {
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -799,18 +979,79 @@ export type ItjCreateWithoutDiputuskanUserInput = {
   updated_at?: Date | string
   lead: Prisma.LeadCreateNestedOneWithoutItjInput
   unit: Prisma.MasterUnitCreateNestedOneWithoutItjInput
+  diputuskanUser?: Prisma.UserCreateNestedOneWithoutItj_diputuskanInput
   reviews?: Prisma.ItjReviewCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiCreateNestedOneWithoutItjInput
 }
 
-export type ItjUncheckedCreateWithoutDiputuskanUserInput = {
+export type ItjUncheckedCreateWithoutMarketingInput = {
   id?: number
   lead_id: number
   unit_id: number
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar: $Enums.MetodeBayar
+  tenor?: number | null
+  diajukan_at?: Date | string
+  diputuskan_at?: Date | string | null
+  diputuskan_oleh?: number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedOneWithoutItjInput
+}
+
+export type ItjCreateOrConnectWithoutMarketingInput = {
+  where: Prisma.ItjWhereUniqueInput
+  create: Prisma.XOR<Prisma.ItjCreateWithoutMarketingInput, Prisma.ItjUncheckedCreateWithoutMarketingInput>
+}
+
+export type ItjCreateManyMarketingInputEnvelope = {
+  data: Prisma.ItjCreateManyMarketingInput | Prisma.ItjCreateManyMarketingInput[]
+  skipDuplicates?: boolean
+}
+
+export type ItjCreateWithoutDiputuskanUserInput = {
+  status?: $Enums.StatusItj
+  nik: string
+  nama_ktp: string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar: $Enums.MetodeBayar
+  tenor?: number | null
+  diajukan_at?: Date | string
+  diputuskan_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  lead: Prisma.LeadCreateNestedOneWithoutItjInput
+  unit: Prisma.MasterUnitCreateNestedOneWithoutItjInput
+  marketing?: Prisma.UserCreateNestedOneWithoutItj_diajukanInput
+  reviews?: Prisma.ItjReviewCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiCreateNestedOneWithoutItjInput
+}
+
+export type ItjUncheckedCreateWithoutDiputuskanUserInput = {
+  id?: number
+  lead_id: number
+  unit_id: number
+  marketing_id?: number | null
+  status?: $Enums.StatusItj
+  nik: string
+  nama_ktp: string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -818,6 +1059,7 @@ export type ItjUncheckedCreateWithoutDiputuskanUserInput = {
   created_at?: Date | string
   updated_at?: Date | string
   reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedOneWithoutItjInput
 }
 
 export type ItjCreateOrConnectWithoutDiputuskanUserInput = {
@@ -828,6 +1070,47 @@ export type ItjCreateOrConnectWithoutDiputuskanUserInput = {
 export type ItjCreateManyDiputuskanUserInputEnvelope = {
   data: Prisma.ItjCreateManyDiputuskanUserInput | Prisma.ItjCreateManyDiputuskanUserInput[]
   skipDuplicates?: boolean
+}
+
+export type ItjUpsertWithWhereUniqueWithoutMarketingInput = {
+  where: Prisma.ItjWhereUniqueInput
+  update: Prisma.XOR<Prisma.ItjUpdateWithoutMarketingInput, Prisma.ItjUncheckedUpdateWithoutMarketingInput>
+  create: Prisma.XOR<Prisma.ItjCreateWithoutMarketingInput, Prisma.ItjUncheckedCreateWithoutMarketingInput>
+}
+
+export type ItjUpdateWithWhereUniqueWithoutMarketingInput = {
+  where: Prisma.ItjWhereUniqueInput
+  data: Prisma.XOR<Prisma.ItjUpdateWithoutMarketingInput, Prisma.ItjUncheckedUpdateWithoutMarketingInput>
+}
+
+export type ItjUpdateManyWithWhereWithoutMarketingInput = {
+  where: Prisma.ItjScalarWhereInput
+  data: Prisma.XOR<Prisma.ItjUpdateManyMutationInput, Prisma.ItjUncheckedUpdateManyWithoutMarketingInput>
+}
+
+export type ItjScalarWhereInput = {
+  AND?: Prisma.ItjScalarWhereInput | Prisma.ItjScalarWhereInput[]
+  OR?: Prisma.ItjScalarWhereInput[]
+  NOT?: Prisma.ItjScalarWhereInput | Prisma.ItjScalarWhereInput[]
+  id?: Prisma.IntFilter<"Itj"> | number
+  lead_id?: Prisma.IntFilter<"Itj"> | number
+  unit_id?: Prisma.IntFilter<"Itj"> | number
+  marketing_id?: Prisma.IntNullableFilter<"Itj"> | number | null
+  status?: Prisma.EnumStatusItjFilter<"Itj"> | $Enums.StatusItj
+  nik?: Prisma.StringFilter<"Itj"> | string
+  nama_ktp?: Prisma.StringFilter<"Itj"> | string
+  nominal?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar?: Prisma.EnumMetodeBayarFilter<"Itj"> | $Enums.MetodeBayar
+  tenor?: Prisma.IntNullableFilter<"Itj"> | number | null
+  diajukan_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
+  diputuskan_at?: Prisma.DateTimeNullableFilter<"Itj"> | Date | string | null
+  diputuskan_oleh?: Prisma.IntNullableFilter<"Itj"> | number | null
+  created_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
 }
 
 export type ItjUpsertWithWhereUniqueWithoutDiputuskanUserInput = {
@@ -846,33 +1129,15 @@ export type ItjUpdateManyWithWhereWithoutDiputuskanUserInput = {
   data: Prisma.XOR<Prisma.ItjUpdateManyMutationInput, Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserInput>
 }
 
-export type ItjScalarWhereInput = {
-  AND?: Prisma.ItjScalarWhereInput | Prisma.ItjScalarWhereInput[]
-  OR?: Prisma.ItjScalarWhereInput[]
-  NOT?: Prisma.ItjScalarWhereInput | Prisma.ItjScalarWhereInput[]
-  id?: Prisma.IntFilter<"Itj"> | number
-  lead_id?: Prisma.IntFilter<"Itj"> | number
-  unit_id?: Prisma.IntFilter<"Itj"> | number
-  status?: Prisma.EnumStatusItjFilter<"Itj"> | $Enums.StatusItj
-  nik?: Prisma.StringFilter<"Itj"> | string
-  nama_ktp?: Prisma.StringFilter<"Itj"> | string
-  nominal?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  target_dp?: Prisma.DecimalFilter<"Itj"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  metode_bayar?: Prisma.EnumMetodeBayarFilter<"Itj"> | $Enums.MetodeBayar
-  tenor?: Prisma.IntNullableFilter<"Itj"> | number | null
-  diajukan_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
-  diputuskan_at?: Prisma.DateTimeNullableFilter<"Itj"> | Date | string | null
-  diputuskan_oleh?: Prisma.IntNullableFilter<"Itj"> | number | null
-  created_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
-  updated_at?: Prisma.DateTimeFilter<"Itj"> | Date | string
-}
-
 export type ItjCreateWithoutUnitInput = {
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -880,18 +1145,24 @@ export type ItjCreateWithoutUnitInput = {
   created_at?: Date | string
   updated_at?: Date | string
   lead: Prisma.LeadCreateNestedOneWithoutItjInput
+  marketing?: Prisma.UserCreateNestedOneWithoutItj_diajukanInput
   diputuskanUser?: Prisma.UserCreateNestedOneWithoutItj_diputuskanInput
   reviews?: Prisma.ItjReviewCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiCreateNestedOneWithoutItjInput
 }
 
 export type ItjUncheckedCreateWithoutUnitInput = {
   id?: number
   lead_id: number
+  marketing_id?: number | null
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -900,6 +1171,7 @@ export type ItjUncheckedCreateWithoutUnitInput = {
   created_at?: Date | string
   updated_at?: Date | string
   reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedOneWithoutItjInput
 }
 
 export type ItjCreateOrConnectWithoutUnitInput = {
@@ -932,8 +1204,11 @@ export type ItjCreateWithoutLeadInput = {
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -941,18 +1216,24 @@ export type ItjCreateWithoutLeadInput = {
   created_at?: Date | string
   updated_at?: Date | string
   unit: Prisma.MasterUnitCreateNestedOneWithoutItjInput
+  marketing?: Prisma.UserCreateNestedOneWithoutItj_diajukanInput
   diputuskanUser?: Prisma.UserCreateNestedOneWithoutItj_diputuskanInput
   reviews?: Prisma.ItjReviewCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiCreateNestedOneWithoutItjInput
 }
 
 export type ItjUncheckedCreateWithoutLeadInput = {
   id?: number
   unit_id: number
+  marketing_id?: number | null
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -961,6 +1242,7 @@ export type ItjUncheckedCreateWithoutLeadInput = {
   created_at?: Date | string
   updated_at?: Date | string
   reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutItjInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedOneWithoutItjInput
 }
 
 export type ItjCreateOrConnectWithoutLeadInput = {
@@ -993,8 +1275,11 @@ export type ItjCreateWithoutReviewsInput = {
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -1003,18 +1288,24 @@ export type ItjCreateWithoutReviewsInput = {
   updated_at?: Date | string
   lead: Prisma.LeadCreateNestedOneWithoutItjInput
   unit: Prisma.MasterUnitCreateNestedOneWithoutItjInput
+  marketing?: Prisma.UserCreateNestedOneWithoutItj_diajukanInput
   diputuskanUser?: Prisma.UserCreateNestedOneWithoutItj_diputuskanInput
+  transaksi?: Prisma.TransaksiCreateNestedOneWithoutItjInput
 }
 
 export type ItjUncheckedCreateWithoutReviewsInput = {
   id?: number
   lead_id: number
   unit_id: number
+  marketing_id?: number | null
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -1022,6 +1313,7 @@ export type ItjUncheckedCreateWithoutReviewsInput = {
   diputuskan_oleh?: number | null
   created_at?: Date | string
   updated_at?: Date | string
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedOneWithoutItjInput
 }
 
 export type ItjCreateOrConnectWithoutReviewsInput = {
@@ -1045,7 +1337,203 @@ export type ItjUpdateWithoutReviewsInput = {
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diputuskan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lead?: Prisma.LeadUpdateOneRequiredWithoutItjNestedInput
+  unit?: Prisma.MasterUnitUpdateOneRequiredWithoutItjNestedInput
+  marketing?: Prisma.UserUpdateOneWithoutItj_diajukanNestedInput
+  diputuskanUser?: Prisma.UserUpdateOneWithoutItj_diputuskanNestedInput
+  transaksi?: Prisma.TransaksiUpdateOneWithoutItjNestedInput
+}
+
+export type ItjUncheckedUpdateWithoutReviewsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
+  nik?: Prisma.StringFieldUpdateOperationsInput | string
+  nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diputuskan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  diputuskan_oleh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transaksi?: Prisma.TransaksiUncheckedUpdateOneWithoutItjNestedInput
+}
+
+export type ItjCreateWithoutTransaksiInput = {
+  status?: $Enums.StatusItj
+  nik: string
+  nama_ktp: string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar: $Enums.MetodeBayar
+  tenor?: number | null
+  diajukan_at?: Date | string
+  diputuskan_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  lead: Prisma.LeadCreateNestedOneWithoutItjInput
+  unit: Prisma.MasterUnitCreateNestedOneWithoutItjInput
+  marketing?: Prisma.UserCreateNestedOneWithoutItj_diajukanInput
+  diputuskanUser?: Prisma.UserCreateNestedOneWithoutItj_diputuskanInput
+  reviews?: Prisma.ItjReviewCreateNestedManyWithoutItjInput
+}
+
+export type ItjUncheckedCreateWithoutTransaksiInput = {
+  id?: number
+  lead_id: number
+  unit_id: number
+  marketing_id?: number | null
+  status?: $Enums.StatusItj
+  nik: string
+  nama_ktp: string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar: $Enums.MetodeBayar
+  tenor?: number | null
+  diajukan_at?: Date | string
+  diputuskan_at?: Date | string | null
+  diputuskan_oleh?: number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutItjInput
+}
+
+export type ItjCreateOrConnectWithoutTransaksiInput = {
+  where: Prisma.ItjWhereUniqueInput
+  create: Prisma.XOR<Prisma.ItjCreateWithoutTransaksiInput, Prisma.ItjUncheckedCreateWithoutTransaksiInput>
+}
+
+export type ItjUpsertWithoutTransaksiInput = {
+  update: Prisma.XOR<Prisma.ItjUpdateWithoutTransaksiInput, Prisma.ItjUncheckedUpdateWithoutTransaksiInput>
+  create: Prisma.XOR<Prisma.ItjCreateWithoutTransaksiInput, Prisma.ItjUncheckedCreateWithoutTransaksiInput>
+  where?: Prisma.ItjWhereInput
+}
+
+export type ItjUpdateToOneWithWhereWithoutTransaksiInput = {
+  where?: Prisma.ItjWhereInput
+  data: Prisma.XOR<Prisma.ItjUpdateWithoutTransaksiInput, Prisma.ItjUncheckedUpdateWithoutTransaksiInput>
+}
+
+export type ItjUpdateWithoutTransaksiInput = {
+  status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
+  nik?: Prisma.StringFieldUpdateOperationsInput | string
+  nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diputuskan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lead?: Prisma.LeadUpdateOneRequiredWithoutItjNestedInput
+  unit?: Prisma.MasterUnitUpdateOneRequiredWithoutItjNestedInput
+  marketing?: Prisma.UserUpdateOneWithoutItj_diajukanNestedInput
+  diputuskanUser?: Prisma.UserUpdateOneWithoutItj_diputuskanNestedInput
+  reviews?: Prisma.ItjReviewUpdateManyWithoutItjNestedInput
+}
+
+export type ItjUncheckedUpdateWithoutTransaksiInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
+  nik?: Prisma.StringFieldUpdateOperationsInput | string
+  nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diputuskan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  diputuskan_oleh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutItjNestedInput
+}
+
+export type ItjCreateManyMarketingInput = {
+  id?: number
+  lead_id: number
+  unit_id: number
+  status?: $Enums.StatusItj
+  nik: string
+  nama_ktp: string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar: $Enums.MetodeBayar
+  tenor?: number | null
+  diajukan_at?: Date | string
+  diputuskan_at?: Date | string | null
+  diputuskan_oleh?: number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type ItjCreateManyDiputuskanUserInput = {
+  id?: number
+  lead_id: number
+  unit_id: number
+  marketing_id?: number | null
+  status?: $Enums.StatusItj
+  nik: string
+  nama_ktp: string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar: $Enums.MetodeBayar
+  tenor?: number | null
+  diajukan_at?: Date | string
+  diputuskan_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type ItjUpdateWithoutMarketingInput = {
+  status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
+  nik?: Prisma.StringFieldUpdateOperationsInput | string
+  nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1055,9 +1543,11 @@ export type ItjUpdateWithoutReviewsInput = {
   lead?: Prisma.LeadUpdateOneRequiredWithoutItjNestedInput
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutItjNestedInput
   diputuskanUser?: Prisma.UserUpdateOneWithoutItj_diputuskanNestedInput
+  reviews?: Prisma.ItjReviewUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUpdateOneWithoutItjNestedInput
 }
 
-export type ItjUncheckedUpdateWithoutReviewsInput = {
+export type ItjUncheckedUpdateWithoutMarketingInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1065,7 +1555,33 @@ export type ItjUncheckedUpdateWithoutReviewsInput = {
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  diputuskan_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  diputuskan_oleh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateOneWithoutItjNestedInput
+}
+
+export type ItjUncheckedUpdateManyWithoutMarketingInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
+  nik?: Prisma.StringFieldUpdateOperationsInput | string
+  nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1075,29 +1591,15 @@ export type ItjUncheckedUpdateWithoutReviewsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ItjCreateManyDiputuskanUserInput = {
-  id?: number
-  lead_id: number
-  unit_id: number
-  status?: $Enums.StatusItj
-  nik: string
-  nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
-  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
-  metode_bayar: $Enums.MetodeBayar
-  tenor?: number | null
-  diajukan_at?: Date | string
-  diputuskan_at?: Date | string | null
-  created_at?: Date | string
-  updated_at?: Date | string
-}
-
 export type ItjUpdateWithoutDiputuskanUserInput = {
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1106,18 +1608,24 @@ export type ItjUpdateWithoutDiputuskanUserInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lead?: Prisma.LeadUpdateOneRequiredWithoutItjNestedInput
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutItjNestedInput
+  marketing?: Prisma.UserUpdateOneWithoutItj_diajukanNestedInput
   reviews?: Prisma.ItjReviewUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUpdateOneWithoutItjNestedInput
 }
 
 export type ItjUncheckedUpdateWithoutDiputuskanUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1125,17 +1633,22 @@ export type ItjUncheckedUpdateWithoutDiputuskanUserInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateOneWithoutItjNestedInput
 }
 
 export type ItjUncheckedUpdateManyWithoutDiputuskanUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1147,11 +1660,15 @@ export type ItjUncheckedUpdateManyWithoutDiputuskanUserInput = {
 export type ItjCreateManyUnitInput = {
   id?: number
   lead_id: number
+  marketing_id?: number | null
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -1166,7 +1683,10 @@ export type ItjUpdateWithoutUnitInput = {
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1174,18 +1694,24 @@ export type ItjUpdateWithoutUnitInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lead?: Prisma.LeadUpdateOneRequiredWithoutItjNestedInput
+  marketing?: Prisma.UserUpdateOneWithoutItj_diajukanNestedInput
   diputuskanUser?: Prisma.UserUpdateOneWithoutItj_diputuskanNestedInput
   reviews?: Prisma.ItjReviewUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUpdateOneWithoutItjNestedInput
 }
 
 export type ItjUncheckedUpdateWithoutUnitInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1194,16 +1720,21 @@ export type ItjUncheckedUpdateWithoutUnitInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateOneWithoutItjNestedInput
 }
 
 export type ItjUncheckedUpdateManyWithoutUnitInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   lead_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1216,11 +1747,15 @@ export type ItjUncheckedUpdateManyWithoutUnitInput = {
 export type ItjCreateManyLeadInput = {
   id?: number
   unit_id: number
+  marketing_id?: number | null
   status?: $Enums.StatusItj
   nik: string
   nama_ktp: string
-  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar: $Enums.MetodeBayar
   tenor?: number | null
   diajukan_at?: Date | string
@@ -1235,7 +1770,10 @@ export type ItjUpdateWithoutLeadInput = {
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1243,18 +1781,24 @@ export type ItjUpdateWithoutLeadInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutItjNestedInput
+  marketing?: Prisma.UserUpdateOneWithoutItj_diajukanNestedInput
   diputuskanUser?: Prisma.UserUpdateOneWithoutItj_diputuskanNestedInput
   reviews?: Prisma.ItjReviewUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUpdateOneWithoutItjNestedInput
 }
 
 export type ItjUncheckedUpdateWithoutLeadInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1263,16 +1807,21 @@ export type ItjUncheckedUpdateWithoutLeadInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutItjNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateOneWithoutItjNestedInput
 }
 
 export type ItjUncheckedUpdateManyWithoutLeadInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   status?: Prisma.EnumStatusItjFieldUpdateOperationsInput | $Enums.StatusItj
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  nominal_dibayar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   tenor?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   diajukan_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1317,11 +1866,15 @@ export type ItjSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   id?: boolean
   lead_id?: boolean
   unit_id?: boolean
+  marketing_id?: boolean
   status?: boolean
   nik?: boolean
   nama_ktp?: boolean
   nominal?: boolean
+  harga_deal?: boolean
+  target_itj?: boolean
   target_dp?: boolean
+  nominal_dibayar?: boolean
   metode_bayar?: boolean
   tenor?: boolean
   diajukan_at?: boolean
@@ -1331,8 +1884,10 @@ export type ItjSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   updated_at?: boolean
   lead?: boolean | Prisma.LeadDefaultArgs<ExtArgs>
   unit?: boolean | Prisma.MasterUnitDefaultArgs<ExtArgs>
+  marketing?: boolean | Prisma.Itj$marketingArgs<ExtArgs>
   diputuskanUser?: boolean | Prisma.Itj$diputuskanUserArgs<ExtArgs>
   reviews?: boolean | Prisma.Itj$reviewsArgs<ExtArgs>
+  transaksi?: boolean | Prisma.Itj$transaksiArgs<ExtArgs>
   _count?: boolean | Prisma.ItjCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["itj"]>
 
@@ -1342,11 +1897,15 @@ export type ItjSelectScalar = {
   id?: boolean
   lead_id?: boolean
   unit_id?: boolean
+  marketing_id?: boolean
   status?: boolean
   nik?: boolean
   nama_ktp?: boolean
   nominal?: boolean
+  harga_deal?: boolean
+  target_itj?: boolean
   target_dp?: boolean
+  nominal_dibayar?: boolean
   metode_bayar?: boolean
   tenor?: boolean
   diajukan_at?: boolean
@@ -1356,12 +1915,14 @@ export type ItjSelectScalar = {
   updated_at?: boolean
 }
 
-export type ItjOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "lead_id" | "unit_id" | "status" | "nik" | "nama_ktp" | "nominal" | "target_dp" | "metode_bayar" | "tenor" | "diajukan_at" | "diputuskan_at" | "diputuskan_oleh" | "created_at" | "updated_at", ExtArgs["result"]["itj"]>
+export type ItjOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "lead_id" | "unit_id" | "marketing_id" | "status" | "nik" | "nama_ktp" | "nominal" | "harga_deal" | "target_itj" | "target_dp" | "nominal_dibayar" | "metode_bayar" | "tenor" | "diajukan_at" | "diputuskan_at" | "diputuskan_oleh" | "created_at" | "updated_at", ExtArgs["result"]["itj"]>
 export type ItjInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lead?: boolean | Prisma.LeadDefaultArgs<ExtArgs>
   unit?: boolean | Prisma.MasterUnitDefaultArgs<ExtArgs>
+  marketing?: boolean | Prisma.Itj$marketingArgs<ExtArgs>
   diputuskanUser?: boolean | Prisma.Itj$diputuskanUserArgs<ExtArgs>
   reviews?: boolean | Prisma.Itj$reviewsArgs<ExtArgs>
+  transaksi?: boolean | Prisma.Itj$transaksiArgs<ExtArgs>
   _count?: boolean | Prisma.ItjCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1370,18 +1931,24 @@ export type $ItjPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   objects: {
     lead: Prisma.$LeadPayload<ExtArgs>
     unit: Prisma.$MasterUnitPayload<ExtArgs>
+    marketing: Prisma.$UserPayload<ExtArgs> | null
     diputuskanUser: Prisma.$UserPayload<ExtArgs> | null
     reviews: Prisma.$ItjReviewPayload<ExtArgs>[]
+    transaksi: Prisma.$TransaksiPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     lead_id: number
     unit_id: number
+    marketing_id: number | null
     status: $Enums.StatusItj
     nik: string
     nama_ktp: string
     nominal: runtime.Decimal
+    harga_deal: runtime.Decimal
+    target_itj: runtime.Decimal
     target_dp: runtime.Decimal
+    nominal_dibayar: runtime.Decimal
     metode_bayar: $Enums.MetodeBayar
     tenor: number | null
     diajukan_at: Date
@@ -1731,8 +2298,10 @@ export interface Prisma__ItjClient<T, Null = never, ExtArgs extends runtime.Type
   readonly [Symbol.toStringTag]: "PrismaPromise"
   lead<T extends Prisma.LeadDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeadDefaultArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   unit<T extends Prisma.MasterUnitDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MasterUnitDefaultArgs<ExtArgs>>): Prisma.Prisma__MasterUnitClient<runtime.Types.Result.GetResult<Prisma.$MasterUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  marketing<T extends Prisma.Itj$marketingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Itj$marketingArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   diputuskanUser<T extends Prisma.Itj$diputuskanUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Itj$diputuskanUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   reviews<T extends Prisma.Itj$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Itj$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItjReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transaksi<T extends Prisma.Itj$transaksiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Itj$transaksiArgs<ExtArgs>>): Prisma.Prisma__TransaksiClient<runtime.Types.Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1765,11 +2334,15 @@ export interface ItjFieldRefs {
   readonly id: Prisma.FieldRef<"Itj", 'Int'>
   readonly lead_id: Prisma.FieldRef<"Itj", 'Int'>
   readonly unit_id: Prisma.FieldRef<"Itj", 'Int'>
+  readonly marketing_id: Prisma.FieldRef<"Itj", 'Int'>
   readonly status: Prisma.FieldRef<"Itj", 'StatusItj'>
   readonly nik: Prisma.FieldRef<"Itj", 'String'>
   readonly nama_ktp: Prisma.FieldRef<"Itj", 'String'>
   readonly nominal: Prisma.FieldRef<"Itj", 'Decimal'>
+  readonly harga_deal: Prisma.FieldRef<"Itj", 'Decimal'>
+  readonly target_itj: Prisma.FieldRef<"Itj", 'Decimal'>
   readonly target_dp: Prisma.FieldRef<"Itj", 'Decimal'>
+  readonly nominal_dibayar: Prisma.FieldRef<"Itj", 'Decimal'>
   readonly metode_bayar: Prisma.FieldRef<"Itj", 'MetodeBayar'>
   readonly tenor: Prisma.FieldRef<"Itj", 'Int'>
   readonly diajukan_at: Prisma.FieldRef<"Itj", 'DateTime'>
@@ -2125,6 +2698,25 @@ export type ItjDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
+ * Itj.marketing
+ */
+export type Itj$marketingArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
+}
+
+/**
  * Itj.diputuskanUser
  */
 export type Itj$diputuskanUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2165,6 +2757,25 @@ export type Itj$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   distinct?: Prisma.ItjReviewScalarFieldEnum | Prisma.ItjReviewScalarFieldEnum[]
+}
+
+/**
+ * Itj.transaksi
+ */
+export type Itj$transaksiArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Transaksi
+   */
+  select?: Prisma.TransaksiSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Transaksi
+   */
+  omit?: Prisma.TransaksiOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TransaksiInclude<ExtArgs> | null
+  where?: Prisma.TransaksiWhereInput
 }
 
 /**

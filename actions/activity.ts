@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { activitySchema, ActivityInput } from "@/schemas/activity.schema";
 import { getLeadTahap, LeadTahap } from "@/lib/lead-utils";
@@ -44,7 +45,7 @@ export interface SerializedLeadDetail {
   tahap: LeadTahap;
   survei_jadwal_at: Date | null;
   survei_selesai_at: Date | null;
-  closing_at: Date | null;
+  closing_at?: Date | null;
   lost_at: Date | null;
   lost_reason: string | null;
   marketing_id: number | null;
@@ -162,6 +163,15 @@ export async function createActivity(
       };
     }
 
+    const session = await auth();
+    const userId = Number(session?.user?.id);
+    if (!Number.isSafeInteger(userId) || userId <= 0) {
+      return {
+        success: false,
+        message: "Silakan login kembali",
+      };
+    }
+
     const { lead_id, jenis, hasil, catatan, tgl_follow_up } = parsed.data;
 
     // Check if parent lead exists
@@ -187,20 +197,24 @@ export async function createActivity(
       };
     }
 
-    // Phase 3 mandate: Saving this DOES NOT change lead milestones, it only creates an Aktivitas record
+    // Maintain last_activity_at and next_follow_up_at on Lead atomically
     const [createdActivity] = await prisma.$transaction([
       prisma.aktivitas.create({
         data: {
           lead_id,
+          user_id: userId,
           jenis,
           hasil,
           catatan: catatan || null,
           tgl_follow_up: followUpDate,
+          created_at: now,
         },
       }),
       prisma.lead.update({
         where: { id: lead_id },
         data: {
+          last_activity_at: now,
+          next_follow_up_at: followUpDate,
           updated_at: now,
         },
       }),

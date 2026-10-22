@@ -15,9 +15,12 @@ import {
   Layers,
   LucideIcon,
   Sparkles,
+  Contact,
+  Banknote,
 } from "lucide-react";
 import { useSidebar } from "./SidebarContext";
 import { cn } from "@/lib/utils";
+import NpkrLogo from "../npkr-logo";
 
 export type RoleType = "marketing" | "admin" | "manager" | "MARKETING" | "ADMIN" | "MANAGER";
 
@@ -35,23 +38,27 @@ export const ROLE_NAV_ITEMS: Record<string, NavItem[]> = {
   marketing: [
     { title: "Dashboard", href: "/marketing/dashboard", icon: LayoutDashboard },
     { title: "Lead", href: "/marketing/lead", icon: Users },
+    { title: "Transaksi", href: "/marketing/transaksi", icon: ReceiptText },
     { title: "Unit", href: "/marketing/unit", icon: Building2 },
     { title: "ITJ", href: "/marketing/itj", icon: FileCheck2 },
     { title: "Laporan", href: "/marketing/laporan", icon: BarChart3 },
   ],
   admin: [
     { title: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-    { title: "Review ITJ", href: "/admin/itj", icon: FileCheck2 },
     { title: "Transaksi", href: "/admin/transaksi", icon: ReceiptText },
     { title: "Manajemen Lead", href: "/admin/lead", icon: Users },
+    { title: "Buku Induk Customer", href: "/admin/customer", icon: Contact },
     { title: "Master Unit", href: "/admin/master-unit", icon: Building2 },
   ],
   manager: [
-    { title: "Dashboard", href: "/manager", icon: LayoutDashboard },
+    { title: "Dashboard", href: "/manager/dashboard", icon: LayoutDashboard },
+    { title: "Laporan Keuangan", href: "/manager/keuangan", icon: Banknote },
     { title: "Manajemen Lead", href: "/manager/lead", icon: Users },
     { title: "Pantauan Transaksi", href: "/manager/transaksi", icon: ReceiptText },
+    { title: "Buku Induk Customer", href: "/manager/customer", icon: Contact },
+    { title: "Inventaris Unit", href: "/manager/unit", icon: Building2 },
     { title: "Tim Marketing", href: "/manager/tim", icon: Briefcase },
-    { title: "Laporan", href: "/manager/laporan", icon: BarChart3 },
+    { title: "Pusat Laporan", href: "/manager/laporan", icon: BarChart3 },
   ],
 };
 
@@ -115,8 +122,8 @@ export function Sidebar({ role, className = "" }: SidebarProps) {
           href={`/${normalizedRole}/dashboard`}
           className="flex items-center gap-2.5 focus:outline-none"
         >
-          <div className="w-8 h-8 rounded-md bg-carbon-ink text-white flex items-center justify-center font-bold text-sm tracking-wider shadow-subtle">
-            <Layers className="w-4 h-4 text-prism-teal" />
+          <div className="w-8 h-8 rounded-md flex items-center justify-center font-bold text-sm tracking-wider shadow-subtle">
+            <NpkrLogo className="w-6 h-6 text-prism-teal" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">

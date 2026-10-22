@@ -250,9 +250,17 @@ export type UserWhereInput = {
   updated_at?: Prisma.DateTimeFilter<"User"> | Date | string
   leads?: Prisma.LeadListRelationFilter
   transaksi?: Prisma.TransaksiListRelationFilter
-  pembayaran?: Prisma.PembayaranListRelationFilter
+  pembayaran_diterima?: Prisma.PembayaranListRelationFilter
+  itj_diajukan?: Prisma.ItjListRelationFilter
   itj_diputuskan?: Prisma.ItjListRelationFilter
   itj_reviews?: Prisma.ItjReviewListRelationFilter
+  transaksi_logs?: Prisma.TransaksiTahapLogListRelationFilter
+  aktivitas_log?: Prisma.AktivitasListRelationFilter
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiListRelationFilter
+  pembayaran_divoid?: Prisma.PembayaranListRelationFilter
+  inspeksi_bast?: Prisma.InspeksiBASTListRelationFilter
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogListRelationFilter
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -267,9 +275,17 @@ export type UserOrderByWithRelationInput = {
   updated_at?: Prisma.SortOrder
   leads?: Prisma.LeadOrderByRelationAggregateInput
   transaksi?: Prisma.TransaksiOrderByRelationAggregateInput
-  pembayaran?: Prisma.PembayaranOrderByRelationAggregateInput
+  pembayaran_diterima?: Prisma.PembayaranOrderByRelationAggregateInput
+  itj_diajukan?: Prisma.ItjOrderByRelationAggregateInput
   itj_diputuskan?: Prisma.ItjOrderByRelationAggregateInput
   itj_reviews?: Prisma.ItjReviewOrderByRelationAggregateInput
+  transaksi_logs?: Prisma.TransaksiTahapLogOrderByRelationAggregateInput
+  aktivitas_log?: Prisma.AktivitasOrderByRelationAggregateInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiOrderByRelationAggregateInput
+  pembayaran_divoid?: Prisma.PembayaranOrderByRelationAggregateInput
+  inspeksi_bast?: Prisma.InspeksiBASTOrderByRelationAggregateInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogOrderByRelationAggregateInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogOrderByRelationAggregateInput
   _relevance?: Prisma.UserOrderByRelevanceInput
 }
 
@@ -288,9 +304,17 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updated_at?: Prisma.DateTimeFilter<"User"> | Date | string
   leads?: Prisma.LeadListRelationFilter
   transaksi?: Prisma.TransaksiListRelationFilter
-  pembayaran?: Prisma.PembayaranListRelationFilter
+  pembayaran_diterima?: Prisma.PembayaranListRelationFilter
+  itj_diajukan?: Prisma.ItjListRelationFilter
   itj_diputuskan?: Prisma.ItjListRelationFilter
   itj_reviews?: Prisma.ItjReviewListRelationFilter
+  transaksi_logs?: Prisma.TransaksiTahapLogListRelationFilter
+  aktivitas_log?: Prisma.AktivitasListRelationFilter
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiListRelationFilter
+  pembayaran_divoid?: Prisma.PembayaranListRelationFilter
+  inspeksi_bast?: Prisma.InspeksiBASTListRelationFilter
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogListRelationFilter
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogListRelationFilter
 }, "id" | "username" | "no_hp">
 
 export type UserOrderByWithAggregationInput = {
@@ -336,9 +360,17 @@ export type UserCreateInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -353,9 +385,17 @@ export type UserUncheckedCreateInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserUpdateInput = {
@@ -369,9 +409,17 @@ export type UserUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -386,9 +434,17 @@ export type UserUncheckedUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -526,10 +582,40 @@ export type UserUpdateOneWithoutLeadsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLeadsInput, Prisma.UserUpdateWithoutLeadsInput>, Prisma.UserUncheckedUpdateWithoutLeadsInput>
 }
 
+export type UserCreateNestedOneWithoutAktivitas_logInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAktivitas_logInput, Prisma.UserUncheckedCreateWithoutAktivitas_logInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAktivitas_logInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAktivitas_logNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAktivitas_logInput, Prisma.UserUncheckedCreateWithoutAktivitas_logInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAktivitas_logInput
+  upsert?: Prisma.UserUpsertWithoutAktivitas_logInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAktivitas_logInput, Prisma.UserUpdateWithoutAktivitas_logInput>, Prisma.UserUncheckedUpdateWithoutAktivitas_logInput>
+}
+
+export type UserCreateNestedOneWithoutItj_diajukanInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutItj_diajukanInput, Prisma.UserUncheckedCreateWithoutItj_diajukanInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutItj_diajukanInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
 export type UserCreateNestedOneWithoutItj_diputuskanInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutItj_diputuskanInput, Prisma.UserUncheckedCreateWithoutItj_diputuskanInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutItj_diputuskanInput
   connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutItj_diajukanNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutItj_diajukanInput, Prisma.UserUncheckedCreateWithoutItj_diajukanInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutItj_diajukanInput
+  upsert?: Prisma.UserUpsertWithoutItj_diajukanInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutItj_diajukanInput, Prisma.UserUpdateWithoutItj_diajukanInput>, Prisma.UserUncheckedUpdateWithoutItj_diajukanInput>
 }
 
 export type UserUpdateOneWithoutItj_diputuskanNestedInput = {
@@ -570,18 +656,108 @@ export type UserUpdateOneRequiredWithoutTransaksiNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTransaksiInput, Prisma.UserUpdateWithoutTransaksiInput>, Prisma.UserUncheckedUpdateWithoutTransaksiInput>
 }
 
-export type UserCreateNestedOneWithoutPembayaranInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPembayaranInput, Prisma.UserUncheckedCreateWithoutPembayaranInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPembayaranInput
+export type UserCreateNestedOneWithoutPengajuan_kpr_logsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPengajuan_kpr_logsInput, Prisma.UserUncheckedCreateWithoutPengajuan_kpr_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPengajuan_kpr_logsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutPembayaranNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPembayaranInput, Prisma.UserUncheckedCreateWithoutPembayaranInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPembayaranInput
-  upsert?: Prisma.UserUpsertWithoutPembayaranInput
+export type UserUpdateOneRequiredWithoutPengajuan_kpr_logsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPengajuan_kpr_logsInput, Prisma.UserUncheckedCreateWithoutPengajuan_kpr_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPengajuan_kpr_logsInput
+  upsert?: Prisma.UserUpsertWithoutPengajuan_kpr_logsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPembayaranInput, Prisma.UserUpdateWithoutPembayaranInput>, Prisma.UserUncheckedUpdateWithoutPembayaranInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPengajuan_kpr_logsInput, Prisma.UserUpdateWithoutPengajuan_kpr_logsInput>, Prisma.UserUncheckedUpdateWithoutPengajuan_kpr_logsInput>
+}
+
+export type UserCreateNestedOneWithoutTransaksi_logsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTransaksi_logsInput, Prisma.UserUncheckedCreateWithoutTransaksi_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTransaksi_logsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTransaksi_logsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTransaksi_logsInput, Prisma.UserUncheckedCreateWithoutTransaksi_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTransaksi_logsInput
+  upsert?: Prisma.UserUpsertWithoutTransaksi_logsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTransaksi_logsInput, Prisma.UserUpdateWithoutTransaksi_logsInput>, Prisma.UserUncheckedUpdateWithoutTransaksi_logsInput>
+}
+
+export type UserCreateNestedOneWithoutDokumen_diverifikasiInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDokumen_diverifikasiInput, Prisma.UserUncheckedCreateWithoutDokumen_diverifikasiInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDokumen_diverifikasiInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDokumen_diverifikasiNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDokumen_diverifikasiInput, Prisma.UserUncheckedCreateWithoutDokumen_diverifikasiInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDokumen_diverifikasiInput
+  upsert?: Prisma.UserUpsertWithoutDokumen_diverifikasiInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDokumen_diverifikasiInput, Prisma.UserUpdateWithoutDokumen_diverifikasiInput>, Prisma.UserUncheckedUpdateWithoutDokumen_diverifikasiInput>
+}
+
+export type UserCreateNestedOneWithoutInspeksi_bastInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bastInput, Prisma.UserUncheckedCreateWithoutInspeksi_bastInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInspeksi_bastInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutInspeksi_bastNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bastInput, Prisma.UserUncheckedCreateWithoutInspeksi_bastInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInspeksi_bastInput
+  upsert?: Prisma.UserUpsertWithoutInspeksi_bastInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInspeksi_bastInput, Prisma.UserUpdateWithoutInspeksi_bastInput>, Prisma.UserUncheckedUpdateWithoutInspeksi_bastInput>
+}
+
+export type UserCreateNestedOneWithoutInspeksi_bast_logsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bast_logsInput, Prisma.UserUncheckedCreateWithoutInspeksi_bast_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInspeksi_bast_logsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutInspeksi_bast_logsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bast_logsInput, Prisma.UserUncheckedCreateWithoutInspeksi_bast_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInspeksi_bast_logsInput
+  upsert?: Prisma.UserUpsertWithoutInspeksi_bast_logsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInspeksi_bast_logsInput, Prisma.UserUpdateWithoutInspeksi_bast_logsInput>, Prisma.UserUncheckedUpdateWithoutInspeksi_bast_logsInput>
+}
+
+export type UserCreateNestedOneWithoutPembayaran_diterimaInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_diterimaInput, Prisma.UserUncheckedCreateWithoutPembayaran_diterimaInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPembayaran_diterimaInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutPembayaran_divoidInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_divoidInput, Prisma.UserUncheckedCreateWithoutPembayaran_divoidInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPembayaran_divoidInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPembayaran_diterimaNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_diterimaInput, Prisma.UserUncheckedCreateWithoutPembayaran_diterimaInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPembayaran_diterimaInput
+  upsert?: Prisma.UserUpsertWithoutPembayaran_diterimaInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPembayaran_diterimaInput, Prisma.UserUpdateWithoutPembayaran_diterimaInput>, Prisma.UserUncheckedUpdateWithoutPembayaran_diterimaInput>
+}
+
+export type UserUpdateOneWithoutPembayaran_divoidNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_divoidInput, Prisma.UserUncheckedCreateWithoutPembayaran_divoidInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPembayaran_divoidInput
+  upsert?: Prisma.UserUpsertWithoutPembayaran_divoidInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPembayaran_divoidInput, Prisma.UserUpdateWithoutPembayaran_divoidInput>, Prisma.UserUncheckedUpdateWithoutPembayaran_divoidInput>
 }
 
 export type UserCreateWithoutLeadsInput = {
@@ -594,9 +770,17 @@ export type UserCreateWithoutLeadsInput = {
   created_at?: Date | string
   updated_at?: Date | string
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutLeadsInput = {
@@ -610,9 +794,17 @@ export type UserUncheckedCreateWithoutLeadsInput = {
   created_at?: Date | string
   updated_at?: Date | string
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutLeadsInput = {
@@ -641,9 +833,17 @@ export type UserUpdateWithoutLeadsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLeadsInput = {
@@ -657,9 +857,179 @@ export type UserUncheckedUpdateWithoutLeadsInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserCreateWithoutAktivitas_logInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutAktivitas_logInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutAktivitas_logInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAktivitas_logInput, Prisma.UserUncheckedCreateWithoutAktivitas_logInput>
+}
+
+export type UserUpsertWithoutAktivitas_logInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAktivitas_logInput, Prisma.UserUncheckedUpdateWithoutAktivitas_logInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAktivitas_logInput, Prisma.UserUncheckedCreateWithoutAktivitas_logInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAktivitas_logInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAktivitas_logInput, Prisma.UserUncheckedUpdateWithoutAktivitas_logInput>
+}
+
+export type UserUpdateWithoutAktivitas_logInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAktivitas_logInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserCreateWithoutItj_diajukanInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutItj_diajukanInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutItj_diajukanInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutItj_diajukanInput, Prisma.UserUncheckedCreateWithoutItj_diajukanInput>
 }
 
 export type UserCreateWithoutItj_diputuskanInput = {
@@ -673,8 +1043,16 @@ export type UserCreateWithoutItj_diputuskanInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
   itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutItj_diputuskanInput = {
@@ -689,13 +1067,79 @@ export type UserUncheckedCreateWithoutItj_diputuskanInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
   itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutItj_diputuskanInput = {
   where: Prisma.UserWhereUniqueInput
   create: Prisma.XOR<Prisma.UserCreateWithoutItj_diputuskanInput, Prisma.UserUncheckedCreateWithoutItj_diputuskanInput>
+}
+
+export type UserUpsertWithoutItj_diajukanInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutItj_diajukanInput, Prisma.UserUncheckedUpdateWithoutItj_diajukanInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutItj_diajukanInput, Prisma.UserUncheckedCreateWithoutItj_diajukanInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutItj_diajukanInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutItj_diajukanInput, Prisma.UserUncheckedUpdateWithoutItj_diajukanInput>
+}
+
+export type UserUpdateWithoutItj_diajukanInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutItj_diajukanInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUpsertWithoutItj_diputuskanInput = {
@@ -720,8 +1164,16 @@ export type UserUpdateWithoutItj_diputuskanInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
   itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutItj_diputuskanInput = {
@@ -736,8 +1188,16 @@ export type UserUncheckedUpdateWithoutItj_diputuskanInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
   itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutItj_reviewsInput = {
@@ -751,8 +1211,16 @@ export type UserCreateWithoutItj_reviewsInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutItj_reviewsInput = {
@@ -767,8 +1235,16 @@ export type UserUncheckedCreateWithoutItj_reviewsInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutItj_reviewsInput = {
@@ -798,8 +1274,16 @@ export type UserUpdateWithoutItj_reviewsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutItj_reviewsInput = {
@@ -814,8 +1298,16 @@ export type UserUncheckedUpdateWithoutItj_reviewsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutTransaksiInput = {
@@ -828,9 +1320,17 @@ export type UserCreateWithoutTransaksiInput = {
   created_at?: Date | string
   updated_at?: Date | string
   leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutTransaksiInput = {
@@ -844,9 +1344,17 @@ export type UserUncheckedCreateWithoutTransaksiInput = {
   created_at?: Date | string
   updated_at?: Date | string
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
-  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutTransaksiInput = {
@@ -875,9 +1383,17 @@ export type UserUpdateWithoutTransaksiInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransaksiInput = {
@@ -891,12 +1407,20 @@ export type UserUncheckedUpdateWithoutTransaksiInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
-  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
-export type UserCreateWithoutPembayaranInput = {
+export type UserCreateWithoutPengajuan_kpr_logsInput = {
   username: string
   nama: string
   no_hp: string
@@ -907,11 +1431,19 @@ export type UserCreateWithoutPembayaranInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
 }
 
-export type UserUncheckedCreateWithoutPembayaranInput = {
+export type UserUncheckedCreateWithoutPengajuan_kpr_logsInput = {
   id?: number
   username: string
   nama: string
@@ -923,27 +1455,35 @@ export type UserUncheckedCreateWithoutPembayaranInput = {
   updated_at?: Date | string
   leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
   itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
   itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
 }
 
-export type UserCreateOrConnectWithoutPembayaranInput = {
+export type UserCreateOrConnectWithoutPengajuan_kpr_logsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutPembayaranInput, Prisma.UserUncheckedCreateWithoutPembayaranInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPengajuan_kpr_logsInput, Prisma.UserUncheckedCreateWithoutPengajuan_kpr_logsInput>
 }
 
-export type UserUpsertWithoutPembayaranInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutPembayaranInput, Prisma.UserUncheckedUpdateWithoutPembayaranInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutPembayaranInput, Prisma.UserUncheckedCreateWithoutPembayaranInput>
+export type UserUpsertWithoutPengajuan_kpr_logsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPengajuan_kpr_logsInput, Prisma.UserUncheckedUpdateWithoutPengajuan_kpr_logsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPengajuan_kpr_logsInput, Prisma.UserUncheckedCreateWithoutPengajuan_kpr_logsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutPembayaranInput = {
+export type UserUpdateToOneWithWhereWithoutPengajuan_kpr_logsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutPembayaranInput, Prisma.UserUncheckedUpdateWithoutPembayaranInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPengajuan_kpr_logsInput, Prisma.UserUncheckedUpdateWithoutPengajuan_kpr_logsInput>
 }
 
-export type UserUpdateWithoutPembayaranInput = {
+export type UserUpdateWithoutPengajuan_kpr_logsInput = {
   username?: Prisma.StringFieldUpdateOperationsInput | string
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
@@ -954,11 +1494,19 @@ export type UserUpdateWithoutPembayaranInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
 }
 
-export type UserUncheckedUpdateWithoutPembayaranInput = {
+export type UserUncheckedUpdateWithoutPengajuan_kpr_logsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   username?: Prisma.StringFieldUpdateOperationsInput | string
   nama?: Prisma.StringFieldUpdateOperationsInput | string
@@ -970,8 +1518,676 @@ export type UserUncheckedUpdateWithoutPembayaranInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
   itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
   itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+}
+
+export type UserCreateWithoutTransaksi_logsInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutTransaksi_logsInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutTransaksi_logsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTransaksi_logsInput, Prisma.UserUncheckedCreateWithoutTransaksi_logsInput>
+}
+
+export type UserUpsertWithoutTransaksi_logsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTransaksi_logsInput, Prisma.UserUncheckedUpdateWithoutTransaksi_logsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTransaksi_logsInput, Prisma.UserUncheckedCreateWithoutTransaksi_logsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTransaksi_logsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTransaksi_logsInput, Prisma.UserUncheckedUpdateWithoutTransaksi_logsInput>
+}
+
+export type UserUpdateWithoutTransaksi_logsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTransaksi_logsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserCreateWithoutDokumen_diverifikasiInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutDokumen_diverifikasiInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutDokumen_diverifikasiInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDokumen_diverifikasiInput, Prisma.UserUncheckedCreateWithoutDokumen_diverifikasiInput>
+}
+
+export type UserUpsertWithoutDokumen_diverifikasiInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDokumen_diverifikasiInput, Prisma.UserUncheckedUpdateWithoutDokumen_diverifikasiInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDokumen_diverifikasiInput, Prisma.UserUncheckedCreateWithoutDokumen_diverifikasiInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDokumen_diverifikasiInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDokumen_diverifikasiInput, Prisma.UserUncheckedUpdateWithoutDokumen_diverifikasiInput>
+}
+
+export type UserUpdateWithoutDokumen_diverifikasiInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDokumen_diverifikasiInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserCreateWithoutInspeksi_bastInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutInspeksi_bastInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutInspeksi_bastInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bastInput, Prisma.UserUncheckedCreateWithoutInspeksi_bastInput>
+}
+
+export type UserUpsertWithoutInspeksi_bastInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInspeksi_bastInput, Prisma.UserUncheckedUpdateWithoutInspeksi_bastInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bastInput, Prisma.UserUncheckedCreateWithoutInspeksi_bastInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInspeksi_bastInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInspeksi_bastInput, Prisma.UserUncheckedUpdateWithoutInspeksi_bastInput>
+}
+
+export type UserUpdateWithoutInspeksi_bastInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInspeksi_bastInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserCreateWithoutInspeksi_bast_logsInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutInspeksi_bast_logsInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutInspeksi_bast_logsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bast_logsInput, Prisma.UserUncheckedCreateWithoutInspeksi_bast_logsInput>
+}
+
+export type UserUpsertWithoutInspeksi_bast_logsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInspeksi_bast_logsInput, Prisma.UserUncheckedUpdateWithoutInspeksi_bast_logsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInspeksi_bast_logsInput, Prisma.UserUncheckedCreateWithoutInspeksi_bast_logsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInspeksi_bast_logsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInspeksi_bast_logsInput, Prisma.UserUncheckedUpdateWithoutInspeksi_bast_logsInput>
+}
+
+export type UserUpdateWithoutInspeksi_bast_logsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInspeksi_bast_logsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserCreateWithoutPembayaran_diterimaInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutPembayaran_diterimaInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutPembayaran_diterimaInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_diterimaInput, Prisma.UserUncheckedCreateWithoutPembayaran_diterimaInput>
+}
+
+export type UserCreateWithoutPembayaran_divoidInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutPembayaran_divoidInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  itj_diputuskan?: Prisma.ItjUncheckedCreateNestedManyWithoutDiputuskanUserInput
+  itj_reviews?: Prisma.ItjReviewUncheckedCreateNestedManyWithoutReviewerInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutPembayaran_divoidInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_divoidInput, Prisma.UserUncheckedCreateWithoutPembayaran_divoidInput>
+}
+
+export type UserUpsertWithoutPembayaran_diterimaInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPembayaran_diterimaInput, Prisma.UserUncheckedUpdateWithoutPembayaran_diterimaInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_diterimaInput, Prisma.UserUncheckedCreateWithoutPembayaran_diterimaInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPembayaran_diterimaInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPembayaran_diterimaInput, Prisma.UserUncheckedUpdateWithoutPembayaran_diterimaInput>
+}
+
+export type UserUpdateWithoutPembayaran_diterimaInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPembayaran_diterimaInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUpsertWithoutPembayaran_divoidInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPembayaran_divoidInput, Prisma.UserUncheckedUpdateWithoutPembayaran_divoidInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPembayaran_divoidInput, Prisma.UserUncheckedCreateWithoutPembayaran_divoidInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPembayaran_divoidInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPembayaran_divoidInput, Prisma.UserUncheckedUpdateWithoutPembayaran_divoidInput>
+}
+
+export type UserUpdateWithoutPembayaran_divoidInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPembayaran_divoidInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  itj_diputuskan?: Prisma.ItjUncheckedUpdateManyWithoutDiputuskanUserNestedInput
+  itj_reviews?: Prisma.ItjReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 
@@ -982,17 +2198,33 @@ export type UserUncheckedUpdateWithoutPembayaranInput = {
 export type UserCountOutputType = {
   leads: number
   transaksi: number
-  pembayaran: number
+  pembayaran_diterima: number
+  itj_diajukan: number
   itj_diputuskan: number
   itj_reviews: number
+  transaksi_logs: number
+  aktivitas_log: number
+  dokumen_diverifikasi: number
+  pembayaran_divoid: number
+  inspeksi_bast: number
+  inspeksi_bast_logs: number
+  pengajuan_kpr_logs: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   leads?: boolean | UserCountOutputTypeCountLeadsArgs
   transaksi?: boolean | UserCountOutputTypeCountTransaksiArgs
-  pembayaran?: boolean | UserCountOutputTypeCountPembayaranArgs
+  pembayaran_diterima?: boolean | UserCountOutputTypeCountPembayaran_diterimaArgs
+  itj_diajukan?: boolean | UserCountOutputTypeCountItj_diajukanArgs
   itj_diputuskan?: boolean | UserCountOutputTypeCountItj_diputuskanArgs
   itj_reviews?: boolean | UserCountOutputTypeCountItj_reviewsArgs
+  transaksi_logs?: boolean | UserCountOutputTypeCountTransaksi_logsArgs
+  aktivitas_log?: boolean | UserCountOutputTypeCountAktivitas_logArgs
+  dokumen_diverifikasi?: boolean | UserCountOutputTypeCountDokumen_diverifikasiArgs
+  pembayaran_divoid?: boolean | UserCountOutputTypeCountPembayaran_divoidArgs
+  inspeksi_bast?: boolean | UserCountOutputTypeCountInspeksi_bastArgs
+  inspeksi_bast_logs?: boolean | UserCountOutputTypeCountInspeksi_bast_logsArgs
+  pengajuan_kpr_logs?: boolean | UserCountOutputTypeCountPengajuan_kpr_logsArgs
 }
 
 /**
@@ -1022,8 +2254,15 @@ export type UserCountOutputTypeCountTransaksiArgs<ExtArgs extends runtime.Types.
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountPembayaranArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountPembayaran_diterimaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PembayaranWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountItj_diajukanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ItjWhereInput
 }
 
 /**
@@ -1040,6 +2279,55 @@ export type UserCountOutputTypeCountItj_reviewsArgs<ExtArgs extends runtime.Type
   where?: Prisma.ItjReviewWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTransaksi_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TransaksiTahapLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAktivitas_logArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AktivitasWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountDokumen_diverifikasiArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DokumenTransaksiWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPembayaran_divoidArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PembayaranWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInspeksi_bastArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InspeksiBASTWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInspeksi_bast_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InspeksiBASTLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPengajuan_kpr_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PengajuanKPRLogWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1053,9 +2341,17 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updated_at?: boolean
   leads?: boolean | Prisma.User$leadsArgs<ExtArgs>
   transaksi?: boolean | Prisma.User$transaksiArgs<ExtArgs>
-  pembayaran?: boolean | Prisma.User$pembayaranArgs<ExtArgs>
+  pembayaran_diterima?: boolean | Prisma.User$pembayaran_diterimaArgs<ExtArgs>
+  itj_diajukan?: boolean | Prisma.User$itj_diajukanArgs<ExtArgs>
   itj_diputuskan?: boolean | Prisma.User$itj_diputuskanArgs<ExtArgs>
   itj_reviews?: boolean | Prisma.User$itj_reviewsArgs<ExtArgs>
+  transaksi_logs?: boolean | Prisma.User$transaksi_logsArgs<ExtArgs>
+  aktivitas_log?: boolean | Prisma.User$aktivitas_logArgs<ExtArgs>
+  dokumen_diverifikasi?: boolean | Prisma.User$dokumen_diverifikasiArgs<ExtArgs>
+  pembayaran_divoid?: boolean | Prisma.User$pembayaran_divoidArgs<ExtArgs>
+  inspeksi_bast?: boolean | Prisma.User$inspeksi_bastArgs<ExtArgs>
+  inspeksi_bast_logs?: boolean | Prisma.User$inspeksi_bast_logsArgs<ExtArgs>
+  pengajuan_kpr_logs?: boolean | Prisma.User$pengajuan_kpr_logsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1077,9 +2373,17 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   leads?: boolean | Prisma.User$leadsArgs<ExtArgs>
   transaksi?: boolean | Prisma.User$transaksiArgs<ExtArgs>
-  pembayaran?: boolean | Prisma.User$pembayaranArgs<ExtArgs>
+  pembayaran_diterima?: boolean | Prisma.User$pembayaran_diterimaArgs<ExtArgs>
+  itj_diajukan?: boolean | Prisma.User$itj_diajukanArgs<ExtArgs>
   itj_diputuskan?: boolean | Prisma.User$itj_diputuskanArgs<ExtArgs>
   itj_reviews?: boolean | Prisma.User$itj_reviewsArgs<ExtArgs>
+  transaksi_logs?: boolean | Prisma.User$transaksi_logsArgs<ExtArgs>
+  aktivitas_log?: boolean | Prisma.User$aktivitas_logArgs<ExtArgs>
+  dokumen_diverifikasi?: boolean | Prisma.User$dokumen_diverifikasiArgs<ExtArgs>
+  pembayaran_divoid?: boolean | Prisma.User$pembayaran_divoidArgs<ExtArgs>
+  inspeksi_bast?: boolean | Prisma.User$inspeksi_bastArgs<ExtArgs>
+  inspeksi_bast_logs?: boolean | Prisma.User$inspeksi_bast_logsArgs<ExtArgs>
+  pengajuan_kpr_logs?: boolean | Prisma.User$pengajuan_kpr_logsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1088,9 +2392,17 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     leads: Prisma.$LeadPayload<ExtArgs>[]
     transaksi: Prisma.$TransaksiPayload<ExtArgs>[]
-    pembayaran: Prisma.$PembayaranPayload<ExtArgs>[]
+    pembayaran_diterima: Prisma.$PembayaranPayload<ExtArgs>[]
+    itj_diajukan: Prisma.$ItjPayload<ExtArgs>[]
     itj_diputuskan: Prisma.$ItjPayload<ExtArgs>[]
     itj_reviews: Prisma.$ItjReviewPayload<ExtArgs>[]
+    transaksi_logs: Prisma.$TransaksiTahapLogPayload<ExtArgs>[]
+    aktivitas_log: Prisma.$AktivitasPayload<ExtArgs>[]
+    dokumen_diverifikasi: Prisma.$DokumenTransaksiPayload<ExtArgs>[]
+    pembayaran_divoid: Prisma.$PembayaranPayload<ExtArgs>[]
+    inspeksi_bast: Prisma.$InspeksiBASTPayload<ExtArgs>[]
+    inspeksi_bast_logs: Prisma.$InspeksiBASTLogPayload<ExtArgs>[]
+    pengajuan_kpr_logs: Prisma.$PengajuanKPRLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1444,9 +2756,17 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   leads<T extends Prisma.User$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   transaksi<T extends Prisma.User$transaksiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$transaksiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  pembayaran<T extends Prisma.User$pembayaranArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pembayaranArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PembayaranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pembayaran_diterima<T extends Prisma.User$pembayaran_diterimaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pembayaran_diterimaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PembayaranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  itj_diajukan<T extends Prisma.User$itj_diajukanArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$itj_diajukanArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   itj_diputuskan<T extends Prisma.User$itj_diputuskanArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$itj_diputuskanArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   itj_reviews<T extends Prisma.User$itj_reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$itj_reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItjReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  transaksi_logs<T extends Prisma.User$transaksi_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$transaksi_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransaksiTahapLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  aktivitas_log<T extends Prisma.User$aktivitas_logArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$aktivitas_logArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AktivitasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  dokumen_diverifikasi<T extends Prisma.User$dokumen_diverifikasiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$dokumen_diverifikasiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DokumenTransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pembayaran_divoid<T extends Prisma.User$pembayaran_divoidArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pembayaran_divoidArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PembayaranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  inspeksi_bast<T extends Prisma.User$inspeksi_bastArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inspeksi_bastArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  inspeksi_bast_logs<T extends Prisma.User$inspeksi_bast_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inspeksi_bast_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pengajuan_kpr_logs<T extends Prisma.User$pengajuan_kpr_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pengajuan_kpr_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PengajuanKPRLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1881,9 +3201,9 @@ export type User$transaksiArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * User.pembayaran
+ * User.pembayaran_diterima
  */
-export type User$pembayaranArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$pembayaran_diterimaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Pembayaran
    */
@@ -1902,6 +3222,30 @@ export type User$pembayaranArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.PembayaranScalarFieldEnum | Prisma.PembayaranScalarFieldEnum[]
+}
+
+/**
+ * User.itj_diajukan
+ */
+export type User$itj_diajukanArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Itj
+   */
+  select?: Prisma.ItjSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Itj
+   */
+  omit?: Prisma.ItjOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ItjInclude<ExtArgs> | null
+  where?: Prisma.ItjWhereInput
+  orderBy?: Prisma.ItjOrderByWithRelationInput | Prisma.ItjOrderByWithRelationInput[]
+  cursor?: Prisma.ItjWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ItjScalarFieldEnum | Prisma.ItjScalarFieldEnum[]
 }
 
 /**
@@ -1950,6 +3294,174 @@ export type User$itj_reviewsArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.ItjReviewScalarFieldEnum | Prisma.ItjReviewScalarFieldEnum[]
+}
+
+/**
+ * User.transaksi_logs
+ */
+export type User$transaksi_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TransaksiTahapLog
+   */
+  select?: Prisma.TransaksiTahapLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TransaksiTahapLog
+   */
+  omit?: Prisma.TransaksiTahapLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TransaksiTahapLogInclude<ExtArgs> | null
+  where?: Prisma.TransaksiTahapLogWhereInput
+  orderBy?: Prisma.TransaksiTahapLogOrderByWithRelationInput | Prisma.TransaksiTahapLogOrderByWithRelationInput[]
+  cursor?: Prisma.TransaksiTahapLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TransaksiTahapLogScalarFieldEnum | Prisma.TransaksiTahapLogScalarFieldEnum[]
+}
+
+/**
+ * User.aktivitas_log
+ */
+export type User$aktivitas_logArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Aktivitas
+   */
+  select?: Prisma.AktivitasSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Aktivitas
+   */
+  omit?: Prisma.AktivitasOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AktivitasInclude<ExtArgs> | null
+  where?: Prisma.AktivitasWhereInput
+  orderBy?: Prisma.AktivitasOrderByWithRelationInput | Prisma.AktivitasOrderByWithRelationInput[]
+  cursor?: Prisma.AktivitasWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AktivitasScalarFieldEnum | Prisma.AktivitasScalarFieldEnum[]
+}
+
+/**
+ * User.dokumen_diverifikasi
+ */
+export type User$dokumen_diverifikasiArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DokumenTransaksi
+   */
+  select?: Prisma.DokumenTransaksiSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DokumenTransaksi
+   */
+  omit?: Prisma.DokumenTransaksiOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DokumenTransaksiInclude<ExtArgs> | null
+  where?: Prisma.DokumenTransaksiWhereInput
+  orderBy?: Prisma.DokumenTransaksiOrderByWithRelationInput | Prisma.DokumenTransaksiOrderByWithRelationInput[]
+  cursor?: Prisma.DokumenTransaksiWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DokumenTransaksiScalarFieldEnum | Prisma.DokumenTransaksiScalarFieldEnum[]
+}
+
+/**
+ * User.pembayaran_divoid
+ */
+export type User$pembayaran_divoidArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Pembayaran
+   */
+  select?: Prisma.PembayaranSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Pembayaran
+   */
+  omit?: Prisma.PembayaranOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PembayaranInclude<ExtArgs> | null
+  where?: Prisma.PembayaranWhereInput
+  orderBy?: Prisma.PembayaranOrderByWithRelationInput | Prisma.PembayaranOrderByWithRelationInput[]
+  cursor?: Prisma.PembayaranWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PembayaranScalarFieldEnum | Prisma.PembayaranScalarFieldEnum[]
+}
+
+/**
+ * User.inspeksi_bast
+ */
+export type User$inspeksi_bastArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InspeksiBAST
+   */
+  select?: Prisma.InspeksiBASTSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InspeksiBAST
+   */
+  omit?: Prisma.InspeksiBASTOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InspeksiBASTInclude<ExtArgs> | null
+  where?: Prisma.InspeksiBASTWhereInput
+  orderBy?: Prisma.InspeksiBASTOrderByWithRelationInput | Prisma.InspeksiBASTOrderByWithRelationInput[]
+  cursor?: Prisma.InspeksiBASTWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InspeksiBASTScalarFieldEnum | Prisma.InspeksiBASTScalarFieldEnum[]
+}
+
+/**
+ * User.inspeksi_bast_logs
+ */
+export type User$inspeksi_bast_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InspeksiBASTLog
+   */
+  select?: Prisma.InspeksiBASTLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InspeksiBASTLog
+   */
+  omit?: Prisma.InspeksiBASTLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InspeksiBASTLogInclude<ExtArgs> | null
+  where?: Prisma.InspeksiBASTLogWhereInput
+  orderBy?: Prisma.InspeksiBASTLogOrderByWithRelationInput | Prisma.InspeksiBASTLogOrderByWithRelationInput[]
+  cursor?: Prisma.InspeksiBASTLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InspeksiBASTLogScalarFieldEnum | Prisma.InspeksiBASTLogScalarFieldEnum[]
+}
+
+/**
+ * User.pengajuan_kpr_logs
+ */
+export type User$pengajuan_kpr_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PengajuanKPRLog
+   */
+  select?: Prisma.PengajuanKPRLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PengajuanKPRLog
+   */
+  omit?: Prisma.PengajuanKPRLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PengajuanKPRLogInclude<ExtArgs> | null
+  where?: Prisma.PengajuanKPRLogWhereInput
+  orderBy?: Prisma.PengajuanKPRLogOrderByWithRelationInput | Prisma.PengajuanKPRLogOrderByWithRelationInput[]
+  cursor?: Prisma.PengajuanKPRLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PengajuanKPRLogScalarFieldEnum | Prisma.PengajuanKPRLogScalarFieldEnum[]
 }
 
 /**

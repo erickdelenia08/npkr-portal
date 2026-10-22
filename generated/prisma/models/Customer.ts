@@ -28,17 +28,14 @@ export type AggregateCustomer = {
 
 export type CustomerAvgAggregateOutputType = {
   id: number | null
-  lead_id: number | null
 }
 
 export type CustomerSumAggregateOutputType = {
   id: number | null
-  lead_id: number | null
 }
 
 export type CustomerMinAggregateOutputType = {
   id: number | null
-  lead_id: number | null
   nama_ktp: string | null
   nik: string | null
   tempat_lahir: string | null
@@ -51,7 +48,6 @@ export type CustomerMinAggregateOutputType = {
 
 export type CustomerMaxAggregateOutputType = {
   id: number | null
-  lead_id: number | null
   nama_ktp: string | null
   nik: string | null
   tempat_lahir: string | null
@@ -64,7 +60,6 @@ export type CustomerMaxAggregateOutputType = {
 
 export type CustomerCountAggregateOutputType = {
   id: number
-  lead_id: number
   nama_ktp: number
   nik: number
   tempat_lahir: number
@@ -79,17 +74,14 @@ export type CustomerCountAggregateOutputType = {
 
 export type CustomerAvgAggregateInputType = {
   id?: true
-  lead_id?: true
 }
 
 export type CustomerSumAggregateInputType = {
   id?: true
-  lead_id?: true
 }
 
 export type CustomerMinAggregateInputType = {
   id?: true
-  lead_id?: true
   nama_ktp?: true
   nik?: true
   tempat_lahir?: true
@@ -102,7 +94,6 @@ export type CustomerMinAggregateInputType = {
 
 export type CustomerMaxAggregateInputType = {
   id?: true
-  lead_id?: true
   nama_ktp?: true
   nik?: true
   tempat_lahir?: true
@@ -115,7 +106,6 @@ export type CustomerMaxAggregateInputType = {
 
 export type CustomerCountAggregateInputType = {
   id?: true
-  lead_id?: true
   nama_ktp?: true
   nik?: true
   tempat_lahir?: true
@@ -215,7 +205,6 @@ export type CustomerGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type CustomerGroupByOutputType = {
   id: number
-  lead_id: number
   nama_ktp: string
   nik: string
   tempat_lahir: string
@@ -251,7 +240,6 @@ export type CustomerWhereInput = {
   OR?: Prisma.CustomerWhereInput[]
   NOT?: Prisma.CustomerWhereInput | Prisma.CustomerWhereInput[]
   id?: Prisma.IntFilter<"Customer"> | number
-  lead_id?: Prisma.IntFilter<"Customer"> | number
   nama_ktp?: Prisma.StringFilter<"Customer"> | string
   nik?: Prisma.StringFilter<"Customer"> | string
   tempat_lahir?: Prisma.StringFilter<"Customer"> | string
@@ -260,13 +248,12 @@ export type CustomerWhereInput = {
   no_hp?: Prisma.StringFilter<"Customer"> | string
   created_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
-  lead?: Prisma.XOR<Prisma.LeadScalarRelationFilter, Prisma.LeadWhereInput>
   transaksi?: Prisma.TransaksiListRelationFilter
+  leads?: Prisma.LeadListRelationFilter
 }
 
 export type CustomerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  lead_id?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   tempat_lahir?: Prisma.SortOrder
@@ -275,14 +262,13 @@ export type CustomerOrderByWithRelationInput = {
   no_hp?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
-  lead?: Prisma.LeadOrderByWithRelationInput
   transaksi?: Prisma.TransaksiOrderByRelationAggregateInput
+  leads?: Prisma.LeadOrderByRelationAggregateInput
   _relevance?: Prisma.CustomerOrderByRelevanceInput
 }
 
 export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  lead_id?: number
   nik?: string
   AND?: Prisma.CustomerWhereInput | Prisma.CustomerWhereInput[]
   OR?: Prisma.CustomerWhereInput[]
@@ -294,13 +280,12 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   no_hp?: Prisma.StringFilter<"Customer"> | string
   created_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Customer"> | Date | string
-  lead?: Prisma.XOR<Prisma.LeadScalarRelationFilter, Prisma.LeadWhereInput>
   transaksi?: Prisma.TransaksiListRelationFilter
-}, "id" | "lead_id" | "nik">
+  leads?: Prisma.LeadListRelationFilter
+}, "id" | "nik">
 
 export type CustomerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  lead_id?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   tempat_lahir?: Prisma.SortOrder
@@ -321,7 +306,6 @@ export type CustomerScalarWhereWithAggregatesInput = {
   OR?: Prisma.CustomerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.CustomerScalarWhereWithAggregatesInput | Prisma.CustomerScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Customer"> | number
-  lead_id?: Prisma.IntWithAggregatesFilter<"Customer"> | number
   nama_ktp?: Prisma.StringWithAggregatesFilter<"Customer"> | string
   nik?: Prisma.StringWithAggregatesFilter<"Customer"> | string
   tempat_lahir?: Prisma.StringWithAggregatesFilter<"Customer"> | string
@@ -341,13 +325,12 @@ export type CustomerCreateInput = {
   no_hp: string
   created_at?: Date | string
   updated_at?: Date | string
-  lead: Prisma.LeadCreateNestedOneWithoutCustomerInput
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutCustomerInput
+  leads?: Prisma.LeadCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateInput = {
   id?: number
-  lead_id: number
   nama_ktp: string
   nik: string
   tempat_lahir: string
@@ -357,6 +340,7 @@ export type CustomerUncheckedCreateInput = {
   created_at?: Date | string
   updated_at?: Date | string
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutCustomerInput
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUpdateInput = {
@@ -368,13 +352,12 @@ export type CustomerUpdateInput = {
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lead?: Prisma.LeadUpdateOneRequiredWithoutCustomerNestedInput
   transaksi?: Prisma.TransaksiUpdateManyWithoutCustomerNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   tempat_lahir?: Prisma.StringFieldUpdateOperationsInput | string
@@ -384,11 +367,11 @@ export type CustomerUncheckedUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutCustomerNestedInput
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateManyInput = {
   id?: number
-  lead_id: number
   nama_ktp: string
   nik: string
   tempat_lahir: string
@@ -412,7 +395,6 @@ export type CustomerUpdateManyMutationInput = {
 
 export type CustomerUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   tempat_lahir?: Prisma.StringFieldUpdateOperationsInput | string
@@ -436,7 +418,6 @@ export type CustomerOrderByRelevanceInput = {
 
 export type CustomerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  lead_id?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   tempat_lahir?: Prisma.SortOrder
@@ -449,12 +430,10 @@ export type CustomerCountOrderByAggregateInput = {
 
 export type CustomerAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  lead_id?: Prisma.SortOrder
 }
 
 export type CustomerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  lead_id?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   tempat_lahir?: Prisma.SortOrder
@@ -467,7 +446,6 @@ export type CustomerMaxOrderByAggregateInput = {
 
 export type CustomerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  lead_id?: Prisma.SortOrder
   nama_ktp?: Prisma.SortOrder
   nik?: Prisma.SortOrder
   tempat_lahir?: Prisma.SortOrder
@@ -480,7 +458,6 @@ export type CustomerMinOrderByAggregateInput = {
 
 export type CustomerSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  lead_id?: Prisma.SortOrder
 }
 
 export type CustomerScalarRelationFilter = {
@@ -488,36 +465,20 @@ export type CustomerScalarRelationFilter = {
   isNot?: Prisma.CustomerWhereInput
 }
 
-export type CustomerCreateNestedOneWithoutLeadInput = {
-  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLeadInput, Prisma.CustomerUncheckedCreateWithoutLeadInput>
-  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLeadInput
+export type CustomerCreateNestedOneWithoutLeadsInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLeadsInput, Prisma.CustomerUncheckedCreateWithoutLeadsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLeadsInput
   connect?: Prisma.CustomerWhereUniqueInput
 }
 
-export type CustomerUncheckedCreateNestedOneWithoutLeadInput = {
-  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLeadInput, Prisma.CustomerUncheckedCreateWithoutLeadInput>
-  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLeadInput
-  connect?: Prisma.CustomerWhereUniqueInput
-}
-
-export type CustomerUpdateOneWithoutLeadNestedInput = {
-  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLeadInput, Prisma.CustomerUncheckedCreateWithoutLeadInput>
-  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLeadInput
-  upsert?: Prisma.CustomerUpsertWithoutLeadInput
+export type CustomerUpdateOneWithoutLeadsNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLeadsInput, Prisma.CustomerUncheckedCreateWithoutLeadsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLeadsInput
+  upsert?: Prisma.CustomerUpsertWithoutLeadsInput
   disconnect?: Prisma.CustomerWhereInput | boolean
   delete?: Prisma.CustomerWhereInput | boolean
   connect?: Prisma.CustomerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutLeadInput, Prisma.CustomerUpdateWithoutLeadInput>, Prisma.CustomerUncheckedUpdateWithoutLeadInput>
-}
-
-export type CustomerUncheckedUpdateOneWithoutLeadNestedInput = {
-  create?: Prisma.XOR<Prisma.CustomerCreateWithoutLeadInput, Prisma.CustomerUncheckedCreateWithoutLeadInput>
-  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutLeadInput
-  upsert?: Prisma.CustomerUpsertWithoutLeadInput
-  disconnect?: Prisma.CustomerWhereInput | boolean
-  delete?: Prisma.CustomerWhereInput | boolean
-  connect?: Prisma.CustomerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutLeadInput, Prisma.CustomerUpdateWithoutLeadInput>, Prisma.CustomerUncheckedUpdateWithoutLeadInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutLeadsInput, Prisma.CustomerUpdateWithoutLeadsInput>, Prisma.CustomerUncheckedUpdateWithoutLeadsInput>
 }
 
 export type CustomerCreateNestedOneWithoutTransaksiInput = {
@@ -534,7 +495,7 @@ export type CustomerUpdateOneRequiredWithoutTransaksiNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutTransaksiInput, Prisma.CustomerUpdateWithoutTransaksiInput>, Prisma.CustomerUncheckedUpdateWithoutTransaksiInput>
 }
 
-export type CustomerCreateWithoutLeadInput = {
+export type CustomerCreateWithoutLeadsInput = {
   nama_ktp: string
   nik: string
   tempat_lahir: string
@@ -546,7 +507,7 @@ export type CustomerCreateWithoutLeadInput = {
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutCustomerInput
 }
 
-export type CustomerUncheckedCreateWithoutLeadInput = {
+export type CustomerUncheckedCreateWithoutLeadsInput = {
   id?: number
   nama_ktp: string
   nik: string
@@ -559,23 +520,23 @@ export type CustomerUncheckedCreateWithoutLeadInput = {
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutCustomerInput
 }
 
-export type CustomerCreateOrConnectWithoutLeadInput = {
+export type CustomerCreateOrConnectWithoutLeadsInput = {
   where: Prisma.CustomerWhereUniqueInput
-  create: Prisma.XOR<Prisma.CustomerCreateWithoutLeadInput, Prisma.CustomerUncheckedCreateWithoutLeadInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutLeadsInput, Prisma.CustomerUncheckedCreateWithoutLeadsInput>
 }
 
-export type CustomerUpsertWithoutLeadInput = {
-  update: Prisma.XOR<Prisma.CustomerUpdateWithoutLeadInput, Prisma.CustomerUncheckedUpdateWithoutLeadInput>
-  create: Prisma.XOR<Prisma.CustomerCreateWithoutLeadInput, Prisma.CustomerUncheckedCreateWithoutLeadInput>
+export type CustomerUpsertWithoutLeadsInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutLeadsInput, Prisma.CustomerUncheckedUpdateWithoutLeadsInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutLeadsInput, Prisma.CustomerUncheckedCreateWithoutLeadsInput>
   where?: Prisma.CustomerWhereInput
 }
 
-export type CustomerUpdateToOneWithWhereWithoutLeadInput = {
+export type CustomerUpdateToOneWithWhereWithoutLeadsInput = {
   where?: Prisma.CustomerWhereInput
-  data: Prisma.XOR<Prisma.CustomerUpdateWithoutLeadInput, Prisma.CustomerUncheckedUpdateWithoutLeadInput>
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutLeadsInput, Prisma.CustomerUncheckedUpdateWithoutLeadsInput>
 }
 
-export type CustomerUpdateWithoutLeadInput = {
+export type CustomerUpdateWithoutLeadsInput = {
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   tempat_lahir?: Prisma.StringFieldUpdateOperationsInput | string
@@ -587,7 +548,7 @@ export type CustomerUpdateWithoutLeadInput = {
   transaksi?: Prisma.TransaksiUpdateManyWithoutCustomerNestedInput
 }
 
-export type CustomerUncheckedUpdateWithoutLeadInput = {
+export type CustomerUncheckedUpdateWithoutLeadsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nik?: Prisma.StringFieldUpdateOperationsInput | string
@@ -609,12 +570,11 @@ export type CustomerCreateWithoutTransaksiInput = {
   no_hp: string
   created_at?: Date | string
   updated_at?: Date | string
-  lead: Prisma.LeadCreateNestedOneWithoutCustomerInput
+  leads?: Prisma.LeadCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutTransaksiInput = {
   id?: number
-  lead_id: number
   nama_ktp: string
   nik: string
   tempat_lahir: string
@@ -623,6 +583,7 @@ export type CustomerUncheckedCreateWithoutTransaksiInput = {
   no_hp: string
   created_at?: Date | string
   updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutTransaksiInput = {
@@ -650,12 +611,11 @@ export type CustomerUpdateWithoutTransaksiInput = {
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lead?: Prisma.LeadUpdateOneRequiredWithoutCustomerNestedInput
+  leads?: Prisma.LeadUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutTransaksiInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
-  lead_id?: Prisma.IntFieldUpdateOperationsInput | number
   nama_ktp?: Prisma.StringFieldUpdateOperationsInput | string
   nik?: Prisma.StringFieldUpdateOperationsInput | string
   tempat_lahir?: Prisma.StringFieldUpdateOperationsInput | string
@@ -664,6 +624,7 @@ export type CustomerUncheckedUpdateWithoutTransaksiInput = {
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 
@@ -673,10 +634,12 @@ export type CustomerUncheckedUpdateWithoutTransaksiInput = {
 
 export type CustomerCountOutputType = {
   transaksi: number
+  leads: number
 }
 
 export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transaksi?: boolean | CustomerCountOutputTypeCountTransaksiArgs
+  leads?: boolean | CustomerCountOutputTypeCountLeadsArgs
 }
 
 /**
@@ -696,10 +659,16 @@ export type CustomerCountOutputTypeCountTransaksiArgs<ExtArgs extends runtime.Ty
   where?: Prisma.TransaksiWhereInput
 }
 
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountLeadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadWhereInput
+}
+
 
 export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  lead_id?: boolean
   nama_ktp?: boolean
   nik?: boolean
   tempat_lahir?: boolean
@@ -708,8 +677,8 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   no_hp?: boolean
   created_at?: boolean
   updated_at?: boolean
-  lead?: boolean | Prisma.LeadDefaultArgs<ExtArgs>
   transaksi?: boolean | Prisma.Customer$transaksiArgs<ExtArgs>
+  leads?: boolean | Prisma.Customer$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -717,7 +686,6 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
 
 export type CustomerSelectScalar = {
   id?: boolean
-  lead_id?: boolean
   nama_ktp?: boolean
   nik?: boolean
   tempat_lahir?: boolean
@@ -728,22 +696,21 @@ export type CustomerSelectScalar = {
   updated_at?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "lead_id" | "nama_ktp" | "nik" | "tempat_lahir" | "tgl_lahir" | "alamat_ktp" | "no_hp" | "created_at" | "updated_at", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nama_ktp" | "nik" | "tempat_lahir" | "tgl_lahir" | "alamat_ktp" | "no_hp" | "created_at" | "updated_at", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  lead?: boolean | Prisma.LeadDefaultArgs<ExtArgs>
   transaksi?: boolean | Prisma.Customer$transaksiArgs<ExtArgs>
+  leads?: boolean | Prisma.Customer$leadsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }
 
 export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Customer"
   objects: {
-    lead: Prisma.$LeadPayload<ExtArgs>
     transaksi: Prisma.$TransaksiPayload<ExtArgs>[]
+    leads: Prisma.$LeadPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
-    lead_id: number
     nama_ktp: string
     nik: string
     tempat_lahir: string
@@ -1092,8 +1059,8 @@ readonly fields: CustomerFieldRefs;
  */
 export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  lead<T extends Prisma.LeadDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeadDefaultArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   transaksi<T extends Prisma.Customer$transaksiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$transaksiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  leads<T extends Prisma.Customer$leadsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$leadsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1124,7 +1091,6 @@ export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime
  */
 export interface CustomerFieldRefs {
   readonly id: Prisma.FieldRef<"Customer", 'Int'>
-  readonly lead_id: Prisma.FieldRef<"Customer", 'Int'>
   readonly nama_ktp: Prisma.FieldRef<"Customer", 'String'>
   readonly nik: Prisma.FieldRef<"Customer", 'String'>
   readonly tempat_lahir: Prisma.FieldRef<"Customer", 'String'>
@@ -1502,6 +1468,30 @@ export type Customer$transaksiArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.TransaksiScalarFieldEnum | Prisma.TransaksiScalarFieldEnum[]
+}
+
+/**
+ * Customer.leads
+ */
+export type Customer$leadsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+  orderBy?: Prisma.LeadOrderByWithRelationInput | Prisma.LeadOrderByWithRelationInput[]
+  cursor?: Prisma.LeadWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadScalarFieldEnum | Prisma.LeadScalarFieldEnum[]
 }
 
 /**

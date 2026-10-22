@@ -5,9 +5,6 @@ export const JenisAktivitasEnum = z.enum([
   "TELEPON",
   "WHATSAPP",
   "BERTEMU",
-  "SURVEI_LOKASI",
-  "UPDATE_ADMIN",
-  "SISTEM",
   "LAINNYA",
 ]);
 

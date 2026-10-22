@@ -29,12 +29,14 @@ export type AggregateMasterUnit = {
 export type MasterUnitAvgAggregateOutputType = {
   id: number | null
   tipe_id: number | null
+  blok_nomor: number | null
   harga_khusus: runtime.Decimal | null
 }
 
 export type MasterUnitSumAggregateOutputType = {
   id: number | null
   tipe_id: number | null
+  blok_nomor: number | null
   harga_khusus: runtime.Decimal | null
 }
 
@@ -42,6 +44,8 @@ export type MasterUnitMinAggregateOutputType = {
   id: number | null
   tipe_id: number | null
   blok: string | null
+  blok_prefix: string | null
+  blok_nomor: number | null
   status_unit: $Enums.StatusUnit | null
   harga_khusus: runtime.Decimal | null
 }
@@ -50,6 +54,8 @@ export type MasterUnitMaxAggregateOutputType = {
   id: number | null
   tipe_id: number | null
   blok: string | null
+  blok_prefix: string | null
+  blok_nomor: number | null
   status_unit: $Enums.StatusUnit | null
   harga_khusus: runtime.Decimal | null
 }
@@ -58,6 +64,8 @@ export type MasterUnitCountAggregateOutputType = {
   id: number
   tipe_id: number
   blok: number
+  blok_prefix: number
+  blok_nomor: number
   status_unit: number
   harga_khusus: number
   _all: number
@@ -67,12 +75,14 @@ export type MasterUnitCountAggregateOutputType = {
 export type MasterUnitAvgAggregateInputType = {
   id?: true
   tipe_id?: true
+  blok_nomor?: true
   harga_khusus?: true
 }
 
 export type MasterUnitSumAggregateInputType = {
   id?: true
   tipe_id?: true
+  blok_nomor?: true
   harga_khusus?: true
 }
 
@@ -80,6 +90,8 @@ export type MasterUnitMinAggregateInputType = {
   id?: true
   tipe_id?: true
   blok?: true
+  blok_prefix?: true
+  blok_nomor?: true
   status_unit?: true
   harga_khusus?: true
 }
@@ -88,6 +100,8 @@ export type MasterUnitMaxAggregateInputType = {
   id?: true
   tipe_id?: true
   blok?: true
+  blok_prefix?: true
+  blok_nomor?: true
   status_unit?: true
   harga_khusus?: true
 }
@@ -96,6 +110,8 @@ export type MasterUnitCountAggregateInputType = {
   id?: true
   tipe_id?: true
   blok?: true
+  blok_prefix?: true
+  blok_nomor?: true
   status_unit?: true
   harga_khusus?: true
   _all?: true
@@ -191,6 +207,8 @@ export type MasterUnitGroupByOutputType = {
   id: number
   tipe_id: number
   blok: string
+  blok_prefix: string
+  blok_nomor: number
   status_unit: $Enums.StatusUnit
   harga_khusus: runtime.Decimal | null
   _count: MasterUnitCountAggregateOutputType | null
@@ -222,6 +240,8 @@ export type MasterUnitWhereInput = {
   id?: Prisma.IntFilter<"MasterUnit"> | number
   tipe_id?: Prisma.IntFilter<"MasterUnit"> | number
   blok?: Prisma.StringFilter<"MasterUnit"> | string
+  blok_prefix?: Prisma.StringFilter<"MasterUnit"> | string
+  blok_nomor?: Prisma.IntFilter<"MasterUnit"> | number
   status_unit?: Prisma.EnumStatusUnitFilter<"MasterUnit"> | $Enums.StatusUnit
   harga_khusus?: Prisma.DecimalNullableFilter<"MasterUnit"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe?: Prisma.XOR<Prisma.MasterTipeScalarRelationFilter, Prisma.MasterTipeWhereInput>
@@ -233,6 +253,8 @@ export type MasterUnitOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tipe_id?: Prisma.SortOrder
   blok?: Prisma.SortOrder
+  blok_prefix?: Prisma.SortOrder
+  blok_nomor?: Prisma.SortOrder
   status_unit?: Prisma.SortOrder
   harga_khusus?: Prisma.SortOrderInput | Prisma.SortOrder
   tipe?: Prisma.MasterTipeOrderByWithRelationInput
@@ -248,6 +270,8 @@ export type MasterUnitWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MasterUnitWhereInput[]
   NOT?: Prisma.MasterUnitWhereInput | Prisma.MasterUnitWhereInput[]
   tipe_id?: Prisma.IntFilter<"MasterUnit"> | number
+  blok_prefix?: Prisma.StringFilter<"MasterUnit"> | string
+  blok_nomor?: Prisma.IntFilter<"MasterUnit"> | number
   status_unit?: Prisma.EnumStatusUnitFilter<"MasterUnit"> | $Enums.StatusUnit
   harga_khusus?: Prisma.DecimalNullableFilter<"MasterUnit"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe?: Prisma.XOR<Prisma.MasterTipeScalarRelationFilter, Prisma.MasterTipeWhereInput>
@@ -259,6 +283,8 @@ export type MasterUnitOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tipe_id?: Prisma.SortOrder
   blok?: Prisma.SortOrder
+  blok_prefix?: Prisma.SortOrder
+  blok_nomor?: Prisma.SortOrder
   status_unit?: Prisma.SortOrder
   harga_khusus?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MasterUnitCountOrderByAggregateInput
@@ -275,12 +301,16 @@ export type MasterUnitScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"MasterUnit"> | number
   tipe_id?: Prisma.IntWithAggregatesFilter<"MasterUnit"> | number
   blok?: Prisma.StringWithAggregatesFilter<"MasterUnit"> | string
+  blok_prefix?: Prisma.StringWithAggregatesFilter<"MasterUnit"> | string
+  blok_nomor?: Prisma.IntWithAggregatesFilter<"MasterUnit"> | number
   status_unit?: Prisma.EnumStatusUnitWithAggregatesFilter<"MasterUnit"> | $Enums.StatusUnit
   harga_khusus?: Prisma.DecimalNullableWithAggregatesFilter<"MasterUnit"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type MasterUnitCreateInput = {
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe: Prisma.MasterTipeCreateNestedOneWithoutUnitsInput
@@ -292,6 +322,8 @@ export type MasterUnitUncheckedCreateInput = {
   id?: number
   tipe_id: number
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutUnitInput
@@ -300,6 +332,8 @@ export type MasterUnitUncheckedCreateInput = {
 
 export type MasterUnitUpdateInput = {
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe?: Prisma.MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
@@ -311,6 +345,8 @@ export type MasterUnitUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tipe_id?: Prisma.IntFieldUpdateOperationsInput | number
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutUnitNestedInput
@@ -321,12 +357,16 @@ export type MasterUnitCreateManyInput = {
   id?: number
   tipe_id: number
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type MasterUnitUpdateManyMutationInput = {
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
@@ -335,6 +375,8 @@ export type MasterUnitUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tipe_id?: Prisma.IntFieldUpdateOperationsInput | number
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
@@ -359,6 +401,8 @@ export type MasterUnitCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tipe_id?: Prisma.SortOrder
   blok?: Prisma.SortOrder
+  blok_prefix?: Prisma.SortOrder
+  blok_nomor?: Prisma.SortOrder
   status_unit?: Prisma.SortOrder
   harga_khusus?: Prisma.SortOrder
 }
@@ -366,6 +410,7 @@ export type MasterUnitCountOrderByAggregateInput = {
 export type MasterUnitAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tipe_id?: Prisma.SortOrder
+  blok_nomor?: Prisma.SortOrder
   harga_khusus?: Prisma.SortOrder
 }
 
@@ -373,6 +418,8 @@ export type MasterUnitMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tipe_id?: Prisma.SortOrder
   blok?: Prisma.SortOrder
+  blok_prefix?: Prisma.SortOrder
+  blok_nomor?: Prisma.SortOrder
   status_unit?: Prisma.SortOrder
   harga_khusus?: Prisma.SortOrder
 }
@@ -381,6 +428,8 @@ export type MasterUnitMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tipe_id?: Prisma.SortOrder
   blok?: Prisma.SortOrder
+  blok_prefix?: Prisma.SortOrder
+  blok_nomor?: Prisma.SortOrder
   status_unit?: Prisma.SortOrder
   harga_khusus?: Prisma.SortOrder
 }
@@ -388,6 +437,7 @@ export type MasterUnitMinOrderByAggregateInput = {
 export type MasterUnitSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tipe_id?: Prisma.SortOrder
+  blok_nomor?: Prisma.SortOrder
   harga_khusus?: Prisma.SortOrder
 }
 
@@ -480,6 +530,8 @@ export type MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput = {
 
 export type MasterUnitCreateWithoutTipeInput = {
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutUnitInput
@@ -489,6 +541,8 @@ export type MasterUnitCreateWithoutTipeInput = {
 export type MasterUnitUncheckedCreateWithoutTipeInput = {
   id?: number
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutUnitInput
@@ -528,12 +582,16 @@ export type MasterUnitScalarWhereInput = {
   id?: Prisma.IntFilter<"MasterUnit"> | number
   tipe_id?: Prisma.IntFilter<"MasterUnit"> | number
   blok?: Prisma.StringFilter<"MasterUnit"> | string
+  blok_prefix?: Prisma.StringFilter<"MasterUnit"> | string
+  blok_nomor?: Prisma.IntFilter<"MasterUnit"> | number
   status_unit?: Prisma.EnumStatusUnitFilter<"MasterUnit"> | $Enums.StatusUnit
   harga_khusus?: Prisma.DecimalNullableFilter<"MasterUnit"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type MasterUnitCreateWithoutItjInput = {
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe: Prisma.MasterTipeCreateNestedOneWithoutUnitsInput
@@ -544,6 +602,8 @@ export type MasterUnitUncheckedCreateWithoutItjInput = {
   id?: number
   tipe_id: number
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutUnitInput
@@ -567,6 +627,8 @@ export type MasterUnitUpdateToOneWithWhereWithoutItjInput = {
 
 export type MasterUnitUpdateWithoutItjInput = {
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe?: Prisma.MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
@@ -577,6 +639,8 @@ export type MasterUnitUncheckedUpdateWithoutItjInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tipe_id?: Prisma.IntFieldUpdateOperationsInput | number
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutUnitNestedInput
@@ -584,6 +648,8 @@ export type MasterUnitUncheckedUpdateWithoutItjInput = {
 
 export type MasterUnitCreateWithoutTransaksiInput = {
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe: Prisma.MasterTipeCreateNestedOneWithoutUnitsInput
@@ -594,6 +660,8 @@ export type MasterUnitUncheckedCreateWithoutTransaksiInput = {
   id?: number
   tipe_id: number
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   itj?: Prisma.ItjUncheckedCreateNestedManyWithoutUnitInput
@@ -617,6 +685,8 @@ export type MasterUnitUpdateToOneWithWhereWithoutTransaksiInput = {
 
 export type MasterUnitUpdateWithoutTransaksiInput = {
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe?: Prisma.MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
@@ -627,6 +697,8 @@ export type MasterUnitUncheckedUpdateWithoutTransaksiInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   tipe_id?: Prisma.IntFieldUpdateOperationsInput | number
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   itj?: Prisma.ItjUncheckedUpdateManyWithoutUnitNestedInput
@@ -635,12 +707,16 @@ export type MasterUnitUncheckedUpdateWithoutTransaksiInput = {
 export type MasterUnitCreateManyTipeInput = {
   id?: number
   blok: string
+  blok_prefix?: string
+  blok_nomor?: number
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type MasterUnitUpdateWithoutTipeInput = {
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUpdateManyWithoutUnitNestedInput
@@ -650,6 +726,8 @@ export type MasterUnitUpdateWithoutTipeInput = {
 export type MasterUnitUncheckedUpdateWithoutTipeInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutUnitNestedInput
@@ -659,6 +737,8 @@ export type MasterUnitUncheckedUpdateWithoutTipeInput = {
 export type MasterUnitUncheckedUpdateManyWithoutTipeInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
@@ -707,6 +787,8 @@ export type MasterUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   tipe_id?: boolean
   blok?: boolean
+  blok_prefix?: boolean
+  blok_nomor?: boolean
   status_unit?: boolean
   harga_khusus?: boolean
   tipe?: boolean | Prisma.MasterTipeDefaultArgs<ExtArgs>
@@ -721,11 +803,13 @@ export type MasterUnitSelectScalar = {
   id?: boolean
   tipe_id?: boolean
   blok?: boolean
+  blok_prefix?: boolean
+  blok_nomor?: boolean
   status_unit?: boolean
   harga_khusus?: boolean
 }
 
-export type MasterUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tipe_id" | "blok" | "status_unit" | "harga_khusus", ExtArgs["result"]["masterUnit"]>
+export type MasterUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tipe_id" | "blok" | "blok_prefix" | "blok_nomor" | "status_unit" | "harga_khusus", ExtArgs["result"]["masterUnit"]>
 export type MasterUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tipe?: boolean | Prisma.MasterTipeDefaultArgs<ExtArgs>
   transaksi?: boolean | Prisma.MasterUnit$transaksiArgs<ExtArgs>
@@ -744,6 +828,8 @@ export type $MasterUnitPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: number
     tipe_id: number
     blok: string
+    blok_prefix: string
+    blok_nomor: number
     status_unit: $Enums.StatusUnit
     harga_khusus: runtime.Decimal | null
   }, ExtArgs["result"]["masterUnit"]>
@@ -1121,6 +1207,8 @@ export interface MasterUnitFieldRefs {
   readonly id: Prisma.FieldRef<"MasterUnit", 'Int'>
   readonly tipe_id: Prisma.FieldRef<"MasterUnit", 'Int'>
   readonly blok: Prisma.FieldRef<"MasterUnit", 'String'>
+  readonly blok_prefix: Prisma.FieldRef<"MasterUnit", 'String'>
+  readonly blok_nomor: Prisma.FieldRef<"MasterUnit", 'Int'>
   readonly status_unit: Prisma.FieldRef<"MasterUnit", 'StatusUnit'>
   readonly harga_khusus: Prisma.FieldRef<"MasterUnit", 'Decimal'>
 }

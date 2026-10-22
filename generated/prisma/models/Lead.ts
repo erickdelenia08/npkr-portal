@@ -29,25 +29,29 @@ export type AggregateLead = {
 export type LeadAvgAggregateOutputType = {
   id: number | null
   marketing_id: number | null
+  customer_id: number | null
 }
 
 export type LeadSumAggregateOutputType = {
   id: number | null
   marketing_id: number | null
+  customer_id: number | null
 }
 
 export type LeadMinAggregateOutputType = {
   id: number | null
   marketing_id: number | null
+  customer_id: number | null
   nama: string | null
   no_hp: string | null
-  sumber: string | null
+  sumber: $Enums.SumberLead | null
   minat_tipe: string | null
   survei_jadwal_at: Date | null
   survei_selesai_at: Date | null
-  closing_at: Date | null
   lost_at: Date | null
   lost_reason: string | null
+  last_activity_at: Date | null
+  next_follow_up_at: Date | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -55,15 +59,17 @@ export type LeadMinAggregateOutputType = {
 export type LeadMaxAggregateOutputType = {
   id: number | null
   marketing_id: number | null
+  customer_id: number | null
   nama: string | null
   no_hp: string | null
-  sumber: string | null
+  sumber: $Enums.SumberLead | null
   minat_tipe: string | null
   survei_jadwal_at: Date | null
   survei_selesai_at: Date | null
-  closing_at: Date | null
   lost_at: Date | null
   lost_reason: string | null
+  last_activity_at: Date | null
+  next_follow_up_at: Date | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -71,15 +77,17 @@ export type LeadMaxAggregateOutputType = {
 export type LeadCountAggregateOutputType = {
   id: number
   marketing_id: number
+  customer_id: number
   nama: number
   no_hp: number
   sumber: number
   minat_tipe: number
   survei_jadwal_at: number
   survei_selesai_at: number
-  closing_at: number
   lost_at: number
   lost_reason: number
+  last_activity_at: number
+  next_follow_up_at: number
   created_at: number
   updated_at: number
   _all: number
@@ -89,25 +97,29 @@ export type LeadCountAggregateOutputType = {
 export type LeadAvgAggregateInputType = {
   id?: true
   marketing_id?: true
+  customer_id?: true
 }
 
 export type LeadSumAggregateInputType = {
   id?: true
   marketing_id?: true
+  customer_id?: true
 }
 
 export type LeadMinAggregateInputType = {
   id?: true
   marketing_id?: true
+  customer_id?: true
   nama?: true
   no_hp?: true
   sumber?: true
   minat_tipe?: true
   survei_jadwal_at?: true
   survei_selesai_at?: true
-  closing_at?: true
   lost_at?: true
   lost_reason?: true
+  last_activity_at?: true
+  next_follow_up_at?: true
   created_at?: true
   updated_at?: true
 }
@@ -115,15 +127,17 @@ export type LeadMinAggregateInputType = {
 export type LeadMaxAggregateInputType = {
   id?: true
   marketing_id?: true
+  customer_id?: true
   nama?: true
   no_hp?: true
   sumber?: true
   minat_tipe?: true
   survei_jadwal_at?: true
   survei_selesai_at?: true
-  closing_at?: true
   lost_at?: true
   lost_reason?: true
+  last_activity_at?: true
+  next_follow_up_at?: true
   created_at?: true
   updated_at?: true
 }
@@ -131,15 +145,17 @@ export type LeadMaxAggregateInputType = {
 export type LeadCountAggregateInputType = {
   id?: true
   marketing_id?: true
+  customer_id?: true
   nama?: true
   no_hp?: true
   sumber?: true
   minat_tipe?: true
   survei_jadwal_at?: true
   survei_selesai_at?: true
-  closing_at?: true
   lost_at?: true
   lost_reason?: true
+  last_activity_at?: true
+  next_follow_up_at?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -234,15 +250,17 @@ export type LeadGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type LeadGroupByOutputType = {
   id: number
   marketing_id: number | null
+  customer_id: number | null
   nama: string
   no_hp: string
-  sumber: string
+  sumber: $Enums.SumberLead
   minat_tipe: string | null
   survei_jadwal_at: Date | null
   survei_selesai_at: Date | null
-  closing_at: Date | null
   lost_at: Date | null
   lost_reason: string | null
+  last_activity_at: Date | null
+  next_follow_up_at: Date | null
   created_at: Date
   updated_at: Date
   _count: LeadCountAggregateOutputType | null
@@ -273,79 +291,87 @@ export type LeadWhereInput = {
   NOT?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
   id?: Prisma.IntFilter<"Lead"> | number
   marketing_id?: Prisma.IntNullableFilter<"Lead"> | number | null
+  customer_id?: Prisma.IntNullableFilter<"Lead"> | number | null
   nama?: Prisma.StringFilter<"Lead"> | string
   no_hp?: Prisma.StringFilter<"Lead"> | string
-  sumber?: Prisma.StringFilter<"Lead"> | string
+  sumber?: Prisma.EnumSumberLeadFilter<"Lead"> | $Enums.SumberLead
   minat_tipe?: Prisma.StringNullableFilter<"Lead"> | string | null
   survei_jadwal_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   survei_selesai_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  closing_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lost_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lost_reason?: Prisma.StringNullableFilter<"Lead"> | string | null
+  last_activity_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  next_follow_up_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Lead"> | Date | string
   marketing?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-  aktivitas?: Prisma.AktivitasListRelationFilter
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  aktivitas?: Prisma.AktivitasListRelationFilter
   itj?: Prisma.ItjListRelationFilter
 }
 
 export type LeadOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  customer_id?: Prisma.SortOrderInput | Prisma.SortOrder
   nama?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
   sumber?: Prisma.SortOrder
   minat_tipe?: Prisma.SortOrderInput | Prisma.SortOrder
   survei_jadwal_at?: Prisma.SortOrderInput | Prisma.SortOrder
   survei_selesai_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  closing_at?: Prisma.SortOrderInput | Prisma.SortOrder
   lost_at?: Prisma.SortOrderInput | Prisma.SortOrder
   lost_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  last_activity_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  next_follow_up_at?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   marketing?: Prisma.UserOrderByWithRelationInput
-  aktivitas?: Prisma.AktivitasOrderByRelationAggregateInput
   customer?: Prisma.CustomerOrderByWithRelationInput
+  aktivitas?: Prisma.AktivitasOrderByRelationAggregateInput
   itj?: Prisma.ItjOrderByRelationAggregateInput
   _relevance?: Prisma.LeadOrderByRelevanceInput
 }
 
 export type LeadWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  no_hp?: string
   AND?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
   OR?: Prisma.LeadWhereInput[]
   NOT?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
   marketing_id?: Prisma.IntNullableFilter<"Lead"> | number | null
+  customer_id?: Prisma.IntNullableFilter<"Lead"> | number | null
   nama?: Prisma.StringFilter<"Lead"> | string
-  sumber?: Prisma.StringFilter<"Lead"> | string
+  no_hp?: Prisma.StringFilter<"Lead"> | string
+  sumber?: Prisma.EnumSumberLeadFilter<"Lead"> | $Enums.SumberLead
   minat_tipe?: Prisma.StringNullableFilter<"Lead"> | string | null
   survei_jadwal_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   survei_selesai_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  closing_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lost_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lost_reason?: Prisma.StringNullableFilter<"Lead"> | string | null
+  last_activity_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  next_follow_up_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Lead"> | Date | string
   marketing?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
-  aktivitas?: Prisma.AktivitasListRelationFilter
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  aktivitas?: Prisma.AktivitasListRelationFilter
   itj?: Prisma.ItjListRelationFilter
-}, "id" | "no_hp">
+}, "id">
 
 export type LeadOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  customer_id?: Prisma.SortOrderInput | Prisma.SortOrder
   nama?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
   sumber?: Prisma.SortOrder
   minat_tipe?: Prisma.SortOrderInput | Prisma.SortOrder
   survei_jadwal_at?: Prisma.SortOrderInput | Prisma.SortOrder
   survei_selesai_at?: Prisma.SortOrderInput | Prisma.SortOrder
-  closing_at?: Prisma.SortOrderInput | Prisma.SortOrder
   lost_at?: Prisma.SortOrderInput | Prisma.SortOrder
   lost_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  last_activity_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  next_follow_up_at?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.LeadCountOrderByAggregateInput
@@ -361,15 +387,17 @@ export type LeadScalarWhereWithAggregatesInput = {
   NOT?: Prisma.LeadScalarWhereWithAggregatesInput | Prisma.LeadScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Lead"> | number
   marketing_id?: Prisma.IntNullableWithAggregatesFilter<"Lead"> | number | null
+  customer_id?: Prisma.IntNullableWithAggregatesFilter<"Lead"> | number | null
   nama?: Prisma.StringWithAggregatesFilter<"Lead"> | string
   no_hp?: Prisma.StringWithAggregatesFilter<"Lead"> | string
-  sumber?: Prisma.StringWithAggregatesFilter<"Lead"> | string
+  sumber?: Prisma.EnumSumberLeadWithAggregatesFilter<"Lead"> | $Enums.SumberLead
   minat_tipe?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   survei_jadwal_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   survei_selesai_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
-  closing_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   lost_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   lost_reason?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
+  last_activity_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+  next_follow_up_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Lead"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Lead"> | Date | string
 }
@@ -377,89 +405,95 @@ export type LeadScalarWhereWithAggregatesInput = {
 export type LeadCreateInput = {
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   marketing?: Prisma.UserCreateNestedOneWithoutLeadsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutLeadsInput
   aktivitas?: Prisma.AktivitasCreateNestedManyWithoutLeadInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutLeadInput
   itj?: Prisma.ItjCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateInput = {
   id?: number
   marketing_id?: number | null
+  customer_id?: number | null
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   aktivitas?: Prisma.AktivitasUncheckedCreateNestedManyWithoutLeadInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutLeadInput
   itj?: Prisma.ItjUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUpdateInput = {
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   marketing?: Prisma.UserUpdateOneWithoutLeadsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutLeadsNestedInput
   aktivitas?: Prisma.AktivitasUpdateManyWithoutLeadNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutLeadNestedInput
   itj?: Prisma.ItjUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customer_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   aktivitas?: Prisma.AktivitasUncheckedUpdateManyWithoutLeadNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutLeadNestedInput
   itj?: Prisma.ItjUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateManyInput = {
   id?: number
   marketing_id?: number | null
+  customer_id?: number | null
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -467,13 +501,14 @@ export type LeadCreateManyInput = {
 export type LeadUpdateManyMutationInput = {
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -481,15 +516,17 @@ export type LeadUpdateManyMutationInput = {
 export type LeadUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customer_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -513,15 +550,17 @@ export type LeadOrderByRelevanceInput = {
 export type LeadCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  customer_id?: Prisma.SortOrder
   nama?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
   sumber?: Prisma.SortOrder
   minat_tipe?: Prisma.SortOrder
   survei_jadwal_at?: Prisma.SortOrder
   survei_selesai_at?: Prisma.SortOrder
-  closing_at?: Prisma.SortOrder
   lost_at?: Prisma.SortOrder
   lost_reason?: Prisma.SortOrder
+  last_activity_at?: Prisma.SortOrder
+  next_follow_up_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -529,20 +568,23 @@ export type LeadCountOrderByAggregateInput = {
 export type LeadAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  customer_id?: Prisma.SortOrder
 }
 
 export type LeadMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  customer_id?: Prisma.SortOrder
   nama?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
   sumber?: Prisma.SortOrder
   minat_tipe?: Prisma.SortOrder
   survei_jadwal_at?: Prisma.SortOrder
   survei_selesai_at?: Prisma.SortOrder
-  closing_at?: Prisma.SortOrder
   lost_at?: Prisma.SortOrder
   lost_reason?: Prisma.SortOrder
+  last_activity_at?: Prisma.SortOrder
+  next_follow_up_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -550,15 +592,17 @@ export type LeadMaxOrderByAggregateInput = {
 export type LeadMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  customer_id?: Prisma.SortOrder
   nama?: Prisma.SortOrder
   no_hp?: Prisma.SortOrder
   sumber?: Prisma.SortOrder
   minat_tipe?: Prisma.SortOrder
   survei_jadwal_at?: Prisma.SortOrder
   survei_selesai_at?: Prisma.SortOrder
-  closing_at?: Prisma.SortOrder
   lost_at?: Prisma.SortOrder
   lost_reason?: Prisma.SortOrder
+  last_activity_at?: Prisma.SortOrder
+  next_follow_up_at?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -566,6 +610,7 @@ export type LeadMinOrderByAggregateInput = {
 export type LeadSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  customer_id?: Prisma.SortOrder
 }
 
 export type LeadScalarRelationFilter = {
@@ -615,12 +660,24 @@ export type LeadUncheckedUpdateManyWithoutMarketingNestedInput = {
   deleteMany?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
 }
 
+export type EnumSumberLeadFieldUpdateOperationsInput = {
+  set?: $Enums.SumberLead
+}
+
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type LeadCreateNestedOneWithoutAktivitasInput = {
@@ -651,52 +708,82 @@ export type LeadUpdateOneRequiredWithoutItjNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LeadUpdateToOneWithWhereWithoutItjInput, Prisma.LeadUpdateWithoutItjInput>, Prisma.LeadUncheckedUpdateWithoutItjInput>
 }
 
-export type LeadCreateNestedOneWithoutCustomerInput = {
-  create?: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput>
-  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutCustomerInput
-  connect?: Prisma.LeadWhereUniqueInput
+export type LeadCreateNestedManyWithoutCustomerInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput> | Prisma.LeadCreateWithoutCustomerInput[] | Prisma.LeadUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutCustomerInput | Prisma.LeadCreateOrConnectWithoutCustomerInput[]
+  createMany?: Prisma.LeadCreateManyCustomerInputEnvelope
+  connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
 }
 
-export type LeadUpdateOneRequiredWithoutCustomerNestedInput = {
-  create?: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput>
-  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutCustomerInput
-  upsert?: Prisma.LeadUpsertWithoutCustomerInput
-  connect?: Prisma.LeadWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LeadUpdateToOneWithWhereWithoutCustomerInput, Prisma.LeadUpdateWithoutCustomerInput>, Prisma.LeadUncheckedUpdateWithoutCustomerInput>
+export type LeadUncheckedCreateNestedManyWithoutCustomerInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput> | Prisma.LeadCreateWithoutCustomerInput[] | Prisma.LeadUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutCustomerInput | Prisma.LeadCreateOrConnectWithoutCustomerInput[]
+  createMany?: Prisma.LeadCreateManyCustomerInputEnvelope
+  connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+}
+
+export type LeadUpdateManyWithoutCustomerNestedInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput> | Prisma.LeadCreateWithoutCustomerInput[] | Prisma.LeadUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutCustomerInput | Prisma.LeadCreateOrConnectWithoutCustomerInput[]
+  upsert?: Prisma.LeadUpsertWithWhereUniqueWithoutCustomerInput | Prisma.LeadUpsertWithWhereUniqueWithoutCustomerInput[]
+  createMany?: Prisma.LeadCreateManyCustomerInputEnvelope
+  set?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  disconnect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  delete?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  update?: Prisma.LeadUpdateWithWhereUniqueWithoutCustomerInput | Prisma.LeadUpdateWithWhereUniqueWithoutCustomerInput[]
+  updateMany?: Prisma.LeadUpdateManyWithWhereWithoutCustomerInput | Prisma.LeadUpdateManyWithWhereWithoutCustomerInput[]
+  deleteMany?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
+}
+
+export type LeadUncheckedUpdateManyWithoutCustomerNestedInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput> | Prisma.LeadCreateWithoutCustomerInput[] | Prisma.LeadUncheckedCreateWithoutCustomerInput[]
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutCustomerInput | Prisma.LeadCreateOrConnectWithoutCustomerInput[]
+  upsert?: Prisma.LeadUpsertWithWhereUniqueWithoutCustomerInput | Prisma.LeadUpsertWithWhereUniqueWithoutCustomerInput[]
+  createMany?: Prisma.LeadCreateManyCustomerInputEnvelope
+  set?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  disconnect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  delete?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  connect?: Prisma.LeadWhereUniqueInput | Prisma.LeadWhereUniqueInput[]
+  update?: Prisma.LeadUpdateWithWhereUniqueWithoutCustomerInput | Prisma.LeadUpdateWithWhereUniqueWithoutCustomerInput[]
+  updateMany?: Prisma.LeadUpdateManyWithWhereWithoutCustomerInput | Prisma.LeadUpdateManyWithWhereWithoutCustomerInput[]
+  deleteMany?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
 }
 
 export type LeadCreateWithoutMarketingInput = {
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
+  customer?: Prisma.CustomerCreateNestedOneWithoutLeadsInput
   aktivitas?: Prisma.AktivitasCreateNestedManyWithoutLeadInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutLeadInput
   itj?: Prisma.ItjCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutMarketingInput = {
   id?: number
+  customer_id?: number | null
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   aktivitas?: Prisma.AktivitasUncheckedCreateNestedManyWithoutLeadInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutLeadInput
   itj?: Prisma.ItjUncheckedCreateNestedManyWithoutLeadInput
 }
 
@@ -732,15 +819,17 @@ export type LeadScalarWhereInput = {
   NOT?: Prisma.LeadScalarWhereInput | Prisma.LeadScalarWhereInput[]
   id?: Prisma.IntFilter<"Lead"> | number
   marketing_id?: Prisma.IntNullableFilter<"Lead"> | number | null
+  customer_id?: Prisma.IntNullableFilter<"Lead"> | number | null
   nama?: Prisma.StringFilter<"Lead"> | string
   no_hp?: Prisma.StringFilter<"Lead"> | string
-  sumber?: Prisma.StringFilter<"Lead"> | string
+  sumber?: Prisma.EnumSumberLeadFilter<"Lead"> | $Enums.SumberLead
   minat_tipe?: Prisma.StringNullableFilter<"Lead"> | string | null
   survei_jadwal_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   survei_selesai_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
-  closing_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lost_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   lost_reason?: Prisma.StringNullableFilter<"Lead"> | string | null
+  last_activity_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  next_follow_up_at?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   created_at?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Lead"> | Date | string
 }
@@ -748,35 +837,37 @@ export type LeadScalarWhereInput = {
 export type LeadCreateWithoutAktivitasInput = {
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   marketing?: Prisma.UserCreateNestedOneWithoutLeadsInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutLeadInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutLeadsInput
   itj?: Prisma.ItjCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutAktivitasInput = {
   id?: number
   marketing_id?: number | null
+  customer_id?: number | null
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutLeadInput
   itj?: Prisma.ItjUncheckedCreateNestedManyWithoutLeadInput
 }
 
@@ -799,71 +890,75 @@ export type LeadUpdateToOneWithWhereWithoutAktivitasInput = {
 export type LeadUpdateWithoutAktivitasInput = {
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   marketing?: Prisma.UserUpdateOneWithoutLeadsNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutLeadNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutLeadsNestedInput
   itj?: Prisma.ItjUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutAktivitasInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customer_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutLeadNestedInput
   itj?: Prisma.ItjUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateWithoutItjInput = {
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   marketing?: Prisma.UserCreateNestedOneWithoutLeadsInput
+  customer?: Prisma.CustomerCreateNestedOneWithoutLeadsInput
   aktivitas?: Prisma.AktivitasCreateNestedManyWithoutLeadInput
-  customer?: Prisma.CustomerCreateNestedOneWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutItjInput = {
   id?: number
   marketing_id?: number | null
+  customer_id?: number | null
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   aktivitas?: Prisma.AktivitasUncheckedCreateNestedManyWithoutLeadInput
-  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutLeadInput
 }
 
 export type LeadCreateOrConnectWithoutItjInput = {
@@ -885,48 +980,51 @@ export type LeadUpdateToOneWithWhereWithoutItjInput = {
 export type LeadUpdateWithoutItjInput = {
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   marketing?: Prisma.UserUpdateOneWithoutLeadsNestedInput
+  customer?: Prisma.CustomerUpdateOneWithoutLeadsNestedInput
   aktivitas?: Prisma.AktivitasUpdateManyWithoutLeadNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutItjInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  customer_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   aktivitas?: Prisma.AktivitasUncheckedUpdateManyWithoutLeadNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutLeadNestedInput
 }
 
 export type LeadCreateWithoutCustomerInput = {
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   marketing?: Prisma.UserCreateNestedOneWithoutLeadsInput
@@ -939,13 +1037,14 @@ export type LeadUncheckedCreateWithoutCustomerInput = {
   marketing_id?: number | null
   nama: string
   no_hp: string
-  sumber: string
+  sumber?: $Enums.SumberLead
   minat_tipe?: string | null
   survei_jadwal_at?: Date | string | null
   survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
   lost_at?: Date | string | null
   lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
   created_at?: Date | string
   updated_at?: Date | string
   aktivitas?: Prisma.AktivitasUncheckedCreateNestedManyWithoutLeadInput
@@ -957,27 +1056,126 @@ export type LeadCreateOrConnectWithoutCustomerInput = {
   create: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput>
 }
 
-export type LeadUpsertWithoutCustomerInput = {
-  update: Prisma.XOR<Prisma.LeadUpdateWithoutCustomerInput, Prisma.LeadUncheckedUpdateWithoutCustomerInput>
-  create: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput>
-  where?: Prisma.LeadWhereInput
+export type LeadCreateManyCustomerInputEnvelope = {
+  data: Prisma.LeadCreateManyCustomerInput | Prisma.LeadCreateManyCustomerInput[]
+  skipDuplicates?: boolean
 }
 
-export type LeadUpdateToOneWithWhereWithoutCustomerInput = {
-  where?: Prisma.LeadWhereInput
+export type LeadUpsertWithWhereUniqueWithoutCustomerInput = {
+  where: Prisma.LeadWhereUniqueInput
+  update: Prisma.XOR<Prisma.LeadUpdateWithoutCustomerInput, Prisma.LeadUncheckedUpdateWithoutCustomerInput>
+  create: Prisma.XOR<Prisma.LeadCreateWithoutCustomerInput, Prisma.LeadUncheckedCreateWithoutCustomerInput>
+}
+
+export type LeadUpdateWithWhereUniqueWithoutCustomerInput = {
+  where: Prisma.LeadWhereUniqueInput
   data: Prisma.XOR<Prisma.LeadUpdateWithoutCustomerInput, Prisma.LeadUncheckedUpdateWithoutCustomerInput>
+}
+
+export type LeadUpdateManyWithWhereWithoutCustomerInput = {
+  where: Prisma.LeadScalarWhereInput
+  data: Prisma.XOR<Prisma.LeadUpdateManyMutationInput, Prisma.LeadUncheckedUpdateManyWithoutCustomerInput>
+}
+
+export type LeadCreateManyMarketingInput = {
+  id?: number
+  customer_id?: number | null
+  nama: string
+  no_hp: string
+  sumber?: $Enums.SumberLead
+  minat_tipe?: string | null
+  survei_jadwal_at?: Date | string | null
+  survei_selesai_at?: Date | string | null
+  lost_at?: Date | string | null
+  lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type LeadUpdateWithoutMarketingInput = {
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
+  minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneWithoutLeadsNestedInput
+  aktivitas?: Prisma.AktivitasUpdateManyWithoutLeadNestedInput
+  itj?: Prisma.ItjUpdateManyWithoutLeadNestedInput
+}
+
+export type LeadUncheckedUpdateWithoutMarketingInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
+  minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aktivitas?: Prisma.AktivitasUncheckedUpdateManyWithoutLeadNestedInput
+  itj?: Prisma.ItjUncheckedUpdateManyWithoutLeadNestedInput
+}
+
+export type LeadUncheckedUpdateManyWithoutMarketingInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
+  minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LeadCreateManyCustomerInput = {
+  id?: number
+  marketing_id?: number | null
+  nama: string
+  no_hp: string
+  sumber?: $Enums.SumberLead
+  minat_tipe?: string | null
+  survei_jadwal_at?: Date | string | null
+  survei_selesai_at?: Date | string | null
+  lost_at?: Date | string | null
+  lost_reason?: string | null
+  last_activity_at?: Date | string | null
+  next_follow_up_at?: Date | string | null
+  created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type LeadUpdateWithoutCustomerInput = {
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   marketing?: Prisma.UserUpdateOneWithoutLeadsNestedInput
@@ -990,80 +1188,33 @@ export type LeadUncheckedUpdateWithoutCustomerInput = {
   marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   aktivitas?: Prisma.AktivitasUncheckedUpdateManyWithoutLeadNestedInput
   itj?: Prisma.ItjUncheckedUpdateManyWithoutLeadNestedInput
 }
 
-export type LeadCreateManyMarketingInput = {
-  id?: number
-  nama: string
-  no_hp: string
-  sumber: string
-  minat_tipe?: string | null
-  survei_jadwal_at?: Date | string | null
-  survei_selesai_at?: Date | string | null
-  closing_at?: Date | string | null
-  lost_at?: Date | string | null
-  lost_reason?: string | null
-  created_at?: Date | string
-  updated_at?: Date | string
-}
-
-export type LeadUpdateWithoutMarketingInput = {
-  nama?: Prisma.StringFieldUpdateOperationsInput | string
-  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
-  minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  aktivitas?: Prisma.AktivitasUpdateManyWithoutLeadNestedInput
-  customer?: Prisma.CustomerUpdateOneWithoutLeadNestedInput
-  itj?: Prisma.ItjUpdateManyWithoutLeadNestedInput
-}
-
-export type LeadUncheckedUpdateWithoutMarketingInput = {
+export type LeadUncheckedUpdateManyWithoutCustomerInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   nama?: Prisma.StringFieldUpdateOperationsInput | string
   no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
+  sumber?: Prisma.EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
   minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  aktivitas?: Prisma.AktivitasUncheckedUpdateManyWithoutLeadNestedInput
-  customer?: Prisma.CustomerUncheckedUpdateOneWithoutLeadNestedInput
-  itj?: Prisma.ItjUncheckedUpdateManyWithoutLeadNestedInput
-}
-
-export type LeadUncheckedUpdateManyWithoutMarketingInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number
-  nama?: Prisma.StringFieldUpdateOperationsInput | string
-  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
-  sumber?: Prisma.StringFieldUpdateOperationsInput | string
-  minat_tipe?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  survei_jadwal_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  survei_selesai_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lost_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lost_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  last_activity_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  next_follow_up_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1111,20 +1262,22 @@ export type LeadCountOutputTypeCountItjArgs<ExtArgs extends runtime.Types.Extens
 export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   marketing_id?: boolean
+  customer_id?: boolean
   nama?: boolean
   no_hp?: boolean
   sumber?: boolean
   minat_tipe?: boolean
   survei_jadwal_at?: boolean
   survei_selesai_at?: boolean
-  closing_at?: boolean
   lost_at?: boolean
   lost_reason?: boolean
+  last_activity_at?: boolean
+  next_follow_up_at?: boolean
   created_at?: boolean
   updated_at?: boolean
   marketing?: boolean | Prisma.Lead$marketingArgs<ExtArgs>
-  aktivitas?: boolean | Prisma.Lead$aktivitasArgs<ExtArgs>
   customer?: boolean | Prisma.Lead$customerArgs<ExtArgs>
+  aktivitas?: boolean | Prisma.Lead$aktivitasArgs<ExtArgs>
   itj?: boolean | Prisma.Lead$itjArgs<ExtArgs>
   _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lead"]>
@@ -1134,24 +1287,26 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type LeadSelectScalar = {
   id?: boolean
   marketing_id?: boolean
+  customer_id?: boolean
   nama?: boolean
   no_hp?: boolean
   sumber?: boolean
   minat_tipe?: boolean
   survei_jadwal_at?: boolean
   survei_selesai_at?: boolean
-  closing_at?: boolean
   lost_at?: boolean
   lost_reason?: boolean
+  last_activity_at?: boolean
+  next_follow_up_at?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "marketing_id" | "nama" | "no_hp" | "sumber" | "minat_tipe" | "survei_jadwal_at" | "survei_selesai_at" | "closing_at" | "lost_at" | "lost_reason" | "created_at" | "updated_at", ExtArgs["result"]["lead"]>
+export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "marketing_id" | "customer_id" | "nama" | "no_hp" | "sumber" | "minat_tipe" | "survei_jadwal_at" | "survei_selesai_at" | "lost_at" | "lost_reason" | "last_activity_at" | "next_follow_up_at" | "created_at" | "updated_at", ExtArgs["result"]["lead"]>
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   marketing?: boolean | Prisma.Lead$marketingArgs<ExtArgs>
-  aktivitas?: boolean | Prisma.Lead$aktivitasArgs<ExtArgs>
   customer?: boolean | Prisma.Lead$customerArgs<ExtArgs>
+  aktivitas?: boolean | Prisma.Lead$aktivitasArgs<ExtArgs>
   itj?: boolean | Prisma.Lead$itjArgs<ExtArgs>
   _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1160,22 +1315,24 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "Lead"
   objects: {
     marketing: Prisma.$UserPayload<ExtArgs> | null
-    aktivitas: Prisma.$AktivitasPayload<ExtArgs>[]
     customer: Prisma.$CustomerPayload<ExtArgs> | null
+    aktivitas: Prisma.$AktivitasPayload<ExtArgs>[]
     itj: Prisma.$ItjPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     marketing_id: number | null
+    customer_id: number | null
     nama: string
     no_hp: string
-    sumber: string
+    sumber: $Enums.SumberLead
     minat_tipe: string | null
     survei_jadwal_at: Date | null
     survei_selesai_at: Date | null
-    closing_at: Date | null
     lost_at: Date | null
     lost_reason: string | null
+    last_activity_at: Date | null
+    next_follow_up_at: Date | null
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["lead"]>
@@ -1519,8 +1676,8 @@ readonly fields: LeadFieldRefs;
 export interface Prisma__LeadClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   marketing<T extends Prisma.Lead$marketingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$marketingArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  aktivitas<T extends Prisma.Lead$aktivitasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$aktivitasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AktivitasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customer<T extends Prisma.Lead$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  aktivitas<T extends Prisma.Lead$aktivitasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$aktivitasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AktivitasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   itj<T extends Prisma.Lead$itjArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$itjArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1553,15 +1710,17 @@ export interface Prisma__LeadClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface LeadFieldRefs {
   readonly id: Prisma.FieldRef<"Lead", 'Int'>
   readonly marketing_id: Prisma.FieldRef<"Lead", 'Int'>
+  readonly customer_id: Prisma.FieldRef<"Lead", 'Int'>
   readonly nama: Prisma.FieldRef<"Lead", 'String'>
   readonly no_hp: Prisma.FieldRef<"Lead", 'String'>
-  readonly sumber: Prisma.FieldRef<"Lead", 'String'>
+  readonly sumber: Prisma.FieldRef<"Lead", 'SumberLead'>
   readonly minat_tipe: Prisma.FieldRef<"Lead", 'String'>
   readonly survei_jadwal_at: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly survei_selesai_at: Prisma.FieldRef<"Lead", 'DateTime'>
-  readonly closing_at: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly lost_at: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly lost_reason: Prisma.FieldRef<"Lead", 'String'>
+  readonly last_activity_at: Prisma.FieldRef<"Lead", 'DateTime'>
+  readonly next_follow_up_at: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly created_at: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Lead", 'DateTime'>
 }
@@ -1931,6 +2090,25 @@ export type Lead$marketingArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
+ * Lead.customer
+ */
+export type Lead$customerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Customer
+   */
+  select?: Prisma.CustomerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Customer
+   */
+  omit?: Prisma.CustomerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerInclude<ExtArgs> | null
+  where?: Prisma.CustomerWhereInput
+}
+
+/**
  * Lead.aktivitas
  */
 export type Lead$aktivitasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1952,25 +2130,6 @@ export type Lead$aktivitasArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.AktivitasScalarFieldEnum | Prisma.AktivitasScalarFieldEnum[]
-}
-
-/**
- * Lead.customer
- */
-export type Lead$customerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Customer
-   */
-  select?: Prisma.CustomerSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Customer
-   */
-  omit?: Prisma.CustomerOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CustomerInclude<ExtArgs> | null
-  where?: Prisma.CustomerWhereInput
 }
 
 /**

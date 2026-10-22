@@ -1,34 +1,39 @@
+// actions/itj.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { itjSchema } from "@/schemas/itj/itj.schema";
-import { StatusItj } from "@/generated/prisma";
+import { todayDateOnlyUTC } from "@/lib/date/wib";
+import type { TahapDetail } from "@/generated/prisma";
 
-export async function submitITJ(formData: FormData): Promise<{
+export interface ITJActionResponse {
   success: boolean;
   error?: string;
   leadId?: number;
-}> {
+  transaksiId?: number;
+  data?: {
+    transaksiId: number;
+    leadId: number;
+  };
+}
+
+/**
+ * Submit ITJ and immediately create an active Transaksi + first Pembayaran.
+ * Allowed for any authenticated user (Marketing, Admin, Manager).
+ * Uses a single atomic prisma.$transaction.
+ */
+export async function submitITJ(
+  formDataOrInput: FormData | Record<string, unknown>
+): Promise<ITJActionResponse> {
   const session = await auth();
 
   if (!session?.user) {
     return { success: false, error: "Silakan login kembali." };
   }
 
-  const role = (session.user as { role?: string }).role;
-
-  if (role !== "MARKETING") {
-    return {
-      success: false,
-      error: "Kamu tidak memiliki izin untuk mengajukan ITJ.",
-    };
-  }
-
-  const userId = Number(
-    (session.user as { id?: string | number }).id
-  );
+  const userId = Number((session.user as { id?: string | number }).id);
 
   if (!Number.isSafeInteger(userId) || userId <= 0) {
     return {
@@ -37,19 +42,33 @@ export async function submitITJ(formData: FormData): Promise<{
     };
   }
 
-  const raw = {
-    leadId: formData.get("leadId"),
-    nik: formData.get("nik"),
-    namaKtp: formData.get("namaKtp"),
-    tempatLahir: formData.get("tempatLahir"),
-    tglLahir: formData.get("tglLahir"),
-    alamatKtp: formData.get("alamatKtp"),
-    unitId: formData.get("unitId"),
-    nominalItj: formData.get("nominalItj"),
-    targetDp: formData.get("targetDp"),
-    metodeBayar: formData.get("metodeBayar"),
-    tenor: formData.get("tenor") || undefined,
-  };
+  const isFormData =
+    typeof formDataOrInput === "object" &&
+    formDataOrInput !== null &&
+    "get" in formDataOrInput &&
+    typeof (formDataOrInput as { get: unknown }).get === "function";
+
+  const raw = isFormData
+    ? {
+        leadId: (formDataOrInput as FormData).get("leadId"),
+        nik: (formDataOrInput as FormData).get("nik"),
+        namaKtp: (formDataOrInput as FormData).get("namaKtp"),
+        tempatLahir: (formDataOrInput as FormData).get("tempatLahir"),
+        tglLahir: (formDataOrInput as FormData).get("tglLahir"),
+        alamatKtp: (formDataOrInput as FormData).get("alamatKtp"),
+        unitId: (formDataOrInput as FormData).get("unitId"),
+        hargaDeal: (formDataOrInput as FormData).get("hargaDeal"),
+        targetItj:
+          (formDataOrInput as FormData).get("targetItj") ??
+          (formDataOrInput as FormData).get("nominalItj"),
+        nominalDibayar:
+          (formDataOrInput as FormData).get("nominalDibayar") ??
+          (formDataOrInput as FormData).get("nominalItj"),
+        targetDp: (formDataOrInput as FormData).get("targetDp"),
+        metodeBayar: (formDataOrInput as FormData).get("metodeBayar"),
+        tenor: (formDataOrInput as FormData).get("tenor") || undefined,
+      }
+    : formDataOrInput;
 
   const parsed = itjSchema.safeParse(raw);
 
@@ -64,9 +83,10 @@ export async function submitITJ(formData: FormData): Promise<{
 
   try {
     let leadTargetId = data.leadId;
+    let createdTransaksiId: number | undefined;
 
     await prisma.$transaction(async (tx) => {
-      // 1. Pastikan lead tersedia dan ambil relasi customer serta itj terakhir.
+      // 1. Pastikan lead tersedia dan valid
       const lead = await tx.lead.findUnique({
         where: { id: data.leadId },
         include: {
@@ -84,27 +104,22 @@ export async function submitITJ(formData: FormData): Promise<{
 
       leadTargetId = lead.id;
 
-      if (
-        lead.marketing_id !== null &&
-        lead.marketing_id !== userId
-      ) {
-        throw new Error("Lead ini bukan tanggung jawab kamu.");
-      }
-
-      // 1. Authorization: Only allow access if survei_selesai_at is NOT null, and the lead is not Lost/Closed
       if (!lead.survei_selesai_at) {
-        throw new Error("Pengajuan ITJ hanya dapat dilakukan setelah survei lokasi selesai.");
+        throw new Error(
+          "Pengajuan ITJ hanya dapat dilakukan setelah survei lokasi selesai."
+        );
       }
 
       if (lead.lost_at !== null) {
         throw new Error("Lead yang berstatus LOST tidak dapat diajukan ITJ.");
       }
 
-      if (lead.closing_at !== null) {
-        throw new Error("Lead ini sudah berstatus Closing.");
+      const isAlreadyClosed = lead.itj.some((i) => i.status === "DISETUJUI");
+      if (isAlreadyClosed) {
+        throw new Error("Lead ini sudah memiliki transaksi ITJ aktif.");
       }
 
-      // 2. Pastikan unit ada dan kategorinya sesuai.
+      // 2. Pastikan unit ada dan kategorinya sesuai
       const unit = await tx.masterUnit.findUnique({
         where: { id: data.unitId },
         include: { tipe: true },
@@ -114,602 +129,180 @@ export async function submitITJ(formData: FormData): Promise<{
         throw new Error("Unit tidak ditemukan.");
       }
 
-      if (
-        unit.tipe.kategori === "KAVLING" &&
-        data.metodeBayar === "KPR"
-      ) {
+      if (unit.tipe.kategori === "KAVLING" && data.metodeBayar === "KPR") {
         throw new Error("Metode KPR tidak tersedia untuk unit kavling.");
       }
 
-      // 3. Cek apakah ada ITJ sebelumnya (revisi atau baru)
-      const existingItj = lead.itj[0] || null;
-      const isRevising =
-        existingItj &&
-        (existingItj.status === "PERLU_REVISI" || existingItj.status === "DITOLAK");
-
-      if (existingItj && existingItj.status === "DIAJUKAN") {
-        throw new Error("Pengajuan ITJ untuk lead ini sedang dalam proses review.");
-      }
-
-      // Validasi ketersediaan unit
+      // 3. Verifikasi unit AVAILABLE & Kunci unit langsung menjadi BOOKED (Atomic Concurrency Guard)
       if (unit.status_unit !== "AVAILABLE") {
-        const isSameHeldUnit = isRevising && existingItj.unit_id === data.unitId && unit.status_unit === "HOLD";
-        if (!isSameHeldUnit) {
-          throw new Error("Unit sudah tidak tersedia. Silakan pilih unit lain.");
-        }
+        throw new Error("Unit sudah tidak tersedia. Silakan pilih unit lain.");
       }
 
-      // 4. Kunci unit menjadi HOLD
-      if (isRevising && existingItj.unit_id !== data.unitId) {
-        // Lepas unit sebelumnya menjadi AVAILABLE
-        await tx.masterUnit.update({
-          where: { id: existingItj.unit_id },
-          data: { status_unit: "AVAILABLE" },
-        });
-        // Kunci unit baru menjadi HOLD
-        await tx.masterUnit.update({
-          where: { id: data.unitId },
-          data: { status_unit: "HOLD" },
-        });
-      } else {
-        await tx.masterUnit.update({
-          where: { id: data.unitId },
-          data: { status_unit: "HOLD" },
-        });
+      const claim = await tx.masterUnit.updateMany({
+        where: { id: data.unitId, status_unit: "AVAILABLE" },
+        data: { status_unit: "BOOKED" },
+      });
+
+      if (claim.count !== 1) {
+        throw new Error("Unit sudah tidak tersedia. Silakan pilih unit lain.");
       }
 
-      // 5. Update atau Buat Customer
+      // 4. Repeat Buyer Logic untuk Customer (Upsert Customer)
+      const cleanNik = data.nik.trim();
       let customerId: number;
-      if (lead.customer) {
+
+      const existingCustomer = await tx.customer.findUnique({
+        where: { nik: cleanNik },
+      });
+
+      if (existingCustomer) {
         await tx.customer.update({
-          where: { id: lead.customer.id },
+          where: { id: existingCustomer.id },
           data: {
-            nama_ktp: data.namaKtp,
-            nik: data.nik,
-            tempat_lahir: data.tempatLahir,
+            nama_ktp: data.namaKtp.trim(),
+            tempat_lahir: data.tempatLahir.trim(),
             tgl_lahir: new Date(`${data.tglLahir}T00:00:00.000Z`),
-            alamat_ktp: data.alamatKtp,
+            alamat_ktp: data.alamatKtp.trim(),
             no_hp: lead.no_hp,
           },
         });
-        customerId = lead.customer.id;
+        customerId = existingCustomer.id;
       } else {
         const createdCustomer = await tx.customer.create({
           data: {
-            lead_id: lead.id,
-            nama_ktp: data.namaKtp,
-            nik: data.nik,
-            tempat_lahir: data.tempatLahir,
+            nama_ktp: data.namaKtp.trim(),
+            nik: cleanNik,
+            tempat_lahir: data.tempatLahir.trim(),
             tgl_lahir: new Date(`${data.tglLahir}T00:00:00.000Z`),
-            alamat_ktp: data.alamatKtp,
+            alamat_ktp: data.alamatKtp.trim(),
             no_hp: lead.no_hp,
           },
         });
         customerId = createdCustomer.id;
       }
 
-      // 6. Buat atau Update record ITJ
-      if (isRevising) {
-        await tx.itj.update({
-          where: { id: existingItj.id },
-          data: {
-            unit_id: unit.id,
-            status: "DIAJUKAN",
-            nik: data.nik,
-            nama_ktp: data.namaKtp,
-            nominal: data.nominalItj,
-            target_dp: data.targetDp,
-            metode_bayar: data.metodeBayar,
-            tenor: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
-            diajukan_at: new Date(),
-            diputuskan_at: null,
-            diputuskan_oleh: null,
-          },
-        });
-      } else {
-        await tx.itj.create({
-          data: {
-            lead_id: lead.id,
-            unit_id: unit.id,
-            status: "DIAJUKAN",
-            nik: data.nik,
-            nama_ktp: data.namaKtp,
-            nominal: data.nominalItj,
-            target_dp: data.targetDp,
-            metode_bayar: data.metodeBayar,
-            tenor: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
-            diajukan_at: new Date(),
-          },
-        });
-      }
-
-      // 7. Buat atau update transaksi ITJ
-      const hargaDeal = unit.harga_khusus ?? unit.tipe.harga_dasar;
-      const existingTransaksi = await tx.transaksi.findFirst({
-        where: { customer_id: customerId },
+      // 5. Update Lead dengan customer_id dan set marketing_id ke user saat ini (PIC)
+      await tx.lead.update({
+        where: { id: lead.id },
+        data: {
+          customer_id: customerId,
+          marketing_id: userId,
+          lost_at: null,
+          lost_reason: null,
+        },
       });
 
-      if (existingTransaksi) {
-        await tx.transaksi.update({
-          where: { id: existingTransaksi.id },
-          data: {
-            unit_id: unit.id,
-            metode_bayar: data.metodeBayar,
-            harga_deal: hargaDeal,
-            target_itj: data.nominalItj,
-            target_dp: data.targetDp,
-            tenor_bulan: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
-            status_transaksi: "ITJ_DIAJUKAN",
-          },
-        });
-      } else {
-        await tx.transaksi.create({
-          data: {
-            customer_id: customerId,
-            unit_id: unit.id,
-            marketing_id: userId,
-            metode_bayar: data.metodeBayar,
-            harga_deal: hargaDeal,
-            target_itj: data.nominalItj,
-            target_dp: data.targetDp,
-            tenor_bulan: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
-            status_transaksi: "ITJ_DIAJUKAN",
-          },
-        });
+      // 6. Buat record ITJ snapshot langsung DISETUJUI
+      // 6. Buat record ITJ snapshot langsung DISETUJUI
+      const itjRecord = await tx.itj.create({
+        data: {
+          lead_id: lead.id,
+          unit_id: unit.id,
+          marketing_id: userId,
+          status: "DISETUJUI",
+          nik: cleanNik,
+          nama_ktp: data.namaKtp.trim(),
+          nominal: data.nominalDibayar,
+          harga_deal: data.hargaDeal,
+          target_itj: data.targetItj,
+          nominal_dibayar: data.nominalDibayar,
+          target_dp: data.targetDp,
+          metode_bayar: data.metodeBayar,
+          tenor: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
+          diajukan_at: new Date(),
+          diputuskan_at: new Date(),
+          diputuskan_oleh: userId,
+        },
+      });
+
+      // 7. Langsung buat Transaksi
+      let detailTahap: TahapDetail = "PENGUMPULAN_DOKUMEN";
+      if (data.metodeBayar === "CASH_KERAS") {
+        detailTahap = "PEMBERKASAN_LEGALITAS";
+      } else if (data.metodeBayar === "CASH_TEMPO") {
+        detailTahap = "PEMBERKASAN_PPJB";
       }
 
-      // 8. Catat riwayat aktivitas
+      const createdTransaksi = await tx.transaksi.create({
+        data: {
+          customer_id: customerId,
+          unit_id: unit.id,
+          marketing_id: userId,
+          itj_id: itjRecord.id,
+          metode_bayar: data.metodeBayar,
+          harga_deal: data.hargaDeal,
+          target_itj: data.targetItj,
+          target_dp: data.targetDp,
+          tenor_bulan: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
+          status_transaksi: "PEMBERKASAN",
+          tahap_detail: detailTahap,
+          closing_at: todayDateOnlyUTC(),
+        },
+      });
+
+      createdTransaksiId = createdTransaksi.id;
+
+      // 8. Buat Pembayaran pertama (ITJ) dengan is_void: false
+      const noKwitansi = `KWT-ITJ-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
+      await tx.pembayaran.create({
+        data: {
+          transaksi_id: createdTransaksi.id,
+          admin_id: userId,
+          no_kwitansi: noKwitansi,
+          jenis_pembayaran: "ITJ",
+          cara_bayar: "TRANSFER",
+          nominal: data.nominalDibayar,
+          tgl_bayar: todayDateOnlyUTC(),
+          is_void: false,
+          catatan: `Pembayaran awal ITJ Blok ${unit.blok}`,
+        },
+      });
+
+      // 9. Catat riwayat aktivitas lead & perbarui last_activity_at
+      const actNow = new Date();
       await tx.aktivitas.create({
         data: {
           lead_id: lead.id,
+          user_id: userId,
           jenis: "LAINNYA",
           hasil: "TERTARIK",
-          catatan: `${isRevising ? "[REVISI ITJ]" : "[PENGAJUAN ITJ]"} Blok ${unit.blok} sebesar Rp ${Number(data.nominalItj).toLocaleString("id-ID")}`,
+          catatan: `[TRANSAKSI ITJ BERHASIL] Blok ${unit.blok} berhasil dibooking dengan setoran ITJ Rp ${Number(data.nominalDibayar).toLocaleString("id-ID")} (Target ITJ: Rp ${Number(data.targetItj).toLocaleString("id-ID")}). Transaksi #${createdTransaksi.id} aktif.`,
+          created_at: actNow,
         },
+      });
+
+      await tx.lead.update({
+        where: { id: lead.id },
+        data: { last_activity_at: actNow },
       });
     });
 
     revalidatePath(`/marketing/lead/${leadTargetId}`);
     revalidatePath("/marketing/lead");
-    revalidatePath("/admin/validasi-itj");
-    revalidatePath("/manager/itj");
-    return { success: true, leadId: leadTargetId };
+    revalidatePath("/admin/transaksi");
+    revalidatePath("/manager/transaksi");
+    if (createdTransaksiId) {
+      revalidatePath(`/admin/transaksi/${createdTransaksiId}`);
+    }
+
+    return {
+      success: true,
+      leadId: leadTargetId,
+      transaksiId: createdTransaksiId,
+      data: createdTransaksiId
+        ? {
+            transaksiId: createdTransaksiId,
+            leadId: leadTargetId,
+          }
+        : undefined,
+    };
   } catch (error: unknown) {
     console.error("submitITJ error:", error);
-
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-
-    return {
-      success: false,
-      error: "Terjadi kesalahan saat menyimpan transaksi ITJ.",
-    };
-  }
-}
-
-// ──────────────────────────────────────────────────────────
-// ADMIN / MANAGER ACTIONS — Approve / Reject / Review ITJ
-// ──────────────────────────────────────────────────────────
-
-interface ITJActionResponse {
-  success: boolean;
-  error?: string;
-}
-
-/**
- * Review an ITJ submission (DIAJUKAN, PERLU_REVISI, DISETUJUI, DITOLAK).
- */
-export async function reviewITJ(
-  itjId: number,
-  keputusan: StatusItj,
-  catatan?: string
-): Promise<ITJActionResponse> {
-  const session = await auth();
-
-  if (!session?.user) {
-    return { success: false, error: "Silakan login kembali." };
-  }
-
-  const role = session.user.role;
-  if (role !== "ADMIN" && role !== "MANAGER") {
-    return {
-      success: false,
-      error: "Hanya Admin atau Manager yang dapat mereview pengajuan ITJ.",
-    };
-  }
-
-  const reviewerId = Number(session.user.id);
-
-  // Validate mandatory note for PERLU_REVISI or DITOLAK
-  if (
-    (keputusan === "PERLU_REVISI" || keputusan === "DITOLAK") &&
-    (!catatan || !catatan.trim())
-  ) {
-    return {
-      success: false,
-      error:
-        keputusan === "PERLU_REVISI"
-          ? "Catatan revisi wajib diisi agar marketing mengetahui data yang perlu diperbaiki."
-          : "Catatan alasan penolakan ITJ wajib diisi.",
-    };
-  }
-
-  const effectiveCatatan = catatan?.trim() || (keputusan === "DISETUJUI" ? "Pengajuan ITJ disetujui" : null);
-
-  try {
-    let leadTargetId: number | null = null;
-
-    await prisma.$transaction(async (tx) => {
-      const itj = await tx.itj.findUnique({
-        where: { id: itjId },
-        include: { unit: true, lead: true },
-      });
-
-      if (!itj) {
-        throw new Error("Pengajuan ITJ tidak ditemukan.");
-      }
-
-      leadTargetId = itj.lead_id;
-
-      // 1. Update Itj status
-      await tx.itj.update({
-        where: { id: itjId },
-        data: {
-          status: keputusan,
-          diputuskan_at: new Date(),
-          diputuskan_oleh: reviewerId,
-        },
-      });
-
-      // 2. Record Review entry
-      await tx.itjReview.create({
-        data: {
-          itj_id: itjId,
-          reviewer_id: reviewerId,
-          keputusan,
-          catatan: effectiveCatatan,
-        },
-      });
-
-      // 3. Side effects based on decision
-      if (keputusan === "DISETUJUI") {
-        // Sets MasterUnit to SOLD
-        await tx.masterUnit.update({
-          where: { id: itj.unit_id },
-          data: { status_unit: "SOLD" },
-        });
-
-        // Fills the closing_at milestone date on the parent Lead model
-        await tx.lead.update({
-          where: { id: itj.lead_id },
-          data: { closing_at: new Date(), lost_at: null },
-        });
-
-        // Update transaksi status
-        await tx.transaksi.updateMany({
-          where: { unit_id: itj.unit_id },
-          data: { status_transaksi: "Pemberkasan Awal" },
-        });
-
-        // Log Aktivitas
-        await tx.aktivitas.create({
-          data: {
-            lead_id: itj.lead_id,
-            jenis: "LAINNYA",
-            hasil: "TERTARIK",
-            catatan: `[ITJ DISETUJUI ADMIN] Blok ${itj.unit.blok} berhasil disetujui. Lead resmi Closing.`,
-          },
-        });
-      } else if (keputusan === "DITOLAK") {
-        // Changes MasterUnit status back to AVAILABLE
-        await tx.masterUnit.update({
-          where: { id: itj.unit_id },
-          data: { status_unit: "AVAILABLE" },
-        });
-
-        // Reset closing_at on lead
-        await tx.lead.update({
-          where: { id: itj.lead_id },
-          data: { closing_at: null },
-        });
-
-        // Update transaksi status
-        await tx.transaksi.updateMany({
-          where: { unit_id: itj.unit_id },
-          data: { status_transaksi: "ITJ_DITOLAK" },
-        });
-
-        // Log Aktivitas
-        await tx.aktivitas.create({
-          data: {
-            lead_id: itj.lead_id,
-            jenis: "LAINNYA",
-            hasil: "TIDAK_JADI",
-            catatan: `[ITJ DITOLAK ADMIN] ${effectiveCatatan || ""}`,
-          },
-        });
-      } else if (keputusan === "PERLU_REVISI") {
-        // Keep unit in HOLD
-        await tx.masterUnit.update({
-          where: { id: itj.unit_id },
-          data: { status_unit: "HOLD" },
-        });
-
-        // Reset closing_at
-        await tx.lead.update({
-          where: { id: itj.lead_id },
-          data: { closing_at: null },
-        });
-
-        // Update transaksi status
-        await tx.transaksi.updateMany({
-          where: { unit_id: itj.unit_id },
-          data: { status_transaksi: "ITJ_PERLU_REVISI" },
-        });
-
-        // Log Aktivitas
-        await tx.aktivitas.create({
-          data: {
-            lead_id: itj.lead_id,
-            jenis: "LAINNYA",
-            hasil: "TERTARIK",
-            catatan: `[ITJ PERLU REVISI] ${effectiveCatatan || ""}`,
-          },
-        });
-      }
-    });
-
-    revalidatePath("/admin/itj");
-    revalidatePath("/admin/validasi-itj");
-    revalidatePath("/manager/itj");
-    revalidatePath("/marketing/lead");
-    if (leadTargetId) {
-      revalidatePath(`/marketing/lead/${leadTargetId}`);
-    }
-    return { success: true };
-  } catch (error: unknown) {
-    const errorMsg = error instanceof Error ? error.message : "Gagal mereview pengajuan ITJ";
+    const errorMsg =
+      error instanceof Error
+        ? error.message
+        : "Terjadi kesalahan saat memproses transaksi ITJ.";
     return { success: false, error: errorMsg };
-  }
-}
-
-export const reviewItj = reviewITJ;
-
-
-/**
- * Approves a pending ITJ submission.
- */
-export async function approveITJ(leadId: number): Promise<ITJActionResponse> {
-  const session = await auth();
-
-  if (!session?.user) {
-    return { success: false, error: "Silakan login kembali." };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      success: false,
-      error: "Hanya Admin yang dapat menyetujui ITJ.",
-    };
-  }
-
-  const reviewerId = Number(session.user.id);
-
-  try {
-    await prisma.$transaction(async (tx) => {
-      // 1. Find the lead + linked transaction via customer.
-      const lead = await tx.lead.findUnique({
-        where: { id: leadId },
-        include: {
-          customer: {
-            include: {
-              transaksi: { where: { status_transaksi: "ITJ_DIAJUKAN" } },
-            },
-          },
-        },
-      });
-
-      if (!lead) {
-        throw new Error("Lead tidak ditemukan.");
-      }
-
-      const transaksi = lead.customer?.transaksi[0];
-
-      if (!transaksi) {
-        throw new Error("Transaksi ITJ tidak ditemukan untuk lead ini.");
-      }
-
-      // 2. Mark unit as SOLD.
-      await tx.masterUnit.update({
-        where: { id: transaksi.unit_id },
-        data: { status_unit: "SOLD" },
-      });
-
-      // 3. Update transaction status.
-      await tx.transaksi.update({
-        where: { id: transaksi.id },
-        data: { status_transaksi: "ITJ_DITERIMA" },
-      });
-
-      // 4. Update Itj record and add ItjReview entry
-      const existingItj = await tx.itj.findFirst({
-        where: { lead_id: leadId, status: "DIAJUKAN" },
-        orderBy: { created_at: "desc" },
-      });
-
-      if (existingItj) {
-        await tx.itj.update({
-          where: { id: existingItj.id },
-          data: {
-            status: "DISETUJUI",
-            diputuskan_at: new Date(),
-            diputuskan_oleh: reviewerId,
-          },
-        });
-
-        await tx.itjReview.create({
-          data: {
-            itj_id: existingItj.id,
-            reviewer_id: reviewerId,
-            keputusan: "DISETUJUI",
-            catatan: "Disetujui oleh Admin",
-          },
-        });
-      }
-
-      // 5. Ensure lead closing_at is recorded
-      await tx.lead.update({
-        where: { id: leadId },
-        data: { closing_at: new Date() },
-      });
-    });
-
-    revalidatePath("/admin/validasi-itj");
-    revalidatePath("/marketing/lead");
-    return { success: true };
-  } catch (error: unknown) {
-    console.error("approveITJ error:", error);
-
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-
-    return {
-      success: false,
-      error: "Terjadi kesalahan saat menyetujui ITJ.",
-    };
-  }
-}
-
-/**
- * Rejects a pending ITJ submission.
- */
-export async function rejectITJ(
-  leadId: number,
-  catatan: string
-): Promise<ITJActionResponse> {
-  const session = await auth();
-
-  if (!session?.user) {
-    return { success: false, error: "Silakan login kembali." };
-  }
-
-  if (session.user.role !== "ADMIN") {
-    return {
-      success: false,
-      error: "Hanya Admin yang dapat menolak ITJ.",
-    };
-  }
-
-  if (!catatan.trim()) {
-    return {
-      success: false,
-      error: "Catatan penolakan wajib diisi.",
-    };
-  }
-
-  const reviewerId = Number(session.user.id);
-
-  try {
-    await prisma.$transaction(async (tx) => {
-      // 1. Find the lead + linked transaction via customer.
-      const lead = await tx.lead.findUnique({
-        where: { id: leadId },
-        include: {
-          customer: {
-            include: {
-              transaksi: { where: { status_transaksi: "ITJ_DIAJUKAN" } },
-            },
-          },
-        },
-      });
-
-      if (!lead) {
-        throw new Error("Lead tidak ditemukan.");
-      }
-
-      const transaksi = lead.customer?.transaksi[0];
-
-      if (!transaksi) {
-        throw new Error("Transaksi ITJ tidak ditemukan untuk lead ini.");
-      }
-
-      // 2. Release unit → AVAILABLE.
-      await tx.masterUnit.update({
-        where: { id: transaksi.unit_id },
-        data: { status_unit: "AVAILABLE" },
-      });
-
-      // 3. Delete the transaction (must go before customer due to FK).
-      await tx.transaksi.delete({
-        where: { id: transaksi.id },
-      });
-
-      // 4. Delete the customer record.
-      if (lead.customer) {
-        await tx.customer.delete({
-          where: { id: lead.customer.id },
-        });
-      }
-
-      // 5. Update Itj record and create ItjReview
-      const existingItj = await tx.itj.findFirst({
-        where: { lead_id: leadId, status: "DIAJUKAN" },
-        orderBy: { created_at: "desc" },
-      });
-
-      if (existingItj) {
-        await tx.itj.update({
-          where: { id: existingItj.id },
-          data: {
-            status: "DITOLAK",
-            diputuskan_at: new Date(),
-            diputuskan_oleh: reviewerId,
-          },
-        });
-
-        await tx.itjReview.create({
-          data: {
-            itj_id: existingItj.id,
-            reviewer_id: reviewerId,
-            keputusan: "DITOLAK",
-            catatan: catatan.trim(),
-          },
-        });
-      }
-
-      // 6. Reset closing_at milestone
-      await tx.lead.update({
-        where: { id: leadId },
-        data: { closing_at: null },
-      });
-
-      // 7. Log rejection note as an activity.
-      await tx.aktivitas.create({
-        data: {
-          lead_id: leadId,
-          jenis: "LAINNYA",
-          hasil: "TIDAK_JADI",
-          catatan: `[ITJ DITOLAK ADMIN] ${catatan.trim()}`,
-        },
-      });
-    });
-
-    revalidatePath("/admin/validasi-itj");
-    revalidatePath("/marketing/lead");
-    return { success: true };
-  } catch (error: unknown) {
-    console.error("rejectITJ error:", error);
-
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-
-    return {
-      success: false,
-      error: "Terjadi kesalahan saat menolak ITJ.",
-    };
   }
 }
 

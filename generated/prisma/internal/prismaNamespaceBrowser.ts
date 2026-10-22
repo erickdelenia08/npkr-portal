@@ -60,6 +60,13 @@ export const ModelName = {
   ItjReview: 'ItjReview',
   Customer: 'Customer',
   Transaksi: 'Transaksi',
+  Bank: 'Bank',
+  PengajuanKPR: 'PengajuanKPR',
+  PengajuanKPRLog: 'PengajuanKPRLog',
+  TransaksiTahapLog: 'TransaksiTahapLog',
+  DokumenTransaksi: 'DokumenTransaksi',
+  InspeksiBAST: 'InspeksiBAST',
+  InspeksiBASTLog: 'InspeksiBASTLog',
   Pembayaran: 'Pembayaran'
 } as const
 
@@ -110,6 +117,8 @@ export const MasterUnitScalarFieldEnum = {
   id: 'id',
   tipe_id: 'tipe_id',
   blok: 'blok',
+  blok_prefix: 'blok_prefix',
+  blok_nomor: 'blok_nomor',
   status_unit: 'status_unit',
   harga_khusus: 'harga_khusus'
 } as const
@@ -120,15 +129,17 @@ export type MasterUnitScalarFieldEnum = (typeof MasterUnitScalarFieldEnum)[keyof
 export const LeadScalarFieldEnum = {
   id: 'id',
   marketing_id: 'marketing_id',
+  customer_id: 'customer_id',
   nama: 'nama',
   no_hp: 'no_hp',
   sumber: 'sumber',
   minat_tipe: 'minat_tipe',
   survei_jadwal_at: 'survei_jadwal_at',
   survei_selesai_at: 'survei_selesai_at',
-  closing_at: 'closing_at',
   lost_at: 'lost_at',
   lost_reason: 'lost_reason',
+  last_activity_at: 'last_activity_at',
+  next_follow_up_at: 'next_follow_up_at',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -139,6 +150,7 @@ export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof Lead
 export const AktivitasScalarFieldEnum = {
   id: 'id',
   lead_id: 'lead_id',
+  user_id: 'user_id',
   jenis: 'jenis',
   hasil: 'hasil',
   catatan: 'catatan',
@@ -153,11 +165,15 @@ export const ItjScalarFieldEnum = {
   id: 'id',
   lead_id: 'lead_id',
   unit_id: 'unit_id',
+  marketing_id: 'marketing_id',
   status: 'status',
   nik: 'nik',
   nama_ktp: 'nama_ktp',
   nominal: 'nominal',
+  harga_deal: 'harga_deal',
+  target_itj: 'target_itj',
   target_dp: 'target_dp',
+  nominal_dibayar: 'nominal_dibayar',
   metode_bayar: 'metode_bayar',
   tenor: 'tenor',
   diajukan_at: 'diajukan_at',
@@ -184,7 +200,6 @@ export type ItjReviewScalarFieldEnum = (typeof ItjReviewScalarFieldEnum)[keyof t
 
 export const CustomerScalarFieldEnum = {
   id: 'id',
-  lead_id: 'lead_id',
   nama_ktp: 'nama_ktp',
   nik: 'nik',
   tempat_lahir: 'tempat_lahir',
@@ -203,19 +218,25 @@ export const TransaksiScalarFieldEnum = {
   customer_id: 'customer_id',
   unit_id: 'unit_id',
   marketing_id: 'marketing_id',
+  itj_id: 'itj_id',
   metode_bayar: 'metode_bayar',
   harga_deal: 'harga_deal',
   target_itj: 'target_itj',
   target_dp: 'target_dp',
   tenor_bulan: 'tenor_bulan',
   status_transaksi: 'status_transaksi',
+  tahap_detail: 'tahap_detail',
   nama_bank: 'nama_bank',
   nama_notaris: 'nama_notaris',
   tgl_akad: 'tgl_akad',
+  tgl_ajb: 'tgl_ajb',
+  lunas_at: 'lunas_at',
   tgl_bast: 'tgl_bast',
+  closing_at: 'closing_at',
+  closed_at: 'closed_at',
+  cancelled_at: 'cancelled_at',
+  alasan_batal: 'alasan_batal',
   catatan_admin: 'catatan_admin',
-  berkas_json: 'berkas_json',
-  bast_json: 'bast_json',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
@@ -223,14 +244,123 @@ export const TransaksiScalarFieldEnum = {
 export type TransaksiScalarFieldEnum = (typeof TransaksiScalarFieldEnum)[keyof typeof TransaksiScalarFieldEnum]
 
 
+export const BankScalarFieldEnum = {
+  id: 'id',
+  nama: 'nama',
+  kode: 'kode',
+  is_active: 'is_active',
+  catatan: 'catatan',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type BankScalarFieldEnum = (typeof BankScalarFieldEnum)[keyof typeof BankScalarFieldEnum]
+
+
+export const PengajuanKPRScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  bank_id: 'bank_id',
+  nomor_pengajuan: 'nomor_pengajuan',
+  status: 'status',
+  tanggal_ajukan: 'tanggal_ajukan',
+  tanggal_keputusan: 'tanggal_keputusan',
+  alasan_penolakan: 'alasan_penolakan',
+  catatan: 'catatan',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type PengajuanKPRScalarFieldEnum = (typeof PengajuanKPRScalarFieldEnum)[keyof typeof PengajuanKPRScalarFieldEnum]
+
+
+export const PengajuanKPRLogScalarFieldEnum = {
+  id: 'id',
+  pengajuan_id: 'pengajuan_id',
+  status_sebelum: 'status_sebelum',
+  status_sesudah: 'status_sesudah',
+  admin_id: 'admin_id',
+  catatan: 'catatan',
+  created_at: 'created_at'
+} as const
+
+export type PengajuanKPRLogScalarFieldEnum = (typeof PengajuanKPRLogScalarFieldEnum)[keyof typeof PengajuanKPRLogScalarFieldEnum]
+
+
+export const TransaksiTahapLogScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  tahap_sebelum: 'tahap_sebelum',
+  tahap_sesudah: 'tahap_sesudah',
+  detail_sebelum: 'detail_sebelum',
+  detail_sesudah: 'detail_sesudah',
+  admin_id: 'admin_id',
+  catatan: 'catatan',
+  created_at: 'created_at'
+} as const
+
+export type TransaksiTahapLogScalarFieldEnum = (typeof TransaksiTahapLogScalarFieldEnum)[keyof typeof TransaksiTahapLogScalarFieldEnum]
+
+
+export const DokumenTransaksiScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  jenis: 'jenis',
+  kategori: 'kategori',
+  status: 'status',
+  file_url: 'file_url',
+  catatan_verifikasi: 'catatan_verifikasi',
+  verified_by: 'verified_by',
+  verified_at: 'verified_at',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type DokumenTransaksiScalarFieldEnum = (typeof DokumenTransaksiScalarFieldEnum)[keyof typeof DokumenTransaksiScalarFieldEnum]
+
+
+export const InspeksiBASTScalarFieldEnum = {
+  id: 'id',
+  transaksi_id: 'transaksi_id',
+  item: 'item',
+  status: 'status',
+  catatan: 'catatan',
+  inspektur_id: 'inspektur_id',
+  diperiksa_at: 'diperiksa_at'
+} as const
+
+export type InspeksiBASTScalarFieldEnum = (typeof InspeksiBASTScalarFieldEnum)[keyof typeof InspeksiBASTScalarFieldEnum]
+
+
+export const InspeksiBASTLogScalarFieldEnum = {
+  id: 'id',
+  inspeksi_bast_id: 'inspeksi_bast_id',
+  status_sebelum: 'status_sebelum',
+  status_sesudah: 'status_sesudah',
+  catatan: 'catatan',
+  inspektur_id: 'inspektur_id',
+  created_at: 'created_at'
+} as const
+
+export type InspeksiBASTLogScalarFieldEnum = (typeof InspeksiBASTLogScalarFieldEnum)[keyof typeof InspeksiBASTLogScalarFieldEnum]
+
+
 export const PembayaranScalarFieldEnum = {
   id: 'id',
   transaksi_id: 'transaksi_id',
   admin_id: 'admin_id',
+  no_kwitansi: 'no_kwitansi',
   jenis_pembayaran: 'jenis_pembayaran',
+  cara_bayar: 'cara_bayar',
   nominal: 'nominal',
+  tgl_bayar: 'tgl_bayar',
   catatan: 'catatan',
-  created_at: 'created_at'
+  is_void: 'is_void',
+  void_at: 'void_at',
+  void_by: 'void_by',
+  void_reason: 'void_reason',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
 export type PembayaranScalarFieldEnum = (typeof PembayaranScalarFieldEnum)[keyof typeof PembayaranScalarFieldEnum]
@@ -244,14 +374,6 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const NullableJsonNullValueInput = {
-  DbNull: DbNull,
-  JsonNull: JsonNull
-} as const
-
-export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
 export const UserOrderByRelevanceFieldEnum = {
   username: 'username',
   nama: 'nama',
@@ -262,6 +384,13 @@ export const UserOrderByRelevanceFieldEnum = {
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
+export const MasterTipeOrderByRelevanceFieldEnum = {
+  nama_tipe: 'nama_tipe'
+} as const
+
+export type MasterTipeOrderByRelevanceFieldEnum = (typeof MasterTipeOrderByRelevanceFieldEnum)[keyof typeof MasterTipeOrderByRelevanceFieldEnum]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
@@ -270,15 +399,9 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
-export const MasterTipeOrderByRelevanceFieldEnum = {
-  nama_tipe: 'nama_tipe'
-} as const
-
-export type MasterTipeOrderByRelevanceFieldEnum = (typeof MasterTipeOrderByRelevanceFieldEnum)[keyof typeof MasterTipeOrderByRelevanceFieldEnum]
-
-
 export const MasterUnitOrderByRelevanceFieldEnum = {
-  blok: 'blok'
+  blok: 'blok',
+  blok_prefix: 'blok_prefix'
 } as const
 
 export type MasterUnitOrderByRelevanceFieldEnum = (typeof MasterUnitOrderByRelevanceFieldEnum)[keyof typeof MasterUnitOrderByRelevanceFieldEnum]
@@ -287,7 +410,6 @@ export type MasterUnitOrderByRelevanceFieldEnum = (typeof MasterUnitOrderByRelev
 export const LeadOrderByRelevanceFieldEnum = {
   nama: 'nama',
   no_hp: 'no_hp',
-  sumber: 'sumber',
   minat_tipe: 'minat_tipe',
   lost_reason: 'lost_reason'
 } as const
@@ -328,35 +450,73 @@ export const CustomerOrderByRelevanceFieldEnum = {
 export type CustomerOrderByRelevanceFieldEnum = (typeof CustomerOrderByRelevanceFieldEnum)[keyof typeof CustomerOrderByRelevanceFieldEnum]
 
 
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
-
-
 export const TransaksiOrderByRelevanceFieldEnum = {
-  status_transaksi: 'status_transaksi',
   nama_bank: 'nama_bank',
   nama_notaris: 'nama_notaris',
+  alasan_batal: 'alasan_batal',
   catatan_admin: 'catatan_admin'
 } as const
 
 export type TransaksiOrderByRelevanceFieldEnum = (typeof TransaksiOrderByRelevanceFieldEnum)[keyof typeof TransaksiOrderByRelevanceFieldEnum]
 
 
-export const PembayaranOrderByRelevanceFieldEnum = {
+export const BankOrderByRelevanceFieldEnum = {
+  nama: 'nama',
+  kode: 'kode',
   catatan: 'catatan'
+} as const
+
+export type BankOrderByRelevanceFieldEnum = (typeof BankOrderByRelevanceFieldEnum)[keyof typeof BankOrderByRelevanceFieldEnum]
+
+
+export const PengajuanKPROrderByRelevanceFieldEnum = {
+  alasan_penolakan: 'alasan_penolakan',
+  catatan: 'catatan'
+} as const
+
+export type PengajuanKPROrderByRelevanceFieldEnum = (typeof PengajuanKPROrderByRelevanceFieldEnum)[keyof typeof PengajuanKPROrderByRelevanceFieldEnum]
+
+
+export const PengajuanKPRLogOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type PengajuanKPRLogOrderByRelevanceFieldEnum = (typeof PengajuanKPRLogOrderByRelevanceFieldEnum)[keyof typeof PengajuanKPRLogOrderByRelevanceFieldEnum]
+
+
+export const TransaksiTahapLogOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type TransaksiTahapLogOrderByRelevanceFieldEnum = (typeof TransaksiTahapLogOrderByRelevanceFieldEnum)[keyof typeof TransaksiTahapLogOrderByRelevanceFieldEnum]
+
+
+export const DokumenTransaksiOrderByRelevanceFieldEnum = {
+  file_url: 'file_url',
+  catatan_verifikasi: 'catatan_verifikasi'
+} as const
+
+export type DokumenTransaksiOrderByRelevanceFieldEnum = (typeof DokumenTransaksiOrderByRelevanceFieldEnum)[keyof typeof DokumenTransaksiOrderByRelevanceFieldEnum]
+
+
+export const InspeksiBASTOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type InspeksiBASTOrderByRelevanceFieldEnum = (typeof InspeksiBASTOrderByRelevanceFieldEnum)[keyof typeof InspeksiBASTOrderByRelevanceFieldEnum]
+
+
+export const InspeksiBASTLogOrderByRelevanceFieldEnum = {
+  catatan: 'catatan'
+} as const
+
+export type InspeksiBASTLogOrderByRelevanceFieldEnum = (typeof InspeksiBASTLogOrderByRelevanceFieldEnum)[keyof typeof InspeksiBASTLogOrderByRelevanceFieldEnum]
+
+
+export const PembayaranOrderByRelevanceFieldEnum = {
+  no_kwitansi: 'no_kwitansi',
+  catatan: 'catatan',
+  void_reason: 'void_reason'
 } as const
 
 export type PembayaranOrderByRelevanceFieldEnum = (typeof PembayaranOrderByRelevanceFieldEnum)[keyof typeof PembayaranOrderByRelevanceFieldEnum]

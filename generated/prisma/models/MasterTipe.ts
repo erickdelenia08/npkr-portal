@@ -201,7 +201,7 @@ export type MasterTipeGroupByOutputType = {
   id: number
   nama_tipe: string
   kategori: $Enums.KategoriUnit
-  luas_bangunan: number | null
+  luas_bangunan: number
   luas_tanah: number
   harga_dasar: runtime.Decimal
   _count: MasterTipeCountAggregateOutputType | null
@@ -233,7 +233,7 @@ export type MasterTipeWhereInput = {
   id?: Prisma.IntFilter<"MasterTipe"> | number
   nama_tipe?: Prisma.StringFilter<"MasterTipe"> | string
   kategori?: Prisma.EnumKategoriUnitFilter<"MasterTipe"> | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.IntNullableFilter<"MasterTipe"> | number | null
+  luas_bangunan?: Prisma.IntFilter<"MasterTipe"> | number
   luas_tanah?: Prisma.IntFilter<"MasterTipe"> | number
   harga_dasar?: Prisma.DecimalFilter<"MasterTipe"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   units?: Prisma.MasterUnitListRelationFilter
@@ -243,7 +243,7 @@ export type MasterTipeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   nama_tipe?: Prisma.SortOrder
   kategori?: Prisma.SortOrder
-  luas_bangunan?: Prisma.SortOrderInput | Prisma.SortOrder
+  luas_bangunan?: Prisma.SortOrder
   luas_tanah?: Prisma.SortOrder
   harga_dasar?: Prisma.SortOrder
   units?: Prisma.MasterUnitOrderByRelationAggregateInput
@@ -252,22 +252,23 @@ export type MasterTipeOrderByWithRelationInput = {
 
 export type MasterTipeWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  kategori_luas_bangunan_luas_tanah?: Prisma.MasterTipeKategoriLuas_bangunanLuas_tanahCompoundUniqueInput
   AND?: Prisma.MasterTipeWhereInput | Prisma.MasterTipeWhereInput[]
   OR?: Prisma.MasterTipeWhereInput[]
   NOT?: Prisma.MasterTipeWhereInput | Prisma.MasterTipeWhereInput[]
   nama_tipe?: Prisma.StringFilter<"MasterTipe"> | string
   kategori?: Prisma.EnumKategoriUnitFilter<"MasterTipe"> | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.IntNullableFilter<"MasterTipe"> | number | null
+  luas_bangunan?: Prisma.IntFilter<"MasterTipe"> | number
   luas_tanah?: Prisma.IntFilter<"MasterTipe"> | number
   harga_dasar?: Prisma.DecimalFilter<"MasterTipe"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   units?: Prisma.MasterUnitListRelationFilter
-}, "id">
+}, "id" | "kategori_luas_bangunan_luas_tanah">
 
 export type MasterTipeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   nama_tipe?: Prisma.SortOrder
   kategori?: Prisma.SortOrder
-  luas_bangunan?: Prisma.SortOrderInput | Prisma.SortOrder
+  luas_bangunan?: Prisma.SortOrder
   luas_tanah?: Prisma.SortOrder
   harga_dasar?: Prisma.SortOrder
   _count?: Prisma.MasterTipeCountOrderByAggregateInput
@@ -284,7 +285,7 @@ export type MasterTipeScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"MasterTipe"> | number
   nama_tipe?: Prisma.StringWithAggregatesFilter<"MasterTipe"> | string
   kategori?: Prisma.EnumKategoriUnitWithAggregatesFilter<"MasterTipe"> | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.IntNullableWithAggregatesFilter<"MasterTipe"> | number | null
+  luas_bangunan?: Prisma.IntWithAggregatesFilter<"MasterTipe"> | number
   luas_tanah?: Prisma.IntWithAggregatesFilter<"MasterTipe"> | number
   harga_dasar?: Prisma.DecimalWithAggregatesFilter<"MasterTipe"> | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -292,7 +293,7 @@ export type MasterTipeScalarWhereWithAggregatesInput = {
 export type MasterTipeCreateInput = {
   nama_tipe: string
   kategori: $Enums.KategoriUnit
-  luas_bangunan?: number | null
+  luas_bangunan?: number
   luas_tanah: number
   harga_dasar: runtime.Decimal | runtime.DecimalJsLike | number | string
   units?: Prisma.MasterUnitCreateNestedManyWithoutTipeInput
@@ -302,7 +303,7 @@ export type MasterTipeUncheckedCreateInput = {
   id?: number
   nama_tipe: string
   kategori: $Enums.KategoriUnit
-  luas_bangunan?: number | null
+  luas_bangunan?: number
   luas_tanah: number
   harga_dasar: runtime.Decimal | runtime.DecimalJsLike | number | string
   units?: Prisma.MasterUnitUncheckedCreateNestedManyWithoutTipeInput
@@ -311,7 +312,7 @@ export type MasterTipeUncheckedCreateInput = {
 export type MasterTipeUpdateInput = {
   nama_tipe?: Prisma.StringFieldUpdateOperationsInput | string
   kategori?: Prisma.EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  luas_bangunan?: Prisma.IntFieldUpdateOperationsInput | number
   luas_tanah?: Prisma.IntFieldUpdateOperationsInput | number
   harga_dasar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   units?: Prisma.MasterUnitUpdateManyWithoutTipeNestedInput
@@ -321,7 +322,7 @@ export type MasterTipeUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nama_tipe?: Prisma.StringFieldUpdateOperationsInput | string
   kategori?: Prisma.EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  luas_bangunan?: Prisma.IntFieldUpdateOperationsInput | number
   luas_tanah?: Prisma.IntFieldUpdateOperationsInput | number
   harga_dasar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   units?: Prisma.MasterUnitUncheckedUpdateManyWithoutTipeNestedInput
@@ -331,7 +332,7 @@ export type MasterTipeCreateManyInput = {
   id?: number
   nama_tipe: string
   kategori: $Enums.KategoriUnit
-  luas_bangunan?: number | null
+  luas_bangunan?: number
   luas_tanah: number
   harga_dasar: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -339,7 +340,7 @@ export type MasterTipeCreateManyInput = {
 export type MasterTipeUpdateManyMutationInput = {
   nama_tipe?: Prisma.StringFieldUpdateOperationsInput | string
   kategori?: Prisma.EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  luas_bangunan?: Prisma.IntFieldUpdateOperationsInput | number
   luas_tanah?: Prisma.IntFieldUpdateOperationsInput | number
   harga_dasar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -348,7 +349,7 @@ export type MasterTipeUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nama_tipe?: Prisma.StringFieldUpdateOperationsInput | string
   kategori?: Prisma.EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  luas_bangunan?: Prisma.IntFieldUpdateOperationsInput | number
   luas_tanah?: Prisma.IntFieldUpdateOperationsInput | number
   harga_dasar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -357,6 +358,12 @@ export type MasterTipeOrderByRelevanceInput = {
   fields: Prisma.MasterTipeOrderByRelevanceFieldEnum | Prisma.MasterTipeOrderByRelevanceFieldEnum[]
   sort: Prisma.SortOrder
   search: string
+}
+
+export type MasterTipeKategoriLuas_bangunanLuas_tanahCompoundUniqueInput = {
+  kategori: $Enums.KategoriUnit
+  luas_bangunan: number
+  luas_tanah: number
 }
 
 export type MasterTipeCountOrderByAggregateInput = {
@@ -409,14 +416,6 @@ export type EnumKategoriUnitFieldUpdateOperationsInput = {
   set?: $Enums.KategoriUnit
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type DecimalFieldUpdateOperationsInput = {
   set?: runtime.Decimal | runtime.DecimalJsLike | number | string
   increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -442,7 +441,7 @@ export type MasterTipeUpdateOneRequiredWithoutUnitsNestedInput = {
 export type MasterTipeCreateWithoutUnitsInput = {
   nama_tipe: string
   kategori: $Enums.KategoriUnit
-  luas_bangunan?: number | null
+  luas_bangunan?: number
   luas_tanah: number
   harga_dasar: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -451,7 +450,7 @@ export type MasterTipeUncheckedCreateWithoutUnitsInput = {
   id?: number
   nama_tipe: string
   kategori: $Enums.KategoriUnit
-  luas_bangunan?: number | null
+  luas_bangunan?: number
   luas_tanah: number
   harga_dasar: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -475,7 +474,7 @@ export type MasterTipeUpdateToOneWithWhereWithoutUnitsInput = {
 export type MasterTipeUpdateWithoutUnitsInput = {
   nama_tipe?: Prisma.StringFieldUpdateOperationsInput | string
   kategori?: Prisma.EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  luas_bangunan?: Prisma.IntFieldUpdateOperationsInput | number
   luas_tanah?: Prisma.IntFieldUpdateOperationsInput | number
   harga_dasar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -484,7 +483,7 @@ export type MasterTipeUncheckedUpdateWithoutUnitsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   nama_tipe?: Prisma.StringFieldUpdateOperationsInput | string
   kategori?: Prisma.EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-  luas_bangunan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  luas_bangunan?: Prisma.IntFieldUpdateOperationsInput | number
   luas_tanah?: Prisma.IntFieldUpdateOperationsInput | number
   harga_dasar?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
 }
@@ -557,7 +556,7 @@ export type $MasterTipePayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: number
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan: number | null
+    luas_bangunan: number
     luas_tanah: number
     harga_dasar: runtime.Decimal
   }, ExtArgs["result"]["masterTipe"]>

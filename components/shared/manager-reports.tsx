@@ -3,19 +3,14 @@
 
 import React, { useState, useTransition } from "react";
 import {
-  FileSpreadsheet,
   Download,
   Users,
   Building2,
   PieChart,
-  Calendar,
   Loader2,
-  CheckCircle2,
   Table,
   ChevronDown,
   ChevronUp,
-  Sparkles,
-  TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -110,23 +105,48 @@ export function ManagerReports() {
           return;
         }
 
-        // Build CSV: Nama Marketing, Total Lead Aktif, Total Survei, Total Closing (ITJ Disetujui)
+        // Build CSV: Nama Marketing, Username, No HP, Lead Masuk, Survei Dijadwalkan, Survei Selesai, ITJ Diajukan, ITJ Disetujui, Closing
         const headers = [
           "Nama Marketing",
           "Username",
           "No HP",
-          "Total Lead Aktif",
-          "Total Survei",
-          "Total Closing (ITJ Disetujui)",
+          "Lead Masuk",
+          "Survei Dijadwalkan",
+          "Survei Selesai",
+          "ITJ Diajukan",
+          "ITJ Disetujui",
+          "Closing",
         ];
 
         const rows = res.data.map((r) => [
           escapeCsv(r.namaMarketing),
           escapeCsv(r.username),
           escapeCsv(r.noHp),
-          escapeCsv(r.totalLeadAktif),
-          escapeCsv(r.totalSurvei),
+          escapeCsv(r.totalLeadMasuk),
+          escapeCsv(r.totalSurveiDijadwalkan),
+          escapeCsv(r.totalSurveiSelesai),
+          escapeCsv(r.totalItjDiajukan),
+          escapeCsv(r.totalItjDisetujui),
           escapeCsv(r.totalClosing),
+        ]);
+
+        const totalMasuk = res.data.reduce((sum, r) => sum + r.totalLeadMasuk, 0);
+        const totalJadwal = res.data.reduce((sum, r) => sum + r.totalSurveiDijadwalkan, 0);
+        const totalSelesai = res.data.reduce((sum, r) => sum + r.totalSurveiSelesai, 0);
+        const totalDiajukan = res.data.reduce((sum, r) => sum + r.totalItjDiajukan, 0);
+        const totalDisetujui = res.data.reduce((sum, r) => sum + r.totalItjDisetujui, 0);
+        const totalClosing = res.data.reduce((sum, r) => sum + r.totalClosing, 0);
+
+        rows.push([
+          "TOTAL",
+          "-",
+          "-",
+          String(totalMasuk),
+          String(totalJadwal),
+          String(totalSelesai),
+          String(totalDiajukan),
+          String(totalDisetujui),
+          String(totalClosing),
         ]);
 
         const csvString = [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
@@ -258,7 +278,7 @@ export function ManagerReports() {
                 Laporan Performa Marketing
               </h2>
               <p className="text-xs text-slate mt-1 leading-relaxed">
-                Evaluasi produktivitas sales lapangan: total lead yang sedang ditangani, frekuensi survei lokasi, dan akumulasi closing ITJ disetujui.
+                Evaluasi produktivitas sales lapangan: lead masuk, survei dijadwalkan, survei selesai, ITJ diajukan &amp; disetujui, serta total closing penjualan.
               </p>
             </div>
 
@@ -268,7 +288,7 @@ export function ManagerReports() {
                 Kolom File CSV/Excel:
               </span>
               <p className="font-mono text-graphite text-[10px] leading-relaxed">
-                Nama Marketing • Total Lead Aktif • Total Survei • Total Closing (ITJ Disetujui)
+                Nama • Lead Masuk • Survei Jadwal • Survei Selesai • ITJ Diajukan • ITJ Disetujui • Closing
               </p>
             </div>
 
@@ -354,28 +374,57 @@ export function ManagerReports() {
               <p className="font-bold text-carbon-ink text-[11px]">
                 Pratinjau: {rep1Preview.length} Anggota Marketing
               </p>
-              <div className="max-h-48 overflow-y-auto overflow-x-auto border border-mist rounded-lg">
+              <div className="max-h-60 overflow-y-auto overflow-x-auto border border-mist rounded-lg">
                 <table className="w-full text-left text-[11px]">
-                  <thead className="bg-bone text-slate font-bold">
+                  <thead className="bg-bone text-slate font-bold sticky top-0 z-10">
                     <tr>
                       <th className="p-2">Nama</th>
-                      <th className="p-2 text-center">Aktif</th>
-                      <th className="p-2 text-center">Survei</th>
-                      <th className="p-2 text-center">Closing</th>
+                      <th className="p-2 text-center whitespace-nowrap">Lead Masuk</th>
+                      <th className="p-2 text-center whitespace-nowrap">Survei Jadwal</th>
+                      <th className="p-2 text-center whitespace-nowrap">Survei Selesai</th>
+                      <th className="p-2 text-center whitespace-nowrap">ITJ Diajukan</th>
+                      <th className="p-2 text-center whitespace-nowrap">ITJ Disetujui</th>
+                      <th className="p-2 text-center whitespace-nowrap">Closing</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-mist">
                     {rep1Preview.map((item, idx) => (
                       <tr key={idx} className="hover:bg-bone/30">
-                        <td className="p-2 font-medium">{item.namaMarketing}</td>
-                        <td className="p-2 text-center tabular-nums">{item.totalLeadAktif}</td>
-                        <td className="p-2 text-center tabular-nums">{item.totalSurvei}</td>
+                        <td className="p-2 font-medium whitespace-nowrap">{item.namaMarketing}</td>
+                        <td className="p-2 text-center tabular-nums">{item.totalLeadMasuk}</td>
+                        <td className="p-2 text-center tabular-nums">{item.totalSurveiDijadwalkan}</td>
+                        <td className="p-2 text-center tabular-nums">{item.totalSurveiSelesai}</td>
+                        <td className="p-2 text-center tabular-nums">{item.totalItjDiajukan}</td>
+                        <td className="p-2 text-center tabular-nums">{item.totalItjDisetujui}</td>
                         <td className="p-2 text-center tabular-nums font-bold text-emerald-700">
                           {item.totalClosing}
                         </td>
                       </tr>
                     ))}
                   </tbody>
+                  <tfoot className="bg-bone/80 font-bold border-t-2 border-mist">
+                    <tr>
+                      <td className="p-2 text-carbon-ink">Total</td>
+                      <td className="p-2 text-center tabular-nums text-carbon-ink">
+                        {rep1Preview.reduce((sum, r) => sum + r.totalLeadMasuk, 0)}
+                      </td>
+                      <td className="p-2 text-center tabular-nums text-carbon-ink">
+                        {rep1Preview.reduce((sum, r) => sum + r.totalSurveiDijadwalkan, 0)}
+                      </td>
+                      <td className="p-2 text-center tabular-nums text-carbon-ink">
+                        {rep1Preview.reduce((sum, r) => sum + r.totalSurveiSelesai, 0)}
+                      </td>
+                      <td className="p-2 text-center tabular-nums text-carbon-ink">
+                        {rep1Preview.reduce((sum, r) => sum + r.totalItjDiajukan, 0)}
+                      </td>
+                      <td className="p-2 text-center tabular-nums text-carbon-ink">
+                        {rep1Preview.reduce((sum, r) => sum + r.totalItjDisetujui, 0)}
+                      </td>
+                      <td className="p-2 text-center tabular-nums font-bold text-emerald-800">
+                        {rep1Preview.reduce((sum, r) => sum + r.totalClosing, 0)}
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>

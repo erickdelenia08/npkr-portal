@@ -31,6 +31,7 @@ export type PembayaranAvgAggregateOutputType = {
   transaksi_id: number | null
   admin_id: number | null
   nominal: runtime.Decimal | null
+  void_by: number | null
 }
 
 export type PembayaranSumAggregateOutputType = {
@@ -38,36 +39,61 @@ export type PembayaranSumAggregateOutputType = {
   transaksi_id: number | null
   admin_id: number | null
   nominal: runtime.Decimal | null
+  void_by: number | null
 }
 
 export type PembayaranMinAggregateOutputType = {
   id: number | null
   transaksi_id: number | null
   admin_id: number | null
+  no_kwitansi: string | null
   jenis_pembayaran: $Enums.JenisBayar | null
+  cara_bayar: $Enums.CaraBayar | null
   nominal: runtime.Decimal | null
+  tgl_bayar: Date | null
   catatan: string | null
+  is_void: boolean | null
+  void_at: Date | null
+  void_by: number | null
+  void_reason: string | null
   created_at: Date | null
+  updated_at: Date | null
 }
 
 export type PembayaranMaxAggregateOutputType = {
   id: number | null
   transaksi_id: number | null
   admin_id: number | null
+  no_kwitansi: string | null
   jenis_pembayaran: $Enums.JenisBayar | null
+  cara_bayar: $Enums.CaraBayar | null
   nominal: runtime.Decimal | null
+  tgl_bayar: Date | null
   catatan: string | null
+  is_void: boolean | null
+  void_at: Date | null
+  void_by: number | null
+  void_reason: string | null
   created_at: Date | null
+  updated_at: Date | null
 }
 
 export type PembayaranCountAggregateOutputType = {
   id: number
   transaksi_id: number
   admin_id: number
+  no_kwitansi: number
   jenis_pembayaran: number
+  cara_bayar: number
   nominal: number
+  tgl_bayar: number
   catatan: number
+  is_void: number
+  void_at: number
+  void_by: number
+  void_reason: number
   created_at: number
+  updated_at: number
   _all: number
 }
 
@@ -77,6 +103,7 @@ export type PembayaranAvgAggregateInputType = {
   transaksi_id?: true
   admin_id?: true
   nominal?: true
+  void_by?: true
 }
 
 export type PembayaranSumAggregateInputType = {
@@ -84,36 +111,61 @@ export type PembayaranSumAggregateInputType = {
   transaksi_id?: true
   admin_id?: true
   nominal?: true
+  void_by?: true
 }
 
 export type PembayaranMinAggregateInputType = {
   id?: true
   transaksi_id?: true
   admin_id?: true
+  no_kwitansi?: true
   jenis_pembayaran?: true
+  cara_bayar?: true
   nominal?: true
+  tgl_bayar?: true
   catatan?: true
+  is_void?: true
+  void_at?: true
+  void_by?: true
+  void_reason?: true
   created_at?: true
+  updated_at?: true
 }
 
 export type PembayaranMaxAggregateInputType = {
   id?: true
   transaksi_id?: true
   admin_id?: true
+  no_kwitansi?: true
   jenis_pembayaran?: true
+  cara_bayar?: true
   nominal?: true
+  tgl_bayar?: true
   catatan?: true
+  is_void?: true
+  void_at?: true
+  void_by?: true
+  void_reason?: true
   created_at?: true
+  updated_at?: true
 }
 
 export type PembayaranCountAggregateInputType = {
   id?: true
   transaksi_id?: true
   admin_id?: true
+  no_kwitansi?: true
   jenis_pembayaran?: true
+  cara_bayar?: true
   nominal?: true
+  tgl_bayar?: true
   catatan?: true
+  is_void?: true
+  void_at?: true
+  void_by?: true
+  void_reason?: true
   created_at?: true
+  updated_at?: true
   _all?: true
 }
 
@@ -207,10 +259,18 @@ export type PembayaranGroupByOutputType = {
   id: number
   transaksi_id: number
   admin_id: number
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar: $Enums.CaraBayar
   nominal: runtime.Decimal
+  tgl_bayar: Date
   catatan: string | null
+  is_void: boolean
+  void_at: Date | null
+  void_by: number | null
+  void_reason: string | null
   created_at: Date
+  updated_at: Date
   _count: PembayaranCountAggregateOutputType | null
   _avg: PembayaranAvgAggregateOutputType | null
   _sum: PembayaranSumAggregateOutputType | null
@@ -240,50 +300,85 @@ export type PembayaranWhereInput = {
   id?: Prisma.IntFilter<"Pembayaran"> | number
   transaksi_id?: Prisma.IntFilter<"Pembayaran"> | number
   admin_id?: Prisma.IntFilter<"Pembayaran"> | number
+  no_kwitansi?: Prisma.StringFilter<"Pembayaran"> | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFilter<"Pembayaran"> | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFilter<"Pembayaran"> | $Enums.CaraBayar
   nominal?: Prisma.DecimalFilter<"Pembayaran"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
   catatan?: Prisma.StringNullableFilter<"Pembayaran"> | string | null
+  is_void?: Prisma.BoolFilter<"Pembayaran"> | boolean
+  void_at?: Prisma.DateTimeNullableFilter<"Pembayaran"> | Date | string | null
+  void_by?: Prisma.IntNullableFilter<"Pembayaran"> | number | null
+  void_reason?: Prisma.StringNullableFilter<"Pembayaran"> | string | null
   created_at?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
   transaksi?: Prisma.XOR<Prisma.TransaksiScalarRelationFilter, Prisma.TransaksiWhereInput>
   penerima?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  voider?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type PembayaranOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   transaksi_id?: Prisma.SortOrder
   admin_id?: Prisma.SortOrder
+  no_kwitansi?: Prisma.SortOrder
   jenis_pembayaran?: Prisma.SortOrder
+  cara_bayar?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  tgl_bayar?: Prisma.SortOrder
   catatan?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_void?: Prisma.SortOrder
+  void_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  void_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  void_reason?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   transaksi?: Prisma.TransaksiOrderByWithRelationInput
   penerima?: Prisma.UserOrderByWithRelationInput
+  voider?: Prisma.UserOrderByWithRelationInput
   _relevance?: Prisma.PembayaranOrderByRelevanceInput
 }
 
 export type PembayaranWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  no_kwitansi?: string
   AND?: Prisma.PembayaranWhereInput | Prisma.PembayaranWhereInput[]
   OR?: Prisma.PembayaranWhereInput[]
   NOT?: Prisma.PembayaranWhereInput | Prisma.PembayaranWhereInput[]
   transaksi_id?: Prisma.IntFilter<"Pembayaran"> | number
   admin_id?: Prisma.IntFilter<"Pembayaran"> | number
   jenis_pembayaran?: Prisma.EnumJenisBayarFilter<"Pembayaran"> | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFilter<"Pembayaran"> | $Enums.CaraBayar
   nominal?: Prisma.DecimalFilter<"Pembayaran"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
   catatan?: Prisma.StringNullableFilter<"Pembayaran"> | string | null
+  is_void?: Prisma.BoolFilter<"Pembayaran"> | boolean
+  void_at?: Prisma.DateTimeNullableFilter<"Pembayaran"> | Date | string | null
+  void_by?: Prisma.IntNullableFilter<"Pembayaran"> | number | null
+  void_reason?: Prisma.StringNullableFilter<"Pembayaran"> | string | null
   created_at?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
   transaksi?: Prisma.XOR<Prisma.TransaksiScalarRelationFilter, Prisma.TransaksiWhereInput>
   penerima?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id">
+  voider?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+}, "id" | "no_kwitansi">
 
 export type PembayaranOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   transaksi_id?: Prisma.SortOrder
   admin_id?: Prisma.SortOrder
+  no_kwitansi?: Prisma.SortOrder
   jenis_pembayaran?: Prisma.SortOrder
+  cara_bayar?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  tgl_bayar?: Prisma.SortOrder
   catatan?: Prisma.SortOrderInput | Prisma.SortOrder
+  is_void?: Prisma.SortOrder
+  void_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  void_by?: Prisma.SortOrderInput | Prisma.SortOrder
+  void_reason?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   _count?: Prisma.PembayaranCountOrderByAggregateInput
   _avg?: Prisma.PembayaranAvgOrderByAggregateInput
   _max?: Prisma.PembayaranMaxOrderByAggregateInput
@@ -298,75 +393,138 @@ export type PembayaranScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Pembayaran"> | number
   transaksi_id?: Prisma.IntWithAggregatesFilter<"Pembayaran"> | number
   admin_id?: Prisma.IntWithAggregatesFilter<"Pembayaran"> | number
+  no_kwitansi?: Prisma.StringWithAggregatesFilter<"Pembayaran"> | string
   jenis_pembayaran?: Prisma.EnumJenisBayarWithAggregatesFilter<"Pembayaran"> | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarWithAggregatesFilter<"Pembayaran"> | $Enums.CaraBayar
   nominal?: Prisma.DecimalWithAggregatesFilter<"Pembayaran"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeWithAggregatesFilter<"Pembayaran"> | Date | string
   catatan?: Prisma.StringNullableWithAggregatesFilter<"Pembayaran"> | string | null
+  is_void?: Prisma.BoolWithAggregatesFilter<"Pembayaran"> | boolean
+  void_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Pembayaran"> | Date | string | null
+  void_by?: Prisma.IntNullableWithAggregatesFilter<"Pembayaran"> | number | null
+  void_reason?: Prisma.StringNullableWithAggregatesFilter<"Pembayaran"> | string | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Pembayaran"> | Date | string
+  updated_at?: Prisma.DateTimeWithAggregatesFilter<"Pembayaran"> | Date | string
 }
 
 export type PembayaranCreateInput = {
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
   transaksi: Prisma.TransaksiCreateNestedOneWithoutPembayaranInput
-  penerima: Prisma.UserCreateNestedOneWithoutPembayaranInput
+  penerima: Prisma.UserCreateNestedOneWithoutPembayaran_diterimaInput
+  voider?: Prisma.UserCreateNestedOneWithoutPembayaran_divoidInput
 }
 
 export type PembayaranUncheckedCreateInput = {
   id?: number
   transaksi_id: number
   admin_id: number
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_by?: number | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type PembayaranUpdateInput = {
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUpdateOneRequiredWithoutPembayaranNestedInput
-  penerima?: Prisma.UserUpdateOneRequiredWithoutPembayaranNestedInput
+  penerima?: Prisma.UserUpdateOneRequiredWithoutPembayaran_diterimaNestedInput
+  voider?: Prisma.UserUpdateOneWithoutPembayaran_divoidNestedInput
 }
 
 export type PembayaranUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   transaksi_id?: Prisma.IntFieldUpdateOperationsInput | number
   admin_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PembayaranCreateManyInput = {
   id?: number
   transaksi_id: number
   admin_id: number
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_by?: number | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type PembayaranUpdateManyMutationInput = {
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PembayaranUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   transaksi_id?: Prisma.IntFieldUpdateOperationsInput | number
   admin_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PembayaranListRelationFilter = {
@@ -389,10 +547,18 @@ export type PembayaranCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   transaksi_id?: Prisma.SortOrder
   admin_id?: Prisma.SortOrder
+  no_kwitansi?: Prisma.SortOrder
   jenis_pembayaran?: Prisma.SortOrder
+  cara_bayar?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  tgl_bayar?: Prisma.SortOrder
   catatan?: Prisma.SortOrder
+  is_void?: Prisma.SortOrder
+  void_at?: Prisma.SortOrder
+  void_by?: Prisma.SortOrder
+  void_reason?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type PembayaranAvgOrderByAggregateInput = {
@@ -400,26 +566,43 @@ export type PembayaranAvgOrderByAggregateInput = {
   transaksi_id?: Prisma.SortOrder
   admin_id?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  void_by?: Prisma.SortOrder
 }
 
 export type PembayaranMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   transaksi_id?: Prisma.SortOrder
   admin_id?: Prisma.SortOrder
+  no_kwitansi?: Prisma.SortOrder
   jenis_pembayaran?: Prisma.SortOrder
+  cara_bayar?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  tgl_bayar?: Prisma.SortOrder
   catatan?: Prisma.SortOrder
+  is_void?: Prisma.SortOrder
+  void_at?: Prisma.SortOrder
+  void_by?: Prisma.SortOrder
+  void_reason?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type PembayaranMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   transaksi_id?: Prisma.SortOrder
   admin_id?: Prisma.SortOrder
+  no_kwitansi?: Prisma.SortOrder
   jenis_pembayaran?: Prisma.SortOrder
+  cara_bayar?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  tgl_bayar?: Prisma.SortOrder
   catatan?: Prisma.SortOrder
+  is_void?: Prisma.SortOrder
+  void_at?: Prisma.SortOrder
+  void_by?: Prisma.SortOrder
+  void_reason?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type PembayaranSumOrderByAggregateInput = {
@@ -427,6 +610,7 @@ export type PembayaranSumOrderByAggregateInput = {
   transaksi_id?: Prisma.SortOrder
   admin_id?: Prisma.SortOrder
   nominal?: Prisma.SortOrder
+  void_by?: Prisma.SortOrder
 }
 
 export type PembayaranCreateNestedManyWithoutPenerimaInput = {
@@ -436,10 +620,24 @@ export type PembayaranCreateNestedManyWithoutPenerimaInput = {
   connect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
 }
 
+export type PembayaranCreateNestedManyWithoutVoiderInput = {
+  create?: Prisma.XOR<Prisma.PembayaranCreateWithoutVoiderInput, Prisma.PembayaranUncheckedCreateWithoutVoiderInput> | Prisma.PembayaranCreateWithoutVoiderInput[] | Prisma.PembayaranUncheckedCreateWithoutVoiderInput[]
+  connectOrCreate?: Prisma.PembayaranCreateOrConnectWithoutVoiderInput | Prisma.PembayaranCreateOrConnectWithoutVoiderInput[]
+  createMany?: Prisma.PembayaranCreateManyVoiderInputEnvelope
+  connect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+}
+
 export type PembayaranUncheckedCreateNestedManyWithoutPenerimaInput = {
   create?: Prisma.XOR<Prisma.PembayaranCreateWithoutPenerimaInput, Prisma.PembayaranUncheckedCreateWithoutPenerimaInput> | Prisma.PembayaranCreateWithoutPenerimaInput[] | Prisma.PembayaranUncheckedCreateWithoutPenerimaInput[]
   connectOrCreate?: Prisma.PembayaranCreateOrConnectWithoutPenerimaInput | Prisma.PembayaranCreateOrConnectWithoutPenerimaInput[]
   createMany?: Prisma.PembayaranCreateManyPenerimaInputEnvelope
+  connect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+}
+
+export type PembayaranUncheckedCreateNestedManyWithoutVoiderInput = {
+  create?: Prisma.XOR<Prisma.PembayaranCreateWithoutVoiderInput, Prisma.PembayaranUncheckedCreateWithoutVoiderInput> | Prisma.PembayaranCreateWithoutVoiderInput[] | Prisma.PembayaranUncheckedCreateWithoutVoiderInput[]
+  connectOrCreate?: Prisma.PembayaranCreateOrConnectWithoutVoiderInput | Prisma.PembayaranCreateOrConnectWithoutVoiderInput[]
+  createMany?: Prisma.PembayaranCreateManyVoiderInputEnvelope
   connect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
 }
 
@@ -457,6 +655,20 @@ export type PembayaranUpdateManyWithoutPenerimaNestedInput = {
   deleteMany?: Prisma.PembayaranScalarWhereInput | Prisma.PembayaranScalarWhereInput[]
 }
 
+export type PembayaranUpdateManyWithoutVoiderNestedInput = {
+  create?: Prisma.XOR<Prisma.PembayaranCreateWithoutVoiderInput, Prisma.PembayaranUncheckedCreateWithoutVoiderInput> | Prisma.PembayaranCreateWithoutVoiderInput[] | Prisma.PembayaranUncheckedCreateWithoutVoiderInput[]
+  connectOrCreate?: Prisma.PembayaranCreateOrConnectWithoutVoiderInput | Prisma.PembayaranCreateOrConnectWithoutVoiderInput[]
+  upsert?: Prisma.PembayaranUpsertWithWhereUniqueWithoutVoiderInput | Prisma.PembayaranUpsertWithWhereUniqueWithoutVoiderInput[]
+  createMany?: Prisma.PembayaranCreateManyVoiderInputEnvelope
+  set?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  disconnect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  delete?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  connect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  update?: Prisma.PembayaranUpdateWithWhereUniqueWithoutVoiderInput | Prisma.PembayaranUpdateWithWhereUniqueWithoutVoiderInput[]
+  updateMany?: Prisma.PembayaranUpdateManyWithWhereWithoutVoiderInput | Prisma.PembayaranUpdateManyWithWhereWithoutVoiderInput[]
+  deleteMany?: Prisma.PembayaranScalarWhereInput | Prisma.PembayaranScalarWhereInput[]
+}
+
 export type PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput = {
   create?: Prisma.XOR<Prisma.PembayaranCreateWithoutPenerimaInput, Prisma.PembayaranUncheckedCreateWithoutPenerimaInput> | Prisma.PembayaranCreateWithoutPenerimaInput[] | Prisma.PembayaranUncheckedCreateWithoutPenerimaInput[]
   connectOrCreate?: Prisma.PembayaranCreateOrConnectWithoutPenerimaInput | Prisma.PembayaranCreateOrConnectWithoutPenerimaInput[]
@@ -468,6 +680,20 @@ export type PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput = {
   connect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
   update?: Prisma.PembayaranUpdateWithWhereUniqueWithoutPenerimaInput | Prisma.PembayaranUpdateWithWhereUniqueWithoutPenerimaInput[]
   updateMany?: Prisma.PembayaranUpdateManyWithWhereWithoutPenerimaInput | Prisma.PembayaranUpdateManyWithWhereWithoutPenerimaInput[]
+  deleteMany?: Prisma.PembayaranScalarWhereInput | Prisma.PembayaranScalarWhereInput[]
+}
+
+export type PembayaranUncheckedUpdateManyWithoutVoiderNestedInput = {
+  create?: Prisma.XOR<Prisma.PembayaranCreateWithoutVoiderInput, Prisma.PembayaranUncheckedCreateWithoutVoiderInput> | Prisma.PembayaranCreateWithoutVoiderInput[] | Prisma.PembayaranUncheckedCreateWithoutVoiderInput[]
+  connectOrCreate?: Prisma.PembayaranCreateOrConnectWithoutVoiderInput | Prisma.PembayaranCreateOrConnectWithoutVoiderInput[]
+  upsert?: Prisma.PembayaranUpsertWithWhereUniqueWithoutVoiderInput | Prisma.PembayaranUpsertWithWhereUniqueWithoutVoiderInput[]
+  createMany?: Prisma.PembayaranCreateManyVoiderInputEnvelope
+  set?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  disconnect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  delete?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  connect?: Prisma.PembayaranWhereUniqueInput | Prisma.PembayaranWhereUniqueInput[]
+  update?: Prisma.PembayaranUpdateWithWhereUniqueWithoutVoiderInput | Prisma.PembayaranUpdateWithWhereUniqueWithoutVoiderInput[]
+  updateMany?: Prisma.PembayaranUpdateManyWithWhereWithoutVoiderInput | Prisma.PembayaranUpdateManyWithWhereWithoutVoiderInput[]
   deleteMany?: Prisma.PembayaranScalarWhereInput | Prisma.PembayaranScalarWhereInput[]
 }
 
@@ -517,21 +743,41 @@ export type EnumJenisBayarFieldUpdateOperationsInput = {
   set?: $Enums.JenisBayar
 }
 
+export type EnumCaraBayarFieldUpdateOperationsInput = {
+  set?: $Enums.CaraBayar
+}
+
 export type PembayaranCreateWithoutPenerimaInput = {
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
   transaksi: Prisma.TransaksiCreateNestedOneWithoutPembayaranInput
+  voider?: Prisma.UserCreateNestedOneWithoutPembayaran_divoidInput
 }
 
 export type PembayaranUncheckedCreateWithoutPenerimaInput = {
   id?: number
   transaksi_id: number
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_by?: number | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type PembayaranCreateOrConnectWithoutPenerimaInput = {
@@ -541,6 +787,49 @@ export type PembayaranCreateOrConnectWithoutPenerimaInput = {
 
 export type PembayaranCreateManyPenerimaInputEnvelope = {
   data: Prisma.PembayaranCreateManyPenerimaInput | Prisma.PembayaranCreateManyPenerimaInput[]
+  skipDuplicates?: boolean
+}
+
+export type PembayaranCreateWithoutVoiderInput = {
+  no_kwitansi: string
+  jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
+  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
+  catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_reason?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  transaksi: Prisma.TransaksiCreateNestedOneWithoutPembayaranInput
+  penerima: Prisma.UserCreateNestedOneWithoutPembayaran_diterimaInput
+}
+
+export type PembayaranUncheckedCreateWithoutVoiderInput = {
+  id?: number
+  transaksi_id: number
+  admin_id: number
+  no_kwitansi: string
+  jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
+  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
+  catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_reason?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type PembayaranCreateOrConnectWithoutVoiderInput = {
+  where: Prisma.PembayaranWhereUniqueInput
+  create: Prisma.XOR<Prisma.PembayaranCreateWithoutVoiderInput, Prisma.PembayaranUncheckedCreateWithoutVoiderInput>
+}
+
+export type PembayaranCreateManyVoiderInputEnvelope = {
+  data: Prisma.PembayaranCreateManyVoiderInput | Prisma.PembayaranCreateManyVoiderInput[]
   skipDuplicates?: boolean
 }
 
@@ -567,27 +856,67 @@ export type PembayaranScalarWhereInput = {
   id?: Prisma.IntFilter<"Pembayaran"> | number
   transaksi_id?: Prisma.IntFilter<"Pembayaran"> | number
   admin_id?: Prisma.IntFilter<"Pembayaran"> | number
+  no_kwitansi?: Prisma.StringFilter<"Pembayaran"> | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFilter<"Pembayaran"> | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFilter<"Pembayaran"> | $Enums.CaraBayar
   nominal?: Prisma.DecimalFilter<"Pembayaran"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
   catatan?: Prisma.StringNullableFilter<"Pembayaran"> | string | null
+  is_void?: Prisma.BoolFilter<"Pembayaran"> | boolean
+  void_at?: Prisma.DateTimeNullableFilter<"Pembayaran"> | Date | string | null
+  void_by?: Prisma.IntNullableFilter<"Pembayaran"> | number | null
+  void_reason?: Prisma.StringNullableFilter<"Pembayaran"> | string | null
   created_at?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Pembayaran"> | Date | string
+}
+
+export type PembayaranUpsertWithWhereUniqueWithoutVoiderInput = {
+  where: Prisma.PembayaranWhereUniqueInput
+  update: Prisma.XOR<Prisma.PembayaranUpdateWithoutVoiderInput, Prisma.PembayaranUncheckedUpdateWithoutVoiderInput>
+  create: Prisma.XOR<Prisma.PembayaranCreateWithoutVoiderInput, Prisma.PembayaranUncheckedCreateWithoutVoiderInput>
+}
+
+export type PembayaranUpdateWithWhereUniqueWithoutVoiderInput = {
+  where: Prisma.PembayaranWhereUniqueInput
+  data: Prisma.XOR<Prisma.PembayaranUpdateWithoutVoiderInput, Prisma.PembayaranUncheckedUpdateWithoutVoiderInput>
+}
+
+export type PembayaranUpdateManyWithWhereWithoutVoiderInput = {
+  where: Prisma.PembayaranScalarWhereInput
+  data: Prisma.XOR<Prisma.PembayaranUpdateManyMutationInput, Prisma.PembayaranUncheckedUpdateManyWithoutVoiderInput>
 }
 
 export type PembayaranCreateWithoutTransaksiInput = {
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_reason?: string | null
   created_at?: Date | string
-  penerima: Prisma.UserCreateNestedOneWithoutPembayaranInput
+  updated_at?: Date | string
+  penerima: Prisma.UserCreateNestedOneWithoutPembayaran_diterimaInput
+  voider?: Prisma.UserCreateNestedOneWithoutPembayaran_divoidInput
 }
 
 export type PembayaranUncheckedCreateWithoutTransaksiInput = {
   id?: number
   admin_id: number
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_by?: number | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type PembayaranCreateOrConnectWithoutTransaksiInput = {
@@ -619,71 +948,202 @@ export type PembayaranUpdateManyWithWhereWithoutTransaksiInput = {
 export type PembayaranCreateManyPenerimaInput = {
   id?: number
   transaksi_id: number
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_by?: number | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type PembayaranCreateManyVoiderInput = {
+  id?: number
+  transaksi_id: number
+  admin_id: number
+  no_kwitansi: string
+  jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
+  nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
+  catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_reason?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type PembayaranUpdateWithoutPenerimaInput = {
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transaksi?: Prisma.TransaksiUpdateOneRequiredWithoutPembayaranNestedInput
+  voider?: Prisma.UserUpdateOneWithoutPembayaran_divoidNestedInput
 }
 
 export type PembayaranUncheckedUpdateWithoutPenerimaInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   transaksi_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PembayaranUncheckedUpdateManyWithoutPenerimaInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   transaksi_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PembayaranUpdateWithoutVoiderInput = {
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
+  jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transaksi?: Prisma.TransaksiUpdateOneRequiredWithoutPembayaranNestedInput
+  penerima?: Prisma.UserUpdateOneRequiredWithoutPembayaran_diterimaNestedInput
+}
+
+export type PembayaranUncheckedUpdateWithoutVoiderInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  transaksi_id?: Prisma.IntFieldUpdateOperationsInput | number
+  admin_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
+  jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PembayaranUncheckedUpdateManyWithoutVoiderInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  transaksi_id?: Prisma.IntFieldUpdateOperationsInput | number
+  admin_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
+  jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
+  nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PembayaranCreateManyTransaksiInput = {
   id?: number
   admin_id: number
+  no_kwitansi: string
   jenis_pembayaran: $Enums.JenisBayar
+  cara_bayar?: $Enums.CaraBayar
   nominal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar: Date | string
   catatan?: string | null
+  is_void?: boolean
+  void_at?: Date | string | null
+  void_by?: number | null
+  void_reason?: string | null
   created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type PembayaranUpdateWithoutTransaksiInput = {
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  penerima?: Prisma.UserUpdateOneRequiredWithoutPembayaranNestedInput
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  penerima?: Prisma.UserUpdateOneRequiredWithoutPembayaran_diterimaNestedInput
+  voider?: Prisma.UserUpdateOneWithoutPembayaran_divoidNestedInput
 }
 
 export type PembayaranUncheckedUpdateWithoutTransaksiInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   admin_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PembayaranUncheckedUpdateManyWithoutTransaksiInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   admin_id?: Prisma.IntFieldUpdateOperationsInput | number
+  no_kwitansi?: Prisma.StringFieldUpdateOperationsInput | string
   jenis_pembayaran?: Prisma.EnumJenisBayarFieldUpdateOperationsInput | $Enums.JenisBayar
+  cara_bayar?: Prisma.EnumCaraBayarFieldUpdateOperationsInput | $Enums.CaraBayar
   nominal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tgl_bayar?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   catatan?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  is_void?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  void_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  void_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  void_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -692,12 +1152,21 @@ export type PembayaranSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   transaksi_id?: boolean
   admin_id?: boolean
+  no_kwitansi?: boolean
   jenis_pembayaran?: boolean
+  cara_bayar?: boolean
   nominal?: boolean
+  tgl_bayar?: boolean
   catatan?: boolean
+  is_void?: boolean
+  void_at?: boolean
+  void_by?: boolean
+  void_reason?: boolean
   created_at?: boolean
+  updated_at?: boolean
   transaksi?: boolean | Prisma.TransaksiDefaultArgs<ExtArgs>
   penerima?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  voider?: boolean | Prisma.Pembayaran$voiderArgs<ExtArgs>
 }, ExtArgs["result"]["pembayaran"]>
 
 
@@ -706,16 +1175,25 @@ export type PembayaranSelectScalar = {
   id?: boolean
   transaksi_id?: boolean
   admin_id?: boolean
+  no_kwitansi?: boolean
   jenis_pembayaran?: boolean
+  cara_bayar?: boolean
   nominal?: boolean
+  tgl_bayar?: boolean
   catatan?: boolean
+  is_void?: boolean
+  void_at?: boolean
+  void_by?: boolean
+  void_reason?: boolean
   created_at?: boolean
+  updated_at?: boolean
 }
 
-export type PembayaranOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "transaksi_id" | "admin_id" | "jenis_pembayaran" | "nominal" | "catatan" | "created_at", ExtArgs["result"]["pembayaran"]>
+export type PembayaranOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "transaksi_id" | "admin_id" | "no_kwitansi" | "jenis_pembayaran" | "cara_bayar" | "nominal" | "tgl_bayar" | "catatan" | "is_void" | "void_at" | "void_by" | "void_reason" | "created_at" | "updated_at", ExtArgs["result"]["pembayaran"]>
 export type PembayaranInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transaksi?: boolean | Prisma.TransaksiDefaultArgs<ExtArgs>
   penerima?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  voider?: boolean | Prisma.Pembayaran$voiderArgs<ExtArgs>
 }
 
 export type $PembayaranPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -723,15 +1201,24 @@ export type $PembayaranPayload<ExtArgs extends runtime.Types.Extensions.Internal
   objects: {
     transaksi: Prisma.$TransaksiPayload<ExtArgs>
     penerima: Prisma.$UserPayload<ExtArgs>
+    voider: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     transaksi_id: number
     admin_id: number
+    no_kwitansi: string
     jenis_pembayaran: $Enums.JenisBayar
+    cara_bayar: $Enums.CaraBayar
     nominal: runtime.Decimal
+    tgl_bayar: Date
     catatan: string | null
+    is_void: boolean
+    void_at: Date | null
+    void_by: number | null
+    void_reason: string | null
     created_at: Date
+    updated_at: Date
   }, ExtArgs["result"]["pembayaran"]>
   composites: {}
 }
@@ -1074,6 +1561,7 @@ export interface Prisma__PembayaranClient<T, Null = never, ExtArgs extends runti
   readonly [Symbol.toStringTag]: "PrismaPromise"
   transaksi<T extends Prisma.TransaksiDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TransaksiDefaultArgs<ExtArgs>>): Prisma.Prisma__TransaksiClient<runtime.Types.Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   penerima<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  voider<T extends Prisma.Pembayaran$voiderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Pembayaran$voiderArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1106,10 +1594,18 @@ export interface PembayaranFieldRefs {
   readonly id: Prisma.FieldRef<"Pembayaran", 'Int'>
   readonly transaksi_id: Prisma.FieldRef<"Pembayaran", 'Int'>
   readonly admin_id: Prisma.FieldRef<"Pembayaran", 'Int'>
+  readonly no_kwitansi: Prisma.FieldRef<"Pembayaran", 'String'>
   readonly jenis_pembayaran: Prisma.FieldRef<"Pembayaran", 'JenisBayar'>
+  readonly cara_bayar: Prisma.FieldRef<"Pembayaran", 'CaraBayar'>
   readonly nominal: Prisma.FieldRef<"Pembayaran", 'Decimal'>
+  readonly tgl_bayar: Prisma.FieldRef<"Pembayaran", 'DateTime'>
   readonly catatan: Prisma.FieldRef<"Pembayaran", 'String'>
+  readonly is_void: Prisma.FieldRef<"Pembayaran", 'Boolean'>
+  readonly void_at: Prisma.FieldRef<"Pembayaran", 'DateTime'>
+  readonly void_by: Prisma.FieldRef<"Pembayaran", 'Int'>
+  readonly void_reason: Prisma.FieldRef<"Pembayaran", 'String'>
   readonly created_at: Prisma.FieldRef<"Pembayaran", 'DateTime'>
+  readonly updated_at: Prisma.FieldRef<"Pembayaran", 'DateTime'>
 }
     
 
@@ -1455,6 +1951,25 @@ export type PembayaranDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many Pembayarans to delete.
    */
   limit?: number
+}
+
+/**
+ * Pembayaran.voider
+ */
+export type Pembayaran$voiderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

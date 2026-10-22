@@ -14,27 +14,11 @@ import {
   Calendar,
 } from "lucide-react";
 import { CreateLeadForm } from "./CreateLeadForm";
-import { getLeads, GetLeadsResponse } from "@/actions/lead";
+import { getLeads, GetLeadsResponse, LeadCardData } from "@/actions/lead";
 import { LeadTahap } from "@/lib/lead-utils";
 
-interface LeadItem {
-  id: number;
-  nama: string;
-  no_hp: string;
-  sumber: string;
-  minat_tipe: string | null;
-  tahap: LeadTahap;
-  marketing_id: number | null;
-  created_at: Date;
-  marketing: {
-    id: number;
-    nama: string;
-    no_hp: string;
-  } | null;
-}
-
 interface LeadManagerProps {
-  initialLeads: LeadItem[];
+  initialLeads: LeadCardData[];
   initialTotal: number;
   userRole?: string;
   userId?: number;
@@ -46,7 +30,7 @@ export function LeadManager({
   userRole,
   userId,
 }: LeadManagerProps) {
-  const [leads, setLeads] = useState<LeadItem[]>(initialLeads);
+  const [leads, setLeads] = useState<LeadCardData[]>(initialLeads);
   const [total, setTotal] = useState<number>(initialTotal);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");

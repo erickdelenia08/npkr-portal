@@ -31,6 +31,7 @@ export type TransaksiAvgAggregateOutputType = {
   customer_id: number | null
   unit_id: number | null
   marketing_id: number | null
+  itj_id: number | null
   harga_deal: runtime.Decimal | null
   target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
@@ -42,6 +43,7 @@ export type TransaksiSumAggregateOutputType = {
   customer_id: number | null
   unit_id: number | null
   marketing_id: number | null
+  itj_id: number | null
   harga_deal: runtime.Decimal | null
   target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
@@ -53,16 +55,24 @@ export type TransaksiMinAggregateOutputType = {
   customer_id: number | null
   unit_id: number | null
   marketing_id: number | null
+  itj_id: number | null
   metode_bayar: $Enums.MetodeBayar | null
   harga_deal: runtime.Decimal | null
   target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
   tenor_bulan: number | null
-  status_transaksi: string | null
+  status_transaksi: $Enums.TahapTransaksi | null
+  tahap_detail: $Enums.TahapDetail | null
   nama_bank: string | null
   nama_notaris: string | null
   tgl_akad: Date | null
+  tgl_ajb: Date | null
+  lunas_at: Date | null
   tgl_bast: Date | null
+  closing_at: Date | null
+  closed_at: Date | null
+  cancelled_at: Date | null
+  alasan_batal: string | null
   catatan_admin: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -73,16 +83,24 @@ export type TransaksiMaxAggregateOutputType = {
   customer_id: number | null
   unit_id: number | null
   marketing_id: number | null
+  itj_id: number | null
   metode_bayar: $Enums.MetodeBayar | null
   harga_deal: runtime.Decimal | null
   target_itj: runtime.Decimal | null
   target_dp: runtime.Decimal | null
   tenor_bulan: number | null
-  status_transaksi: string | null
+  status_transaksi: $Enums.TahapTransaksi | null
+  tahap_detail: $Enums.TahapDetail | null
   nama_bank: string | null
   nama_notaris: string | null
   tgl_akad: Date | null
+  tgl_ajb: Date | null
+  lunas_at: Date | null
   tgl_bast: Date | null
+  closing_at: Date | null
+  closed_at: Date | null
+  cancelled_at: Date | null
+  alasan_batal: string | null
   catatan_admin: string | null
   created_at: Date | null
   updated_at: Date | null
@@ -93,19 +111,25 @@ export type TransaksiCountAggregateOutputType = {
   customer_id: number
   unit_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: number
   harga_deal: number
   target_itj: number
   target_dp: number
   tenor_bulan: number
   status_transaksi: number
+  tahap_detail: number
   nama_bank: number
   nama_notaris: number
   tgl_akad: number
+  tgl_ajb: number
+  lunas_at: number
   tgl_bast: number
+  closing_at: number
+  closed_at: number
+  cancelled_at: number
+  alasan_batal: number
   catatan_admin: number
-  berkas_json: number
-  bast_json: number
   created_at: number
   updated_at: number
   _all: number
@@ -117,6 +141,7 @@ export type TransaksiAvgAggregateInputType = {
   customer_id?: true
   unit_id?: true
   marketing_id?: true
+  itj_id?: true
   harga_deal?: true
   target_itj?: true
   target_dp?: true
@@ -128,6 +153,7 @@ export type TransaksiSumAggregateInputType = {
   customer_id?: true
   unit_id?: true
   marketing_id?: true
+  itj_id?: true
   harga_deal?: true
   target_itj?: true
   target_dp?: true
@@ -139,16 +165,24 @@ export type TransaksiMinAggregateInputType = {
   customer_id?: true
   unit_id?: true
   marketing_id?: true
+  itj_id?: true
   metode_bayar?: true
   harga_deal?: true
   target_itj?: true
   target_dp?: true
   tenor_bulan?: true
   status_transaksi?: true
+  tahap_detail?: true
   nama_bank?: true
   nama_notaris?: true
   tgl_akad?: true
+  tgl_ajb?: true
+  lunas_at?: true
   tgl_bast?: true
+  closing_at?: true
+  closed_at?: true
+  cancelled_at?: true
+  alasan_batal?: true
   catatan_admin?: true
   created_at?: true
   updated_at?: true
@@ -159,16 +193,24 @@ export type TransaksiMaxAggregateInputType = {
   customer_id?: true
   unit_id?: true
   marketing_id?: true
+  itj_id?: true
   metode_bayar?: true
   harga_deal?: true
   target_itj?: true
   target_dp?: true
   tenor_bulan?: true
   status_transaksi?: true
+  tahap_detail?: true
   nama_bank?: true
   nama_notaris?: true
   tgl_akad?: true
+  tgl_ajb?: true
+  lunas_at?: true
   tgl_bast?: true
+  closing_at?: true
+  closed_at?: true
+  cancelled_at?: true
+  alasan_batal?: true
   catatan_admin?: true
   created_at?: true
   updated_at?: true
@@ -179,19 +221,25 @@ export type TransaksiCountAggregateInputType = {
   customer_id?: true
   unit_id?: true
   marketing_id?: true
+  itj_id?: true
   metode_bayar?: true
   harga_deal?: true
   target_itj?: true
   target_dp?: true
   tenor_bulan?: true
   status_transaksi?: true
+  tahap_detail?: true
   nama_bank?: true
   nama_notaris?: true
   tgl_akad?: true
+  tgl_ajb?: true
+  lunas_at?: true
   tgl_bast?: true
+  closing_at?: true
+  closed_at?: true
+  cancelled_at?: true
+  alasan_batal?: true
   catatan_admin?: true
-  berkas_json?: true
-  bast_json?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -288,19 +336,25 @@ export type TransaksiGroupByOutputType = {
   customer_id: number
   unit_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal
   target_itj: runtime.Decimal
   target_dp: runtime.Decimal
   tenor_bulan: number | null
-  status_transaksi: string
+  status_transaksi: $Enums.TahapTransaksi
+  tahap_detail: $Enums.TahapDetail
   nama_bank: string | null
   nama_notaris: string | null
   tgl_akad: Date | null
+  tgl_ajb: Date | null
+  lunas_at: Date | null
   tgl_bast: Date | null
+  closing_at: Date | null
+  closed_at: Date | null
+  cancelled_at: Date | null
+  alasan_batal: string | null
   catatan_admin: string | null
-  berkas_json: runtime.JsonValue | null
-  bast_json: runtime.JsonValue | null
   created_at: Date
   updated_at: Date
   _count: TransaksiCountAggregateOutputType | null
@@ -333,25 +387,36 @@ export type TransaksiWhereInput = {
   customer_id?: Prisma.IntFilter<"Transaksi"> | number
   unit_id?: Prisma.IntFilter<"Transaksi"> | number
   marketing_id?: Prisma.IntFilter<"Transaksi"> | number
+  itj_id?: Prisma.IntFilter<"Transaksi"> | number
   metode_bayar?: Prisma.EnumMetodeBayarFilter<"Transaksi"> | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.IntNullableFilter<"Transaksi"> | number | null
-  status_transaksi?: Prisma.StringFilter<"Transaksi"> | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFilter<"Transaksi"> | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFilter<"Transaksi"> | $Enums.TahapDetail
   nama_bank?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  tgl_ajb?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  lunas_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  closing_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  closed_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  cancelled_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  alasan_batal?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   catatan_admin?: Prisma.StringNullableFilter<"Transaksi"> | string | null
-  berkas_json?: Prisma.JsonNullableFilter<"Transaksi">
-  bast_json?: Prisma.JsonNullableFilter<"Transaksi">
   created_at?: Prisma.DateTimeFilter<"Transaksi"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Transaksi"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
   unit?: Prisma.XOR<Prisma.MasterUnitScalarRelationFilter, Prisma.MasterUnitWhereInput>
   marketing?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  itj?: Prisma.XOR<Prisma.ItjScalarRelationFilter, Prisma.ItjWhereInput>
   pembayaran?: Prisma.PembayaranListRelationFilter
+  logs?: Prisma.TransaksiTahapLogListRelationFilter
+  dokumen?: Prisma.DokumenTransaksiListRelationFilter
+  inspeksi_bast?: Prisma.InspeksiBASTListRelationFilter
+  pengajuan_kpr?: Prisma.PengajuanKPRListRelationFilter
 }
 
 export type TransaksiOrderByWithRelationInput = {
@@ -359,30 +424,42 @@ export type TransaksiOrderByWithRelationInput = {
   customer_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  itj_id?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   harga_deal?: Prisma.SortOrder
   target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
   tenor_bulan?: Prisma.SortOrderInput | Prisma.SortOrder
   status_transaksi?: Prisma.SortOrder
+  tahap_detail?: Prisma.SortOrder
   nama_bank?: Prisma.SortOrderInput | Prisma.SortOrder
   nama_notaris?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_akad?: Prisma.SortOrderInput | Prisma.SortOrder
+  tgl_ajb?: Prisma.SortOrderInput | Prisma.SortOrder
+  lunas_at?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_bast?: Prisma.SortOrderInput | Prisma.SortOrder
+  closing_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  closed_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelled_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  alasan_batal?: Prisma.SortOrderInput | Prisma.SortOrder
   catatan_admin?: Prisma.SortOrderInput | Prisma.SortOrder
-  berkas_json?: Prisma.SortOrderInput | Prisma.SortOrder
-  bast_json?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   customer?: Prisma.CustomerOrderByWithRelationInput
   unit?: Prisma.MasterUnitOrderByWithRelationInput
   marketing?: Prisma.UserOrderByWithRelationInput
+  itj?: Prisma.ItjOrderByWithRelationInput
   pembayaran?: Prisma.PembayaranOrderByRelationAggregateInput
+  logs?: Prisma.TransaksiTahapLogOrderByRelationAggregateInput
+  dokumen?: Prisma.DokumenTransaksiOrderByRelationAggregateInput
+  inspeksi_bast?: Prisma.InspeksiBASTOrderByRelationAggregateInput
+  pengajuan_kpr?: Prisma.PengajuanKPROrderByRelationAggregateInput
   _relevance?: Prisma.TransaksiOrderByRelevanceInput
 }
 
 export type TransaksiWhereUniqueInput = Prisma.AtLeast<{
   id?: number
+  itj_id?: number
   AND?: Prisma.TransaksiWhereInput | Prisma.TransaksiWhereInput[]
   OR?: Prisma.TransaksiWhereInput[]
   NOT?: Prisma.TransaksiWhereInput | Prisma.TransaksiWhereInput[]
@@ -394,40 +471,56 @@ export type TransaksiWhereUniqueInput = Prisma.AtLeast<{
   target_itj?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.IntNullableFilter<"Transaksi"> | number | null
-  status_transaksi?: Prisma.StringFilter<"Transaksi"> | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFilter<"Transaksi"> | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFilter<"Transaksi"> | $Enums.TahapDetail
   nama_bank?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  tgl_ajb?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  lunas_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  closing_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  closed_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  cancelled_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  alasan_batal?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   catatan_admin?: Prisma.StringNullableFilter<"Transaksi"> | string | null
-  berkas_json?: Prisma.JsonNullableFilter<"Transaksi">
-  bast_json?: Prisma.JsonNullableFilter<"Transaksi">
   created_at?: Prisma.DateTimeFilter<"Transaksi"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Transaksi"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerScalarRelationFilter, Prisma.CustomerWhereInput>
   unit?: Prisma.XOR<Prisma.MasterUnitScalarRelationFilter, Prisma.MasterUnitWhereInput>
   marketing?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  itj?: Prisma.XOR<Prisma.ItjScalarRelationFilter, Prisma.ItjWhereInput>
   pembayaran?: Prisma.PembayaranListRelationFilter
-}, "id">
+  logs?: Prisma.TransaksiTahapLogListRelationFilter
+  dokumen?: Prisma.DokumenTransaksiListRelationFilter
+  inspeksi_bast?: Prisma.InspeksiBASTListRelationFilter
+  pengajuan_kpr?: Prisma.PengajuanKPRListRelationFilter
+}, "id" | "itj_id">
 
 export type TransaksiOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   customer_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  itj_id?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   harga_deal?: Prisma.SortOrder
   target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
   tenor_bulan?: Prisma.SortOrderInput | Prisma.SortOrder
   status_transaksi?: Prisma.SortOrder
+  tahap_detail?: Prisma.SortOrder
   nama_bank?: Prisma.SortOrderInput | Prisma.SortOrder
   nama_notaris?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_akad?: Prisma.SortOrderInput | Prisma.SortOrder
+  tgl_ajb?: Prisma.SortOrderInput | Prisma.SortOrder
+  lunas_at?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_bast?: Prisma.SortOrderInput | Prisma.SortOrder
+  closing_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  closed_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelled_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  alasan_batal?: Prisma.SortOrderInput | Prisma.SortOrder
   catatan_admin?: Prisma.SortOrderInput | Prisma.SortOrder
-  berkas_json?: Prisma.SortOrderInput | Prisma.SortOrder
-  bast_json?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.TransaksiCountOrderByAggregateInput
@@ -445,19 +538,25 @@ export type TransaksiScalarWhereWithAggregatesInput = {
   customer_id?: Prisma.IntWithAggregatesFilter<"Transaksi"> | number
   unit_id?: Prisma.IntWithAggregatesFilter<"Transaksi"> | number
   marketing_id?: Prisma.IntWithAggregatesFilter<"Transaksi"> | number
+  itj_id?: Prisma.IntWithAggregatesFilter<"Transaksi"> | number
   metode_bayar?: Prisma.EnumMetodeBayarWithAggregatesFilter<"Transaksi"> | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalWithAggregatesFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalWithAggregatesFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalWithAggregatesFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.IntNullableWithAggregatesFilter<"Transaksi"> | number | null
-  status_transaksi?: Prisma.StringWithAggregatesFilter<"Transaksi"> | string
+  status_transaksi?: Prisma.EnumTahapTransaksiWithAggregatesFilter<"Transaksi"> | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailWithAggregatesFilter<"Transaksi"> | $Enums.TahapDetail
   nama_bank?: Prisma.StringNullableWithAggregatesFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableWithAggregatesFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+  tgl_ajb?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+  lunas_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+  closing_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+  closed_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+  cancelled_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+  alasan_batal?: Prisma.StringNullableWithAggregatesFilter<"Transaksi"> | string | null
   catatan_admin?: Prisma.StringNullableWithAggregatesFilter<"Transaksi"> | string | null
-  berkas_json?: Prisma.JsonNullableWithAggregatesFilter<"Transaksi">
-  bast_json?: Prisma.JsonNullableWithAggregatesFilter<"Transaksi">
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Transaksi"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Transaksi"> | Date | string
 }
@@ -468,20 +567,30 @@ export type TransaksiCreateInput = {
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
   unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
   marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
   pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiUncheckedCreateInput = {
@@ -489,22 +598,32 @@ export type TransaksiUncheckedCreateInput = {
   customer_id: number
   unit_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiUpdateInput = {
@@ -513,20 +632,30 @@ export type TransaksiUpdateInput = {
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
   marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
   pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateInput = {
@@ -534,22 +663,32 @@ export type TransaksiUncheckedUpdateInput = {
   customer_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiCreateManyInput = {
@@ -557,19 +696,25 @@ export type TransaksiCreateManyInput = {
   customer_id: number
   unit_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -580,14 +725,19 @@ export type TransaksiUpdateManyMutationInput = {
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -597,19 +747,25 @@ export type TransaksiUncheckedUpdateManyInput = {
   customer_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -624,6 +780,11 @@ export type TransaksiOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type TransaksiNullableScalarRelationFilter = {
+  is?: Prisma.TransaksiWhereInput | null
+  isNot?: Prisma.TransaksiWhereInput | null
+}
+
 export type TransaksiOrderByRelevanceInput = {
   fields: Prisma.TransaksiOrderByRelevanceFieldEnum | Prisma.TransaksiOrderByRelevanceFieldEnum[]
   sort: Prisma.SortOrder
@@ -635,19 +796,25 @@ export type TransaksiCountOrderByAggregateInput = {
   customer_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  itj_id?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   harga_deal?: Prisma.SortOrder
   target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
   tenor_bulan?: Prisma.SortOrder
   status_transaksi?: Prisma.SortOrder
+  tahap_detail?: Prisma.SortOrder
   nama_bank?: Prisma.SortOrder
   nama_notaris?: Prisma.SortOrder
   tgl_akad?: Prisma.SortOrder
+  tgl_ajb?: Prisma.SortOrder
+  lunas_at?: Prisma.SortOrder
   tgl_bast?: Prisma.SortOrder
+  closing_at?: Prisma.SortOrder
+  closed_at?: Prisma.SortOrder
+  cancelled_at?: Prisma.SortOrder
+  alasan_batal?: Prisma.SortOrder
   catatan_admin?: Prisma.SortOrder
-  berkas_json?: Prisma.SortOrder
-  bast_json?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -657,6 +824,7 @@ export type TransaksiAvgOrderByAggregateInput = {
   customer_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  itj_id?: Prisma.SortOrder
   harga_deal?: Prisma.SortOrder
   target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
@@ -668,16 +836,24 @@ export type TransaksiMaxOrderByAggregateInput = {
   customer_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  itj_id?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   harga_deal?: Prisma.SortOrder
   target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
   tenor_bulan?: Prisma.SortOrder
   status_transaksi?: Prisma.SortOrder
+  tahap_detail?: Prisma.SortOrder
   nama_bank?: Prisma.SortOrder
   nama_notaris?: Prisma.SortOrder
   tgl_akad?: Prisma.SortOrder
+  tgl_ajb?: Prisma.SortOrder
+  lunas_at?: Prisma.SortOrder
   tgl_bast?: Prisma.SortOrder
+  closing_at?: Prisma.SortOrder
+  closed_at?: Prisma.SortOrder
+  cancelled_at?: Prisma.SortOrder
+  alasan_batal?: Prisma.SortOrder
   catatan_admin?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -688,16 +864,24 @@ export type TransaksiMinOrderByAggregateInput = {
   customer_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  itj_id?: Prisma.SortOrder
   metode_bayar?: Prisma.SortOrder
   harga_deal?: Prisma.SortOrder
   target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
   tenor_bulan?: Prisma.SortOrder
   status_transaksi?: Prisma.SortOrder
+  tahap_detail?: Prisma.SortOrder
   nama_bank?: Prisma.SortOrder
   nama_notaris?: Prisma.SortOrder
   tgl_akad?: Prisma.SortOrder
+  tgl_ajb?: Prisma.SortOrder
+  lunas_at?: Prisma.SortOrder
   tgl_bast?: Prisma.SortOrder
+  closing_at?: Prisma.SortOrder
+  closed_at?: Prisma.SortOrder
+  cancelled_at?: Prisma.SortOrder
+  alasan_batal?: Prisma.SortOrder
   catatan_admin?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -708,6 +892,7 @@ export type TransaksiSumOrderByAggregateInput = {
   customer_id?: Prisma.SortOrder
   unit_id?: Prisma.SortOrder
   marketing_id?: Prisma.SortOrder
+  itj_id?: Prisma.SortOrder
   harga_deal?: Prisma.SortOrder
   target_itj?: Prisma.SortOrder
   target_dp?: Prisma.SortOrder
@@ -803,6 +988,38 @@ export type TransaksiUncheckedUpdateManyWithoutUnitNestedInput = {
   deleteMany?: Prisma.TransaksiScalarWhereInput | Prisma.TransaksiScalarWhereInput[]
 }
 
+export type TransaksiCreateNestedOneWithoutItjInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutItjInput, Prisma.TransaksiUncheckedCreateWithoutItjInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutItjInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+}
+
+export type TransaksiUncheckedCreateNestedOneWithoutItjInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutItjInput, Prisma.TransaksiUncheckedCreateWithoutItjInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutItjInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+}
+
+export type TransaksiUpdateOneWithoutItjNestedInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutItjInput, Prisma.TransaksiUncheckedCreateWithoutItjInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutItjInput
+  upsert?: Prisma.TransaksiUpsertWithoutItjInput
+  disconnect?: Prisma.TransaksiWhereInput | boolean
+  delete?: Prisma.TransaksiWhereInput | boolean
+  connect?: Prisma.TransaksiWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TransaksiUpdateToOneWithWhereWithoutItjInput, Prisma.TransaksiUpdateWithoutItjInput>, Prisma.TransaksiUncheckedUpdateWithoutItjInput>
+}
+
+export type TransaksiUncheckedUpdateOneWithoutItjNestedInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutItjInput, Prisma.TransaksiUncheckedCreateWithoutItjInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutItjInput
+  upsert?: Prisma.TransaksiUpsertWithoutItjInput
+  disconnect?: Prisma.TransaksiWhereInput | boolean
+  delete?: Prisma.TransaksiWhereInput | boolean
+  connect?: Prisma.TransaksiWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TransaksiUpdateToOneWithWhereWithoutItjInput, Prisma.TransaksiUpdateWithoutItjInput>, Prisma.TransaksiUncheckedUpdateWithoutItjInput>
+}
+
 export type TransaksiCreateNestedManyWithoutCustomerInput = {
   create?: Prisma.XOR<Prisma.TransaksiCreateWithoutCustomerInput, Prisma.TransaksiUncheckedCreateWithoutCustomerInput> | Prisma.TransaksiCreateWithoutCustomerInput[] | Prisma.TransaksiUncheckedCreateWithoutCustomerInput[]
   connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutCustomerInput | Prisma.TransaksiCreateOrConnectWithoutCustomerInput[]
@@ -845,6 +1062,70 @@ export type TransaksiUncheckedUpdateManyWithoutCustomerNestedInput = {
   deleteMany?: Prisma.TransaksiScalarWhereInput | Prisma.TransaksiScalarWhereInput[]
 }
 
+export type EnumTahapTransaksiFieldUpdateOperationsInput = {
+  set?: $Enums.TahapTransaksi
+}
+
+export type EnumTahapDetailFieldUpdateOperationsInput = {
+  set?: $Enums.TahapDetail
+}
+
+export type TransaksiCreateNestedOneWithoutPengajuan_kprInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutPengajuan_kprInput, Prisma.TransaksiUncheckedCreateWithoutPengajuan_kprInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutPengajuan_kprInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+}
+
+export type TransaksiUpdateOneRequiredWithoutPengajuan_kprNestedInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutPengajuan_kprInput, Prisma.TransaksiUncheckedCreateWithoutPengajuan_kprInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutPengajuan_kprInput
+  upsert?: Prisma.TransaksiUpsertWithoutPengajuan_kprInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TransaksiUpdateToOneWithWhereWithoutPengajuan_kprInput, Prisma.TransaksiUpdateWithoutPengajuan_kprInput>, Prisma.TransaksiUncheckedUpdateWithoutPengajuan_kprInput>
+}
+
+export type TransaksiCreateNestedOneWithoutLogsInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutLogsInput, Prisma.TransaksiUncheckedCreateWithoutLogsInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutLogsInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+}
+
+export type TransaksiUpdateOneRequiredWithoutLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutLogsInput, Prisma.TransaksiUncheckedCreateWithoutLogsInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutLogsInput
+  upsert?: Prisma.TransaksiUpsertWithoutLogsInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TransaksiUpdateToOneWithWhereWithoutLogsInput, Prisma.TransaksiUpdateWithoutLogsInput>, Prisma.TransaksiUncheckedUpdateWithoutLogsInput>
+}
+
+export type TransaksiCreateNestedOneWithoutDokumenInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutDokumenInput, Prisma.TransaksiUncheckedCreateWithoutDokumenInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutDokumenInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+}
+
+export type TransaksiUpdateOneRequiredWithoutDokumenNestedInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutDokumenInput, Prisma.TransaksiUncheckedCreateWithoutDokumenInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutDokumenInput
+  upsert?: Prisma.TransaksiUpsertWithoutDokumenInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TransaksiUpdateToOneWithWhereWithoutDokumenInput, Prisma.TransaksiUpdateWithoutDokumenInput>, Prisma.TransaksiUncheckedUpdateWithoutDokumenInput>
+}
+
+export type TransaksiCreateNestedOneWithoutInspeksi_bastInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutInspeksi_bastInput, Prisma.TransaksiUncheckedCreateWithoutInspeksi_bastInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutInspeksi_bastInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+}
+
+export type TransaksiUpdateOneRequiredWithoutInspeksi_bastNestedInput = {
+  create?: Prisma.XOR<Prisma.TransaksiCreateWithoutInspeksi_bastInput, Prisma.TransaksiUncheckedCreateWithoutInspeksi_bastInput>
+  connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutInspeksi_bastInput
+  upsert?: Prisma.TransaksiUpsertWithoutInspeksi_bastInput
+  connect?: Prisma.TransaksiWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TransaksiUpdateToOneWithWhereWithoutInspeksi_bastInput, Prisma.TransaksiUpdateWithoutInspeksi_bastInput>, Prisma.TransaksiUncheckedUpdateWithoutInspeksi_bastInput>
+}
+
 export type TransaksiCreateNestedOneWithoutPembayaranInput = {
   create?: Prisma.XOR<Prisma.TransaksiCreateWithoutPembayaranInput, Prisma.TransaksiUncheckedCreateWithoutPembayaranInput>
   connectOrCreate?: Prisma.TransaksiCreateOrConnectWithoutPembayaranInput
@@ -865,41 +1146,61 @@ export type TransaksiCreateWithoutMarketingInput = {
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
   unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
   pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiUncheckedCreateWithoutMarketingInput = {
   id?: number
   customer_id: number
   unit_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiCreateOrConnectWithoutMarketingInput = {
@@ -936,19 +1237,25 @@ export type TransaksiScalarWhereInput = {
   customer_id?: Prisma.IntFilter<"Transaksi"> | number
   unit_id?: Prisma.IntFilter<"Transaksi"> | number
   marketing_id?: Prisma.IntFilter<"Transaksi"> | number
+  itj_id?: Prisma.IntFilter<"Transaksi"> | number
   metode_bayar?: Prisma.EnumMetodeBayarFilter<"Transaksi"> | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFilter<"Transaksi"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.IntNullableFilter<"Transaksi"> | number | null
-  status_transaksi?: Prisma.StringFilter<"Transaksi"> | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFilter<"Transaksi"> | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFilter<"Transaksi"> | $Enums.TahapDetail
   nama_bank?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  tgl_ajb?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  lunas_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  closing_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  closed_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  cancelled_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
+  alasan_batal?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   catatan_admin?: Prisma.StringNullableFilter<"Transaksi"> | string | null
-  berkas_json?: Prisma.JsonNullableFilter<"Transaksi">
-  bast_json?: Prisma.JsonNullableFilter<"Transaksi">
   created_at?: Prisma.DateTimeFilter<"Transaksi"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Transaksi"> | Date | string
 }
@@ -959,41 +1266,61 @@ export type TransaksiCreateWithoutUnitInput = {
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
   marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
   pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiUncheckedCreateWithoutUnitInput = {
   id?: number
   customer_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiCreateOrConnectWithoutUnitInput = {
@@ -1022,29 +1349,40 @@ export type TransaksiUpdateManyWithWhereWithoutUnitInput = {
   data: Prisma.XOR<Prisma.TransaksiUpdateManyMutationInput, Prisma.TransaksiUncheckedUpdateManyWithoutUnitInput>
 }
 
-export type TransaksiCreateWithoutCustomerInput = {
+export type TransaksiCreateWithoutItjInput = {
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
   unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
   marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
   pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
 }
 
-export type TransaksiUncheckedCreateWithoutCustomerInput = {
+export type TransaksiUncheckedCreateWithoutItjInput = {
   id?: number
+  customer_id: number
   unit_id: number
   marketing_id: number
   metode_bayar: $Enums.MetodeBayar
@@ -1052,17 +1390,168 @@ export type TransaksiUncheckedCreateWithoutCustomerInput = {
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiCreateOrConnectWithoutItjInput = {
+  where: Prisma.TransaksiWhereUniqueInput
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutItjInput, Prisma.TransaksiUncheckedCreateWithoutItjInput>
+}
+
+export type TransaksiUpsertWithoutItjInput = {
+  update: Prisma.XOR<Prisma.TransaksiUpdateWithoutItjInput, Prisma.TransaksiUncheckedUpdateWithoutItjInput>
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutItjInput, Prisma.TransaksiUncheckedCreateWithoutItjInput>
+  where?: Prisma.TransaksiWhereInput
+}
+
+export type TransaksiUpdateToOneWithWhereWithoutItjInput = {
+  where?: Prisma.TransaksiWhereInput
+  data: Prisma.XOR<Prisma.TransaksiUpdateWithoutItjInput, Prisma.TransaksiUncheckedUpdateWithoutItjInput>
+}
+
+export type TransaksiUpdateWithoutItjInput = {
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
+  unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+  marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiUncheckedUpdateWithoutItjInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiCreateWithoutCustomerInput = {
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
+  marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
+  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiUncheckedCreateWithoutCustomerInput = {
+  id?: number
+  unit_id: number
+  marketing_id: number
+  itj_id: number
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiCreateOrConnectWithoutCustomerInput = {
@@ -1091,25 +1580,603 @@ export type TransaksiUpdateManyWithWhereWithoutCustomerInput = {
   data: Prisma.XOR<Prisma.TransaksiUpdateManyMutationInput, Prisma.TransaksiUncheckedUpdateManyWithoutCustomerInput>
 }
 
+export type TransaksiCreateWithoutPengajuan_kprInput = {
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
+  unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
+  marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
+  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiUncheckedCreateWithoutPengajuan_kprInput = {
+  id?: number
+  customer_id: number
+  unit_id: number
+  marketing_id: number
+  itj_id: number
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiCreateOrConnectWithoutPengajuan_kprInput = {
+  where: Prisma.TransaksiWhereUniqueInput
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutPengajuan_kprInput, Prisma.TransaksiUncheckedCreateWithoutPengajuan_kprInput>
+}
+
+export type TransaksiUpsertWithoutPengajuan_kprInput = {
+  update: Prisma.XOR<Prisma.TransaksiUpdateWithoutPengajuan_kprInput, Prisma.TransaksiUncheckedUpdateWithoutPengajuan_kprInput>
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutPengajuan_kprInput, Prisma.TransaksiUncheckedCreateWithoutPengajuan_kprInput>
+  where?: Prisma.TransaksiWhereInput
+}
+
+export type TransaksiUpdateToOneWithWhereWithoutPengajuan_kprInput = {
+  where?: Prisma.TransaksiWhereInput
+  data: Prisma.XOR<Prisma.TransaksiUpdateWithoutPengajuan_kprInput, Prisma.TransaksiUncheckedUpdateWithoutPengajuan_kprInput>
+}
+
+export type TransaksiUpdateWithoutPengajuan_kprInput = {
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
+  unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+  marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
+  pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiUncheckedUpdateWithoutPengajuan_kprInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiCreateWithoutLogsInput = {
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
+  unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
+  marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
+  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiUncheckedCreateWithoutLogsInput = {
+  id?: number
+  customer_id: number
+  unit_id: number
+  marketing_id: number
+  itj_id: number
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiCreateOrConnectWithoutLogsInput = {
+  where: Prisma.TransaksiWhereUniqueInput
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutLogsInput, Prisma.TransaksiUncheckedCreateWithoutLogsInput>
+}
+
+export type TransaksiUpsertWithoutLogsInput = {
+  update: Prisma.XOR<Prisma.TransaksiUpdateWithoutLogsInput, Prisma.TransaksiUncheckedUpdateWithoutLogsInput>
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutLogsInput, Prisma.TransaksiUncheckedCreateWithoutLogsInput>
+  where?: Prisma.TransaksiWhereInput
+}
+
+export type TransaksiUpdateToOneWithWhereWithoutLogsInput = {
+  where?: Prisma.TransaksiWhereInput
+  data: Prisma.XOR<Prisma.TransaksiUpdateWithoutLogsInput, Prisma.TransaksiUncheckedUpdateWithoutLogsInput>
+}
+
+export type TransaksiUpdateWithoutLogsInput = {
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
+  unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+  marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
+  pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiUncheckedUpdateWithoutLogsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiCreateWithoutDokumenInput = {
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
+  unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
+  marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
+  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiUncheckedCreateWithoutDokumenInput = {
+  id?: number
+  customer_id: number
+  unit_id: number
+  marketing_id: number
+  itj_id: number
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiCreateOrConnectWithoutDokumenInput = {
+  where: Prisma.TransaksiWhereUniqueInput
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutDokumenInput, Prisma.TransaksiUncheckedCreateWithoutDokumenInput>
+}
+
+export type TransaksiUpsertWithoutDokumenInput = {
+  update: Prisma.XOR<Prisma.TransaksiUpdateWithoutDokumenInput, Prisma.TransaksiUncheckedUpdateWithoutDokumenInput>
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutDokumenInput, Prisma.TransaksiUncheckedCreateWithoutDokumenInput>
+  where?: Prisma.TransaksiWhereInput
+}
+
+export type TransaksiUpdateToOneWithWhereWithoutDokumenInput = {
+  where?: Prisma.TransaksiWhereInput
+  data: Prisma.XOR<Prisma.TransaksiUpdateWithoutDokumenInput, Prisma.TransaksiUncheckedUpdateWithoutDokumenInput>
+}
+
+export type TransaksiUpdateWithoutDokumenInput = {
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
+  unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+  marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
+  pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiUncheckedUpdateWithoutDokumenInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiCreateWithoutInspeksi_bastInput = {
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
+  unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
+  marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
+  pembayaran?: Prisma.PembayaranCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiUncheckedCreateWithoutInspeksi_bastInput = {
+  id?: number
+  customer_id: number
+  unit_id: number
+  marketing_id: number
+  itj_id: number
+  metode_bayar: $Enums.MetodeBayar
+  harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: number | null
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
+  nama_bank?: string | null
+  nama_notaris?: string | null
+  tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
+  tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
+  catatan_admin?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  pembayaran?: Prisma.PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
+}
+
+export type TransaksiCreateOrConnectWithoutInspeksi_bastInput = {
+  where: Prisma.TransaksiWhereUniqueInput
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutInspeksi_bastInput, Prisma.TransaksiUncheckedCreateWithoutInspeksi_bastInput>
+}
+
+export type TransaksiUpsertWithoutInspeksi_bastInput = {
+  update: Prisma.XOR<Prisma.TransaksiUpdateWithoutInspeksi_bastInput, Prisma.TransaksiUncheckedUpdateWithoutInspeksi_bastInput>
+  create: Prisma.XOR<Prisma.TransaksiCreateWithoutInspeksi_bastInput, Prisma.TransaksiUncheckedCreateWithoutInspeksi_bastInput>
+  where?: Prisma.TransaksiWhereInput
+}
+
+export type TransaksiUpdateToOneWithWhereWithoutInspeksi_bastInput = {
+  where?: Prisma.TransaksiWhereInput
+  data: Prisma.XOR<Prisma.TransaksiUpdateWithoutInspeksi_bastInput, Prisma.TransaksiUncheckedUpdateWithoutInspeksi_bastInput>
+}
+
+export type TransaksiUpdateWithoutInspeksi_bastInput = {
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
+  unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+  marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
+  pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+}
+
+export type TransaksiUncheckedUpdateWithoutInspeksi_bastInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
+  metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+  harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+  nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
+}
+
 export type TransaksiCreateWithoutPembayaranInput = {
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
   customer: Prisma.CustomerCreateNestedOneWithoutTransaksiInput
   unit: Prisma.MasterUnitCreateNestedOneWithoutTransaksiInput
   marketing: Prisma.UserCreateNestedOneWithoutTransaksiInput
+  itj: Prisma.ItjCreateNestedOneWithoutTransaksiInput
+  logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiUncheckedCreateWithoutPembayaranInput = {
@@ -1117,21 +2184,31 @@ export type TransaksiUncheckedCreateWithoutPembayaranInput = {
   customer_id: number
   unit_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
+  logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
 }
 
 export type TransaksiCreateOrConnectWithoutPembayaranInput = {
@@ -1156,19 +2233,29 @@ export type TransaksiUpdateWithoutPembayaranInput = {
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
   marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateWithoutPembayaranInput = {
@@ -1176,40 +2263,56 @@ export type TransaksiUncheckedUpdateWithoutPembayaranInput = {
   customer_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiCreateManyMarketingInput = {
   id?: number
   customer_id: number
   unit_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -1220,60 +2323,86 @@ export type TransaksiUpdateWithoutMarketingInput = {
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
   pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateWithoutMarketingInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   customer_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateManyWithoutMarketingInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   customer_id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1282,19 +2411,25 @@ export type TransaksiCreateManyUnitInput = {
   id?: number
   customer_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -1305,60 +2440,86 @@ export type TransaksiUpdateWithoutUnitInput = {
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneRequiredWithoutTransaksiNestedInput
   marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
   pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateWithoutUnitInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   customer_id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateManyWithoutUnitInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   customer_id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1367,19 +2528,25 @@ export type TransaksiCreateManyCustomerInput = {
   id?: number
   unit_id: number
   marketing_id: number
+  itj_id: number
   metode_bayar: $Enums.MetodeBayar
   harga_deal: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj: runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp: runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: number | null
-  status_transaksi: string
+  status_transaksi?: $Enums.TahapTransaksi
+  tahap_detail?: $Enums.TahapDetail
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
+  tgl_ajb?: Date | string | null
+  lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
+  closing_at?: Date | string | null
+  closed_at?: Date | string | null
+  cancelled_at?: Date | string | null
+  alasan_batal?: string | null
   catatan_admin?: string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -1390,60 +2557,86 @@ export type TransaksiUpdateWithoutCustomerInput = {
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unit?: Prisma.MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
   marketing?: Prisma.UserUpdateOneRequiredWithoutTransaksiNestedInput
+  itj?: Prisma.ItjUpdateOneRequiredWithoutTransaksiNestedInput
   pembayaran?: Prisma.PembayaranUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateWithoutCustomerInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   pembayaran?: Prisma.PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+  logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+  dokumen?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  pengajuan_kpr?: Prisma.PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
 }
 
 export type TransaksiUncheckedUpdateManyWithoutCustomerInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   unit_id?: Prisma.IntFieldUpdateOperationsInput | number
   marketing_id?: Prisma.IntFieldUpdateOperationsInput | number
+  itj_id?: Prisma.IntFieldUpdateOperationsInput | number
   metode_bayar?: Prisma.EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
   harga_deal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_itj?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   target_dp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   tenor_bulan?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  status_transaksi?: Prisma.StringFieldUpdateOperationsInput | string
+  status_transaksi?: Prisma.EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  tahap_detail?: Prisma.EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelled_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  alasan_batal?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   catatan_admin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  berkas_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  bast_json?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1455,10 +2648,18 @@ export type TransaksiUncheckedUpdateManyWithoutCustomerInput = {
 
 export type TransaksiCountOutputType = {
   pembayaran: number
+  logs: number
+  dokumen: number
+  inspeksi_bast: number
+  pengajuan_kpr: number
 }
 
 export type TransaksiCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   pembayaran?: boolean | TransaksiCountOutputTypeCountPembayaranArgs
+  logs?: boolean | TransaksiCountOutputTypeCountLogsArgs
+  dokumen?: boolean | TransaksiCountOutputTypeCountDokumenArgs
+  inspeksi_bast?: boolean | TransaksiCountOutputTypeCountInspeksi_bastArgs
+  pengajuan_kpr?: boolean | TransaksiCountOutputTypeCountPengajuan_kprArgs
 }
 
 /**
@@ -1478,31 +2679,70 @@ export type TransaksiCountOutputTypeCountPembayaranArgs<ExtArgs extends runtime.
   where?: Prisma.PembayaranWhereInput
 }
 
+/**
+ * TransaksiCountOutputType without action
+ */
+export type TransaksiCountOutputTypeCountLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TransaksiTahapLogWhereInput
+}
+
+/**
+ * TransaksiCountOutputType without action
+ */
+export type TransaksiCountOutputTypeCountDokumenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DokumenTransaksiWhereInput
+}
+
+/**
+ * TransaksiCountOutputType without action
+ */
+export type TransaksiCountOutputTypeCountInspeksi_bastArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InspeksiBASTWhereInput
+}
+
+/**
+ * TransaksiCountOutputType without action
+ */
+export type TransaksiCountOutputTypeCountPengajuan_kprArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PengajuanKPRWhereInput
+}
+
 
 export type TransaksiSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   customer_id?: boolean
   unit_id?: boolean
   marketing_id?: boolean
+  itj_id?: boolean
   metode_bayar?: boolean
   harga_deal?: boolean
   target_itj?: boolean
   target_dp?: boolean
   tenor_bulan?: boolean
   status_transaksi?: boolean
+  tahap_detail?: boolean
   nama_bank?: boolean
   nama_notaris?: boolean
   tgl_akad?: boolean
+  tgl_ajb?: boolean
+  lunas_at?: boolean
   tgl_bast?: boolean
+  closing_at?: boolean
+  closed_at?: boolean
+  cancelled_at?: boolean
+  alasan_batal?: boolean
   catatan_admin?: boolean
-  berkas_json?: boolean
-  bast_json?: boolean
   created_at?: boolean
   updated_at?: boolean
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
   unit?: boolean | Prisma.MasterUnitDefaultArgs<ExtArgs>
   marketing?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  itj?: boolean | Prisma.ItjDefaultArgs<ExtArgs>
   pembayaran?: boolean | Prisma.Transaksi$pembayaranArgs<ExtArgs>
+  logs?: boolean | Prisma.Transaksi$logsArgs<ExtArgs>
+  dokumen?: boolean | Prisma.Transaksi$dokumenArgs<ExtArgs>
+  inspeksi_bast?: boolean | Prisma.Transaksi$inspeksi_bastArgs<ExtArgs>
+  pengajuan_kpr?: boolean | Prisma.Transaksi$pengajuan_kprArgs<ExtArgs>
   _count?: boolean | Prisma.TransaksiCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["transaksi"]>
 
@@ -1513,29 +2753,40 @@ export type TransaksiSelectScalar = {
   customer_id?: boolean
   unit_id?: boolean
   marketing_id?: boolean
+  itj_id?: boolean
   metode_bayar?: boolean
   harga_deal?: boolean
   target_itj?: boolean
   target_dp?: boolean
   tenor_bulan?: boolean
   status_transaksi?: boolean
+  tahap_detail?: boolean
   nama_bank?: boolean
   nama_notaris?: boolean
   tgl_akad?: boolean
+  tgl_ajb?: boolean
+  lunas_at?: boolean
   tgl_bast?: boolean
+  closing_at?: boolean
+  closed_at?: boolean
+  cancelled_at?: boolean
+  alasan_batal?: boolean
   catatan_admin?: boolean
-  berkas_json?: boolean
-  bast_json?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type TransaksiOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer_id" | "unit_id" | "marketing_id" | "metode_bayar" | "harga_deal" | "target_itj" | "target_dp" | "tenor_bulan" | "status_transaksi" | "nama_bank" | "nama_notaris" | "tgl_akad" | "tgl_bast" | "catatan_admin" | "berkas_json" | "bast_json" | "created_at" | "updated_at", ExtArgs["result"]["transaksi"]>
+export type TransaksiOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer_id" | "unit_id" | "marketing_id" | "itj_id" | "metode_bayar" | "harga_deal" | "target_itj" | "target_dp" | "tenor_bulan" | "status_transaksi" | "tahap_detail" | "nama_bank" | "nama_notaris" | "tgl_akad" | "tgl_ajb" | "lunas_at" | "tgl_bast" | "closing_at" | "closed_at" | "cancelled_at" | "alasan_batal" | "catatan_admin" | "created_at" | "updated_at", ExtArgs["result"]["transaksi"]>
 export type TransaksiInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
   unit?: boolean | Prisma.MasterUnitDefaultArgs<ExtArgs>
   marketing?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  itj?: boolean | Prisma.ItjDefaultArgs<ExtArgs>
   pembayaran?: boolean | Prisma.Transaksi$pembayaranArgs<ExtArgs>
+  logs?: boolean | Prisma.Transaksi$logsArgs<ExtArgs>
+  dokumen?: boolean | Prisma.Transaksi$dokumenArgs<ExtArgs>
+  inspeksi_bast?: boolean | Prisma.Transaksi$inspeksi_bastArgs<ExtArgs>
+  pengajuan_kpr?: boolean | Prisma.Transaksi$pengajuan_kprArgs<ExtArgs>
   _count?: boolean | Prisma.TransaksiCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -1545,26 +2796,37 @@ export type $TransaksiPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     customer: Prisma.$CustomerPayload<ExtArgs>
     unit: Prisma.$MasterUnitPayload<ExtArgs>
     marketing: Prisma.$UserPayload<ExtArgs>
+    itj: Prisma.$ItjPayload<ExtArgs>
     pembayaran: Prisma.$PembayaranPayload<ExtArgs>[]
+    logs: Prisma.$TransaksiTahapLogPayload<ExtArgs>[]
+    dokumen: Prisma.$DokumenTransaksiPayload<ExtArgs>[]
+    inspeksi_bast: Prisma.$InspeksiBASTPayload<ExtArgs>[]
+    pengajuan_kpr: Prisma.$PengajuanKPRPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     customer_id: number
     unit_id: number
     marketing_id: number
+    itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: runtime.Decimal
     target_itj: runtime.Decimal
     target_dp: runtime.Decimal
     tenor_bulan: number | null
-    status_transaksi: string
+    status_transaksi: $Enums.TahapTransaksi
+    tahap_detail: $Enums.TahapDetail
     nama_bank: string | null
     nama_notaris: string | null
     tgl_akad: Date | null
+    tgl_ajb: Date | null
+    lunas_at: Date | null
     tgl_bast: Date | null
+    closing_at: Date | null
+    closed_at: Date | null
+    cancelled_at: Date | null
+    alasan_batal: string | null
     catatan_admin: string | null
-    berkas_json: runtime.JsonValue | null
-    bast_json: runtime.JsonValue | null
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["transaksi"]>
@@ -1910,7 +3172,12 @@ export interface Prisma__TransaksiClient<T, Null = never, ExtArgs extends runtim
   customer<T extends Prisma.CustomerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CustomerDefaultArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   unit<T extends Prisma.MasterUnitDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MasterUnitDefaultArgs<ExtArgs>>): Prisma.Prisma__MasterUnitClient<runtime.Types.Result.GetResult<Prisma.$MasterUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   marketing<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  itj<T extends Prisma.ItjDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ItjDefaultArgs<ExtArgs>>): Prisma.Prisma__ItjClient<runtime.Types.Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   pembayaran<T extends Prisma.Transaksi$pembayaranArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Transaksi$pembayaranArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PembayaranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  logs<T extends Prisma.Transaksi$logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Transaksi$logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransaksiTahapLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  dokumen<T extends Prisma.Transaksi$dokumenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Transaksi$dokumenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DokumenTransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  inspeksi_bast<T extends Prisma.Transaksi$inspeksi_bastArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Transaksi$inspeksi_bastArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pengajuan_kpr<T extends Prisma.Transaksi$pengajuan_kprArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Transaksi$pengajuan_kprArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PengajuanKPRPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1944,19 +3211,25 @@ export interface TransaksiFieldRefs {
   readonly customer_id: Prisma.FieldRef<"Transaksi", 'Int'>
   readonly unit_id: Prisma.FieldRef<"Transaksi", 'Int'>
   readonly marketing_id: Prisma.FieldRef<"Transaksi", 'Int'>
+  readonly itj_id: Prisma.FieldRef<"Transaksi", 'Int'>
   readonly metode_bayar: Prisma.FieldRef<"Transaksi", 'MetodeBayar'>
   readonly harga_deal: Prisma.FieldRef<"Transaksi", 'Decimal'>
   readonly target_itj: Prisma.FieldRef<"Transaksi", 'Decimal'>
   readonly target_dp: Prisma.FieldRef<"Transaksi", 'Decimal'>
   readonly tenor_bulan: Prisma.FieldRef<"Transaksi", 'Int'>
-  readonly status_transaksi: Prisma.FieldRef<"Transaksi", 'String'>
+  readonly status_transaksi: Prisma.FieldRef<"Transaksi", 'TahapTransaksi'>
+  readonly tahap_detail: Prisma.FieldRef<"Transaksi", 'TahapDetail'>
   readonly nama_bank: Prisma.FieldRef<"Transaksi", 'String'>
   readonly nama_notaris: Prisma.FieldRef<"Transaksi", 'String'>
   readonly tgl_akad: Prisma.FieldRef<"Transaksi", 'DateTime'>
+  readonly tgl_ajb: Prisma.FieldRef<"Transaksi", 'DateTime'>
+  readonly lunas_at: Prisma.FieldRef<"Transaksi", 'DateTime'>
   readonly tgl_bast: Prisma.FieldRef<"Transaksi", 'DateTime'>
+  readonly closing_at: Prisma.FieldRef<"Transaksi", 'DateTime'>
+  readonly closed_at: Prisma.FieldRef<"Transaksi", 'DateTime'>
+  readonly cancelled_at: Prisma.FieldRef<"Transaksi", 'DateTime'>
+  readonly alasan_batal: Prisma.FieldRef<"Transaksi", 'String'>
   readonly catatan_admin: Prisma.FieldRef<"Transaksi", 'String'>
-  readonly berkas_json: Prisma.FieldRef<"Transaksi", 'Json'>
-  readonly bast_json: Prisma.FieldRef<"Transaksi", 'Json'>
   readonly created_at: Prisma.FieldRef<"Transaksi", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Transaksi", 'DateTime'>
 }
@@ -2328,6 +3601,102 @@ export type Transaksi$pembayaranArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.PembayaranScalarFieldEnum | Prisma.PembayaranScalarFieldEnum[]
+}
+
+/**
+ * Transaksi.logs
+ */
+export type Transaksi$logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TransaksiTahapLog
+   */
+  select?: Prisma.TransaksiTahapLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TransaksiTahapLog
+   */
+  omit?: Prisma.TransaksiTahapLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TransaksiTahapLogInclude<ExtArgs> | null
+  where?: Prisma.TransaksiTahapLogWhereInput
+  orderBy?: Prisma.TransaksiTahapLogOrderByWithRelationInput | Prisma.TransaksiTahapLogOrderByWithRelationInput[]
+  cursor?: Prisma.TransaksiTahapLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TransaksiTahapLogScalarFieldEnum | Prisma.TransaksiTahapLogScalarFieldEnum[]
+}
+
+/**
+ * Transaksi.dokumen
+ */
+export type Transaksi$dokumenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DokumenTransaksi
+   */
+  select?: Prisma.DokumenTransaksiSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DokumenTransaksi
+   */
+  omit?: Prisma.DokumenTransaksiOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DokumenTransaksiInclude<ExtArgs> | null
+  where?: Prisma.DokumenTransaksiWhereInput
+  orderBy?: Prisma.DokumenTransaksiOrderByWithRelationInput | Prisma.DokumenTransaksiOrderByWithRelationInput[]
+  cursor?: Prisma.DokumenTransaksiWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DokumenTransaksiScalarFieldEnum | Prisma.DokumenTransaksiScalarFieldEnum[]
+}
+
+/**
+ * Transaksi.inspeksi_bast
+ */
+export type Transaksi$inspeksi_bastArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InspeksiBAST
+   */
+  select?: Prisma.InspeksiBASTSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InspeksiBAST
+   */
+  omit?: Prisma.InspeksiBASTOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InspeksiBASTInclude<ExtArgs> | null
+  where?: Prisma.InspeksiBASTWhereInput
+  orderBy?: Prisma.InspeksiBASTOrderByWithRelationInput | Prisma.InspeksiBASTOrderByWithRelationInput[]
+  cursor?: Prisma.InspeksiBASTWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InspeksiBASTScalarFieldEnum | Prisma.InspeksiBASTScalarFieldEnum[]
+}
+
+/**
+ * Transaksi.pengajuan_kpr
+ */
+export type Transaksi$pengajuan_kprArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PengajuanKPR
+   */
+  select?: Prisma.PengajuanKPRSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PengajuanKPR
+   */
+  omit?: Prisma.PengajuanKPROmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PengajuanKPRInclude<ExtArgs> | null
+  where?: Prisma.PengajuanKPRWhereInput
+  orderBy?: Prisma.PengajuanKPROrderByWithRelationInput | Prisma.PengajuanKPROrderByWithRelationInput[]
+  cursor?: Prisma.PengajuanKPRWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PengajuanKPRScalarFieldEnum | Prisma.PengajuanKPRScalarFieldEnum[]
 }
 
 /**

@@ -43,9 +43,16 @@ export const itjSchema = z
 
     unitId: integerId,
 
-    nominalItj: rupiahAmount(
+    hargaDeal: rupiahAmount(1, "Harga deal harus lebih dari Rp0"),
+
+    targetItj: rupiahAmount(
       300000,
-      "Nominal ITJ minimal Rp300.000"
+      "Target total ITJ minimal Rp300.000"
+    ),
+
+    nominalDibayar: rupiahAmount(
+      300000,
+      "ITJ dibayar saat ini minimal Rp300.000"
     ),
 
     targetDp: rupiahAmount(0, "Target DP minimal Rp0"),
@@ -70,4 +77,13 @@ export const itjSchema = z
         message: "Tenor wajib diisi untuk metode KPR",
       });
     }
+    if (data.nominalDibayar > data.targetItj) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["nominalDibayar"],
+        message: "ITJ dibayar saat ini tidak boleh melebihi target total ITJ",
+      });
+    }
   });
+
+export type ItjInput = z.infer<typeof itjSchema>;

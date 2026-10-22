@@ -5,9 +5,8 @@ import {
   Edit2,
   Trash2,
   Building2,
-  Layers,
   Loader2,
-  AlertTriangle,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -19,20 +18,23 @@ interface MasterTipeTableProps {
   data: SerializedMasterTipe[];
   onEdit: (tipe: SerializedMasterTipe) => void;
   onRefresh: () => void;
+  isAdmin?: boolean;
 }
 
 export function MasterTipeTable({
   data,
   onEdit,
   onRefresh,
+  isAdmin = true,
 }: MasterTipeTableProps) {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = (tipe: SerializedMasterTipe) => {
-    if (tipe._count && tipe._count.units > 0) {
+    const unitCount = tipe.jumlah_unit ?? tipe._count?.units ?? 0;
+    if (unitCount > 0) {
       toast.error(
-        `Tidak bisa menghapus: Tipe ini masih digunakan oleh ${tipe._count.units} unit.`
+        `Tidak bisa menghapus: Tipe ini masih digunakan oleh ${unitCount} unit.`
       );
       return;
     }
@@ -83,12 +85,11 @@ export function MasterTipeTable({
         <div className="w-12 h-12 rounded-full bg-bone text-slate flex items-center justify-center mx-auto mb-3">
           <Building2 className="w-6 h-6 text-steel" />
         </div>
-        <h3 className="text-sm font-semibold text-carbon-ink">
+        <h3 className="text-sm font-semibold text-carbon-ink font-heading">
           Belum ada Tipe Unit
         </h3>
         <p className="text-xs text-slate mt-1 max-w-sm mx-auto">
-          Klik tombol &quot;Tambah Tipe Unit&quot; untuk menambahkan tipe perumahan
-          atau kavling pertama Anda.
+          Mulai dengan membuat tipe unit terlebih dahulu agar blok unit pada siteplan dapat ditentukan.
         </p>
       </div>
     );
@@ -105,14 +106,15 @@ export function MasterTipeTable({
               <th className="px-5 py-3.5">Kategori</th>
               <th className="px-5 py-3.5">Luas (Bangunan / Tanah)</th>
               <th className="px-5 py-3.5">Harga Dasar</th>
-              <th className="px-5 py-3.5 text-center">Unit Terdaftar</th>
-              <th className="px-5 py-3.5 text-right">Aksi</th>
+              <th className="px-5 py-3.5 text-center">Dipakai Unit</th>
+              {isAdmin && <th className="px-5 py-3.5 text-right">Aksi</th>}
             </tr>
           </thead>
 
           {/* Table Body */}
           <tbody className="divide-y divide-mist">
             {data.map((tipe) => {
+              const unitCount = tipe.jumlah_unit ?? tipe._count?.units ?? 0;
               const formattedPrice = new Intl.NumberFormat("id-ID", {
                 style: "currency",
                 currency: "IDR",
@@ -126,7 +128,7 @@ export function MasterTipeTable({
                 >
                   {/* Nama Tipe */}
                   <td className="px-5 py-3.5">
-                    <span className="font-semibold text-carbon-ink text-sm">
+                    <span className="font-semibold text-carbon-ink text-sm font-mono">
                       {tipe.nama_tipe}
                     </span>
                   </td>
@@ -146,7 +148,7 @@ export function MasterTipeTable({
                   <td className="px-5 py-3.5 text-slate font-medium">
                     {tipe.kategori === "KAVLING" ? (
                       <span>
-                        <span className="text-fog">-</span> / {tipe.luas_tanah} m²
+                        <span className="text-fog">0 (Kavling)</span> / {tipe.luas_tanah} m²
                       </span>
                     ) : (
                       <span>
@@ -160,40 +162,53 @@ export function MasterTipeTable({
                     {formattedPrice}
                   </td>
 
-                  {/* Jumlah Unit */}
+                  {/* Jumlah Unit Dipakai */}
                   <td className="px-5 py-3.5 text-center">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-bone text-graphite text-xs font-semibold">
-                      {tipe._count?.units || 0} unit
+                    <span
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                        unitCount > 0
+                          ? "bg-teal-50 text-deep-teal border border-teal-200"
+                          : "bg-bone text-slate"
+                      }`}
+                    >
+                      {unitCount > 0 && <Lock className="w-3 h-3" />}
+                      <span>{unitCount} unit</span>
                     </span>
                   </td>
 
                   {/* Actions */}
-                  <td className="px-5 py-3.5 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => onEdit(tipe)}
-                        className="p-1.5 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
-                        title="Edit Tipe"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
+                  {isAdmin && (
+                    <td className="px-5 py-3.5 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => onEdit(tipe)}
+                          className="p-1.5 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
+                          title="Edit Tipe"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
 
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(tipe)}
-                        disabled={isPending && deleteId === tipe.id}
-                        className="p-1.5 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-50"
-                        title="Hapus Tipe"
-                      >
-                        {isPending && deleteId === tipe.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
-                  </td>
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(tipe)}
+                          disabled={(isPending && deleteId === tipe.id) || unitCount > 0}
+                          className="p-1.5 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                          title={
+                            unitCount > 0
+                              ? `Tidak bisa dihapus: masih digunakan oleh ${unitCount} unit`
+                              : "Hapus Tipe"
+                          }
+                        >
+                          {isPending && deleteId === tipe.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               );
             })}

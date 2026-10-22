@@ -5,6 +5,12 @@ export { getLeadTahap };
 export type { LeadTahap, LeadMilestoneFields };
 
 export const LeadTahapEnum = z.enum([
+  "LEAD MASUK",
+  "SURVEI DIJADWALKAN",
+  "SUDAH SURVEI",
+  "ITJ DIAJUKAN",
+  "CLOSING",
+  "LOST",
   "Lead Masuk",
   "Survei Dijadwalkan",
   "Sudah Survei",

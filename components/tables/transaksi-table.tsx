@@ -22,6 +22,7 @@ export interface SerializedPembayaran {
   nominal: number;
   jenis_pembayaran: "ITJ" | "DP" | "CICILAN" | "PELUNASAN";
   catatan: string | null;
+  is_void?: boolean;
   created_at: string;
 }
 
@@ -105,6 +106,12 @@ const getStatusBadge = (status: string) => {
     return {
       label: status,
       className: "bg-sky-50 text-sky-700 border-sky-200",
+    };
+  }
+  if (norm.includes("PEMBAYARAN")) {
+    return {
+      label: "Pembayaran",
+      className: "bg-indigo-50 text-indigo-700 border-indigo-200",
     };
   }
   if (norm.includes("SP3K")) {
@@ -261,13 +268,13 @@ export function TransaksiTable({ data }: TransaksiTableProps) {
               {items.map((trx) => {
                 const statusBadge = getStatusBadge(trx.status_transaksi);
 
-                // Calculate paid & remaining ITJ and DP
+                // Calculate paid & remaining ITJ and DP (excluding voided payments)
                 const itjPaid = trx.pembayaran
-                  .filter((p) => p.jenis_pembayaran === "ITJ")
+                  .filter((p) => !p.is_void && p.jenis_pembayaran === "ITJ")
                   .reduce((sum, p) => sum + p.nominal, 0);
 
                 const dpPaid = trx.pembayaran
-                  .filter((p) => p.jenis_pembayaran === "DP")
+                  .filter((p) => !p.is_void && p.jenis_pembayaran === "DP")
                   .reduce((sum, p) => sum + p.nominal, 0);
 
                 const sisaItj = Math.max(0, trx.target_itj - itjPaid);

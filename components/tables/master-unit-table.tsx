@@ -5,22 +5,26 @@ import {
   Search,
   Filter,
   Trash2,
-  Edit,
-  Loader2,
+  Lock,
+  MoreVertical,
+  History,
+  Tag,
+  RotateCcw,
+  Sparkles,
   ChevronLeft,
   ChevronRight,
-  CheckCircle,
-  Clock,
-  Ban,
-  Tag,
+  Loader2,
+  CheckSquare,
+  Square,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   SerializedMasterUnit,
   SerializedMasterTipe,
   deleteMasterUnit,
-  updateMasterUnit,
 } from "@/actions/master-unit.action";
+import { SetHargaKhususModal } from "@/components/forms/set-harga-khusus-modal";
+import { BulkChangeTipeDrawer } from "@/components/forms/bulk-change-tipe-drawer";
 
 interface MasterUnitTableProps {
   units: SerializedMasterUnit[];
@@ -31,11 +35,16 @@ interface MasterUnitTableProps {
   search: string;
   statusFilter: string;
   tipeFilter: number;
+  kategoriFilter: string;
   onSearchChange: (search: string) => void;
   onStatusChange: (status: string) => void;
   onTipeChange: (tipeId: number) => void;
+  onKategoriChange: (kategori: string) => void;
   onPageChange: (page: number) => void;
   onRefresh: () => void;
+  onChangeTipe: (unit: SerializedMasterUnit) => void;
+  isAdmin?: boolean;
+  isLoading?: boolean;
 }
 
 export function MasterUnitTable({
@@ -47,25 +56,57 @@ export function MasterUnitTable({
   search,
   statusFilter,
   tipeFilter,
+  kategoriFilter,
   onSearchChange,
   onStatusChange,
   onTipeChange,
+  onKategoriChange,
   onPageChange,
   onRefresh,
+  onChangeTipe,
+  isAdmin = true,
+  isLoading = false,
 }: MasterUnitTableProps) {
   const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [updatingId, setUpdatingId] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  // Modals state
+  const [hargaKhususUnit, setHargaKhususUnit] = useState<SerializedMasterUnit | null>(null);
+  const [openMenuUnitId, setOpenMenuUnitId] = useState<number | null>(null);
+
+  // Bulk selection state (Phase 2)
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [isBulkDrawerOpen, setIsBulkDrawerOpen] = useState<boolean>(false);
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === units.length && units.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(units.map((u) => u.id)));
+    }
+  };
+
+  const toggleSelectOne = (id: number) => {
+    const updated = new Set(selectedIds);
+    if (updated.has(id)) {
+      updated.delete(id);
+    } else {
+      updated.add(id);
+    }
+    setSelectedIds(updated);
+  };
+
+  const selectedUnits = units.filter((u) => selectedIds.has(u.id));
+
   const handleDelete = (unit: SerializedMasterUnit) => {
-    if (unit.status_unit !== "AVAILABLE") {
+    if (unit.status_unit !== "AVAILABLE" || unit.isLocked) {
       toast.error(
-        `Unit berstatus '${unit.status_unit}' tidak dapat dihapus langsung.`
+        `Unit berstatus '${unit.status_unit}' atau memiliki transaksi aktif sehingga tidak dapat dihapus.`
       );
       return;
     }
 
-    if (!window.confirm(`Yakin ingin menghapus unit blok '${unit.blok}'?`)) {
+    if (!window.confirm(`Yakin ingin menghapus unit blok '${unit.blok}'? Tindakan ini tidak dapat dibatalkan.`)) {
       return;
     }
 
@@ -80,7 +121,7 @@ export function MasterUnitTable({
           toast.error(res.message);
         }
       } catch (error: unknown) {
-        const msg = error instanceof Error ? error.message : "Gagal menghapus";
+        const msg = error instanceof Error ? error.message : "Gagal menghapus unit";
         toast.error(msg);
       } finally {
         setDeleteId(null);
@@ -88,30 +129,7 @@ export function MasterUnitTable({
     });
   };
 
-  const handleStatusQuickChange = (
-    unitId: number,
-    newStatus: "AVAILABLE" | "HOLD" | "SOLD"
-  ) => {
-    setUpdatingId(unitId);
-    startTransition(async () => {
-      try {
-        const res = await updateMasterUnit(unitId, { status_unit: newStatus });
-        if (res.success) {
-          toast.success(`Status berhasil diubah ke ${newStatus}`);
-          onRefresh();
-        } else {
-          toast.error(res.message);
-        }
-      } catch (error: unknown) {
-        const msg = error instanceof Error ? error.message : "Gagal mengubah status";
-        toast.error(msg);
-      } finally {
-        setUpdatingId(null);
-      }
-    });
-  };
-
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, isLocked: boolean) => {
     switch (status) {
       case "AVAILABLE":
         return (
@@ -127,15 +145,35 @@ export function MasterUnitTable({
             HOLD
           </span>
         );
+      case "BOOKED":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            BOOKED
+          </span>
+        );
       case "SOLD":
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-            SOLD
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-300">
+            <Lock className="w-3 h-3 text-slate-500" />
+            <span>SOLD (Terkunci)</span>
           </span>
         );
       default:
         return <span>{status}</span>;
+    }
+  };
+
+  const getKategoriBadge = (kategori: string) => {
+    switch (kategori) {
+      case "SUBSIDI":
+        return "bg-sky-50 text-sky-700 border-sky-200";
+      case "KOMERSIL":
+        return "bg-indigo-50 text-indigo-700 border-indigo-200";
+      case "KAVLING":
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      default:
+        return "bg-bone text-graphite border-mist";
     }
   };
 
@@ -150,16 +188,30 @@ export function MasterUnitTable({
             type="text"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Cari nama blok (cth: F-1, A-1)..."
+            placeholder="Cari nama blok (cth: M-1, F-10, A-1)..."
             className="w-full pl-9 pr-3 py-2 text-xs rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal transition-all font-mono"
           />
         </div>
 
         {/* Filter Dropdowns */}
         <div className="flex items-center flex-wrap gap-2.5">
-          {/* Status Filter */}
+          {/* Kategori Filter */}
           <div className="flex items-center gap-1.5 text-xs text-slate">
             <Filter className="w-3.5 h-3.5" />
+            <select
+              value={kategoriFilter}
+              onChange={(e) => onKategoriChange(e.target.value)}
+              className="px-2.5 py-1.5 rounded-md border border-mist bg-white text-xs text-graphite font-medium focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal"
+            >
+              <option value="">Semua Kategori</option>
+              <option value="SUBSIDI">SUBSIDI</option>
+              <option value="KOMERSIL">KOMERSIL</option>
+              <option value="KAVLING">KAVLING</option>
+            </select>
+          </div>
+
+          {/* Status Filter */}
+          <div>
             <select
               value={statusFilter}
               onChange={(e) => onStatusChange(e.target.value)}
@@ -168,6 +220,7 @@ export function MasterUnitTable({
               <option value="">Semua Status</option>
               <option value="AVAILABLE">AVAILABLE (Tersedia)</option>
               <option value="HOLD">HOLD (Pengajuan ITJ)</option>
+              <option value="BOOKED">BOOKED (Dipesan)</option>
               <option value="SOLD">SOLD (Terjual)</option>
             </select>
           </div>
@@ -177,12 +230,12 @@ export function MasterUnitTable({
             <select
               value={tipeFilter}
               onChange={(e) => onTipeChange(Number(e.target.value))}
-              className="px-2.5 py-1.5 rounded-md border border-mist bg-white text-xs text-graphite font-medium focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal max-w-[180px] truncate"
+              className="px-2.5 py-1.5 rounded-md border border-mist bg-white text-xs text-graphite font-medium focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal max-w-[200px] truncate"
             >
               <option value="0">Semua Tipe Unit</option>
               {tipeList.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.nama_tipe}
+                  {t.nama_tipe} ({t.kategori})
                 </option>
               ))}
             </select>
@@ -196,24 +249,53 @@ export function MasterUnitTable({
           <table className="w-full text-left text-xs">
             <thead className="bg-bone/60 border-b border-mist text-slate font-semibold uppercase tracking-wider">
               <tr>
+                {isAdmin && (
+                  <th className="px-4 py-3.5 w-8">
+                    <input
+                      type="checkbox"
+                      aria-label="Pilih semua unit"
+                      checked={units.length > 0 && selectedIds.size === units.length}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded text-prism-teal focus:ring-prism-teal border-mist cursor-pointer"
+                    />
+                  </th>
+                )}
                 <th className="px-5 py-3.5">Nama Blok</th>
-                <th className="px-5 py-3.5">Tipe & Kategori</th>
+                <th className="px-5 py-3.5">Kategori</th>
+                <th className="px-5 py-3.5">Tipe &amp; Dimensi</th>
                 <th className="px-5 py-3.5">Harga Dasar</th>
                 <th className="px-5 py-3.5">Harga Khusus</th>
                 <th className="px-5 py-3.5">Status Unit</th>
-                <th className="px-5 py-3.5 text-right">Aksi</th>
+                {isAdmin && <th className="px-5 py-3.5 text-right">Aksi</th>}
               </tr>
             </thead>
 
             <tbody className="divide-y divide-mist">
-              {units.length === 0 ? (
+              {isLoading ? (
+                // Skeleton loading rows
+                Array.from({ length: 5 }).map((_, idx) => (
+                  <tr key={idx} className="animate-pulse">
+                    {isAdmin && <td className="px-4 py-4 w-8"><div className="w-4 h-4 bg-mist rounded" /></td>}
+                    <td className="px-5 py-4"><div className="h-4 w-12 bg-mist rounded" /></td>
+                    <td className="px-5 py-4"><div className="h-4 w-16 bg-mist rounded" /></td>
+                    <td className="px-5 py-4"><div className="h-4 w-28 bg-mist rounded mb-1" /><div className="h-3 w-16 bg-mist/60 rounded" /></td>
+                    <td className="px-5 py-4"><div className="h-4 w-20 bg-mist rounded" /></td>
+                    <td className="px-5 py-4"><div className="h-4 w-12 bg-mist rounded" /></td>
+                    <td className="px-5 py-4"><div className="h-5 w-20 bg-mist rounded-full" /></td>
+                    {isAdmin && <td className="px-5 py-4 text-right"><div className="h-7 w-24 bg-mist rounded ml-auto" /></td>}
+                  </tr>
+                ))
+              ) : units.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-slate">
-                    Tidak ada unit yang sesuai dengan kriteria pencarian.
+                  <td colSpan={isAdmin ? 8 : 7} className="px-5 py-12 text-center text-slate">
+                    Tidak ada unit yang sesuai dengan kriteria pencarian atau filter.
                   </td>
                 </tr>
               ) : (
                 units.map((unit) => {
+                  const isAvailable = unit.status_unit === "AVAILABLE" && !unit.isLocked;
+                  const isSelected = selectedIds.has(unit.id);
+
                   const basePriceFormatted = new Intl.NumberFormat("id-ID", {
                     style: "currency",
                     currency: "IDR",
@@ -231,8 +313,22 @@ export function MasterUnitTable({
                   return (
                     <tr
                       key={unit.id}
-                      className="hover:bg-bone/40 transition-colors"
+                      className={`hover:bg-bone/40 transition-colors ${
+                        isSelected ? "bg-teal-50/30" : ""
+                      }`}
                     >
+                      {/* Checkbox */}
+                      {isAdmin && (
+                        <td className="px-4 py-3.5">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleSelectOne(unit.id)}
+                            className="w-4 h-4 rounded text-prism-teal focus:ring-prism-teal border-mist cursor-pointer"
+                          />
+                        </td>
+                      )}
+
                       {/* Blok */}
                       <td className="px-5 py-3.5">
                         <span className="font-mono font-bold text-sm text-carbon-ink">
@@ -240,14 +336,31 @@ export function MasterUnitTable({
                         </span>
                       </td>
 
-                      {/* Tipe & Kategori */}
+                      {/* Kategori Badge */}
+                      <td className="px-5 py-3.5">
+                        <span
+                          className={`inline-flex px-2 py-0.5 rounded text-[10px] font-semibold border ${getKategoriBadge(
+                            unit.tipe.kategori
+                          )}`}
+                        >
+                          {unit.tipe.kategori}
+                        </span>
+                      </td>
+
+                      {/* Tipe with LB/LT underneath */}
                       <td className="px-5 py-3.5">
                         <div className="flex flex-col">
-                          <span className="font-semibold text-graphite">
+                          <span className="font-mono font-bold text-xs text-graphite">
                             {unit.tipe.nama_tipe}
                           </span>
-                          <span className="text-[10px] text-slate font-medium">
-                            {unit.tipe.kategori}
+                          <span className="text-[11px] text-slate font-medium">
+                            {unit.tipe.kategori === "KAVLING" ? (
+                              <span>LT: {unit.tipe.luas_tanah} m² (Kavling)</span>
+                            ) : (
+                              <span>
+                                LB: {unit.tipe.luas_bangunan} m² / LT: {unit.tipe.luas_tanah} m²
+                              </span>
+                            )}
                           </span>
                         </div>
                       </td>
@@ -264,7 +377,7 @@ export function MasterUnitTable({
                             <span className="font-semibold text-deep-teal">
                               {specialPriceFormatted}
                             </span>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-teal-50 text-deep-teal font-medium border border-teal-100">
+                            <span className="text-[10px] px-1.5 py-0.2 rounded bg-teal-50 text-deep-teal font-medium border border-teal-100">
                               Khusus
                             </span>
                           </div>
@@ -273,47 +386,108 @@ export function MasterUnitTable({
                         )}
                       </td>
 
-                      {/* Status & Quick Change */}
+                      {/* Status (Read-Only Badge) */}
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-2">
-                          {getStatusBadge(unit.status_unit)}
-
-                          {/* Inline status switcher */}
-                          <select
-                            value={unit.status_unit}
-                            disabled={updatingId === unit.id}
-                            onChange={(e) =>
-                              handleStatusQuickChange(
-                                unit.id,
-                                e.target.value as "AVAILABLE" | "HOLD" | "SOLD"
-                              )
-                            }
-                            className="text-[11px] py-0.5 px-1 rounded border border-mist bg-white text-slate hover:text-graphite cursor-pointer focus:outline-none"
-                            title="Ganti status langsung"
-                          >
-                            <option value="AVAILABLE">AVAILABLE</option>
-                            <option value="HOLD">HOLD</option>
-                            <option value="SOLD">SOLD</option>
-                          </select>
+                          {getStatusBadge(unit.status_unit, unit.isLocked)}
+                          {unit.isLocked && unit.status_unit !== "SOLD" && (
+                            <span
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200"
+                              title="Unit memiliki transaksi atau pengajuan ITJ aktif."
+                            >
+                              <Lock className="w-3 h-3 text-amber-600" />
+                              <span>Terkunci</span>
+                            </span>
+                          )}
                         </div>
                       </td>
 
                       {/* Actions */}
-                      <td className="px-5 py-3.5 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(unit)}
-                          disabled={isPending && deleteId === unit.id}
-                          className="p-1.5 rounded-md text-slate hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-50"
-                          title="Hapus Unit"
-                        >
-                          {isPending && deleteId === unit.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin text-rose-500" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
-                        </button>
-                      </td>
+                      {isAdmin && (
+                        <td className="px-5 py-3.5 text-right relative">
+                          <div className="inline-flex items-center justify-end gap-1.5">
+                            {/* Primary Action: Ganti Tipe Button */}
+                            <button
+                              type="button"
+                              onClick={() => onChangeTipe(unit)}
+                              disabled={!isAvailable}
+                              className="px-2.5 py-1 text-xs font-semibold rounded-md border border-prism-teal/40 text-deep-teal bg-teal-50/50 hover:bg-teal-50 hover:border-prism-teal transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs"
+                              title={
+                                !isAvailable
+                                  ? unit.status_unit !== "AVAILABLE"
+                                    ? `Unit berstatus '${unit.status_unit}', tipe tidak bisa diganti`
+                                    : "Unit memiliki transaksi aktif, tipe tidak bisa diganti"
+                                  : "Ganti tipe unit ini"
+                              }
+                            >
+                              Ganti Tipe
+                            </button>
+
+                            {/* Dropdown Menu Trigger */}
+                            <div className="relative inline-block text-left">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setOpenMenuUnitId(openMenuUnitId === unit.id ? null : unit.id)
+                                }
+                                className="p-1 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
+                                title="Menu opsi"
+                              >
+                                <MoreVertical className="w-4 h-4" />
+                              </button>
+
+                              {/* Menu Flyout */}
+                              {openMenuUnitId === unit.id && (
+                                <>
+                                  {/* Backdrop to close menu */}
+                                  <div
+                                    className="fixed inset-0 z-30"
+                                    onClick={() => setOpenMenuUnitId(null)}
+                                  />
+                                  <div className="absolute right-0 mt-1 w-44 rounded-md bg-white border border-mist shadow-lg py-1 z-40 animate-in fade-in zoom-in-95 duration-100 text-left">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setOpenMenuUnitId(null);
+                                        setHargaKhususUnit(unit);
+                                      }}
+                                      className="w-full text-left px-3 py-1.5 text-xs text-graphite hover:bg-bone flex items-center gap-2"
+                                    >
+                                      <Tag className="w-3.5 h-3.5 text-slate" />
+                                      <span>Atur Harga Khusus</span>
+                                    </button>
+
+
+                                    <div className="border-t border-mist my-1" />
+
+                                    <button
+                                      type="button"
+                                      disabled={!isAvailable}
+                                      onClick={() => {
+                                        setOpenMenuUnitId(null);
+                                        handleDelete(unit);
+                                      }}
+                                      className="w-full text-left px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                                      title={
+                                        !isAvailable
+                                          ? "Hanya unit AVAILABLE tanpa transaksi yang dapat dihapus"
+                                          : "Hapus unit"
+                                      }
+                                    >
+                                      {isPending && deleteId === unit.id ? (
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
+                                      ) : (
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      )}
+                                      <span>Hapus Blok</span>
+                                    </button>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                      )}
                     </tr>
                   );
                 })
@@ -325,8 +499,7 @@ export function MasterUnitTable({
         {/* Pagination Bar */}
         <div className="px-5 py-3 border-t border-mist bg-bone/30 flex items-center justify-between text-xs text-slate">
           <span>
-            Total <strong className="text-carbon-ink">{total}</strong> unit
-            terdaftar
+            Total <strong className="text-carbon-ink font-mono">{total}</strong> blok unit terdaftar
           </span>
 
           <div className="flex items-center gap-2">
@@ -338,7 +511,7 @@ export function MasterUnitTable({
               <button
                 type="button"
                 onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage <= 1}
+                disabled={currentPage <= 1 || isLoading}
                 className="p-1 rounded border border-mist bg-white text-slate hover:text-graphite hover:bg-bone disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 title="Halaman Sebelumnya"
               >
@@ -348,7 +521,7 @@ export function MasterUnitTable({
               <button
                 type="button"
                 onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage >= totalPages}
+                disabled={currentPage >= totalPages || isLoading}
                 className="p-1 rounded border border-mist bg-white text-slate hover:text-graphite hover:bg-bone disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 title="Halaman Berikutnya"
               >
@@ -358,6 +531,62 @@ export function MasterUnitTable({
           </div>
         </div>
       </div>
+
+      {/* Sticky Bulk Selection Bar (Phase 2) */}
+      {selectedIds.size > 0 && isAdmin && (
+        <div className="sticky bottom-4 z-30 p-3.5 bg-carbon-ink text-white rounded-lg shadow-xl border border-carbon-ink/80 flex items-center justify-between animate-in slide-in-from-bottom duration-200">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-prism-teal text-white">
+              {selectedIds.size} Unit Terpilih
+            </span>
+            <span className="text-xs text-fog hidden sm:inline">
+              Pilih tindakan massal untuk unit-unit di atas.
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedIds(new Set())}
+              className="px-3 py-1.5 text-xs text-fog hover:text-white transition-colors"
+            >
+              Batal Pilih
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsBulkDrawerOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold shadow-xs transition-colors"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Ganti Tipe Massal ({selectedIds.size})</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Atur Harga Khusus */}
+      {hargaKhususUnit && (
+        <SetHargaKhususModal
+          unit={hargaKhususUnit}
+          isOpen={Boolean(hargaKhususUnit)}
+          onClose={() => setHargaKhususUnit(null)}
+          onSuccess={onRefresh}
+        />
+      )}
+
+      {/* Drawer: Bulk Change Tipe (Phase 2) */}
+      {isBulkDrawerOpen && (
+        <BulkChangeTipeDrawer
+          selectedUnits={selectedUnits}
+          tipeList={tipeList}
+          isOpen={isBulkDrawerOpen}
+          onClose={() => setIsBulkDrawerOpen(false)}
+          onSuccess={() => {
+            setSelectedIds(new Set());
+            onRefresh();
+          }}
+        />
+      )}
     </div>
   );
 }
