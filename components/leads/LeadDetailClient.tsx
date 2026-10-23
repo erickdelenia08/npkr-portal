@@ -19,6 +19,7 @@ import {
   Loader2,
   X,
   XCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { SerializedLeadDetail, getLeadDetail } from "@/actions/activity";
@@ -123,6 +124,8 @@ export function LeadDetailClient({
     currentUserRole === "ADMIN" ||
     (Number.isSafeInteger(currentUserId) && currentUserId === lead.marketing_id);
 
+  const canHandover = canEdit || currentUserRole === "MANAGER";
+
   const fetchLatestLead = async () => {
     const res = await getLeadDetail(lead.id);
     if (res.success && res.data) {
@@ -218,11 +221,29 @@ export function LeadDetailClient({
         </div>
       )}
 
+      {/* Banner Read-Only untuk non-PIC / Manager */}
+      {!canEdit && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs">
+          <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-bold">Mode Hanya Baca (Read-Only)</p>
+            <p className="text-amber-800 mt-0.5">
+              Anda melihat detail lead ini dalam mode hanya baca. Perubahan data, survei, dan pencatatan aktivitas hanya dapat dilakukan oleh Marketing PIC ({lead.marketing?.nama || "PIC"}) atau Administrator.
+              {currentUserRole === "MANAGER" && (
+                <span className="block mt-1 font-semibold text-teal-800">
+                  Sebagai Manager, Anda tetap memiliki hak akses untuk mengalihkan PIC (Oper PIC).
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Milestone stepper (read-only) */}
       <LeadMilestoneStepper lead={lead} />
 
       {/* Kartu aksi utama: langsung di bawah stepper supaya next step jelas */}
-      {!isLost && <LeadDynamicActionCard lead={lead} onRefresh={fetchLatestLead} basePath={basePath} />}
+      {!isLost && <LeadDynamicActionCard lead={lead} onRefresh={fetchLatestLead} basePath={basePath} canEdit={canEdit} />}
 
       {/* Profil lead */}
       <div className="bg-white rounded-2xl border border-mist p-5 sm:p-6 shadow-2xs space-y-5">
@@ -259,7 +280,7 @@ export function LeadDetailClient({
               <MessageCircle className="w-4 h-4 text-emerald-600" />
               <span>WhatsApp</span>
             </a>
-            {canEdit && (
+            {canHandover && (
               <HandoverDialog
                 leadId={lead.id}
                 currentMarketingId={lead.marketing_id}
@@ -267,14 +288,16 @@ export function LeadDetailClient({
                 onSuccess={fetchLatestLead}
               />
             )}
-            <button
-              type="button"
-              onClick={() => setIsActivityModalOpen(true)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold transition-all cursor-pointer shadow-subtle"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Catat Aktivitas</span>
-            </button>
+            {canEdit && (
+              <button
+                type="button"
+                onClick={() => setIsActivityModalOpen(true)}
+                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold transition-all cursor-pointer shadow-subtle"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Catat Aktivitas</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -340,7 +363,7 @@ export function LeadDetailClient({
       <ActivityTimeline activities={lead.aktivitas} />
 
       {/* Tombol Lost di paling bawah (aksi destruktif dijauhkan dari aksi utama) */}
-      {!isLost && (
+      {!isLost && canEdit && (
         <div className="pt-6 pb-4 border-t border-mist flex items-center justify-center">
           <button
             type="button"
@@ -353,26 +376,28 @@ export function LeadDetailClient({
         </div>
       )}
 
-      {/* Bar aksi mobile: hanya WhatsApp + Catat Aktivitas */}
+      {/* Bar aksi mobile: WhatsApp + Catat Aktivitas (jika canEdit) */}
       <div className="sm:hidden fixed bottom-0 left-0 right-0 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-white/95 backdrop-blur-md border-t border-mist z-30 shadow-lg">
-        <div className="grid grid-cols-5 gap-2 max-w-md mx-auto">
+        <div className={`grid ${canEdit ? "grid-cols-5" : "grid-cols-1"} gap-2 max-w-md mx-auto`}>
           <a
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="col-span-2 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold active:bg-emerald-100 transition-colors"
+            className={`${canEdit ? "col-span-2" : "col-span-1"} flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold active:bg-emerald-100 transition-colors`}
           >
             <MessageCircle className="w-4 h-4" />
             <span>WhatsApp</span>
           </a>
-          <button
-            type="button"
-            onClick={() => setIsActivityModalOpen(true)}
-            className="col-span-3 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-prism-teal active:bg-deep-teal text-white text-xs font-bold transition-all shadow-subtle cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Catat Aktivitas</span>
-          </button>
+          {canEdit && (
+            <button
+              type="button"
+              onClick={() => setIsActivityModalOpen(true)}
+              className="col-span-3 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-prism-teal active:bg-deep-teal text-white text-xs font-bold transition-all shadow-subtle cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Catat Aktivitas</span>
+            </button>
+          )}
         </div>
       </div>
 

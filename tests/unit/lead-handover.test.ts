@@ -162,6 +162,42 @@ describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () =
       );
     });
 
+    it("allows MANAGER to handover a lead even if not current PIC", async () => {
+      mockAuth.mockResolvedValue({
+        user: {
+          id: "99",
+          role: "MANAGER",
+        },
+      });
+
+      mockTx.lead.findUnique.mockResolvedValue({
+        id: 100,
+        marketing_id: 10,
+        marketing: { id: 10, nama: "Marketing Alpha" },
+        itj: [],
+      });
+
+      mockTx.user.findUnique.mockResolvedValue({
+        id: 12,
+        nama: "Marketing Gamma",
+        role: "MARKETING",
+      });
+
+      mockTx.lead.update.mockResolvedValue({ id: 100, marketing_id: 12 });
+      mockTx.transaksi.updateMany.mockResolvedValue({ count: 0 });
+      mockTx.aktivitas.create.mockResolvedValue({ id: 1001 });
+
+      const res = await handoverLead(100, 12, "Penugasan ulang oleh Manager");
+
+      expect(res.success).toBe(true);
+      expect(mockTx.lead.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 100 },
+          data: expect.objectContaining({ marketing_id: 12 }),
+        })
+      );
+    });
+
     it("rejects handover if non-PIC marketing user attempts it", async () => {
       mockAuth.mockResolvedValue({
         user: {

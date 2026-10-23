@@ -3,9 +3,36 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { activitySchema, ActivityInput } from "@/schemas/activity.schema";
+import {
+  activitySchema,
+  ActivityInput,
+  globalActivityFilterSchema,
+  GlobalActivityFilterInput,
+} from "@/schemas/activity.schema";
 import { getLeadTahap, LeadTahap } from "@/lib/lead-utils";
 import { JenisAktivitas, HasilAktivitas, Prisma } from "@/generated/prisma";
+
+export interface GlobalActivityItem {
+  id: number;
+  lead_id: number;
+  user_id: number;
+  jenis: JenisAktivitas;
+  hasil: HasilAktivitas;
+  catatan: string | null;
+  tgl_follow_up: Date | null;
+  created_at: Date;
+  user: {
+    id: number;
+    nama: string;
+    role: string;
+  };
+  lead: {
+    id: number;
+    nama: string;
+    no_hp: string;
+    marketing_id: number | null;
+  };
+}
 
 export interface SerializedAktivitas {
   id: number;
@@ -221,9 +248,9 @@ export async function createActivity(
     // Revalidate paths
     revalidatePath(`/marketing/lead/${lead_id}`);
     revalidatePath("/marketing/lead");
-    revalidatePath("/marketing/dashboard");
     revalidatePath("/admin/lead");
     revalidatePath("/manager/lead");
+    revalidatePath("/manager/aktivitas");
 
     return {
       success: true,
@@ -237,5 +264,133 @@ export async function createActivity(
       message: msg,
       error: msg,
     };
+  }
+}
+
+/**
+ * Server Action: Retrieve global activities audit log for Manager & Admin.
+ * Supports filters: userId, jenis, startDate, endDate.
+ * Relations: user (actor) and lead.
+ * Order: created_at DESC.
+ */
+export async function getGlobalActivities(
+  filters?: GlobalActivityFilterInput
+): Promise<{
+  success: boolean;
+  data?: GlobalActivityItem[];
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false, error: "Silakan login kembali." };
+    }
+
+    const currentUserRole = session.user.role;
+    if (currentUserRole !== "MANAGER" && currentUserRole !== "ADMIN") {
+      return {
+        success: false,
+        error: "Unauthorized: Hanya Manager dan Admin yang dapat mengakses audit aktivitas.",
+      };
+    }
+
+    const parsedFilters = filters ? globalActivityFilterSchema.safeParse(filters) : null;
+    const filterData = parsedFilters && parsedFilters.success ? parsedFilters.data : filters;
+
+    const where: Prisma.AktivitasWhereInput = {};
+
+    if (filterData?.userId) {
+      where.user_id = filterData.userId;
+    }
+
+    if (filterData?.jenis) {
+      where.jenis = filterData.jenis;
+    }
+
+    if (filterData?.startDate || filterData?.endDate) {
+      const dateFilter: Prisma.DateTimeFilter = {};
+      if (filterData.startDate) {
+        const start = new Date(filterData.startDate);
+        if (!isNaN(start.getTime())) {
+          start.setHours(0, 0, 0, 0);
+          dateFilter.gte = start;
+        }
+      }
+      if (filterData.endDate) {
+        const end = new Date(filterData.endDate);
+        if (!isNaN(end.getTime())) {
+          end.setHours(23, 59, 59, 999);
+          dateFilter.lte = end;
+        }
+      }
+      if (dateFilter.gte || dateFilter.lte) {
+        where.created_at = dateFilter;
+      }
+    }
+
+    const activities = await prisma.aktivitas.findMany({
+      where,
+      include: {
+        user: {
+          select: {
+            id: true,
+            nama: true,
+            role: true,
+          },
+        },
+        lead: {
+          select: {
+            id: true,
+            nama: true,
+            no_hp: true,
+            marketing_id: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+      take: 200,
+    });
+
+    return {
+      success: true,
+      data: activities,
+    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error ? error.message : "Gagal memuat log aktivitas global.";
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Server Action: Get active actors (users) for activity filter dropdowns.
+ */
+export async function getActivityActors(): Promise<{
+  success: boolean;
+  data?: { id: number; nama: string; role: string }[];
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false, error: "Silakan login kembali." };
+    }
+
+    const users = await prisma.user.findMany({
+      where: { isActive: true },
+      select: { id: true, nama: true, role: true },
+      orderBy: [{ role: "asc" }, { nama: "asc" }],
+    });
+
+    return {
+      success: true,
+      data: users,
+    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error ? error.message : "Gagal memuat daftar personel.";
+    return { success: false, error: msg };
   }
 }

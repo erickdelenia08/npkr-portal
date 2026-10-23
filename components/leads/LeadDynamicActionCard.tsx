@@ -22,6 +22,7 @@ interface LeadDynamicActionCardProps {
   lead: SerializedLeadDetail;
   onRefresh: () => Promise<void> | void;
   basePath?: string;
+  canEdit?: boolean;
 }
 
 /* ------------------------------------------------------------------ */
@@ -102,6 +103,7 @@ export function LeadDynamicActionCard({
   lead,
   onRefresh,
   basePath = "/marketing",
+  canEdit = true,
 }: LeadDynamicActionCardProps) {
   const [isPending, startTransition] = useTransition();
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
@@ -127,7 +129,7 @@ export function LeadDynamicActionCard({
   const isSurveyScheduled = Boolean(lead.survei_jadwal_at) && !isSurveyCompleted;
 
   // Sumber kebenaran tunggal untuk tombol "Buat ITJ"
-  const canSubmitItj = !hasActiveClosing && isSurveyCompleted;
+  const canSubmitItj = !hasActiveClosing && isSurveyCompleted && canEdit;
 
   // Route transaksi dinamis (transaksi/[id]): tombol hanya muncul jika id sudah ada
   const transaksiId =
@@ -277,31 +279,37 @@ export function LeadDynamicActionCard({
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={handleMarkSurveyCompleted}
-                    disabled={isPending}
-                    className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
-                  >
-                    {isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <CalendarCheck2 className="w-4 h-4" />
-                    )}
-                    <span>Tandai Sudah Survei</span>
-                  </button>
+                {canEdit ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button
+                      type="button"
+                      onClick={handleMarkSurveyCompleted}
+                      disabled={isPending}
+                      className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      {isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <CalendarCheck2 className="w-4 h-4" />
+                      )}
+                      <span>Tandai Sudah Survei</span>
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={handleOpenScheduleModal}
-                    disabled={isPending}
-                    className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white hover:bg-bone text-graphite border border-mist text-xs font-semibold shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
-                  >
-                    <Edit3 className="w-4 h-4 text-slate" />
-                    <span>Ubah Jadwal</span>
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={handleOpenScheduleModal}
+                      disabled={isPending}
+                      className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-white hover:bg-bone text-graphite border border-mist text-xs font-semibold shadow-2xs transition-colors disabled:opacity-50 cursor-pointer"
+                    >
+                      <Edit3 className="w-4 h-4 text-slate" />
+                      <span>Ubah Jadwal</span>
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate italic bg-bone/50 p-2.5 rounded-lg border border-mist">
+                    Status survei hanya dapat diperbarui oleh PIC Marketing atau Admin.
+                  </p>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
@@ -317,15 +325,21 @@ export function LeadDynamicActionCard({
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleOpenScheduleModal}
-                  disabled={isPending}
-                  className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-prism-teal hover:bg-deep-teal active:bg-deep-teal text-white text-xs font-bold shadow-subtle transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>Jadwalkan Survei</span>
-                </button>
+                {canEdit ? (
+                  <button
+                    type="button"
+                    onClick={handleOpenScheduleModal}
+                    disabled={isPending}
+                    className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-prism-teal hover:bg-deep-teal active:bg-deep-teal text-white text-xs font-bold shadow-subtle transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <Calendar className="w-4 h-4" />
+                    <span>Jadwalkan Survei</span>
+                  </button>
+                ) : (
+                  <p className="text-xs text-slate italic bg-bone/50 p-2.5 rounded-lg border border-mist">
+                    Jadwal survei dapat ditentukan oleh PIC Marketing terkait atau Admin.
+                  </p>
+                )}
               </div>
             )}
           </>

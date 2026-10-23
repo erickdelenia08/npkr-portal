@@ -90,7 +90,7 @@ export async function getMarketingReport(year: number, month: number): Promise<R
     closingGroups,
   ] = await Promise.all([
     prisma.user.findMany({
-      where: { role: "MARKETING" },
+      where: { role: { in: ["MARKETING", "ADMIN"] } },
       select: { id: true, nama: true, username: true, no_hp: true, isActive: true },
     }),
     prisma.lead.groupBy({
@@ -772,10 +772,10 @@ export async function getBankReport(year: number, month: number): Promise<Report
     const avgHari =
       b.durasiList.length > 0
         ? Number(
-            (
-              b.durasiList.reduce((s, d) => s + d, 0) / b.durasiList.length
-            ).toFixed(1)
-          )
+          (
+            b.durasiList.reduce((s, d) => s + d, 0) / b.durasiList.length
+          ).toFixed(1)
+        )
         : null;
 
     return {

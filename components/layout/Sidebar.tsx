@@ -17,6 +17,7 @@ import {
   Sparkles,
   Contact,
   Banknote,
+  Activity,
 } from "lucide-react";
 import { useSidebar } from "./SidebarContext";
 import { cn } from "@/lib/utils";
@@ -56,6 +57,7 @@ export const ROLE_NAV_ITEMS: Record<string, NavItem[]> = {
     { title: "Buku Induk Customer", href: "/manager/customer", icon: Contact },
     { title: "Inventaris Unit", href: "/manager/unit", icon: Building2 },
     { title: "Tim Marketing", href: "/manager/tim", icon: Briefcase },
+    { title: "Audit Aktivitas", href: "/manager/aktivitas", icon: Activity },
     { title: "Pusat Laporan", href: "/manager/laporan", icon: BarChart3 },
   ],
 };

@@ -105,13 +105,15 @@ export async function handoverLead(
         throw new Error("Data lead tidak ditemukan.");
       }
 
-      // 2. Authorization Guard: Current PIC or Admin only
+      // 2. Authorization Guard: Current PIC, Admin, or Manager
       const canHandover =
-        currentUserId === lead.marketing_id || currentUserRole === "ADMIN";
+        currentUserRole === "ADMIN" ||
+        currentUserRole === "MANAGER" ||
+        currentUserId === lead.marketing_id;
 
       if (!canHandover) {
         throw new Error(
-          "Anda tidak memiliki izin untuk mengalihkan PIC lead ini. Hanya PIC saat ini atau Admin yang diperkenankan."
+          "Anda tidak memiliki izin untuk mengalihkan PIC lead ini. Hanya PIC saat ini, Admin, atau Manager yang diperkenankan."
         );
       }
 
@@ -181,6 +183,7 @@ export async function handoverLead(
     revalidatePath("/admin/transaksi");
     revalidatePath("/marketing/transaksi");
     revalidatePath("/manager/transaksi");
+    revalidatePath("/manager/aktivitas");
 
     return {
       success: true,

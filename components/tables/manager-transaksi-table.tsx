@@ -732,13 +732,22 @@ export function ManagerTransaksiTable({ data }: ManagerTransaksiTableProps) {
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setSelectedTransaksi(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate hover:text-carbon-ink rounded-lg bg-bone hover:bg-slate-200 transition-colors cursor-pointer"
-              >
-                Tutup
-              </button>
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/manager/transaksi/${selectedTransaksi.id}`}
+                  className="px-3.5 py-2 text-xs font-semibold text-white rounded-lg bg-prism-teal hover:bg-deep-teal transition-colors inline-flex items-center gap-1.5"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>Buka Halaman Detail</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setSelectedTransaksi(null)}
+                  className="px-4 py-2 text-xs font-semibold text-slate hover:text-carbon-ink rounded-lg bg-bone hover:bg-slate-200 transition-colors cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
             </div>
           </div>
         </div>

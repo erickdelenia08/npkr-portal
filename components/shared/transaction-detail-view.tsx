@@ -126,6 +126,8 @@ export async function TransactionDetailView({
     (Number.isSafeInteger(currentUserId) && currentUserId === transaksi.marketing_id) ||
     currentUserRole === "ADMIN";
 
+  const canHandover = canEdit || currentUserRole === "MANAGER";
+
   // Fetch or auto-seed master bank list
   let masterBanks = await prisma.bank.findMany({
     where: { is_active: true },
@@ -262,7 +264,7 @@ export async function TransactionDetailView({
 
         {/* Quick Action Buttons (Oper PIC, Cetak SPR & Cetak Kwitansi) */}
         <div className="flex items-center gap-2 flex-wrap">
-          {canEdit && (
+          {canHandover && (
             <HandoverDialog
               leadId={transaksi.itj.lead_id}
               currentMarketingId={transaksi.marketing_id}

@@ -27,3 +27,13 @@ export const activitySchema = z.object({
 });
 
 export type ActivityInput = z.infer<typeof activitySchema>;
+
+export const globalActivityFilterSchema = z.object({
+  userId: z.coerce.number().int().positive().optional().nullable(),
+  jenis: JenisAktivitasEnum.optional().nullable(),
+  startDate: z.string().trim().optional().nullable(),
+  endDate: z.string().trim().optional().nullable(),
+});
+
+export type GlobalActivityFilterInput = z.infer<typeof globalActivityFilterSchema>;
+
