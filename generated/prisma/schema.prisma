@@ -1,0 +1,589 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ==========================================
+// 1. PENGGUNA & HAK AKSES
+// ==========================================
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  nama     String
+  no_hp    String  @unique
+  password String
+  role     Role
+  isActive Boolean @default(true)
+
+  // Back-relations
+  leads                Lead[]              @relation("MarketingLeads")
+  transaksi            Transaksi[]         @relation("MarketingTransaksi")
+  pembayaran_diterima  Pembayaran[]        @relation("AdminPenerima")
+  itj_diajukan         Itj[]               @relation("ItjMarketing") // CHANGED: snapshot marketing pemilik ITJ
+  transaksi_logs       TransaksiTahapLog[] @relation("AdminLog")
+  aktivitas_log        Aktivitas[]         @relation("UserAktivitas")
+  dokumen_diverifikasi DokumenTransaksi[]  @relation("DocVerifier")
+  pembayaran_divoid    Pembayaran[]        @relation("AdminVoider")
+  inspeksi_bast        InspeksiBAST[]      @relation("AdminInspektur")
+  inspeksi_bast_logs   InspeksiBASTLog[]   @relation("AdminInspekturLog")
+  pengajuan_kpr_logs   PengajuanKPRLog[]   @relation("AdminPengajuanKPRLog")
+  unit_tipe_logs       UnitTipeLog[]       @relation("AdminTipeLog")
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+enum Role {
+  MARKETING
+  ADMIN
+  MANAGER
+}
+
+// ==========================================
+// 2. MASTER DATA (PRODUK & INVENTORI)
+// ==========================================
+model MasterTipe {
+  id             Int           @id @default(autoincrement())
+  nama_tipe      String
+  kategori       KategoriUnit
+  luas_bangunan  Int           @default(0)
+  luas_tanah     Int
+  harga_dasar    Decimal       @db.Decimal(15, 2)
+  units          MasterUnit[]
+  unit_tipe_lama UnitTipeLog[] @relation("TipeLama")
+  unit_tipe_baru UnitTipeLog[] @relation("TipeBaru")
+
+  @@unique([kategori, luas_bangunan, luas_tanah])
+}
+
+model MasterUnit {
+  id           Int        @id @default(autoincrement())
+  tipe_id      Int
+  blok         String     @unique
+  blok_prefix  String     @default("")
+  blok_nomor   Int        @default(0)
+  status_unit  StatusUnit @default(AVAILABLE)
+  harga_khusus Decimal?   @db.Decimal(15, 2)
+
+  tipe      MasterTipe    @relation(fields: [tipe_id], references: [id])
+  transaksi Transaksi[]
+  itj       Itj[]
+  tipe_logs UnitTipeLog[]
+
+  @@index([status_unit])
+}
+
+model UnitTipeLog {
+  id                   Int      @id @default(autoincrement())
+  unit_id              Int?
+  blok                 String
+  tipe_lama_id         Int
+  tipe_baru_id         Int
+  harga_khusus_lama    Decimal? @db.Decimal(15, 2)
+  harga_khusus_direset Boolean  @default(false)
+  alasan               String   @db.Text
+  changed_by           Int
+  created_at           DateTime @default(now())
+
+  unit      MasterUnit? @relation(fields: [unit_id], references: [id], onDelete: SetNull)
+  tipe_lama MasterTipe  @relation("TipeLama", fields: [tipe_lama_id], references: [id])
+  tipe_baru MasterTipe  @relation("TipeBaru", fields: [tipe_baru_id], references: [id])
+  admin     User        @relation("AdminTipeLog", fields: [changed_by], references: [id])
+
+  @@index([unit_id, created_at])
+  @@index([blok])
+}
+
+enum KategoriUnit {
+  SUBSIDI
+  KOMERSIL
+  KAVLING
+}
+
+enum StatusUnit {
+  AVAILABLE
+  HOLD
+  BOOKED
+  SOLD
+}
+
+// ==========================================
+// 3. LEAD & AKTIVITAS
+// ==========================================
+enum SumberLead {
+  WALK_IN
+  FACEBOOK_ADS
+  TIKTOK
+  INSTAGRAM
+  WA_KANTOR
+  REFERRAL
+  LAINNYA
+}
+
+model Lead {
+  id           Int        @id @default(autoincrement())
+  marketing_id Int?
+  customer_id  Int?
+  nama         String
+  no_hp        String
+  sumber       SumberLead @default(LAINNYA)
+  minat_tipe   String?
+
+  // Milestone Dates (tahap lead DITURUNKAN dari kolom-kolom ini, bukan status manual)
+  survei_jadwal_at  DateTime?
+  survei_selesai_at DateTime?
+  lost_at           DateTime?
+  lost_reason       String?   @db.Text
+
+  // CHANGED: kolom turunan untuk dashboard marketing.
+  // Wajib diperbarui di transaksi DB yang sama saat Aktivitas dibuat.
+  last_activity_at  DateTime? // created_at aktivitas terbaru
+  next_follow_up_at DateTime? // tgl_follow_up milik aktivitas terbaru (null = tidak ada jadwal)
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  marketing User?       @relation("MarketingLeads", fields: [marketing_id], references: [id])
+  customer  Customer?   @relation("CustomerLeads", fields: [customer_id], references: [id])
+  aktivitas Aktivitas[]
+  itj       Itj[]
+
+  @@index([no_hp])
+  @@index([marketing_id, created_at])
+  @@index([marketing_id, next_follow_up_at]) // CHANGED
+  @@index([sumber])
+  @@index([survei_jadwal_at]) // CHANGED
+  @@index([survei_selesai_at]) // CHANGED
+}
+
+model Aktivitas {
+  id            Int            @id @default(autoincrement())
+  lead_id       Int
+  user_id       Int
+  jenis         JenisAktivitas
+  hasil         HasilAktivitas
+  catatan       String?        @db.Text
+  tgl_follow_up DateTime?
+
+  created_at DateTime @default(now())
+
+  lead Lead @relation(fields: [lead_id], references: [id], onDelete: Restrict)
+  user User @relation("UserAktivitas", fields: [user_id], references: [id])
+
+  @@index([lead_id, tgl_follow_up])
+  @@index([user_id])
+}
+
+enum JenisAktivitas {
+  TELEPON
+  WHATSAPP
+  BERTEMU
+  LAINNYA
+}
+
+enum HasilAktivitas {
+  TERTARIK
+  MASIH_MIKIR
+  TIDAK_DIJAWAB
+  MINTA_INFO_LAGI
+  TIDAK_JADI
+}
+
+// ==========================================
+// 4. ITJ WORKFLOW (Closing Langsung)
+// ==========================================
+model Itj {
+  id              Int         @id @default(autoincrement())
+  lead_id         Int
+  unit_id         Int
+  marketing_id    Int? // CHANGED: snapshot marketing saat ITJ dibuat (tidak ikut berubah jika lead dialihkan)
+  nik             String
+  nama_ktp        String
+  nominal         Decimal     @default(0) @db.Decimal(15, 2)
+  harga_deal      Decimal     @default(0) @db.Decimal(15, 2)
+  target_itj      Decimal     @default(0) @db.Decimal(15, 2)
+  target_dp       Decimal     @db.Decimal(15, 2)
+  nominal_dibayar Decimal     @default(0) @db.Decimal(15, 2)
+  metode_bayar    MetodeBayar
+  tenor           Int?
+  diajukan_at     DateTime    @default(now())
+
+  lead      Lead       @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+  unit      MasterUnit @relation(fields: [unit_id], references: [id])
+  marketing User?      @relation("ItjMarketing", fields: [marketing_id], references: [id]) // CHANGED
+  transaksi Transaksi?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([unit_id])
+  @@index([marketing_id, diajukan_at]) // CHANGED: laporan bulanan
+}
+
+// ==========================================
+// 5. CUSTOMER & TRANSAKSI
+// ==========================================
+model Customer {
+  id                Int               @id @default(autoincrement())
+  nama_ktp          String
+  nik               String            @unique
+  tempat_lahir      String
+  tgl_lahir         DateTime          @db.Date // CHANGED: tanggal murni
+  alamat_ktp        String            @db.Text
+  no_hp             String
+  status_pernikahan StatusPernikahan?
+  status_pekerjaan  StatusPekerjaan?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  transaksi Transaksi[]
+  leads     Lead[]      @relation("CustomerLeads")
+}
+
+enum StatusPernikahan {
+  MENIKAH
+  BELUM_MENIKAH
+  CERAI
+}
+
+enum StatusPekerjaan {
+  TETAP
+  TIDAK_TETAP
+}
+
+enum MetodeBayar {
+  KPR
+  CASH_KERAS
+  CASH_TEMPO
+}
+
+// STATUS MAKRO (Untuk Reporting Manager). Urutannya harus monoton maju.
+enum TahapTransaksi {
+  PEMBERKASAN
+  PROSES_BANK
+  PEMBAYARAN // CHANGED: baru. DP, cicilan, dan pelunasan (alur Cash)
+  AKAD_AJB
+  PEMBANGUNAN
+  SERAH_TERIMA
+  BATAL
+}
+
+// STATUS MIKRO (Sesuai Metode Bayar)
+// Pemetaan detail -> makro (SSOT, harus satu tempat di kode):
+//   PENGUMPULAN_DOKUMEN, PEMBERKASAN_LEGALITAS, PEMBERKASAN_PPJB -> PEMBERKASAN
+//   WAWANCARA, OTS, VERIFIKASI, SP3K                             -> PROSES_BANK
+//   MENUNGGU_PELUNASAN, PEMBAYARAN_DP, CICILAN_BERJALAN, PELUNASAN -> PEMBAYARAN
+//   AKAD_KREDIT, AJB                                             -> AKAD_AJB
+//   PEMBANGUNAN                                                  -> PEMBANGUNAN
+//   BAST                                                         -> SERAH_TERIMA
+//   BATAL                                                        -> BATAL
+enum TahapDetail {
+  PENGUMPULAN_DOKUMEN
+  // KPR
+  WAWANCARA
+  OTS
+  VERIFIKASI
+  SP3K
+  AKAD_KREDIT
+  // Cash Keras
+  PEMBERKASAN_LEGALITAS
+  MENUNGGU_PELUNASAN
+  // Cash Tempo
+  PEMBERKASAN_PPJB
+  PEMBAYARAN_DP
+  CICILAN_BERJALAN
+  PELUNASAN
+  // Bersama
+  AJB
+  // PEMBANGUNAN
+  BAST
+  BATAL
+}
+
+model Transaksi {
+  id           Int @id @default(autoincrement())
+  customer_id  Int
+  unit_id      Int
+  marketing_id Int
+  itj_id       Int @unique
+
+  metode_bayar MetodeBayar
+  harga_deal   Decimal     @db.Decimal(15, 2)
+  target_itj   Decimal     @db.Decimal(15, 2)
+  target_dp    Decimal     @db.Decimal(15, 2)
+  tenor_bulan  Int?
+
+  status_transaksi TahapTransaksi @default(PEMBERKASAN)
+  // Default ini HANYA valid untuk KPR. Saat membuat transaksi Cash,
+  // tahap_detail awal wajib diisi eksplisit (lihat pemetaan di atas).
+  tahap_detail     TahapDetail    @default(PENGUMPULAN_DOKUMEN)
+
+  nama_bank    String? // DEPRECATED: gunakan PengajuanKPR. Hapus setelah migrasi data selesai.
+  nama_notaris String?
+
+  // OPERATIONAL MILESTONES (tanggal murni, simpan sebagai UTC midnight)
+  tgl_akad DateTime? @db.Date // Tanggal akad/closing operasional untuk KPR maupun Cash
+  // tgl_ajb  DateTime? @db.Date // DEPRECATED: dipertahankan untuk kompatibilitas data Cash lama
+  lunas_at DateTime? @db.Date // CHANGED
+  tgl_bast DateTime? @db.Date // CHANGED
+
+  // REPORTING MILESTONES (SSOT)
+  closing_at    DateTime? @db.Date // CHANGED: closing penjualan = tgl_akad (KPR) atau tgl_ajb (Cash)
+  closed_at     DateTime? // transaksi tuntas penuh (setelah BAST); BUKAN tanggal closing penjualan
+  cancelled_at  DateTime?
+  alasan_batal  String?   @db.Text
+  catatan_admin String?   @db.Text
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  customer      Customer            @relation(fields: [customer_id], references: [id])
+  unit          MasterUnit          @relation(fields: [unit_id], references: [id])
+  marketing     User                @relation("MarketingTransaksi", fields: [marketing_id], references: [id])
+  itj           Itj                 @relation(fields: [itj_id], references: [id])
+  pembayaran    Pembayaran[]
+  logs          TransaksiTahapLog[]
+  dokumen       DokumenTransaksi[]
+  inspeksi_bast InspeksiBAST[]
+  pengajuan_kpr PengajuanKPR[]
+
+  @@index([status_transaksi])
+  @@index([closed_at])
+  @@index([closing_at]) // CHANGED
+  @@index([marketing_id, closing_at]) // CHANGED: laporan bulanan per marketing
+}
+
+// ==========================================
+// 6. PENGAJUAN KPR & BANK
+// ==========================================
+model Bank {
+  id         Int      @id @default(autoincrement())
+  nama       String   @unique
+  kode       String?  @unique
+  is_active  Boolean  @default(true)
+  catatan    String?  @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  pengajuan_kpr PengajuanKPR[]
+}
+
+enum StatusPengajuanKPR {
+  DIAJUKAN
+  WAWANCARA
+  OTS
+  VERIFIKASI
+  SP3K
+  DISETUJUI
+  DITOLAK
+  DIBATALKAN
+}
+
+model PengajuanKPR {
+  id                Int                @id @default(autoincrement())
+  transaksi_id      Int
+  bank_id           Int
+  nomor_pengajuan   Int
+  status            StatusPengajuanKPR @default(DIAJUKAN)
+  tanggal_ajukan    DateTime           @default(now())
+  tanggal_keputusan DateTime?
+  alasan_penolakan  String?            @db.Text
+  catatan           String?            @db.Text
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+
+  transaksi Transaksi         @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
+  bank      Bank              @relation(fields: [bank_id], references: [id], onDelete: Restrict)
+  logs      PengajuanKPRLog[]
+
+  @@unique([transaksi_id, nomor_pengajuan])
+  @@index([transaksi_id, status])
+  @@index([bank_id, status])
+}
+
+model PengajuanKPRLog {
+  id             Int                 @id @default(autoincrement())
+  pengajuan_id   Int
+  status_sebelum StatusPengajuanKPR?
+  status_sesudah StatusPengajuanKPR
+  admin_id       Int
+  catatan        String?             @db.Text
+  created_at     DateTime            @default(now())
+
+  pengajuan PengajuanKPR @relation(fields: [pengajuan_id], references: [id], onDelete: Restrict)
+  admin     User         @relation("AdminPengajuanKPRLog", fields: [admin_id], references: [id], onDelete: Restrict)
+
+  @@index([pengajuan_id, created_at])
+  @@index([admin_id, created_at])
+}
+
+// ==========================================
+// 7. MANAJEMEN DOKUMEN & AUDIT LOG
+// ==========================================
+model TransaksiTahapLog {
+  id             Int             @id @default(autoincrement())
+  transaksi_id   Int
+  tahap_sebelum  TahapTransaksi?
+  tahap_sesudah  TahapTransaksi
+  detail_sebelum TahapDetail?
+  detail_sesudah TahapDetail
+  admin_id       Int
+  catatan        String?         @db.Text
+  created_at     DateTime        @default(now())
+
+  transaksi Transaksi @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
+  admin     User      @relation("AdminLog", fields: [admin_id], references: [id])
+
+  @@index([transaksi_id, created_at])
+}
+
+enum KategoriDokumen {
+  PEMBERKASAN
+  BAST
+  LEGALITAS_LAINNYA
+}
+
+enum JenisDokumen {
+  KTP_SUAMI_ISTRI // DEPRECATED: digantikan KTP_PEMOHON & KTP_PASANGAN
+  KTP_PEMOHON
+  KTP_PASANGAN
+  KARTU_KELUARGA
+  NPWP
+  BUKU_NIKAH
+  SURAT_PERNYATAAN_BELUM_MENIKAH
+  AKTA_CERAI
+  SLIP_GAJI
+  SURAT_KET_KERJA
+  REKENING_KORAN
+  SURAT_KET_BELUM_PUNYA_RUMAH
+  SKU_WIRAUSAHA
+  LAPORAN_KEUANGAN
+  LEGALITAS_LAINNYA
+}
+
+enum StatusDokumen {
+  BELUM_DIUNGGAH
+  MENUNGGU_VERIFIKASI
+  PERLU_REVISI
+  TERVERIFIKASI
+}
+
+model DokumenTransaksi {
+  id                 Int             @id @default(autoincrement())
+  transaksi_id       Int
+  jenis              JenisDokumen
+  kategori           KategoriDokumen
+  status             StatusDokumen   @default(BELUM_DIUNGGAH)
+  file_url           String?
+  catatan_verifikasi String?         @db.Text
+  verified_by        Int?
+  verified_at        DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  transaksi Transaksi @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
+  verifier  User?     @relation("DocVerifier", fields: [verified_by], references: [id])
+
+  @@unique([transaksi_id, jenis])
+  @@index([transaksi_id, kategori])
+}
+
+// ==========================================
+// 8. INSPEKSI BAST & RIWAYAT KOMPLAIN
+// ==========================================
+enum ItemBAST {
+  PONDASI_STRUKTUR
+  DINDING_PLESTER_CAT
+  ATAP_PLAFON
+  LANTAI_KERAMIK
+  KUSEN_PINTU_JENDELA
+  KELISTRIKAN
+  SANITASI_AIR_POMPA
+  FASAD_KEBERSIHAN
+}
+
+enum StatusInspeksi {
+  BELUM_DICEK
+  SESUAI
+  PERLU_PERBAIKAN
+  SELESAI_DIPERBAIKI
+}
+
+model InspeksiBAST {
+  id           Int            @id @default(autoincrement())
+  transaksi_id Int
+  item         ItemBAST
+  status       StatusInspeksi @default(BELUM_DICEK)
+  catatan      String?        @db.Text
+  inspektur_id Int?
+  diperiksa_at DateTime?
+
+  transaksi Transaksi         @relation(fields: [transaksi_id], references: [id], onDelete: Cascade)
+  inspektur User?             @relation("AdminInspektur", fields: [inspektur_id], references: [id])
+  logs      InspeksiBASTLog[]
+
+  @@unique([transaksi_id, item])
+}
+
+model InspeksiBASTLog {
+  id               Int             @id @default(autoincrement())
+  inspeksi_bast_id Int
+  status_sebelum   StatusInspeksi?
+  status_sesudah   StatusInspeksi
+  catatan          String?         @db.Text
+  inspektur_id     Int
+  created_at       DateTime        @default(now())
+
+  inspeksi_bast InspeksiBAST @relation(fields: [inspeksi_bast_id], references: [id], onDelete: Cascade)
+  inspektur     User         @relation("AdminInspekturLog", fields: [inspektur_id], references: [id])
+
+  @@index([inspeksi_bast_id, created_at])
+}
+
+// ==========================================
+// 9. KEUANGAN & AUDIT VOID
+// ==========================================
+enum JenisBayar {
+  ITJ
+  DP
+  CICILAN
+  PELUNASAN
+}
+
+enum CaraBayar {
+  TUNAI
+  TRANSFER
+}
+
+model Pembayaran {
+  id               Int        @id @default(autoincrement())
+  transaksi_id     Int
+  admin_id         Int
+  no_kwitansi      String     @unique
+  jenis_pembayaran JenisBayar
+  cara_bayar       CaraBayar  @default(TRANSFER)
+  nominal          Decimal    @db.Decimal(15, 2)
+  tgl_bayar        DateTime   @db.Date // CHANGED: tanggal murni; laporan kas memakai kolom ini, bukan created_at
+  catatan          String?    @db.Text
+
+  is_void     Boolean   @default(false)
+  void_at     DateTime?
+  void_by     Int?
+  void_reason String?   @db.Text
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  transaksi Transaksi @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
+  penerima  User      @relation("AdminPenerima", fields: [admin_id], references: [id])
+  voider    User?     @relation("AdminVoider", fields: [void_by], references: [id])
+
+  @@index([transaksi_id, tgl_bayar])
+  @@index([is_void, tgl_bayar]) // CHANGED: laporan kas (selalu is_void = false)
+}

@@ -150,10 +150,10 @@ export async function getLeadDetail(
         unit: latest.unit ? { blok: latest.unit.blok } : null,
         transaksi: latest.transaksi
           ? {
-              id: latest.transaksi.id,
-              status_transaksi: latest.transaksi.status_transaksi,
-              closing_at: latest.transaksi.closing_at,
-            }
+            id: latest.transaksi.id,
+            status_transaksi: latest.transaksi.status_transaksi,
+            closing_at: latest.transaksi.closing_at,
+          }
           : null,
       };
     }

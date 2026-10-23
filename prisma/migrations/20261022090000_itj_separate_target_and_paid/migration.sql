@@ -1,5 +1,0 @@
--- AlterTable Itj
-ALTER TABLE `Itj`
-  ADD COLUMN `harga_deal` DECIMAL(15, 2) NOT NULL DEFAULT 0,
-  ADD COLUMN `target_itj` DECIMAL(15, 2) NOT NULL DEFAULT 0,
-  ADD COLUMN `nominal_dibayar` DECIMAL(15, 2) NOT NULL DEFAULT 0;

@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -47,13 +47,13 @@ enum Role {
 // 2. MASTER DATA (PRODUK & INVENTORI)
 // ==========================================
 model MasterTipe {
-  id            Int          @id @default(autoincrement())
-  nama_tipe     String
-  kategori      KategoriUnit
-  luas_bangunan Int          @default(0)
-  luas_tanah    Int
-  harga_dasar   Decimal      @db.Decimal(15, 2)
-  units         MasterUnit[]
+  id             Int           @id @default(autoincrement())
+  nama_tipe      String
+  kategori       KategoriUnit
+  luas_bangunan  Int           @default(0)
+  luas_tanah     Int
+  harga_dasar    Decimal       @db.Decimal(15, 2)
+  units          MasterUnit[]
   unit_tipe_lama UnitTipeLog[] @relation("TipeLama")
   unit_tipe_baru UnitTipeLog[] @relation("TipeBaru")
 
@@ -69,7 +69,7 @@ model MasterUnit {
   status_unit  StatusUnit @default(AVAILABLE)
   harga_khusus Decimal?   @db.Decimal(15, 2)
 
-  tipe      MasterTipe  @relation(fields: [tipe_id], references: [id])
+  tipe      MasterTipe    @relation(fields: [tipe_id], references: [id])
   transaksi Transaksi[]
   itj       Itj[]
   tipe_logs UnitTipeLog[]
@@ -78,16 +78,16 @@ model MasterUnit {
 }
 
 model UnitTipeLog {
-  id                   Int         @id @default(autoincrement())
+  id                   Int      @id @default(autoincrement())
   unit_id              Int?
   blok                 String
   tipe_lama_id         Int
   tipe_baru_id         Int
-  harga_khusus_lama    Decimal?    @db.Decimal(15, 2)
-  harga_khusus_direset Boolean     @default(false)
-  alasan               String      @db.Text
+  harga_khusus_lama    Decimal? @db.Decimal(15, 2)
+  harga_khusus_direset Boolean  @default(false)
+  alasan               String   @db.Text
   changed_by           Int
-  created_at           DateTime    @default(now())
+  created_at           DateTime @default(now())
 
   unit      MasterUnit? @relation(fields: [unit_id], references: [id], onDelete: SetNull)
   tipe_lama MasterTipe  @relation("TipeLama", fields: [tipe_lama_id], references: [id])
@@ -212,10 +212,10 @@ model Itj {
   tenor           Int?
   diajukan_at     DateTime    @default(now())
 
-  lead           Lead        @relation(fields: [lead_id], references: [id], onDelete: Cascade)
-  unit           MasterUnit  @relation(fields: [unit_id], references: [id])
-  marketing      User?       @relation("ItjMarketing", fields: [marketing_id], references: [id]) // CHANGED
-  transaksi      Transaksi?
+  lead      Lead       @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+  unit      MasterUnit @relation(fields: [unit_id], references: [id])
+  marketing User?      @relation("ItjMarketing", fields: [marketing_id], references: [id]) // CHANGED
+  transaksi Transaksi?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
