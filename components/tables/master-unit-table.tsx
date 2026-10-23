@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useEffect, useRef } from "react";
 import {
   Search,
   Filter,
@@ -14,17 +14,24 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
-  CheckSquare,
-  Square,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
+import { deleteMasterUnit } from "@/actions/master-unit.action";
+import type {
   SerializedMasterUnit,
   SerializedMasterTipe,
-  deleteMasterUnit,
 } from "@/actions/master-unit.action";
 import { SetHargaKhususModal } from "@/components/forms/set-harga-khusus-modal";
 import { BulkChangeTipeDrawer } from "@/components/forms/bulk-change-tipe-drawer";
+import { UnitTipeHistoryDrawer } from "@/components/forms/unit-tipe-history-drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 interface MasterUnitTableProps {
   units: SerializedMasterUnit[];
@@ -67,22 +74,47 @@ export function MasterUnitTable({
   isAdmin = true,
   isLoading = false,
 }: MasterUnitTableProps) {
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SerializedMasterUnit | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  // Modals state
+  // Modals / Drawers state
   const [hargaKhususUnit, setHargaKhususUnit] = useState<SerializedMasterUnit | null>(null);
-  const [openMenuUnitId, setOpenMenuUnitId] = useState<number | null>(null);
+  const [historyUnit, setHistoryUnit] = useState<SerializedMasterUnit | null>(null);
 
-  // Bulk selection state (Phase 2)
+  // Bulk selection state
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [isBulkDrawerOpen, setIsBulkDrawerOpen] = useState<boolean>(false);
+  const selectAllCheckboxRef = useRef<HTMLInputElement>(null);
+
+  // Reset selection when page or filters change
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [currentPage, search, statusFilter, tipeFilter, kategoriFilter]);
+
+  // Selectable units on the current page: only AVAILABLE and not locked
+  const selectableUnits = units.filter(
+    (u) => u.status_unit === "AVAILABLE" && !u.isLocked
+  );
+
+  const isAllSelectableSelected =
+    selectableUnits.length > 0 &&
+    selectableUnits.every((u) => selectedIds.has(u.id));
+
+  const isPartiallySelected =
+    selectableUnits.some((u) => selectedIds.has(u.id)) && !isAllSelectableSelected;
+
+  // Set indeterminate state on select-all checkbox
+  useEffect(() => {
+    if (selectAllCheckboxRef.current) {
+      selectAllCheckboxRef.current.indeterminate = isPartiallySelected;
+    }
+  }, [isPartiallySelected]);
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === units.length && units.length > 0) {
+    if (isAllSelectableSelected) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(units.map((u) => u.id)));
+      setSelectedIds(new Set(selectableUnits.map((u) => u.id)));
     }
   };
 
@@ -98,24 +130,15 @@ export function MasterUnitTable({
 
   const selectedUnits = units.filter((u) => selectedIds.has(u.id));
 
-  const handleDelete = (unit: SerializedMasterUnit) => {
-    if (unit.status_unit !== "AVAILABLE" || unit.isLocked) {
-      toast.error(
-        `Unit berstatus '${unit.status_unit}' atau memiliki transaksi aktif sehingga tidak dapat dihapus.`
-      );
-      return;
-    }
+  const handleDeleteConfirm = () => {
+    if (!deleteTarget) return;
 
-    if (!window.confirm(`Yakin ingin menghapus unit blok '${unit.blok}'? Tindakan ini tidak dapat dibatalkan.`)) {
-      return;
-    }
-
-    setDeleteId(unit.id);
     startTransition(async () => {
       try {
-        const res = await deleteMasterUnit(unit.id);
+        const res = await deleteMasterUnit(deleteTarget.id);
         if (res.success) {
           toast.success(res.message);
+          setDeleteTarget(null);
           onRefresh();
         } else {
           toast.error(res.message);
@@ -123,8 +146,6 @@ export function MasterUnitTable({
       } catch (error: unknown) {
         const msg = error instanceof Error ? error.message : "Gagal menghapus unit";
         toast.error(msg);
-      } finally {
-        setDeleteId(null);
       }
     });
   };
@@ -219,6 +240,7 @@ export function MasterUnitTable({
             >
               <option value="">Semua Status</option>
               <option value="AVAILABLE">AVAILABLE (Tersedia)</option>
+              <option value="PROSES">PROSES (HOLD + BOOKED)</option>
               <option value="HOLD">HOLD (Pengajuan ITJ)</option>
               <option value="BOOKED">BOOKED (Dipesan)</option>
               <option value="SOLD">SOLD (Terjual)</option>
@@ -244,7 +266,7 @@ export function MasterUnitTable({
       </div>
 
       {/* Units Table */}
-      <div className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden">
+      <div className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden relative">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="bg-bone/60 border-b border-mist text-slate font-semibold uppercase tracking-wider">
@@ -252,11 +274,13 @@ export function MasterUnitTable({
                 {isAdmin && (
                   <th className="px-4 py-3.5 w-8">
                     <input
+                      ref={selectAllCheckboxRef}
                       type="checkbox"
-                      aria-label="Pilih semua unit"
-                      checked={units.length > 0 && selectedIds.size === units.length}
+                      aria-label="Pilih semua unit di halaman ini"
+                      checked={isAllSelectableSelected}
+                      disabled={selectableUnits.length === 0}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded text-prism-teal focus:ring-prism-teal border-mist cursor-pointer"
+                      className="w-4 h-4 rounded text-prism-teal focus:ring-prism-teal border-mist cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
                     />
                   </th>
                 )}
@@ -270,19 +294,44 @@ export function MasterUnitTable({
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-mist">
-              {isLoading ? (
-                // Skeleton loading rows
+            <tbody
+              className={`divide-y divide-mist transition-opacity duration-150 ${
+                isLoading && units.length > 0 ? "opacity-50 pointer-events-none" : "opacity-100"
+              }`}
+            >
+              {isLoading && units.length === 0 ? (
+                // Skeleton loading rows ONLY on initial load
                 Array.from({ length: 5 }).map((_, idx) => (
                   <tr key={idx} className="animate-pulse">
-                    {isAdmin && <td className="px-4 py-4 w-8"><div className="w-4 h-4 bg-mist rounded" /></td>}
-                    <td className="px-5 py-4"><div className="h-4 w-12 bg-mist rounded" /></td>
-                    <td className="px-5 py-4"><div className="h-4 w-16 bg-mist rounded" /></td>
-                    <td className="px-5 py-4"><div className="h-4 w-28 bg-mist rounded mb-1" /><div className="h-3 w-16 bg-mist/60 rounded" /></td>
-                    <td className="px-5 py-4"><div className="h-4 w-20 bg-mist rounded" /></td>
-                    <td className="px-5 py-4"><div className="h-4 w-12 bg-mist rounded" /></td>
-                    <td className="px-5 py-4"><div className="h-5 w-20 bg-mist rounded-full" /></td>
-                    {isAdmin && <td className="px-5 py-4 text-right"><div className="h-7 w-24 bg-mist rounded ml-auto" /></td>}
+                    {isAdmin && (
+                      <td className="px-4 py-4 w-8">
+                        <div className="w-4 h-4 bg-mist rounded" />
+                      </td>
+                    )}
+                    <td className="px-5 py-4">
+                      <div className="h-4 w-12 bg-mist rounded" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="h-4 w-16 bg-mist rounded" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="h-4 w-28 bg-mist rounded mb-1" />
+                      <div className="h-3 w-16 bg-mist/60 rounded" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="h-4 w-20 bg-mist rounded" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="h-4 w-12 bg-mist rounded" />
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="h-5 w-20 bg-mist rounded-full" />
+                    </td>
+                    {isAdmin && (
+                      <td className="px-5 py-4 text-right">
+                        <div className="h-7 w-24 bg-mist rounded ml-auto" />
+                      </td>
+                    )}
                   </tr>
                 ))
               ) : units.length === 0 ? (
@@ -317,14 +366,20 @@ export function MasterUnitTable({
                         isSelected ? "bg-teal-50/30" : ""
                       }`}
                     >
-                      {/* Checkbox */}
+                      {/* Checkbox: disabled if not available */}
                       {isAdmin && (
                         <td className="px-4 py-3.5">
                           <input
                             type="checkbox"
                             checked={isSelected}
+                            disabled={!isAvailable}
                             onChange={() => toggleSelectOne(unit.id)}
-                            className="w-4 h-4 rounded text-prism-teal focus:ring-prism-teal border-mist cursor-pointer"
+                            className="w-4 h-4 rounded text-prism-teal focus:ring-prism-teal border-mist cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
+                            title={
+                              !isAvailable
+                                ? "Hanya unit AVAILABLE tanpa transaksi yang dapat dipilih massal"
+                                : `Pilih unit ${unit.blok}`
+                            }
                           />
                         </td>
                       )}
@@ -423,68 +478,43 @@ export function MasterUnitTable({
                               Ganti Tipe
                             </button>
 
-                            {/* Dropdown Menu Trigger */}
-                            <div className="relative inline-block text-left">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setOpenMenuUnitId(openMenuUnitId === unit.id ? null : unit.id)
-                                }
-                                className="p-1 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
-                                title="Menu opsi"
+                            {/* Accessible Radix / Base-UI DropdownMenu */}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger
+                                className="p-1 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                aria-label={`Menu opsi blok ${unit.blok}`}
                               >
                                 <MoreVertical className="w-4 h-4" />
-                              </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem
+                                  onClick={() => setHistoryUnit(unit)}
+                                  className="gap-2 cursor-pointer text-xs"
+                                >
+                                  <History className="w-3.5 h-3.5 text-prism-teal" />
+                                  <span>Riwayat Perubahan</span>
+                                </DropdownMenuItem>
 
-                              {/* Menu Flyout */}
-                              {openMenuUnitId === unit.id && (
-                                <>
-                                  {/* Backdrop to close menu */}
-                                  <div
-                                    className="fixed inset-0 z-30"
-                                    onClick={() => setOpenMenuUnitId(null)}
-                                  />
-                                  <div className="absolute right-0 mt-1 w-44 rounded-md bg-white border border-mist shadow-lg py-1 z-40 animate-in fade-in zoom-in-95 duration-100 text-left">
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setOpenMenuUnitId(null);
-                                        setHargaKhususUnit(unit);
-                                      }}
-                                      className="w-full text-left px-3 py-1.5 text-xs text-graphite hover:bg-bone flex items-center gap-2"
-                                    >
-                                      <Tag className="w-3.5 h-3.5 text-slate" />
-                                      <span>Atur Harga Khusus</span>
-                                    </button>
+                                <DropdownMenuItem
+                                  onClick={() => setHargaKhususUnit(unit)}
+                                  className="gap-2 cursor-pointer text-xs"
+                                >
+                                  <Tag className="w-3.5 h-3.5 text-slate" />
+                                  <span>Atur Harga Khusus</span>
+                                </DropdownMenuItem>
 
+                                <DropdownMenuSeparator />
 
-                                    <div className="border-t border-mist my-1" />
-
-                                    <button
-                                      type="button"
-                                      disabled={!isAvailable}
-                                      onClick={() => {
-                                        setOpenMenuUnitId(null);
-                                        handleDelete(unit);
-                                      }}
-                                      className="w-full text-left px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
-                                      title={
-                                        !isAvailable
-                                          ? "Hanya unit AVAILABLE tanpa transaksi yang dapat dihapus"
-                                          : "Hapus unit"
-                                      }
-                                    >
-                                      {isPending && deleteId === unit.id ? (
-                                        <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-600" />
-                                      ) : (
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                      )}
-                                      <span>Hapus Blok</span>
-                                    </button>
-                                  </div>
-                                </>
-                              )}
-                            </div>
+                                <DropdownMenuItem
+                                  disabled={!isAvailable}
+                                  onClick={() => setDeleteTarget(unit)}
+                                  className="gap-2 cursor-pointer text-xs text-rose-600 focus:text-rose-700 focus:bg-rose-50"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                  <span>Hapus Blok</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </td>
                       )}
@@ -532,15 +562,15 @@ export function MasterUnitTable({
         </div>
       </div>
 
-      {/* Sticky Bulk Selection Bar (Phase 2) */}
-      {selectedIds.size > 0 && isAdmin && (
+      {/* Sticky Bulk Selection Bar */}
+      {selectedUnits.length > 0 && isAdmin && (
         <div className="sticky bottom-4 z-30 p-3.5 bg-carbon-ink text-white rounded-lg shadow-xl border border-carbon-ink/80 flex items-center justify-between animate-in slide-in-from-bottom duration-200">
           <div className="flex items-center gap-3">
             <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-prism-teal text-white">
-              {selectedIds.size} Unit Terpilih
+              {selectedUnits.length} Unit Terpilih
             </span>
             <span className="text-xs text-fog hidden sm:inline">
-              Pilih tindakan massal untuk unit-unit di atas.
+              Pilih tindakan massal untuk unit-unit AVAILABLE di atas.
             </span>
           </div>
 
@@ -548,45 +578,67 @@ export function MasterUnitTable({
             <button
               type="button"
               onClick={() => setSelectedIds(new Set())}
-              className="px-3 py-1.5 text-xs text-fog hover:text-white transition-colors"
+              className="px-3 py-1.5 rounded text-xs text-fog hover:text-white hover:bg-white/10 transition-colors"
             >
               Batal Pilih
             </button>
             <button
               type="button"
               onClick={() => setIsBulkDrawerOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold shadow-xs transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold shadow-subtle transition-colors"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Ganti Tipe Massal ({selectedIds.size})</span>
+              <span>Ganti Tipe Massal ({selectedUnits.length})</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Modal: Atur Harga Khusus */}
-      {hargaKhususUnit && (
-        <SetHargaKhususModal
-          unit={hargaKhususUnit}
-          isOpen={Boolean(hargaKhususUnit)}
-          onClose={() => setHargaKhususUnit(null)}
-          onSuccess={onRefresh}
-        />
-      )}
+      {/* Modal: Set Harga Khusus */}
+      <SetHargaKhususModal
+        unit={hargaKhususUnit}
+        isOpen={Boolean(hargaKhususUnit)}
+        onClose={() => setHargaKhususUnit(null)}
+        onSuccess={onRefresh}
+      />
 
-      {/* Drawer: Bulk Change Tipe (Phase 2) */}
-      {isBulkDrawerOpen && (
-        <BulkChangeTipeDrawer
-          selectedUnits={selectedUnits}
-          tipeList={tipeList}
-          isOpen={isBulkDrawerOpen}
-          onClose={() => setIsBulkDrawerOpen(false)}
-          onSuccess={() => {
-            setSelectedIds(new Set());
-            onRefresh();
-          }}
-        />
-      )}
+      {/* Drawer: Riwayat Perubahan Tipe */}
+      <UnitTipeHistoryDrawer
+        unit={historyUnit}
+        isOpen={Boolean(historyUnit)}
+        onClose={() => setHistoryUnit(null)}
+      />
+
+      {/* Drawer: Bulk Change Tipe */}
+      <BulkChangeTipeDrawer
+        selectedUnits={selectedUnits}
+        tipeList={tipeList}
+        isOpen={isBulkDrawerOpen}
+        onClose={() => setIsBulkDrawerOpen(false)}
+        onSuccess={() => {
+          setSelectedIds(new Set());
+          onRefresh();
+        }}
+      />
+
+      {/* Confirm Delete Unit Dialog */}
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        title="Hapus Blok Unit"
+        description={
+          deleteTarget ? (
+            <span>
+              Apakah Anda yakin ingin menghapus unit blok <strong>{deleteTarget.blok}</strong>?
+              Riwayat perubahan tipe unit ini akan tetap diarsipkan dalam database.
+            </span>
+          ) : null
+        }
+        confirmLabel="Hapus Unit"
+        tone="danger"
+        pending={isPending}
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

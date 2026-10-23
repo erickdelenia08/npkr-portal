@@ -15,10 +15,8 @@ import {
 } from "lucide-react";
 import { leadSchema, LeadInput } from "@/schemas/lead.schema";
 import { createLead, CreateLeadResponse } from "@/actions/lead";
-import {
-  getMasterTipeList,
-  SerializedMasterTipe,
-} from "@/actions/master-unit.action";
+import { getMasterTipeList } from "@/actions/master-unit.action";
+import type { SerializedMasterTipe } from "@/actions/master-unit.action";
 
 export interface CreateLeadFormProps {
   onSuccess?: (newLead: NonNullable<CreateLeadResponse["data"]>) => void;

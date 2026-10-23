@@ -31,6 +31,7 @@ model User {
   inspeksi_bast        InspeksiBAST[]      @relation("AdminInspektur")
   inspeksi_bast_logs   InspeksiBASTLog[]   @relation("AdminInspekturLog")
   pengajuan_kpr_logs   PengajuanKPRLog[]   @relation("AdminPengajuanKPRLog")
+  unit_tipe_logs       UnitTipeLog[]       @relation("AdminTipeLog")
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -53,6 +54,8 @@ model MasterTipe {
   luas_tanah    Int
   harga_dasar   Decimal      @db.Decimal(15, 2)
   units         MasterUnit[]
+  unit_tipe_lama UnitTipeLog[] @relation("TipeLama")
+  unit_tipe_baru UnitTipeLog[] @relation("TipeBaru")
 
   @@unique([kategori, luas_bangunan, luas_tanah])
 }
@@ -69,9 +72,30 @@ model MasterUnit {
   tipe      MasterTipe  @relation(fields: [tipe_id], references: [id])
   transaksi Transaksi[]
   itj       Itj[]
+  tipe_logs UnitTipeLog[]
 
   @@index([status_unit])
-  @@index([blok_prefix, blok_nomor])
+}
+
+model UnitTipeLog {
+  id                   Int         @id @default(autoincrement())
+  unit_id              Int?
+  blok                 String
+  tipe_lama_id         Int
+  tipe_baru_id         Int
+  harga_khusus_lama    Decimal?    @db.Decimal(15, 2)
+  harga_khusus_direset Boolean     @default(false)
+  alasan               String      @db.Text
+  changed_by           Int
+  created_at           DateTime    @default(now())
+
+  unit      MasterUnit? @relation(fields: [unit_id], references: [id], onDelete: SetNull)
+  tipe_lama MasterTipe  @relation("TipeLama", fields: [tipe_lama_id], references: [id])
+  tipe_baru MasterTipe  @relation("TipeBaru", fields: [tipe_baru_id], references: [id])
+  admin     User        @relation("AdminTipeLog", fields: [changed_by], references: [id])
+
+  @@index([unit_id, created_at])
+  @@index([blok])
 }
 
 enum KategoriUnit {

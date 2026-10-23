@@ -13,20 +13,49 @@ export const metadata: Metadata = {
   description: "Manajemen data master tipe perumahan dan inventori blok unit",
 };
 
-export default async function MasterUnitPage() {
+interface MasterUnitPageProps {
+  searchParams: Promise<{
+    tab?: string;
+    q?: string;
+    status?: string;
+    tipe?: string;
+    kategori?: string;
+    page?: string;
+  }>;
+}
+
+export default async function MasterUnitPage({ searchParams }: MasterUnitPageProps) {
+  const params = await searchParams;
+
+  const page = params.page ? parseInt(params.page, 10) : 1;
+  const search = params.q || "";
+  const status = params.status || "";
+  const tipeId = params.tipe ? parseInt(params.tipe, 10) : undefined;
+  const kategori = params.kategori || "";
+  const activeTab = params.tab || "units";
+
   // Fetch initial data on the server for fast, SEO-friendly initial render
   const [tipeRes, unitsRes, summaryRes, roleRes] = await Promise.all([
     getMasterTipeList(),
-    getMasterUnits({ page: 1, limit: 15 }),
+    getMasterUnits({
+      page: isNaN(page) || page < 1 ? 1 : page,
+      limit: 15,
+      search: search || undefined,
+      status: status && status !== "ALL" ? status : undefined,
+      tipeId: tipeId && !isNaN(tipeId) && tipeId > 0 ? tipeId : undefined,
+      kategori: kategori && kategori !== "ALL" ? kategori : undefined,
+    }),
     getMasterUnitSummary(),
     getCurrentUserRole(),
   ]);
+
+  const loadError = !tipeRes.success || !unitsRes.success || !summaryRes.success;
 
   const initialTipeList = tipeRes.success && tipeRes.data ? tipeRes.data : [];
   const initialUnitsResult =
     unitsRes.success && unitsRes.data
       ? unitsRes.data
-      : { units: [], total: 0, page: 1, totalPages: 1 };
+      : { units: [], total: 0, page: 1, totalPages: 1, limit: 15 };
   const initialSummary =
     summaryRes.success && summaryRes.data
       ? summaryRes.data
@@ -44,6 +73,15 @@ export default async function MasterUnitPage() {
       initialUnitsResult={initialUnitsResult}
       initialSummary={initialSummary}
       isAdmin={roleRes.isAdmin}
+      loadError={loadError}
+      initialParams={{
+        tab: activeTab,
+        q: search,
+        status,
+        tipe: tipeId,
+        kategori,
+        page: isNaN(page) || page < 1 ? 1 : page,
+      }}
     />
   );
 }

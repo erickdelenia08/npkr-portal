@@ -3,10 +3,10 @@
 import React, { useState, useTransition } from "react";
 import { X, Loader2, Edit3, Lock, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
-import {
+import { updateMasterUnit } from "@/actions/master-unit.action";
+import type {
   SerializedMasterUnit,
   SerializedMasterTipe,
-  updateMasterUnit,
 } from "@/actions/master-unit.action";
 
 interface EditMasterUnitModalProps {

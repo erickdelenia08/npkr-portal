@@ -247,6 +247,7 @@ export type MasterUnitWhereInput = {
   tipe?: Prisma.XOR<Prisma.MasterTipeScalarRelationFilter, Prisma.MasterTipeWhereInput>
   transaksi?: Prisma.TransaksiListRelationFilter
   itj?: Prisma.ItjListRelationFilter
+  tipe_logs?: Prisma.UnitTipeLogListRelationFilter
 }
 
 export type MasterUnitOrderByWithRelationInput = {
@@ -260,6 +261,7 @@ export type MasterUnitOrderByWithRelationInput = {
   tipe?: Prisma.MasterTipeOrderByWithRelationInput
   transaksi?: Prisma.TransaksiOrderByRelationAggregateInput
   itj?: Prisma.ItjOrderByRelationAggregateInput
+  tipe_logs?: Prisma.UnitTipeLogOrderByRelationAggregateInput
   _relevance?: Prisma.MasterUnitOrderByRelevanceInput
 }
 
@@ -277,6 +279,7 @@ export type MasterUnitWhereUniqueInput = Prisma.AtLeast<{
   tipe?: Prisma.XOR<Prisma.MasterTipeScalarRelationFilter, Prisma.MasterTipeWhereInput>
   transaksi?: Prisma.TransaksiListRelationFilter
   itj?: Prisma.ItjListRelationFilter
+  tipe_logs?: Prisma.UnitTipeLogListRelationFilter
 }, "id" | "blok">
 
 export type MasterUnitOrderByWithAggregationInput = {
@@ -316,6 +319,7 @@ export type MasterUnitCreateInput = {
   tipe: Prisma.MasterTipeCreateNestedOneWithoutUnitsInput
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutUnitInput
   itj?: Prisma.ItjCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitUncheckedCreateInput = {
@@ -328,6 +332,7 @@ export type MasterUnitUncheckedCreateInput = {
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutUnitInput
   itj?: Prisma.ItjUncheckedCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitUpdateInput = {
@@ -339,6 +344,7 @@ export type MasterUnitUpdateInput = {
   tipe?: Prisma.MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
   transaksi?: Prisma.TransaksiUpdateManyWithoutUnitNestedInput
   itj?: Prisma.ItjUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitUncheckedUpdateInput = {
@@ -351,6 +357,7 @@ export type MasterUnitUncheckedUpdateInput = {
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutUnitNestedInput
   itj?: Prisma.ItjUncheckedUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitCreateManyInput = {
@@ -441,6 +448,11 @@ export type MasterUnitSumOrderByAggregateInput = {
   harga_khusus?: Prisma.SortOrder
 }
 
+export type MasterUnitNullableScalarRelationFilter = {
+  is?: Prisma.MasterUnitWhereInput | null
+  isNot?: Prisma.MasterUnitWhereInput | null
+}
+
 export type MasterUnitScalarRelationFilter = {
   is?: Prisma.MasterUnitWhereInput
   isNot?: Prisma.MasterUnitWhereInput
@@ -500,6 +512,22 @@ export type NullableDecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
+export type MasterUnitCreateNestedOneWithoutTipe_logsInput = {
+  create?: Prisma.XOR<Prisma.MasterUnitCreateWithoutTipe_logsInput, Prisma.MasterUnitUncheckedCreateWithoutTipe_logsInput>
+  connectOrCreate?: Prisma.MasterUnitCreateOrConnectWithoutTipe_logsInput
+  connect?: Prisma.MasterUnitWhereUniqueInput
+}
+
+export type MasterUnitUpdateOneWithoutTipe_logsNestedInput = {
+  create?: Prisma.XOR<Prisma.MasterUnitCreateWithoutTipe_logsInput, Prisma.MasterUnitUncheckedCreateWithoutTipe_logsInput>
+  connectOrCreate?: Prisma.MasterUnitCreateOrConnectWithoutTipe_logsInput
+  upsert?: Prisma.MasterUnitUpsertWithoutTipe_logsInput
+  disconnect?: Prisma.MasterUnitWhereInput | boolean
+  delete?: Prisma.MasterUnitWhereInput | boolean
+  connect?: Prisma.MasterUnitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MasterUnitUpdateToOneWithWhereWithoutTipe_logsInput, Prisma.MasterUnitUpdateWithoutTipe_logsInput>, Prisma.MasterUnitUncheckedUpdateWithoutTipe_logsInput>
+}
+
 export type MasterUnitCreateNestedOneWithoutItjInput = {
   create?: Prisma.XOR<Prisma.MasterUnitCreateWithoutItjInput, Prisma.MasterUnitUncheckedCreateWithoutItjInput>
   connectOrCreate?: Prisma.MasterUnitCreateOrConnectWithoutItjInput
@@ -536,6 +564,7 @@ export type MasterUnitCreateWithoutTipeInput = {
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutUnitInput
   itj?: Prisma.ItjCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitUncheckedCreateWithoutTipeInput = {
@@ -547,6 +576,7 @@ export type MasterUnitUncheckedCreateWithoutTipeInput = {
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutUnitInput
   itj?: Prisma.ItjUncheckedCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitCreateOrConnectWithoutTipeInput = {
@@ -588,6 +618,68 @@ export type MasterUnitScalarWhereInput = {
   harga_khusus?: Prisma.DecimalNullableFilter<"MasterUnit"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
+export type MasterUnitCreateWithoutTipe_logsInput = {
+  blok: string
+  blok_prefix?: string
+  blok_nomor?: number
+  status_unit?: $Enums.StatusUnit
+  harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  tipe: Prisma.MasterTipeCreateNestedOneWithoutUnitsInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutUnitInput
+  itj?: Prisma.ItjCreateNestedManyWithoutUnitInput
+}
+
+export type MasterUnitUncheckedCreateWithoutTipe_logsInput = {
+  id?: number
+  tipe_id: number
+  blok: string
+  blok_prefix?: string
+  blok_nomor?: number
+  status_unit?: $Enums.StatusUnit
+  harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutUnitInput
+  itj?: Prisma.ItjUncheckedCreateNestedManyWithoutUnitInput
+}
+
+export type MasterUnitCreateOrConnectWithoutTipe_logsInput = {
+  where: Prisma.MasterUnitWhereUniqueInput
+  create: Prisma.XOR<Prisma.MasterUnitCreateWithoutTipe_logsInput, Prisma.MasterUnitUncheckedCreateWithoutTipe_logsInput>
+}
+
+export type MasterUnitUpsertWithoutTipe_logsInput = {
+  update: Prisma.XOR<Prisma.MasterUnitUpdateWithoutTipe_logsInput, Prisma.MasterUnitUncheckedUpdateWithoutTipe_logsInput>
+  create: Prisma.XOR<Prisma.MasterUnitCreateWithoutTipe_logsInput, Prisma.MasterUnitUncheckedCreateWithoutTipe_logsInput>
+  where?: Prisma.MasterUnitWhereInput
+}
+
+export type MasterUnitUpdateToOneWithWhereWithoutTipe_logsInput = {
+  where?: Prisma.MasterUnitWhereInput
+  data: Prisma.XOR<Prisma.MasterUnitUpdateWithoutTipe_logsInput, Prisma.MasterUnitUncheckedUpdateWithoutTipe_logsInput>
+}
+
+export type MasterUnitUpdateWithoutTipe_logsInput = {
+  blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
+  status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
+  harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  tipe?: Prisma.MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutUnitNestedInput
+  itj?: Prisma.ItjUpdateManyWithoutUnitNestedInput
+}
+
+export type MasterUnitUncheckedUpdateWithoutTipe_logsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  tipe_id?: Prisma.IntFieldUpdateOperationsInput | number
+  blok?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_prefix?: Prisma.StringFieldUpdateOperationsInput | string
+  blok_nomor?: Prisma.IntFieldUpdateOperationsInput | number
+  status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
+  harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutUnitNestedInput
+  itj?: Prisma.ItjUncheckedUpdateManyWithoutUnitNestedInput
+}
+
 export type MasterUnitCreateWithoutItjInput = {
   blok: string
   blok_prefix?: string
@@ -596,6 +688,7 @@ export type MasterUnitCreateWithoutItjInput = {
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe: Prisma.MasterTipeCreateNestedOneWithoutUnitsInput
   transaksi?: Prisma.TransaksiCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitUncheckedCreateWithoutItjInput = {
@@ -607,6 +700,7 @@ export type MasterUnitUncheckedCreateWithoutItjInput = {
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitCreateOrConnectWithoutItjInput = {
@@ -633,6 +727,7 @@ export type MasterUnitUpdateWithoutItjInput = {
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe?: Prisma.MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
   transaksi?: Prisma.TransaksiUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitUncheckedUpdateWithoutItjInput = {
@@ -644,6 +739,7 @@ export type MasterUnitUncheckedUpdateWithoutItjInput = {
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitCreateWithoutTransaksiInput = {
@@ -654,6 +750,7 @@ export type MasterUnitCreateWithoutTransaksiInput = {
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe: Prisma.MasterTipeCreateNestedOneWithoutUnitsInput
   itj?: Prisma.ItjCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitUncheckedCreateWithoutTransaksiInput = {
@@ -665,6 +762,7 @@ export type MasterUnitUncheckedCreateWithoutTransaksiInput = {
   status_unit?: $Enums.StatusUnit
   harga_khusus?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   itj?: Prisma.ItjUncheckedCreateNestedManyWithoutUnitInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
 }
 
 export type MasterUnitCreateOrConnectWithoutTransaksiInput = {
@@ -691,6 +789,7 @@ export type MasterUnitUpdateWithoutTransaksiInput = {
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   tipe?: Prisma.MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
   itj?: Prisma.ItjUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitUncheckedUpdateWithoutTransaksiInput = {
@@ -702,6 +801,7 @@ export type MasterUnitUncheckedUpdateWithoutTransaksiInput = {
   status_unit?: Prisma.EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   itj?: Prisma.ItjUncheckedUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitCreateManyTipeInput = {
@@ -721,6 +821,7 @@ export type MasterUnitUpdateWithoutTipeInput = {
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUpdateManyWithoutUnitNestedInput
   itj?: Prisma.ItjUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitUncheckedUpdateWithoutTipeInput = {
@@ -732,6 +833,7 @@ export type MasterUnitUncheckedUpdateWithoutTipeInput = {
   harga_khusus?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutUnitNestedInput
   itj?: Prisma.ItjUncheckedUpdateManyWithoutUnitNestedInput
+  tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
 }
 
 export type MasterUnitUncheckedUpdateManyWithoutTipeInput = {
@@ -751,11 +853,13 @@ export type MasterUnitUncheckedUpdateManyWithoutTipeInput = {
 export type MasterUnitCountOutputType = {
   transaksi: number
   itj: number
+  tipe_logs: number
 }
 
 export type MasterUnitCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   transaksi?: boolean | MasterUnitCountOutputTypeCountTransaksiArgs
   itj?: boolean | MasterUnitCountOutputTypeCountItjArgs
+  tipe_logs?: boolean | MasterUnitCountOutputTypeCountTipe_logsArgs
 }
 
 /**
@@ -782,6 +886,13 @@ export type MasterUnitCountOutputTypeCountItjArgs<ExtArgs extends runtime.Types.
   where?: Prisma.ItjWhereInput
 }
 
+/**
+ * MasterUnitCountOutputType without action
+ */
+export type MasterUnitCountOutputTypeCountTipe_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UnitTipeLogWhereInput
+}
+
 
 export type MasterUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -794,6 +905,7 @@ export type MasterUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   tipe?: boolean | Prisma.MasterTipeDefaultArgs<ExtArgs>
   transaksi?: boolean | Prisma.MasterUnit$transaksiArgs<ExtArgs>
   itj?: boolean | Prisma.MasterUnit$itjArgs<ExtArgs>
+  tipe_logs?: boolean | Prisma.MasterUnit$tipe_logsArgs<ExtArgs>
   _count?: boolean | Prisma.MasterUnitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["masterUnit"]>
 
@@ -814,6 +926,7 @@ export type MasterUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalA
   tipe?: boolean | Prisma.MasterTipeDefaultArgs<ExtArgs>
   transaksi?: boolean | Prisma.MasterUnit$transaksiArgs<ExtArgs>
   itj?: boolean | Prisma.MasterUnit$itjArgs<ExtArgs>
+  tipe_logs?: boolean | Prisma.MasterUnit$tipe_logsArgs<ExtArgs>
   _count?: boolean | Prisma.MasterUnitCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -823,6 +936,7 @@ export type $MasterUnitPayload<ExtArgs extends runtime.Types.Extensions.Internal
     tipe: Prisma.$MasterTipePayload<ExtArgs>
     transaksi: Prisma.$TransaksiPayload<ExtArgs>[]
     itj: Prisma.$ItjPayload<ExtArgs>[]
+    tipe_logs: Prisma.$UnitTipeLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1175,6 +1289,7 @@ export interface Prisma__MasterUnitClient<T, Null = never, ExtArgs extends runti
   tipe<T extends Prisma.MasterTipeDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MasterTipeDefaultArgs<ExtArgs>>): Prisma.Prisma__MasterTipeClient<runtime.Types.Result.GetResult<Prisma.$MasterTipePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   transaksi<T extends Prisma.MasterUnit$transaksiArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MasterUnit$transaksiArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   itj<T extends Prisma.MasterUnit$itjArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MasterUnit$itjArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tipe_logs<T extends Prisma.MasterUnit$tipe_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MasterUnit$tipe_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UnitTipeLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1604,6 +1719,30 @@ export type MasterUnit$itjArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.ItjScalarFieldEnum | Prisma.ItjScalarFieldEnum[]
+}
+
+/**
+ * MasterUnit.tipe_logs
+ */
+export type MasterUnit$tipe_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UnitTipeLog
+   */
+  select?: Prisma.UnitTipeLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UnitTipeLog
+   */
+  omit?: Prisma.UnitTipeLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UnitTipeLogInclude<ExtArgs> | null
+  where?: Prisma.UnitTipeLogWhereInput
+  orderBy?: Prisma.UnitTipeLogOrderByWithRelationInput | Prisma.UnitTipeLogOrderByWithRelationInput[]
+  cursor?: Prisma.UnitTipeLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UnitTipeLogScalarFieldEnum | Prisma.UnitTipeLogScalarFieldEnum[]
 }
 
 /**

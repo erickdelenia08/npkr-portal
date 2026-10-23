@@ -49,37 +49,39 @@ export const singleUnitSchema = z.object({
 export type SingleUnitInput = z.infer<typeof singleUnitSchema>;
 
 /**
- * Validation schema for bulk creating Master Units (Siteplan setup)
+ * Validation schema for wizard setup row (Siteplan setup)
  */
-export const bulkUnitSchema = z
+export const setupRowSchema = z
   .object({
-    prefix_blok: z
+    prefix: z
       .string()
       .trim()
-      .min(1, "Prefix blok wajib diisi (misal: 'A')")
-      .max(4, "Prefix blok maksimal 4 karakter")
-      .regex(/^[A-Za-z0-9-]+$/, "Prefix blok hanya boleh huruf atau angka"),
-    nomor_mulai: z
+      .min(1, "Prefix blok wajib diisi (contoh: 'A')")
+      .max(3, "Prefix blok maksimal 3 karakter alfanumerik")
+      .regex(/^[A-Za-z0-9]+$/, "Prefix blok hanya boleh huruf atau angka tanpa spasi/simbol"),
+    nomorMulai: z
       .number()
       .int("Nomor mulai harus berupa bilangan bulat")
       .min(1, "Nomor mulai minimal 1"),
-    nomor_akhir: z
+    nomorAkhir: z
       .number()
       .int("Nomor akhir harus berupa bilangan bulat")
       .min(1, "Nomor akhir minimal 1"),
-    tipe_id: z.number().min(1, "Pilih tipe unit"),
-    harga_khusus: z.number().min(0).nullable().optional(),
+    kecuali: z.array(z.number().int().min(1)).optional().default([]),
+    tipeId: z.number().int().min(1, "Pilih tipe unit"),
   })
-  .refine((data) => data.nomor_akhir >= data.nomor_mulai, {
+  .refine((data) => data.nomorAkhir >= data.nomorMulai, {
     message: "Nomor akhir harus lebih besar atau sama dengan nomor mulai",
-    path: ["nomor_akhir"],
-  })
-  .refine((data) => data.nomor_akhir - data.nomor_mulai <= 200, {
-    message: "Maksimal pembuatan sekaligus adalah 200 unit",
-    path: ["nomor_akhir"],
+    path: ["nomorAkhir"],
   });
 
-export type BulkUnitInput = z.infer<typeof bulkUnitSchema>;
+export type SetupRowInput = z.infer<typeof setupRowSchema>;
+
+export const setupUnitsBatchSchema = z
+  .array(setupRowSchema)
+  .min(1, "Minimal harus ada satu baris konfigurasi blok");
+
+export type SetupUnitsBatchInput = z.infer<typeof setupUnitsBatchSchema>;
 
 /**
  * Validation schema for changing unit tipe (single unit)
@@ -96,9 +98,13 @@ export type ChangeTipeInput = z.infer<typeof changeTipeSchema>;
  * Validation schema for bulk changing unit tipe
  */
 export const changeTipeBulkSchema = z.object({
-  unitIds: z.array(z.number().int()).min(1, "Pilih minimal satu unit"),
+  unitIds: z
+    .array(z.number().int())
+    .min(1, "Pilih minimal satu unit")
+    .max(200, "Maksimal 200 unit per perubahan massal"),
   newTipeId: z.number().min(1, "Pilih tipe baru"),
   alasan: z.string().trim().min(5, "Alasan perubahan minimal 5 karakter"),
+  resetHargaKhusus: z.boolean(),
 });
 
 export type ChangeTipeBulkInput = z.infer<typeof changeTipeBulkSchema>;

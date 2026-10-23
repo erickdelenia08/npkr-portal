@@ -33,6 +33,11 @@ export type MasterTipe = Prisma.MasterTipeModel
  */
 export type MasterUnit = Prisma.MasterUnitModel
 /**
+ * Model UnitTipeLog
+ * 
+ */
+export type UnitTipeLog = Prisma.UnitTipeLogModel
+/**
  * Model Lead
  * 
  */

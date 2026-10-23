@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { SerializedMasterUnit } from "@/actions/master-unit.action";
+import type { SerializedMasterUnit } from "@/actions/master-unit.action";
 import siteplanData from "./siteplan-data.json";
 
 export interface UnregisteredPlot {
@@ -184,15 +184,29 @@ export function InteractiveSiteplanSvg({
                 key={plot.id}
                 id={`plot-${plot.blok}`}
                 data-blok={plot.blok}
+                role="button"
+                tabIndex={0}
+                aria-label={`Unit Blok ${plot.blok}${unit ? ` status ${unit.status_unit}` : " belum terdaftar"}`}
                 className={`${opacityClass} ${
                   isAvailable ? "cursor-pointer group" : isRegistered ? "cursor-pointer" : "cursor-default"
-                }`}
+                } outline-none focus-visible:ring-2 focus-visible:ring-prism-teal`}
                 onClick={() => {
                   if (unit) {
                     onSelectUnit(unit);
                     onSelectUnregistered?.(null);
                   } else {
                     onSelectUnregistered?.({ blok: plot.blok, isRegistered: false });
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    if (unit) {
+                      onSelectUnit(unit);
+                      onSelectUnregistered?.(null);
+                    } else {
+                      onSelectUnregistered?.({ blok: plot.blok, isRegistered: false });
+                    }
                   }
                 }}
                 onMouseEnter={() => {

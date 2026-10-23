@@ -11,6 +11,7 @@
 export type * from './models/User'
 export type * from './models/MasterTipe'
 export type * from './models/MasterUnit'
+export type * from './models/UnitTipeLog'
 export type * from './models/Lead'
 export type * from './models/Aktivitas'
 export type * from './models/Itj'

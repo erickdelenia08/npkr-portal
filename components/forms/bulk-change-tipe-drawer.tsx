@@ -1,28 +1,32 @@
 "use client";
 
-import React, { useState, useTransition, useMemo } from "react";
+import React, { useState, useTransition, useMemo, useId } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
-  X,
-  Layers,
-  ArrowRight,
   AlertTriangle,
   Loader2,
   CheckCircle2,
   Sparkles,
 } from "lucide-react";
-import {
+import { changeUnitTipeBulk } from "@/actions/master-unit.action";
+import type {
   SerializedMasterUnit,
   SerializedMasterTipe,
-  changeUnitTipeBulk,
   BulkChangeTipeResult,
 } from "@/actions/master-unit.action";
 import {
   changeTipeBulkSchema,
   ChangeTipeBulkInput,
 } from "@/schemas/master-unit.schema";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 
 interface BulkChangeTipeDrawerProps {
   selectedUnits: SerializedMasterUnit[];
@@ -42,6 +46,11 @@ export function BulkChangeTipeDrawer({
   const [isPending, startTransition] = useTransition();
   const [bulkResult, setBulkResult] = useState<BulkChangeTipeResult | null>(null);
 
+  const baseId = useId();
+  const tipeSelectId = `${baseId}-tipe`;
+  const alasanId = `${baseId}-alasan`;
+  const resetHargaId = `${baseId}-reset-harga`;
+
   const {
     register,
     handleSubmit,
@@ -54,8 +63,11 @@ export function BulkChangeTipeDrawer({
       unitIds: selectedUnits.map((u) => u.id),
       newTipeId: 0,
       alasan: "",
+      resetHargaKhusus: false,
     },
   });
+
+  const selectedNewTipeId = watch("newTipeId");
 
   React.useEffect(() => {
     if (isOpen) {
@@ -63,20 +75,56 @@ export function BulkChangeTipeDrawer({
         unitIds: selectedUnits.map((u) => u.id),
         newTipeId: 0,
         alasan: "",
+        resetHargaKhusus: false,
       });
       setBulkResult(null);
     }
   }, [isOpen, selectedUnits, reset]);
 
-  if (!isOpen || selectedUnits.length === 0) return null;
+  const targetTipe = useMemo(() => {
+    const id = Number(selectedNewTipeId);
+    return tipeList.find((t) => t.id === id) || null;
+  }, [tipeList, selectedNewTipeId]);
 
-  // Find dominant kategori and luas_tanah if homogenous
-  const firstUnit = selectedUnits[0];
-  const isHomogeneous = selectedUnits.every(
-    (u) =>
-      u.tipe.kategori === firstUnit.tipe.kategori &&
-      u.tipe.luas_tanah === firstUnit.tipe.luas_tanah
-  );
+  // Compatibility analysis for selected units against targetTipe
+  const { compatibleCount, skippedCount, hasSpecialPriceUnits } = useMemo(() => {
+    if (!targetTipe) {
+      return {
+        compatibleCount: 0,
+        skippedCount: 0,
+        hasSpecialPriceUnits: selectedUnits.some((u) => u.harga_khusus !== null && u.harga_khusus !== undefined),
+      };
+    }
+
+    let comp = 0;
+    let skip = 0;
+    let special = false;
+
+    for (const unit of selectedUnits) {
+      if (unit.harga_khusus !== null && unit.harga_khusus !== undefined) {
+        special = true;
+      }
+      if (
+        unit.status_unit === "AVAILABLE" &&
+        !unit.isLocked &&
+        unit.tipe.kategori === targetTipe.kategori &&
+        unit.tipe.luas_tanah === targetTipe.luas_tanah &&
+        unit.tipe_id !== targetTipe.id
+      ) {
+        comp++;
+      } else {
+        skip++;
+      }
+    }
+
+    return {
+      compatibleCount: comp,
+      skippedCount: skip,
+      hasSpecialPriceUnits: special,
+    };
+  }, [selectedUnits, targetTipe]);
+
+  if (!isOpen || selectedUnits.length === 0) return null;
 
   const formatPrice = (amount: number) =>
     new Intl.NumberFormat("id-ID", {
@@ -86,12 +134,18 @@ export function BulkChangeTipeDrawer({
     }).format(amount);
 
   const onSubmit = (data: ChangeTipeBulkInput) => {
+    if (!data.newTipeId || Number(data.newTipeId) === 0) {
+      toast.error("Silakan pilih tipe tujuan.");
+      return;
+    }
+
     startTransition(async () => {
       try {
         const res = await changeUnitTipeBulk({
           unitIds: selectedUnits.map((u) => u.id),
           newTipeId: Number(data.newTipeId),
           alasan: data.alasan,
+          resetHargaKhusus: Boolean(data.resetHargaKhusus),
         });
 
         if (res.success && res.data) {
@@ -110,42 +164,31 @@ export function BulkChangeTipeDrawer({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end animate-in fade-in duration-200"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className="relative w-full max-w-lg bg-white shadow-2xl h-full flex flex-col border-l border-mist animate-in slide-in-from-right duration-200">
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent side="right" className="p-0 gap-0 max-w-lg flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-mist bg-bone/40">
+        <SheetHeader className="px-6 py-4 border-b border-mist bg-bone/40">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-md bg-teal-50 text-prism-teal flex items-center justify-center">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-carbon-ink tracking-tight font-heading">
+              <SheetTitle className="text-base font-bold text-carbon-ink tracking-tight font-heading">
                 Ganti Tipe Massal ({selectedUnits.length} Unit)
-              </h2>
-              <p className="text-xs text-slate">
+              </SheetTitle>
+              <SheetDescription className="text-xs text-slate">
                 Ubah tipe secara bersamaan untuk beberapa unit terpilih
-              </p>
+              </SheetDescription>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        </SheetHeader>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Selected units preview pills */}
           <div className="p-3.5 rounded-lg border border-mist bg-bone/30 space-y-2">
             <span className="text-[10px] font-semibold text-slate uppercase tracking-wider block">
-              Unit Terpilih:
+              Unit Terpilih ({selectedUnits.length} unit):
             </span>
             <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
               {selectedUnits.map((u) => (
@@ -159,24 +202,15 @@ export function BulkChangeTipeDrawer({
             </div>
           </div>
 
-          {!isHomogeneous && (
-            <div className="p-3.5 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-              <span>
-                Unit yang dipilih memiliki variasi kategori atau luas tanah yang berbeda.
-                Sistem akan memvalidasi kesesuaian per unit dan melewati unit yang tidak kompatibel.
-              </span>
-            </div>
-          )}
-
           {/* Form */}
           {!bulkResult ? (
             <form id="bulk-change-tipe-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-graphite mb-1.5">
+                <label htmlFor={tipeSelectId} className="block text-xs font-semibold text-graphite mb-1.5">
                   Pilih Tipe Tujuan <span className="text-rose-500">*</span>
                 </label>
                 <select
+                  id={tipeSelectId}
                   {...register("newTipeId", { valueAsNumber: true })}
                   className="w-full px-3 py-2 text-xs rounded-md border border-mist bg-white font-medium text-graphite focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal"
                 >
@@ -192,11 +226,52 @@ export function BulkChangeTipeDrawer({
                 )}
               </div>
 
+              {/* Compatibility Breakdown Preview */}
+              {targetTipe && (
+                <div className="p-3.5 rounded-lg border border-teal-200 bg-teal-50/50 space-y-2 text-xs">
+                  <div className="flex items-center justify-between font-semibold text-deep-teal">
+                    <span>Pratinjau Kesesuaian Tipe:</span>
+                    <span className="font-mono text-[11px]">{targetTipe.nama_tipe}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 pt-1 text-[11px]">
+                    <div className="p-2 rounded bg-emerald-50 border border-emerald-200 text-emerald-800">
+                      <span className="block font-bold text-sm text-emerald-700">{compatibleCount} Unit</span>
+                      <span>Kompatibel &amp; akan diubah</span>
+                    </div>
+                    <div className="p-2 rounded bg-amber-50 border border-amber-200 text-amber-800">
+                      <span className="block font-bold text-sm text-amber-700">{skippedCount} Unit</span>
+                      <span>Akan dilewati (tidak cocok)</span>
+                    </div>
+                  </div>
+                  {skippedCount > 0 && (
+                    <p className="text-[10px] text-amber-900 mt-1">
+                      * Unit dilewati jika kategori/LT berbeda, status bukan AVAILABLE, atau sudah bertipe ini.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Reset Harga Khusus */}
+              {hasSpecialPriceUnits && (
+                <div className="p-3 rounded-lg border border-amber-200 bg-amber-50/70">
+                  <label htmlFor={resetHargaId} className="flex items-center gap-2 text-xs font-medium text-graphite cursor-pointer">
+                    <input
+                      id={resetHargaId}
+                      type="checkbox"
+                      {...register("resetHargaKhusus")}
+                      className="w-4 h-4 rounded text-prism-teal focus:ring-prism-teal border-mist cursor-pointer"
+                    />
+                    <span>Reset harga khusus pada unit yang berubah ke harga dasar tipe baru</span>
+                  </label>
+                </div>
+              )}
+
               <div>
-                <label className="block text-xs font-semibold text-graphite mb-1.5">
+                <label htmlFor={alasanId} className="block text-xs font-semibold text-graphite mb-1.5">
                   Alasan Perubahan Massal <span className="text-rose-500">*</span>
                 </label>
                 <textarea
+                  id={alasanId}
                   rows={3}
                   placeholder="Contoh: Penyesuaian siteplan blok, perubahan izin rancang bangun..."
                   {...register("alasan")}
@@ -251,8 +326,8 @@ export function BulkChangeTipeDrawer({
             <button
               type="submit"
               form="bulk-change-tipe-form"
-              disabled={isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-prism-teal hover:bg-deep-teal rounded-md shadow-subtle transition-colors disabled:opacity-50"
+              disabled={isPending || !targetTipe || compatibleCount === 0}
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-prism-teal hover:bg-deep-teal rounded-md shadow-subtle transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isPending ? (
                 <>
@@ -260,12 +335,12 @@ export function BulkChangeTipeDrawer({
                   <span>Memproses...</span>
                 </>
               ) : (
-                <span>Terapkan Perubahan</span>
+                <span>Terapkan Perubahan ({compatibleCount} Unit)</span>
               )}
             </button>
           )}
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }

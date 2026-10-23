@@ -54,6 +54,7 @@ export const ModelName = {
   User: 'User',
   MasterTipe: 'MasterTipe',
   MasterUnit: 'MasterUnit',
+  UnitTipeLog: 'UnitTipeLog',
   Lead: 'Lead',
   Aktivitas: 'Aktivitas',
   Itj: 'Itj',
@@ -123,6 +124,22 @@ export const MasterUnitScalarFieldEnum = {
 } as const
 
 export type MasterUnitScalarFieldEnum = (typeof MasterUnitScalarFieldEnum)[keyof typeof MasterUnitScalarFieldEnum]
+
+
+export const UnitTipeLogScalarFieldEnum = {
+  id: 'id',
+  unit_id: 'unit_id',
+  blok: 'blok',
+  tipe_lama_id: 'tipe_lama_id',
+  tipe_baru_id: 'tipe_baru_id',
+  harga_khusus_lama: 'harga_khusus_lama',
+  harga_khusus_direset: 'harga_khusus_direset',
+  alasan: 'alasan',
+  changed_by: 'changed_by',
+  created_at: 'created_at'
+} as const
+
+export type UnitTipeLogScalarFieldEnum = (typeof UnitTipeLogScalarFieldEnum)[keyof typeof UnitTipeLogScalarFieldEnum]
 
 
 export const LeadScalarFieldEnum = {
@@ -390,6 +407,14 @@ export const MasterUnitOrderByRelevanceFieldEnum = {
 } as const
 
 export type MasterUnitOrderByRelevanceFieldEnum = (typeof MasterUnitOrderByRelevanceFieldEnum)[keyof typeof MasterUnitOrderByRelevanceFieldEnum]
+
+
+export const UnitTipeLogOrderByRelevanceFieldEnum = {
+  blok: 'blok',
+  alasan: 'alasan'
+} as const
+
+export type UnitTipeLogOrderByRelevanceFieldEnum = (typeof UnitTipeLogOrderByRelevanceFieldEnum)[keyof typeof UnitTipeLogOrderByRelevanceFieldEnum]
 
 
 export const LeadOrderByRelevanceFieldEnum = {

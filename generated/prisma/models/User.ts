@@ -259,6 +259,7 @@ export type UserWhereInput = {
   inspeksi_bast?: Prisma.InspeksiBASTListRelationFilter
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogListRelationFilter
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogListRelationFilter
+  unit_tipe_logs?: Prisma.UnitTipeLogListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -282,6 +283,7 @@ export type UserOrderByWithRelationInput = {
   inspeksi_bast?: Prisma.InspeksiBASTOrderByRelationAggregateInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogOrderByRelationAggregateInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogOrderByRelationAggregateInput
+  unit_tipe_logs?: Prisma.UnitTipeLogOrderByRelationAggregateInput
   _relevance?: Prisma.UserOrderByRelevanceInput
 }
 
@@ -309,6 +311,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   inspeksi_bast?: Prisma.InspeksiBASTListRelationFilter
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogListRelationFilter
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogListRelationFilter
+  unit_tipe_logs?: Prisma.UnitTipeLogListRelationFilter
 }, "id" | "username" | "no_hp">
 
 export type UserOrderByWithAggregationInput = {
@@ -363,6 +366,7 @@ export type UserCreateInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -386,6 +390,7 @@ export type UserUncheckedCreateInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserUpdateInput = {
@@ -408,6 +413,7 @@ export type UserUpdateInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -431,6 +437,7 @@ export type UserUncheckedUpdateInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -518,14 +525,14 @@ export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
-export type UserNullableScalarRelationFilter = {
-  is?: Prisma.UserWhereInput | null
-  isNot?: Prisma.UserWhereInput | null
-}
-
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -550,6 +557,20 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type UserCreateNestedOneWithoutUnit_tipe_logsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUnit_tipe_logsInput, Prisma.UserUncheckedCreateWithoutUnit_tipe_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUnit_tipe_logsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUnit_tipe_logsInput, Prisma.UserUncheckedCreateWithoutUnit_tipe_logsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUnit_tipe_logsInput
+  upsert?: Prisma.UserUpsertWithoutUnit_tipe_logsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUnit_tipe_logsInput, Prisma.UserUpdateWithoutUnit_tipe_logsInput>, Prisma.UserUncheckedUpdateWithoutUnit_tipe_logsInput>
 }
 
 export type UserCreateNestedOneWithoutLeadsInput = {
@@ -716,6 +737,112 @@ export type UserUpdateOneWithoutPembayaran_divoidNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPembayaran_divoidInput, Prisma.UserUpdateWithoutPembayaran_divoidInput>, Prisma.UserUncheckedUpdateWithoutPembayaran_divoidInput>
 }
 
+export type UserCreateWithoutUnit_tipe_logsInput = {
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjCreateNestedManyWithoutMarketingInput
+  transaksi_logs?: Prisma.TransaksiTahapLogCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+}
+
+export type UserUncheckedCreateWithoutUnit_tipe_logsInput = {
+  id?: number
+  username: string
+  nama: string
+  no_hp: string
+  password: string
+  role: $Enums.Role
+  isActive?: boolean
+  created_at?: Date | string
+  updated_at?: Date | string
+  leads?: Prisma.LeadUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi?: Prisma.TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
+  itj_diajukan?: Prisma.ItjUncheckedCreateNestedManyWithoutMarketingInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+  aktivitas_log?: Prisma.AktivitasUncheckedCreateNestedManyWithoutUserInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+}
+
+export type UserCreateOrConnectWithoutUnit_tipe_logsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUnit_tipe_logsInput, Prisma.UserUncheckedCreateWithoutUnit_tipe_logsInput>
+}
+
+export type UserUpsertWithoutUnit_tipe_logsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUnit_tipe_logsInput, Prisma.UserUncheckedUpdateWithoutUnit_tipe_logsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUnit_tipe_logsInput, Prisma.UserUncheckedCreateWithoutUnit_tipe_logsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUnit_tipe_logsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUnit_tipe_logsInput, Prisma.UserUncheckedUpdateWithoutUnit_tipe_logsInput>
+}
+
+export type UserUpdateWithoutUnit_tipe_logsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUpdateManyWithoutMarketingNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUnit_tipe_logsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  nama?: Prisma.StringFieldUpdateOperationsInput | string
+  no_hp?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leads?: Prisma.LeadUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi?: Prisma.TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+  pembayaran_diterima?: Prisma.PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
+  itj_diajukan?: Prisma.ItjUncheckedUpdateManyWithoutMarketingNestedInput
+  transaksi_logs?: Prisma.TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+  aktivitas_log?: Prisma.AktivitasUncheckedUpdateManyWithoutUserNestedInput
+  dokumen_diverifikasi?: Prisma.DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+  pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
+  inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
+  inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+}
+
 export type UserCreateWithoutLeadsInput = {
   username: string
   nama: string
@@ -735,6 +862,7 @@ export type UserCreateWithoutLeadsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutLeadsInput = {
@@ -757,6 +885,7 @@ export type UserUncheckedCreateWithoutLeadsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutLeadsInput = {
@@ -794,6 +923,7 @@ export type UserUpdateWithoutLeadsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLeadsInput = {
@@ -816,6 +946,7 @@ export type UserUncheckedUpdateWithoutLeadsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutAktivitas_logInput = {
@@ -837,6 +968,7 @@ export type UserCreateWithoutAktivitas_logInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutAktivitas_logInput = {
@@ -859,6 +991,7 @@ export type UserUncheckedCreateWithoutAktivitas_logInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutAktivitas_logInput = {
@@ -896,6 +1029,7 @@ export type UserUpdateWithoutAktivitas_logInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAktivitas_logInput = {
@@ -918,6 +1052,7 @@ export type UserUncheckedUpdateWithoutAktivitas_logInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutItj_diajukanInput = {
@@ -939,6 +1074,7 @@ export type UserCreateWithoutItj_diajukanInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutItj_diajukanInput = {
@@ -961,6 +1097,7 @@ export type UserUncheckedCreateWithoutItj_diajukanInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutItj_diajukanInput = {
@@ -998,6 +1135,7 @@ export type UserUpdateWithoutItj_diajukanInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutItj_diajukanInput = {
@@ -1020,6 +1158,7 @@ export type UserUncheckedUpdateWithoutItj_diajukanInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutTransaksiInput = {
@@ -1041,6 +1180,7 @@ export type UserCreateWithoutTransaksiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutTransaksiInput = {
@@ -1063,6 +1203,7 @@ export type UserUncheckedCreateWithoutTransaksiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutTransaksiInput = {
@@ -1100,6 +1241,7 @@ export type UserUpdateWithoutTransaksiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransaksiInput = {
@@ -1122,6 +1264,7 @@ export type UserUncheckedUpdateWithoutTransaksiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutPengajuan_kpr_logsInput = {
@@ -1143,6 +1286,7 @@ export type UserCreateWithoutPengajuan_kpr_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutPengajuan_kpr_logsInput = {
@@ -1165,6 +1309,7 @@ export type UserUncheckedCreateWithoutPengajuan_kpr_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutPengajuan_kpr_logsInput = {
@@ -1202,6 +1347,7 @@ export type UserUpdateWithoutPengajuan_kpr_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPengajuan_kpr_logsInput = {
@@ -1224,6 +1370,7 @@ export type UserUncheckedUpdateWithoutPengajuan_kpr_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutTransaksi_logsInput = {
@@ -1245,6 +1392,7 @@ export type UserCreateWithoutTransaksi_logsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutTransaksi_logsInput = {
@@ -1267,6 +1415,7 @@ export type UserUncheckedCreateWithoutTransaksi_logsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutTransaksi_logsInput = {
@@ -1304,6 +1453,7 @@ export type UserUpdateWithoutTransaksi_logsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTransaksi_logsInput = {
@@ -1326,6 +1476,7 @@ export type UserUncheckedUpdateWithoutTransaksi_logsInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutDokumen_diverifikasiInput = {
@@ -1347,6 +1498,7 @@ export type UserCreateWithoutDokumen_diverifikasiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutDokumen_diverifikasiInput = {
@@ -1369,6 +1521,7 @@ export type UserUncheckedCreateWithoutDokumen_diverifikasiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutDokumen_diverifikasiInput = {
@@ -1406,6 +1559,7 @@ export type UserUpdateWithoutDokumen_diverifikasiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDokumen_diverifikasiInput = {
@@ -1428,6 +1582,7 @@ export type UserUncheckedUpdateWithoutDokumen_diverifikasiInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutInspeksi_bastInput = {
@@ -1449,6 +1604,7 @@ export type UserCreateWithoutInspeksi_bastInput = {
   pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutInspeksi_bastInput = {
@@ -1471,6 +1627,7 @@ export type UserUncheckedCreateWithoutInspeksi_bastInput = {
   pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutInspeksi_bastInput = {
@@ -1508,6 +1665,7 @@ export type UserUpdateWithoutInspeksi_bastInput = {
   pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInspeksi_bastInput = {
@@ -1530,6 +1688,7 @@ export type UserUncheckedUpdateWithoutInspeksi_bastInput = {
   pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutInspeksi_bast_logsInput = {
@@ -1551,6 +1710,7 @@ export type UserCreateWithoutInspeksi_bast_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranCreateNestedManyWithoutVoiderInput
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutInspeksi_bast_logsInput = {
@@ -1573,6 +1733,7 @@ export type UserUncheckedCreateWithoutInspeksi_bast_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranUncheckedCreateNestedManyWithoutVoiderInput
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutInspeksi_bast_logsInput = {
@@ -1610,6 +1771,7 @@ export type UserUpdateWithoutInspeksi_bast_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranUpdateManyWithoutVoiderNestedInput
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInspeksi_bast_logsInput = {
@@ -1632,6 +1794,7 @@ export type UserUncheckedUpdateWithoutInspeksi_bast_logsInput = {
   pembayaran_divoid?: Prisma.PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserCreateWithoutPembayaran_diterimaInput = {
@@ -1653,6 +1816,7 @@ export type UserCreateWithoutPembayaran_diterimaInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutPembayaran_diterimaInput = {
@@ -1675,6 +1839,7 @@ export type UserUncheckedCreateWithoutPembayaran_diterimaInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutPembayaran_diterimaInput = {
@@ -1701,6 +1866,7 @@ export type UserCreateWithoutPembayaran_divoidInput = {
   inspeksi_bast?: Prisma.InspeksiBASTCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogCreateNestedManyWithoutAdminInput
 }
 
 export type UserUncheckedCreateWithoutPembayaran_divoidInput = {
@@ -1723,6 +1889,7 @@ export type UserUncheckedCreateWithoutPembayaran_divoidInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
 }
 
 export type UserCreateOrConnectWithoutPembayaran_divoidInput = {
@@ -1760,6 +1927,7 @@ export type UserUpdateWithoutPembayaran_diterimaInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPembayaran_diterimaInput = {
@@ -1782,6 +1950,7 @@ export type UserUncheckedUpdateWithoutPembayaran_diterimaInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUpsertWithoutPembayaran_divoidInput = {
@@ -1814,6 +1983,7 @@ export type UserUpdateWithoutPembayaran_divoidInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUpdateManyWithoutAdminNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPembayaran_divoidInput = {
@@ -1836,6 +2006,7 @@ export type UserUncheckedUpdateWithoutPembayaran_divoidInput = {
   inspeksi_bast?: Prisma.InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
   inspeksi_bast_logs?: Prisma.InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
   pengajuan_kpr_logs?: Prisma.PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+  unit_tipe_logs?: Prisma.UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
 }
 
 
@@ -1855,6 +2026,7 @@ export type UserCountOutputType = {
   inspeksi_bast: number
   inspeksi_bast_logs: number
   pengajuan_kpr_logs: number
+  unit_tipe_logs: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1869,6 +2041,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   inspeksi_bast?: boolean | UserCountOutputTypeCountInspeksi_bastArgs
   inspeksi_bast_logs?: boolean | UserCountOutputTypeCountInspeksi_bast_logsArgs
   pengajuan_kpr_logs?: boolean | UserCountOutputTypeCountPengajuan_kpr_logsArgs
+  unit_tipe_logs?: boolean | UserCountOutputTypeCountUnit_tipe_logsArgs
 }
 
 /**
@@ -1958,6 +2131,13 @@ export type UserCountOutputTypeCountPengajuan_kpr_logsArgs<ExtArgs extends runti
   where?: Prisma.PengajuanKPRLogWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUnit_tipe_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UnitTipeLogWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1980,6 +2160,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   inspeksi_bast?: boolean | Prisma.User$inspeksi_bastArgs<ExtArgs>
   inspeksi_bast_logs?: boolean | Prisma.User$inspeksi_bast_logsArgs<ExtArgs>
   pengajuan_kpr_logs?: boolean | Prisma.User$pengajuan_kpr_logsArgs<ExtArgs>
+  unit_tipe_logs?: boolean | Prisma.User$unit_tipe_logsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2010,6 +2191,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   inspeksi_bast?: boolean | Prisma.User$inspeksi_bastArgs<ExtArgs>
   inspeksi_bast_logs?: boolean | Prisma.User$inspeksi_bast_logsArgs<ExtArgs>
   pengajuan_kpr_logs?: boolean | Prisma.User$pengajuan_kpr_logsArgs<ExtArgs>
+  unit_tipe_logs?: boolean | Prisma.User$unit_tipe_logsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -2027,6 +2209,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     inspeksi_bast: Prisma.$InspeksiBASTPayload<ExtArgs>[]
     inspeksi_bast_logs: Prisma.$InspeksiBASTLogPayload<ExtArgs>[]
     pengajuan_kpr_logs: Prisma.$PengajuanKPRLogPayload<ExtArgs>[]
+    unit_tipe_logs: Prisma.$UnitTipeLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2389,6 +2572,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   inspeksi_bast<T extends Prisma.User$inspeksi_bastArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inspeksi_bastArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inspeksi_bast_logs<T extends Prisma.User$inspeksi_bast_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inspeksi_bast_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pengajuan_kpr_logs<T extends Prisma.User$pengajuan_kpr_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pengajuan_kpr_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PengajuanKPRLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  unit_tipe_logs<T extends Prisma.User$unit_tipe_logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$unit_tipe_logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UnitTipeLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3036,6 +3220,30 @@ export type User$pengajuan_kpr_logsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.PengajuanKPRLogScalarFieldEnum | Prisma.PengajuanKPRLogScalarFieldEnum[]
+}
+
+/**
+ * User.unit_tipe_logs
+ */
+export type User$unit_tipe_logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UnitTipeLog
+   */
+  select?: Prisma.UnitTipeLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UnitTipeLog
+   */
+  omit?: Prisma.UnitTipeLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UnitTipeLogInclude<ExtArgs> | null
+  where?: Prisma.UnitTipeLogWhereInput
+  orderBy?: Prisma.UnitTipeLogOrderByWithRelationInput | Prisma.UnitTipeLogOrderByWithRelationInput[]
+  cursor?: Prisma.UnitTipeLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UnitTipeLogScalarFieldEnum | Prisma.UnitTipeLogScalarFieldEnum[]
 }
 
 /**

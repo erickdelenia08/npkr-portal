@@ -1,18 +1,19 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import Link from "next/link";
 import {
   Edit2,
   Trash2,
   Building2,
   Loader2,
   Lock,
+  PlusCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import {
-  SerializedMasterTipe,
-  deleteMasterTipe,
-} from "@/actions/master-unit.action";
+import { deleteMasterTipe } from "@/actions/master-unit.action";
+import type { SerializedMasterTipe } from "@/actions/master-unit.action";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface MasterTipeTableProps {
   data: SerializedMasterTipe[];
@@ -27,10 +28,10 @@ export function MasterTipeTable({
   onRefresh,
   isAdmin = true,
 }: MasterTipeTableProps) {
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<SerializedMasterTipe | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const handleDelete = (tipe: SerializedMasterTipe) => {
+  const handleOpenDelete = (tipe: SerializedMasterTipe) => {
     const unitCount = tipe.jumlah_unit ?? tipe._count?.units ?? 0;
     if (unitCount > 0) {
       toast.error(
@@ -38,30 +39,25 @@ export function MasterTipeTable({
       );
       return;
     }
+    setDeleteTarget(tipe);
+  };
 
-    if (
-      !window.confirm(
-        `Apakah Anda yakin ingin menghapus tipe '${tipe.nama_tipe}'?`
-      )
-    ) {
-      return;
-    }
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
 
-    setDeleteId(tipe.id);
     startTransition(async () => {
       try {
-        const res = await deleteMasterTipe(tipe.id);
+        const res = await deleteMasterTipe(deleteTarget.id);
         if (res.success) {
           toast.success(res.message);
+          setDeleteTarget(null);
           onRefresh();
         } else {
           toast.error(res.message);
         }
       } catch (error: unknown) {
-        const msg = error instanceof Error ? error.message : "Gagal menghapus";
+        const msg = error instanceof Error ? error.message : "Gagal menghapus tipe";
         toast.error(msg);
-      } finally {
-        setDeleteId(null);
       }
     });
   };
@@ -96,125 +92,152 @@ export function MasterTipeTable({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          {/* Table Header */}
-          <thead className="bg-bone/60 border-b border-mist text-slate font-semibold uppercase tracking-wider">
-            <tr>
-              <th className="px-5 py-3.5">Nama Tipe</th>
-              <th className="px-5 py-3.5">Kategori</th>
-              <th className="px-5 py-3.5">Luas (Bangunan / Tanah)</th>
-              <th className="px-5 py-3.5">Harga Dasar</th>
-              <th className="px-5 py-3.5 text-center">Dipakai Unit</th>
-              {isAdmin && <th className="px-5 py-3.5 text-right">Aksi</th>}
-            </tr>
-          </thead>
+    <>
+      <div className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            {/* Table Header */}
+            <thead className="bg-bone/60 border-b border-mist text-slate font-semibold uppercase tracking-wider">
+              <tr>
+                <th className="px-5 py-3.5">Nama Tipe</th>
+                <th className="px-5 py-3.5">Kategori</th>
+                <th className="px-5 py-3.5">Luas (Bangunan / Tanah)</th>
+                <th className="px-5 py-3.5">Harga Dasar</th>
+                <th className="px-5 py-3.5 text-center">Dipakai Unit</th>
+                {isAdmin && <th className="px-5 py-3.5 text-right">Aksi</th>}
+              </tr>
+            </thead>
 
-          {/* Table Body */}
-          <tbody className="divide-y divide-mist">
-            {data.map((tipe) => {
-              const unitCount = tipe.jumlah_unit ?? tipe._count?.units ?? 0;
-              const formattedPrice = new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-                maximumFractionDigits: 0,
-              }).format(tipe.harga_dasar);
+            {/* Table Body */}
+            <tbody className="divide-y divide-mist">
+              {data.map((tipe) => {
+                const unitCount = tipe.jumlah_unit ?? tipe._count?.units ?? 0;
+                const formattedPrice = new Intl.NumberFormat("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                  maximumFractionDigits: 0,
+                }).format(tipe.harga_dasar);
 
-              return (
-                <tr
-                  key={tipe.id}
-                  className="hover:bg-bone/40 transition-colors"
-                >
-                  {/* Nama Tipe */}
-                  <td className="px-5 py-3.5">
-                    <span className="font-semibold text-carbon-ink text-sm font-mono">
-                      {tipe.nama_tipe}
-                    </span>
-                  </td>
-
-                  {/* Kategori */}
-                  <td className="px-5 py-3.5">
-                    <span
-                      className={`inline-flex px-2 py-0.5 rounded text-[11px] font-semibold border ${getKategoriBadge(
-                        tipe.kategori
-                      )}`}
-                    >
-                      {tipe.kategori}
-                    </span>
-                  </td>
-
-                  {/* Luas */}
-                  <td className="px-5 py-3.5 text-slate font-medium">
-                    {tipe.kategori === "KAVLING" ? (
-                      <span>
-                        <span className="text-fog">0 (Kavling)</span> / {tipe.luas_tanah} m²
+                return (
+                  <tr
+                    key={tipe.id}
+                    className="hover:bg-bone/40 transition-colors"
+                  >
+                    {/* Nama Tipe */}
+                    <td className="px-5 py-3.5">
+                      <span className="font-semibold text-carbon-ink text-sm font-mono">
+                        {tipe.nama_tipe}
                       </span>
-                    ) : (
-                      <span>
-                        {tipe.luas_bangunan || 0} m² / {tipe.luas_tanah} m²
-                      </span>
-                    )}
-                  </td>
-
-                  {/* Harga Dasar */}
-                  <td className="px-5 py-3.5 font-mono font-semibold text-deep-teal">
-                    {formattedPrice}
-                  </td>
-
-                  {/* Jumlah Unit Dipakai */}
-                  <td className="px-5 py-3.5 text-center">
-                    <span
-                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        unitCount > 0
-                          ? "bg-teal-50 text-deep-teal border border-teal-200"
-                          : "bg-bone text-slate"
-                      }`}
-                    >
-                      {unitCount > 0 && <Lock className="w-3 h-3" />}
-                      <span>{unitCount} unit</span>
-                    </span>
-                  </td>
-
-                  {/* Actions */}
-                  {isAdmin && (
-                    <td className="px-5 py-3.5 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => onEdit(tipe)}
-                          className="p-1.5 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
-                          title="Edit Tipe"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(tipe)}
-                          disabled={(isPending && deleteId === tipe.id) || unitCount > 0}
-                          className="p-1.5 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                          title={
-                            unitCount > 0
-                              ? `Tidak bisa dihapus: masih digunakan oleh ${unitCount} unit`
-                              : "Hapus Tipe"
-                          }
-                        >
-                          {isPending && deleteId === tipe.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
                     </td>
-                  )}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+
+                    {/* Kategori */}
+                    <td className="px-5 py-3.5">
+                      <span
+                        className={`inline-flex px-2 py-0.5 rounded text-[11px] font-semibold border ${getKategoriBadge(
+                          tipe.kategori
+                        )}`}
+                      >
+                        {tipe.kategori}
+                      </span>
+                    </td>
+
+                    {/* Luas */}
+                    <td className="px-5 py-3.5 text-slate font-medium">
+                      {tipe.kategori === "KAVLING" ? (
+                        <span>
+                          <span className="text-fog">0 (Kavling)</span> / {tipe.luas_tanah} m²
+                        </span>
+                      ) : (
+                        <span>
+                          {tipe.luas_bangunan || 0} m² / {tipe.luas_tanah} m²
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Harga Dasar */}
+                    <td className="px-5 py-3.5 font-mono font-semibold text-deep-teal">
+                      {formattedPrice}
+                    </td>
+
+                    {/* Jumlah Unit Dipakai */}
+                    <td className="px-5 py-3.5 text-center">
+                      <span
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          unitCount > 0
+                            ? "bg-teal-50 text-deep-teal border border-teal-200"
+                            : "bg-bone text-slate"
+                        }`}
+                      >
+                        {unitCount > 0 && <Lock className="w-3 h-3" />}
+                        <span>{unitCount} unit</span>
+                      </span>
+                    </td>
+
+                    {/* Actions */}
+                    {isAdmin && (
+                      <td className="px-5 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* Buat unit dari tipe ini */}
+                          <Link
+                            href={`/admin/master-unit/setup?tipeId=${tipe.id}`}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-teal-50 hover:bg-teal-100/80 text-deep-teal text-[11px] font-semibold transition-colors border border-teal-200/80"
+                            title="Buat unit baru di wizard menggunakan tipe ini"
+                          >
+                            <PlusCircle className="w-3.5 h-3.5 text-prism-teal" />
+                            <span>Buat Unit</span>
+                          </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => onEdit(tipe)}
+                            className="p-1.5 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
+                            title="Edit Tipe"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleOpenDelete(tipe)}
+                            disabled={unitCount > 0}
+                            className="p-1.5 rounded-md text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                            title={
+                              unitCount > 0
+                                ? `Tidak bisa dihapus: masih digunakan oleh ${unitCount} unit`
+                                : "Hapus Tipe"
+                            }
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        title="Hapus Master Tipe"
+        description={
+          deleteTarget ? (
+            <span>
+              Apakah Anda yakin ingin menghapus tipe <strong>{deleteTarget.nama_tipe}</strong>?
+              Tindakan ini tidak dapat dibatalkan.
+            </span>
+          ) : null
+        }
+        confirmLabel="Hapus Tipe"
+        tone="danger"
+        pending={isPending}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+    </>
   );
 }

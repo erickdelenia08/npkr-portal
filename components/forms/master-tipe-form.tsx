@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useMemo, useId } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
-  X,
   Loader2,
   Building2,
   CheckCircle2,
@@ -21,9 +20,17 @@ import {
 import {
   createMasterTipe,
   updateMasterTipe,
-  SerializedMasterTipe,
 } from "@/actions/master-unit.action";
+import type { SerializedMasterTipe } from "@/actions/master-unit.action";
 import { buildNamaTipe } from "@/lib/tipe-name";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { CurrencyInput } from "@/components/ui/currency-input";
 
 interface MasterTipeFormProps {
   initialData?: SerializedMasterTipe | null;
@@ -31,6 +38,9 @@ interface MasterTipeFormProps {
   onClose: () => void;
   onSuccess: () => void;
   existingTipeList?: SerializedMasterTipe[];
+  presetKategori?: KategoriUnitType;
+  presetLuasTanah?: number;
+  onCreated?: (tipe: SerializedMasterTipe) => void;
 }
 
 export function MasterTipeForm({
@@ -39,10 +49,21 @@ export function MasterTipeForm({
   onClose,
   onSuccess,
   existingTipeList = [],
+  presetKategori,
+  presetLuasTanah,
+  onCreated,
 }: MasterTipeFormProps) {
   const isEditing = Boolean(initialData);
   const unitsCount = initialData?.jumlah_unit ?? initialData?._count?.units ?? 0;
   const isUsedByUnits = isEditing && unitsCount > 0;
+
+  const isKategoriLocked = isUsedByUnits || Boolean(presetKategori);
+  const isLuasTanahLocked = isUsedByUnits || Boolean(presetLuasTanah);
+
+  const baseId = useId();
+  const lbId = `${baseId}-lb`;
+  const ltId = `${baseId}-lt`;
+  const hargaId = `${baseId}-harga`;
 
   const {
     register,
@@ -50,14 +71,15 @@ export function MasterTipeForm({
     watch,
     reset,
     setValue,
+    control,
     formState: { errors, isSubmitting, isValid },
   } = useForm<MasterTipeInput>({
     resolver: zodResolver(masterTipeSchema),
     mode: "onChange",
     defaultValues: {
-      kategori: "KOMERSIL",
+      kategori: presetKategori || "KOMERSIL",
       luas_bangunan: undefined,
-      luas_tanah: undefined,
+      luas_tanah: presetLuasTanah || undefined,
       harga_dasar: undefined,
     },
   });
@@ -68,6 +90,8 @@ export function MasterTipeForm({
   const hargaDasarValue = watch("harga_dasar");
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (initialData) {
       reset({
         kategori: initialData.kategori,
@@ -77,26 +101,31 @@ export function MasterTipeForm({
       });
     } else {
       reset({
-        kategori: "KOMERSIL",
-        luas_bangunan: undefined,
-        luas_tanah: undefined,
+        kategori: presetKategori || "KOMERSIL",
+        luas_bangunan: presetKategori === "KAVLING" ? 0 : undefined,
+        luas_tanah: presetLuasTanah || undefined,
         harga_dasar: undefined,
       });
     }
-  }, [initialData, reset, isOpen]);
+  }, [initialData, reset, isOpen, presetKategori, presetLuasTanah]);
 
-  // If kategori changes to KAVLING, automatically set luas_bangunan to 0
+  // If kategori is KAVLING, automatically set luas_bangunan to 0
   useEffect(() => {
     if (selectedKategori === "KAVLING") {
       setValue("luas_bangunan", 0, { shouldValidate: true });
     }
   }, [selectedKategori, setValue]);
 
-  // Live preview of derived nama_tipe
+  // Derived nama preview: show KOMERSIL-…/… until both luas fields are filled
   const derivedNama = useMemo(() => {
-    const lb = selectedKategori === "KAVLING" ? 0 : Number(luasBangunanValue || 0);
-    const lt = Number(luasTanahValue || 0);
-    return buildNamaTipe(selectedKategori || "KOMERSIL", lb, lt);
+    const kat = selectedKategori || "KOMERSIL";
+    const lb = kat === "KAVLING" ? 0 : luasBangunanValue;
+    const lt = luasTanahValue;
+
+    if ((lb === undefined || lb === null || isNaN(Number(lb))) || !lt || isNaN(Number(lt))) {
+      return `${kat}-…/…`;
+    }
+    return buildNamaTipe(kat, Number(lb), Number(lt));
   }, [selectedKategori, luasBangunanValue, luasTanahValue]);
 
   // Duplicate detection in existing tipe list
@@ -114,8 +143,6 @@ export function MasterTipeForm({
       );
     });
   }, [existingTipeList, initialData, selectedKategori, luasBangunanValue, luasTanahValue]);
-
-  if (!isOpen) return null;
 
   const onSubmit = async (data: MasterTipeInput) => {
     if (isDuplicate) {
@@ -135,8 +162,9 @@ export function MasterTipeForm({
         }
       } else {
         const res = await createMasterTipe(data);
-        if (res.success) {
+        if (res.success && res.data) {
           toast.success(res.message);
+          onCreated?.(res.data);
           onSuccess();
           onClose();
         } else {
@@ -149,45 +177,25 @@ export function MasterTipeForm({
     }
   };
 
-  const formattedHarga =
-    hargaDasarValue && !isNaN(Number(hargaDasarValue))
-      ? new Intl.NumberFormat("id-ID", {
-          style: "currency",
-          currency: "IDR",
-          maximumFractionDigits: 0,
-        }).format(Number(hargaDasarValue))
-      : "-";
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-in fade-in duration-150"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div className="relative w-full max-w-lg bg-white rounded-lg border border-mist shadow-xl overflow-hidden">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-mist bg-bone/30">
+        <DialogHeader className="px-6 py-4 border-b border-mist bg-bone/30">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-md bg-teal-50 text-prism-teal flex items-center justify-center">
               <Building2 className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-carbon-ink tracking-tight font-heading">
+              <DialogTitle className="text-base font-bold text-carbon-ink tracking-tight font-heading">
                 {isEditing ? "Edit Spesifikasi Tipe" : "Tambah Tipe Unit Baru"}
-              </h2>
-              <p className="text-xs text-slate">
+              </DialogTitle>
+              <DialogDescription className="text-xs text-slate">
                 Nama tipe otomatis dibuat berdasarkan kombinasi Kategori dan Luas (LB/LT)
-              </p>
+              </DialogDescription>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1 rounded-md text-slate hover:text-graphite hover:bg-bone transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        </DialogHeader>
 
         {/* Form Body */}
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
@@ -209,7 +217,7 @@ export function MasterTipeForm({
             </span>
           </div>
 
-          {/* Used By Units Warning Banner (if editing existing type) */}
+          {/* Used By Units Warning Banner */}
           {isUsedByUnits && (
             <div className="p-3 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-800 space-y-1">
               <div className="flex items-center gap-1.5 font-semibold text-amber-900">
@@ -239,37 +247,44 @@ export function MasterTipeForm({
               <label className="text-xs font-semibold text-graphite flex items-center gap-1">
                 <span>Kategori Properti</span>
                 <span className="text-rose-500">*</span>
-                {isUsedByUnits && <Lock className="w-3 h-3 text-slate ml-1" />}
+                {isKategoriLocked && <Lock className="w-3 h-3 text-slate ml-1" />}
               </label>
-              {isUsedByUnits && (
-                <span className="text-[10px] text-slate font-medium">Terkunci (Dipakai unit)</span>
+              {isKategoriLocked && (
+                <span className="text-[10px] text-slate font-medium">
+                  {isUsedByUnits ? "Terkunci (Dipakai unit)" : "Terkunci (Sesuai Siteplan)"}
+                </span>
               )}
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              {(["SUBSIDI", "KOMERSIL", "KAVLING"] as KategoriUnitType[]).map((kat) => (
-                <label
-                  key={kat}
-                  className={`flex items-center justify-center gap-2 p-2.5 rounded-md border text-xs font-semibold transition-all ${
-                    isUsedByUnits
-                      ? selectedKategori === kat
-                        ? "border-mist bg-bone text-carbon-ink cursor-not-allowed"
-                        : "border-mist bg-bone/40 text-fog cursor-not-allowed"
-                      : selectedKategori === kat
-                      ? "border-prism-teal bg-teal-50 text-deep-teal cursor-pointer"
-                      : "border-mist bg-white text-slate hover:bg-bone cursor-pointer"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    value={kat}
-                    disabled={isUsedByUnits}
-                    {...register("kategori")}
-                    className="sr-only"
-                  />
-                  <span>{kat}</span>
-                </label>
-              ))}
-            </div>
+
+            {isKategoriLocked ? (
+              <div className="p-2.5 rounded-md border border-mist bg-bone/60 flex items-center justify-between">
+                <span className="text-xs font-semibold text-carbon-ink">{selectedKategori}</span>
+                <span className="text-[10px] text-slate">Nilai terkunci</span>
+                {/* Hidden input to ensure react-hook-form value is preserved */}
+                <input type="hidden" {...register("kategori")} />
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {(["SUBSIDI", "KOMERSIL", "KAVLING"] as KategoriUnitType[]).map((kat) => (
+                  <label
+                    key={kat}
+                    className={`flex items-center justify-center gap-2 p-2.5 rounded-md border text-xs font-semibold transition-all focus-within:ring-2 focus-within:ring-prism-teal focus-within:outline-none cursor-pointer ${
+                      selectedKategori === kat
+                        ? "border-prism-teal bg-teal-50 text-deep-teal font-bold shadow-xs"
+                        : "border-mist bg-white text-slate hover:bg-bone"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      value={kat}
+                      {...register("kategori")}
+                      className="sr-only"
+                    />
+                    <span>{kat}</span>
+                  </label>
+                ))}
+              </div>
+            )}
             {errors.kategori && (
               <p className="text-xs text-rose-500 mt-1">{errors.kategori.message}</p>
             )}
@@ -279,28 +294,30 @@ export function MasterTipeForm({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-graphite">
+                <label htmlFor={lbId} className="text-xs font-semibold text-graphite">
                   Luas Bangunan (m²) <span className="text-rose-500">*</span>
                 </label>
                 {selectedKategori === "KAVLING" && (
                   <span className="text-[10px] text-prism-teal font-medium">0 (Kavling)</span>
                 )}
               </div>
-              <input
-                type="number"
-                min={0}
-                placeholder={selectedKategori === "KAVLING" ? "0" : "cth: 36"}
-                disabled={selectedKategori === "KAVLING"}
-                {...register("luas_bangunan", {
-                  setValueAs: (v) =>
-                    selectedKategori === "KAVLING"
-                      ? 0
-                      : v === "" || v === null || isNaN(v)
-                      ? undefined
-                      : Number(v),
-                })}
-                className="w-full px-3 py-2 text-sm rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal disabled:bg-bone disabled:cursor-not-allowed transition-all"
-              />
+              {selectedKategori === "KAVLING" ? (
+                <div className="px-3 py-2 text-sm rounded-md border border-mist bg-bone text-slate font-mono">
+                  0
+                  <input type="hidden" {...register("luas_bangunan", { valueAsNumber: true })} />
+                </div>
+              ) : (
+                <input
+                  id={lbId}
+                  type="number"
+                  min={0}
+                  placeholder="cth: 36"
+                  {...register("luas_bangunan", {
+                    setValueAs: (v) => (v === "" || v === null || isNaN(v) ? undefined : Number(v)),
+                  })}
+                  className="w-full px-3 py-2 text-sm rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal transition-all"
+                />
+              )}
               {errors.luas_bangunan && (
                 <p className="text-xs text-rose-500 mt-1">{errors.luas_bangunan.message}</p>
               )}
@@ -308,49 +325,56 @@ export function MasterTipeForm({
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-graphite flex items-center gap-1">
+                <label htmlFor={ltId} className="text-xs font-semibold text-graphite flex items-center gap-1">
                   <span>Luas Tanah (m²)</span>
                   <span className="text-rose-500">*</span>
-                  {isUsedByUnits && <Lock className="w-3 h-3 text-slate ml-1" />}
+                  {isLuasTanahLocked && <Lock className="w-3 h-3 text-slate ml-1" />}
                 </label>
-                {isUsedByUnits && (
+                {isLuasTanahLocked && (
                   <span className="text-[10px] text-slate font-medium">Terkunci</span>
                 )}
               </div>
-              <input
-                type="number"
-                min={1}
-                placeholder="cth: 72"
-                disabled={isUsedByUnits}
-                {...register("luas_tanah", {
-                  setValueAs: (v) => (v === "" || v === null || isNaN(v) ? undefined : Number(v)),
-                })}
-                className="w-full px-3 py-2 text-sm rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal disabled:bg-bone disabled:cursor-not-allowed transition-all"
-              />
+              {isLuasTanahLocked ? (
+                <div className="px-3 py-2 text-sm rounded-md border border-mist bg-bone text-carbon-ink font-mono">
+                  {luasTanahValue}
+                  <input type="hidden" {...register("luas_tanah", { valueAsNumber: true })} />
+                </div>
+              ) : (
+                <input
+                  id={ltId}
+                  type="number"
+                  min={1}
+                  placeholder="cth: 72"
+                  {...register("luas_tanah", {
+                    setValueAs: (v) => (v === "" || v === null || isNaN(v) ? undefined : Number(v)),
+                  })}
+                  className="w-full px-3 py-2 text-sm rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal transition-all"
+                />
+              )}
               {errors.luas_tanah && (
                 <p className="text-xs text-rose-500 mt-1">{errors.luas_tanah.message}</p>
               )}
             </div>
           </div>
 
-          {/* Harga Dasar */}
+          {/* Harga Dasar (Using CurrencyInput) */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-semibold text-graphite">
-                Harga Dasar Unit (Rp) <span className="text-rose-500">*</span>
+              <label htmlFor={hargaId} className="text-xs font-semibold text-graphite">
+                Harga Dasar Unit <span className="text-rose-500">*</span>
               </label>
-              <span className="text-xs font-mono font-semibold text-deep-teal">
-                {formattedHarga}
-              </span>
             </div>
-            <input
-              type="number"
-              step="1000000"
-              placeholder="cth: 150000000"
-              {...register("harga_dasar", {
-                setValueAs: (v) => (v === "" || v === null || isNaN(v) ? undefined : Number(v)),
-              })}
-              className="w-full px-3 py-2 text-sm font-mono rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal transition-all"
+            <Controller
+              control={control}
+              name="harga_dasar"
+              render={({ field }) => (
+                <CurrencyInput
+                  id={hargaId}
+                  placeholder="cth: 150.000.000"
+                  value={field.value}
+                  onChange={(val) => field.onChange(val || undefined)}
+                />
+              )}
             />
             {errors.harga_dasar && (
               <p className="text-xs text-rose-500 mt-1">{errors.harga_dasar.message}</p>
@@ -386,7 +410,7 @@ export function MasterTipeForm({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

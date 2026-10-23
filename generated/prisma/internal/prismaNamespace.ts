@@ -400,6 +400,7 @@ export const ModelName = {
   User: 'User',
   MasterTipe: 'MasterTipe',
   MasterUnit: 'MasterUnit',
+  UnitTipeLog: 'UnitTipeLog',
   Lead: 'Lead',
   Aktivitas: 'Aktivitas',
   Itj: 'Itj',
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "masterTipe" | "masterUnit" | "lead" | "aktivitas" | "itj" | "customer" | "transaksi" | "bank" | "pengajuanKPR" | "pengajuanKPRLog" | "transaksiTahapLog" | "dokumenTransaksi" | "inspeksiBAST" | "inspeksiBASTLog" | "pembayaran"
+    modelProps: "user" | "masterTipe" | "masterUnit" | "unitTipeLog" | "lead" | "aktivitas" | "itj" | "customer" | "transaksi" | "bank" | "pengajuanKPR" | "pengajuanKPRLog" | "transaksiTahapLog" | "dokumenTransaksi" | "inspeksiBAST" | "inspeksiBASTLog" | "pembayaran"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -627,6 +628,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.MasterUnitCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.MasterUnitCountAggregateOutputType> | number
+        }
+      }
+    }
+    UnitTipeLog: {
+      payload: Prisma.$UnitTipeLogPayload<ExtArgs>
+      fields: Prisma.UnitTipeLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UnitTipeLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UnitTipeLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload>
+        }
+        findFirst: {
+          args: Prisma.UnitTipeLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UnitTipeLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload>
+        }
+        findMany: {
+          args: Prisma.UnitTipeLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload>[]
+        }
+        create: {
+          args: Prisma.UnitTipeLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload>
+        }
+        createMany: {
+          args: Prisma.UnitTipeLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.UnitTipeLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload>
+        }
+        update: {
+          args: Prisma.UnitTipeLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.UnitTipeLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UnitTipeLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.UnitTipeLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UnitTipeLogPayload>
+        }
+        aggregate: {
+          args: Prisma.UnitTipeLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUnitTipeLog>
+        }
+        groupBy: {
+          args: Prisma.UnitTipeLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UnitTipeLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UnitTipeLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UnitTipeLogCountAggregateOutputType> | number
         }
       }
     }
@@ -1567,6 +1634,22 @@ export const MasterUnitScalarFieldEnum = {
 export type MasterUnitScalarFieldEnum = (typeof MasterUnitScalarFieldEnum)[keyof typeof MasterUnitScalarFieldEnum]
 
 
+export const UnitTipeLogScalarFieldEnum = {
+  id: 'id',
+  unit_id: 'unit_id',
+  blok: 'blok',
+  tipe_lama_id: 'tipe_lama_id',
+  tipe_baru_id: 'tipe_baru_id',
+  harga_khusus_lama: 'harga_khusus_lama',
+  harga_khusus_direset: 'harga_khusus_direset',
+  alasan: 'alasan',
+  changed_by: 'changed_by',
+  created_at: 'created_at'
+} as const
+
+export type UnitTipeLogScalarFieldEnum = (typeof UnitTipeLogScalarFieldEnum)[keyof typeof UnitTipeLogScalarFieldEnum]
+
+
 export const LeadScalarFieldEnum = {
   id: 'id',
   marketing_id: 'marketing_id',
@@ -1832,6 +1915,14 @@ export const MasterUnitOrderByRelevanceFieldEnum = {
 } as const
 
 export type MasterUnitOrderByRelevanceFieldEnum = (typeof MasterUnitOrderByRelevanceFieldEnum)[keyof typeof MasterUnitOrderByRelevanceFieldEnum]
+
+
+export const UnitTipeLogOrderByRelevanceFieldEnum = {
+  blok: 'blok',
+  alasan: 'alasan'
+} as const
+
+export type UnitTipeLogOrderByRelevanceFieldEnum = (typeof UnitTipeLogOrderByRelevanceFieldEnum)[keyof typeof UnitTipeLogOrderByRelevanceFieldEnum]
 
 
 export const LeadOrderByRelevanceFieldEnum = {
@@ -2276,6 +2367,7 @@ export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   masterTipe?: Prisma.MasterTipeOmit
   masterUnit?: Prisma.MasterUnitOmit
+  unitTipeLog?: Prisma.UnitTipeLogOmit
   lead?: Prisma.LeadOmit
   aktivitas?: Prisma.AktivitasOmit
   itj?: Prisma.ItjOmit

@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import Link from "next/link";
 import {
   Search,
   Grid,
   Map,
   Building2,
-  Sparkles,
   Info,
   X,
   ZoomIn,
@@ -16,37 +14,20 @@ import {
   Layers,
   ChevronRight,
 } from "lucide-react";
-import { SerializedMasterUnit } from "@/actions/master-unit.action";
+import type { SerializedMasterUnit } from "@/actions/master-unit.action";
 import {
   InteractiveSiteplanSvg,
   UnregisteredPlot,
 } from "@/components/shared/InteractiveSiteplanSvg";
 
-const ALL_BLOCKS = [
-  "ALL",
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "J",
-  "K",
-  "L",
-  "M",
-  "N",
-  "O",
-  "Q",
-  "R",
-];
-
 interface UnitInventoryViewerProps {
   units: SerializedMasterUnit[];
   title?: string;
   subtitle?: string;
+  projectName?: string;
+  actionInstruction?: string;
+  hideHeader?: boolean;
+  showListView?: boolean;
   onChangeTipe?: (unit: SerializedMasterUnit) => void;
 }
 
@@ -54,6 +35,10 @@ export function UnitInventoryViewer({
   units,
   title = "Inventaris Unit & Siteplan Visual",
   subtitle = "Monitoring ketersediaan unit dan visualisasi siteplan",
+  projectName = "New Puri Kencana",
+  actionInstruction = "melihat detail harga & membuat ITJ",
+  hideHeader = false,
+  showListView = true,
   onChangeTipe,
 }: UnitInventoryViewerProps) {
   // View Toggle: "siteplan" | "list"
@@ -72,6 +57,23 @@ export function UnitInventoryViewer({
   const [selectedUnit, setSelectedUnit] = useState<SerializedMasterUnit | null>(null);
   const [unregisteredPlot, setUnregisteredPlot] = useState<UnregisteredPlot | null>(null);
   const [hoveredUnit, setHoveredUnit] = useState<SerializedMasterUnit | null>(null);
+
+  // Dynamic Block List derived from registered units (natural alphanumeric sort)
+  const blockList = useMemo(() => {
+    const prefixSet = new Set<string>();
+    units.forEach((u) => {
+      const match = u.blok.match(/^([A-Za-z0-9]+)-/);
+      if (match) {
+        prefixSet.add(match[1].toUpperCase());
+      }
+    });
+
+    const sorted = Array.from(prefixSet).sort((a, b) =>
+      a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" })
+    );
+
+    return ["ALL", ...sorted];
+  }, [units]);
 
   // Status Counts
   const counts = useMemo(() => {
@@ -136,51 +138,53 @@ export function UnitInventoryViewer({
     }).format(amount);
   };
 
-  const activeUnitInfo = selectedUnit || hoveredUnit;
-
   return (
     <div className="space-y-4">
-      {/* Header & Controls Bar */}
-      <div className="bg-white p-5 rounded-lg border border-mist shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl md:text-2xl font-bold text-carbon-ink tracking-tight font-heading">
-            {title}
-          </h1>
-          <p className="text-xs md:text-sm text-slate mt-0.5">{subtitle}</p>
-        </div>
+      {/* Optional Header & Controls Bar */}
+      {!hideHeader && (
+        <div className="bg-white p-5 rounded-lg border border-mist shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold text-carbon-ink tracking-tight font-heading">
+              {title}
+            </h1>
+            <p className="text-xs md:text-sm text-slate mt-0.5">{subtitle}</p>
+          </div>
 
-        {/* View Mode Switcher (List vs Siteplan) */}
-        <div className="inline-flex p-1 rounded-lg bg-bone border border-mist self-start md:self-auto">
-          <button
-            type="button"
-            onClick={() => setActiveView("siteplan")}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
-              activeView === "siteplan"
-                ? "bg-white text-carbon-ink shadow-xs"
-                : "text-slate hover:text-graphite"
-            }`}
-          >
-            <Map className="w-4 h-4 text-prism-teal" />
-            <span>Siteplan View</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveView("list")}
-            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
-              activeView === "list"
-                ? "bg-white text-carbon-ink shadow-xs"
-                : "text-slate hover:text-graphite"
-            }`}
-          >
-            <Grid className="w-4 h-4" />
-            <span>List View</span>
-          </button>
+          {/* View Mode Switcher (List vs Siteplan) */}
+          {showListView && (
+            <div className="inline-flex p-1 rounded-lg bg-bone border border-mist self-start md:self-auto">
+              <button
+                type="button"
+                onClick={() => setActiveView("siteplan")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                  activeView === "siteplan"
+                    ? "bg-white text-carbon-ink shadow-xs"
+                    : "text-slate hover:text-graphite"
+                }`}
+              >
+                <Map className="w-4 h-4 text-prism-teal" />
+                <span>Siteplan View</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveView("list")}
+                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold transition-all ${
+                  activeView === "list"
+                    ? "bg-white text-carbon-ink shadow-xs"
+                    : "text-slate hover:text-graphite"
+                }`}
+              >
+                <Grid className="w-4 h-4" />
+                <span>List View</span>
+              </button>
+            </div>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Summary Stat Badges & Filters */}
       <div className="bg-white p-4 rounded-lg border border-mist shadow-subtle space-y-4">
-        {/* Quick Legend & Metrics */}
+        {/* Quick Legend & Metrics as real accessible buttons */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-semibold">
           <div className="p-2.5 rounded-md border border-mist bg-bone/40 flex items-center justify-between">
             <span className="text-slate">Total Unit Master</span>
@@ -189,11 +193,13 @@ export function UnitInventoryViewer({
             </span>
           </div>
 
-          <div
+          <button
+            type="button"
+            aria-pressed={statusFilter === "AVAILABLE"}
             onClick={() => setStatusFilter(statusFilter === "AVAILABLE" ? "ALL" : "AVAILABLE")}
-            className={`p-2.5 rounded-md border cursor-pointer transition-all flex items-center justify-between ${
+            className={`p-2.5 rounded-md border cursor-pointer transition-all flex items-center justify-between outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
               statusFilter === "AVAILABLE"
-                ? "border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500"
+                ? "border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500 shadow-xs"
                 : "border-emerald-200 bg-emerald-50/60 hover:bg-emerald-50 text-emerald-800"
             }`}
           >
@@ -202,15 +208,17 @@ export function UnitInventoryViewer({
               <span>AVAILABLE</span>
             </div>
             <span className="font-mono font-bold">{counts.available}</span>
-          </div>
+          </button>
 
-          <div
+          <button
+            type="button"
+            aria-pressed={statusFilter === "HOLD_BOOKED"}
             onClick={() =>
               setStatusFilter(statusFilter === "HOLD_BOOKED" ? "ALL" : "HOLD_BOOKED")
             }
-            className={`p-2.5 rounded-md border cursor-pointer transition-all flex items-center justify-between ${
+            className={`p-2.5 rounded-md border cursor-pointer transition-all flex items-center justify-between outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
               statusFilter === "HOLD_BOOKED"
-                ? "border-amber-500 bg-amber-50 ring-1 ring-amber-500"
+                ? "border-amber-500 bg-amber-50 ring-1 ring-amber-500 shadow-xs"
                 : "border-amber-200 bg-amber-50/60 hover:bg-amber-50 text-amber-800"
             }`}
           >
@@ -219,13 +227,15 @@ export function UnitInventoryViewer({
               <span>HOLD / BOOKED</span>
             </div>
             <span className="font-mono font-bold">{counts.holdBooked}</span>
-          </div>
+          </button>
 
-          <div
+          <button
+            type="button"
+            aria-pressed={statusFilter === "SOLD"}
             onClick={() => setStatusFilter(statusFilter === "SOLD" ? "ALL" : "SOLD")}
-            className={`p-2.5 rounded-md border cursor-pointer transition-all flex items-center justify-between ${
+            className={`p-2.5 rounded-md border cursor-pointer transition-all flex items-center justify-between outline-none focus-visible:ring-2 focus-visible:ring-slate-500 ${
               statusFilter === "SOLD"
-                ? "border-slate-500 bg-slate-100 ring-1 ring-slate-500"
+                ? "border-slate-500 bg-slate-100 ring-1 ring-slate-500 shadow-xs"
                 : "border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800"
             }`}
           >
@@ -234,7 +244,7 @@ export function UnitInventoryViewer({
               <span>SOLD</span>
             </div>
             <span className="font-mono font-bold">{counts.sold}</span>
-          </div>
+          </button>
         </div>
 
         {/* Global Filter Bar */}
@@ -294,27 +304,29 @@ export function UnitInventoryViewer({
           </div>
         </div>
 
-        {/* Quick Block Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-thin text-xs">
-          <span className="text-slate flex items-center gap-1 font-semibold text-[11px] shrink-0 mr-1">
-            <Layers className="w-3.5 h-3.5 text-prism-teal" />
-            <span>Pilih Blok:</span>
-          </span>
-          {ALL_BLOCKS.map((blk) => (
-            <button
-              key={blk}
-              type="button"
-              onClick={() => setSelectedBlock(blk)}
-              className={`px-2.5 py-1 rounded text-xs font-mono font-bold shrink-0 transition-all ${
-                selectedBlock === blk
-                  ? "bg-slate-900 text-white shadow-xs"
-                  : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
-              }`}
-            >
-              {blk === "ALL" ? "Semua" : blk}
-            </button>
-          ))}
-        </div>
+        {/* Quick Block Filter Pills (dynamically derived) */}
+        {blockList.length > 1 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pt-1 pb-0.5 scrollbar-thin text-xs">
+            <span className="text-slate flex items-center gap-1 font-semibold text-[11px] shrink-0 mr-1">
+              <Layers className="w-3.5 h-3.5 text-prism-teal" />
+              <span>Pilih Blok:</span>
+            </span>
+            {blockList.map((blk) => (
+              <button
+                key={blk}
+                type="button"
+                onClick={() => setSelectedBlock(blk)}
+                className={`px-2.5 py-1 rounded text-xs font-mono font-bold shrink-0 transition-all ${
+                  selectedBlock === blk
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
+                }`}
+              >
+                {blk === "ALL" ? "Semua" : blk}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* VIEW 1: INTERACTIVE SVG SITEPLAN */}
@@ -325,8 +337,8 @@ export function UnitInventoryViewer({
             <div className="flex items-center gap-2">
               <Info className="w-4 h-4 text-prism-teal shrink-0" />
               <span>
-                Siteplan Asli Perumahan New Puri Kencana. Klik atau arahkan kursor ke unit{" "}
-                <strong className="text-emerald-700">Hijau (AVAILABLE)</strong> untuk melihat detail harga &amp; membuat ITJ.
+                Siteplan Asli Perumahan {projectName}. Klik atau arahkan kursor ke unit{" "}
+                <strong className="text-emerald-700">Hijau (AVAILABLE)</strong> untuk {actionInstruction}.
               </span>
             </div>
 
@@ -368,16 +380,57 @@ export function UnitInventoryViewer({
               units={units}
               filteredUnits={filteredUnits}
               selectedUnit={selectedUnit}
-              onSelectUnit={(unit) => setSelectedUnit(unit)}
+              onSelectUnit={(unit) => {
+                setSelectedUnit(unit);
+                setHoveredUnit(null);
+              }}
               onSelectUnregistered={(plot) => setUnregisteredPlot(plot)}
               hoveredUnit={hoveredUnit}
-              onHoverUnit={(unit) => setHoveredUnit(unit)}
+              onHoverUnit={(unit) => {
+                if (!selectedUnit) {
+                  setHoveredUnit(unit);
+                }
+              }}
               selectedBlock={selectedBlock}
               zoomScale={zoomScale}
             />
 
-            {/* Floating Popover / Tooltip when unit is clicked or hovered */}
-            {activeUnitInfo && (
+            {/* Hover Tooltip (Lightweight, NO action buttons) */}
+            {hoveredUnit && !selectedUnit && (
+              <div className="absolute top-4 right-4 z-20 w-64 bg-white/95 backdrop-blur-xs rounded-lg border border-mist shadow-lg p-3 animate-in fade-in duration-100 pointer-events-none">
+                <div className="flex items-center justify-between pb-1.5 border-b border-mist/80">
+                  <span className="font-mono font-bold text-sm text-carbon-ink">
+                    Blok {hoveredUnit.blok}
+                  </span>
+                  <span
+                    className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                      hoveredUnit.status_unit === "AVAILABLE"
+                        ? "bg-emerald-50 text-emerald-700"
+                        : hoveredUnit.status_unit === "SOLD"
+                        ? "bg-red-50 text-red-700"
+                        : "bg-amber-50 text-amber-700"
+                    }`}
+                  >
+                    {hoveredUnit.status_unit}
+                  </span>
+                </div>
+                <div className="pt-2 space-y-1 text-xs">
+                  <div className="flex justify-between text-slate">
+                    <span>Tipe:</span>
+                    <span className="font-semibold text-graphite">{hoveredUnit.tipe.nama_tipe}</span>
+                  </div>
+                  <div className="flex justify-between text-slate">
+                    <span>Harga:</span>
+                    <span className="font-mono font-bold text-deep-teal">
+                      {formatPrice(hoveredUnit.harga_khusus ?? hoveredUnit.tipe.harga_dasar)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Selected Popover (Interactive, with Ganti Tipe Action) */}
+            {selectedUnit && (
               <div className="absolute top-4 right-4 z-20 w-72 bg-white rounded-lg border border-mist shadow-xl p-4 animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-start justify-between pb-2 border-b border-mist">
                   <div>
@@ -385,15 +438,12 @@ export function UnitInventoryViewer({
                       Blok Terpilih
                     </span>
                     <span className="font-mono font-bold text-lg text-carbon-ink">
-                      {activeUnitInfo.blok}
+                      {selectedUnit.blok}
                     </span>
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setSelectedUnit(null);
-                      setHoveredUnit(null);
-                    }}
+                    onClick={() => setSelectedUnit(null)}
                     className="p-1 rounded text-slate hover:text-carbon-ink hover:bg-bone transition-colors"
                   >
                     <X className="w-4 h-4" />
@@ -404,28 +454,28 @@ export function UnitInventoryViewer({
                   <div className="flex items-center justify-between">
                     <span className="text-slate">Tipe Unit:</span>
                     <span className="font-semibold text-carbon-ink">
-                      {activeUnitInfo.tipe.nama_tipe}
+                      {selectedUnit.tipe.nama_tipe}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-slate">Kategori:</span>
                     <span className="px-1.5 py-0.5 rounded font-medium text-[10px] bg-bone text-graphite">
-                      {activeUnitInfo.tipe.kategori}
+                      {selectedUnit.tipe.kategori}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-slate">LB / LT:</span>
                     <span className="font-mono text-carbon-ink">
-                      {activeUnitInfo.tipe.luas_bangunan} m² / {activeUnitInfo.tipe.luas_tanah} m²
+                      {selectedUnit.tipe.luas_bangunan} m² / {selectedUnit.tipe.luas_tanah} m²
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-slate">Harga:</span>
                     <span className="font-mono font-bold text-deep-teal">
-                      {formatPrice(activeUnitInfo.harga_khusus ?? activeUnitInfo.tipe.harga_dasar)}
+                      {formatPrice(selectedUnit.harga_khusus ?? selectedUnit.tipe.harga_dasar)}
                     </span>
                   </div>
 
@@ -433,14 +483,14 @@ export function UnitInventoryViewer({
                     <span className="text-slate">Status:</span>
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        activeUnitInfo.status_unit === "AVAILABLE"
+                        selectedUnit.status_unit === "AVAILABLE"
                           ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          : activeUnitInfo.status_unit === "SOLD"
+                          : selectedUnit.status_unit === "SOLD"
                           ? "bg-red-50 text-red-700 border border-red-200"
                           : "bg-amber-50 text-amber-700 border border-amber-200"
                       }`}
                     >
-                      {activeUnitInfo.status_unit}
+                      {selectedUnit.status_unit}
                     </span>
                   </div>
                 </div>
@@ -449,130 +499,59 @@ export function UnitInventoryViewer({
                   <div className="pt-2 border-t border-mist mt-2">
                     <button
                       type="button"
-                      disabled={activeUnitInfo.status_unit !== "AVAILABLE"}
-                      onClick={() => onChangeTipe(activeUnitInfo)}
+                      disabled={selectedUnit.status_unit !== "AVAILABLE"}
+                      onClick={() => onChangeTipe(selectedUnit)}
                       className="w-full text-xs font-semibold py-2 px-3 rounded bg-deep-teal text-white hover:bg-deep-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       Ganti Tipe Unit
                     </button>
-                    {activeUnitInfo.status_unit !== "AVAILABLE" && (
+                    {selectedUnit.status_unit !== "AVAILABLE" && (
                       <p className="text-[10px] text-slate text-center mt-1">
-                        Unit {activeUnitInfo.status_unit.toLowerCase()}, tipe tidak bisa diganti
+                        Unit {selectedUnit.status_unit.toLowerCase()}, tipe tidak bisa diganti
                       </p>
                     )}
                   </div>
                 )}
               </div>
             )}
-
-            {/* Unregistered plot tooltip */}
-            {unregisteredPlot && !activeUnitInfo && (
-              <div className="absolute top-4 right-4 z-20 w-64 bg-white rounded-lg border border-amber-200 shadow-xl p-4 animate-in fade-in zoom-in-95 duration-150">
-                <div className="flex items-start justify-between pb-2 border-b border-mist">
-                  <div>
-                    <span className="text-[10px] font-semibold text-amber-700 uppercase tracking-wider block">
-                      Blok Belum Terdaftar
-                    </span>
-                    <span className="font-mono font-bold text-lg text-carbon-ink">
-                      {unregisteredPlot.blok}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setUnregisteredPlot(null)}
-                    className="p-1 rounded text-slate hover:text-carbon-ink hover:bg-bone transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-                <p className="text-xs text-slate mt-2">
-                  Blok ini tertera pada peta siteplan, namun belum terdaftar di database master unit.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       )}
 
-      {/* VIEW 2: LIST VIEW (CARDS & TABLE) */}
-      {activeView === "list" && (
-        <div className="space-y-4">
-          {filteredUnits.length === 0 ? (
-            <div className="bg-white rounded-lg border border-mist p-12 text-center text-slate">
-              <Building2 className="w-10 h-10 mx-auto mb-2 opacity-40 text-slate" />
-              <p className="text-sm font-semibold text-carbon-ink">Tidak ada unit yang cocok</p>
-              <p className="text-xs text-slate mt-1">
-                Silakan sesuaikan filter pencarian, status, atau kategori properti.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-              {filteredUnits.map((unit) => {
-                const finalPrice = unit.harga_khusus ?? unit.tipe.harga_dasar;
-
-                return (
-                  <div
-                    key={unit.id}
-                    className="bg-white rounded-lg border border-mist shadow-subtle p-4 hover:border-prism-teal/60 transition-all flex flex-col justify-between"
+      {/* VIEW 2: LIST VIEW */}
+      {activeView === "list" && showListView && (
+        <div className="bg-white rounded-lg border border-mist shadow-subtle p-4 md:p-6 space-y-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {filteredUnits.map((unit) => (
+              <div
+                key={unit.id}
+                className="p-3 rounded-lg border border-mist bg-bone/30 space-y-1.5"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-mono font-bold text-sm text-carbon-ink">
+                    {unit.blok}
+                  </span>
+                  <span
+                    className={`px-1.5 py-0.2 rounded text-[9px] font-bold ${
+                      unit.status_unit === "AVAILABLE"
+                        ? "bg-emerald-50 text-emerald-700"
+                        : unit.status_unit === "SOLD"
+                        ? "bg-red-50 text-red-700"
+                        : "bg-amber-50 text-amber-700"
+                    }`}
                   >
-                    <div>
-                      {/* Top Blok & Status Badge */}
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <span className="font-mono font-bold text-lg text-carbon-ink">
-                          {unit.blok}
-                        </span>
-
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            unit.status_unit === "AVAILABLE"
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                              : unit.status_unit === "SOLD"
-                              ? "bg-red-50 text-red-700 border border-red-200"
-                              : "bg-amber-50 text-amber-700 border border-amber-200"
-                          }`}
-                        >
-                          {unit.status_unit}
-                        </span>
-                      </div>
-
-                      {/* Tipe & Kategori */}
-                      <div className="text-xs text-slate space-y-1 mb-3">
-                        <div className="flex items-center justify-between">
-                          <span>Tipe:</span>
-                          <span className="font-semibold text-graphite">
-                            {unit.tipe.nama_tipe}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span>Kategori:</span>
-                          <span className="font-medium text-graphite">
-                            {unit.tipe.kategori}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Price and Footer */}
-                    <div className="pt-3 border-t border-mist">
-                      <div className="flex items-baseline justify-between">
-                        <span className="text-[11px] text-slate">Harga:</span>
-                        <div className="text-right">
-                          <span className="font-mono font-bold text-sm text-deep-teal">
-                            {formatPrice(finalPrice)}
-                          </span>
-                          {unit.harga_khusus && (
-                            <span className="block text-[10px] text-teal-600 font-medium">
-                              (Harga Khusus)
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                    {unit.status_unit}
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate font-medium truncate">
+                  {unit.tipe.nama_tipe}
+                </div>
+                <div className="font-mono font-semibold text-xs text-deep-teal">
+                  {formatPrice(unit.harga_khusus ?? unit.tipe.harga_dasar)}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
