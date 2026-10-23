@@ -92,6 +92,9 @@ export async function submitITJ(
         include: {
           customer: true,
           itj: {
+            include: {
+              transaksi: true,
+            },
             orderBy: { id: "desc" },
             take: 1,
           },
@@ -106,17 +109,19 @@ export async function submitITJ(
 
       if (!lead.survei_selesai_at) {
         throw new Error(
-          "Pengajuan ITJ hanya dapat dilakukan setelah survei lokasi selesai."
+          "Pembuatan ITJ hanya dapat dilakukan setelah survei lokasi selesai."
         );
       }
 
       if (lead.lost_at !== null) {
-        throw new Error("Lead yang berstatus LOST tidak dapat diajukan ITJ.");
+        throw new Error("Lead yang berstatus LOST tidak dapat dibuatkan ITJ.");
       }
 
-      const isAlreadyClosed = lead.itj.some((i) => i.status === "DISETUJUI");
-      if (isAlreadyClosed) {
-        throw new Error("Lead ini sudah memiliki transaksi ITJ aktif.");
+      const hasActiveClosing = lead.itj.some(
+        (i) => i.transaksi && i.transaksi.status_transaksi !== "BATAL"
+      );
+      if (hasActiveClosing) {
+        throw new Error("Lead ini sudah memiliki transaksi aktif.");
       }
 
       // 2. Pastikan unit ada dan kategorinya sesuai
@@ -192,14 +197,12 @@ export async function submitITJ(
         },
       });
 
-      // 6. Buat record ITJ snapshot langsung DISETUJUI
-      // 6. Buat record ITJ snapshot langsung DISETUJUI
+      // 6. Buat record ITJ (langsung closing)
       const itjRecord = await tx.itj.create({
         data: {
           lead_id: lead.id,
           unit_id: unit.id,
           marketing_id: userId,
-          status: "DISETUJUI",
           nik: cleanNik,
           nama_ktp: data.namaKtp.trim(),
           nominal: data.nominalDibayar,
@@ -210,8 +213,6 @@ export async function submitITJ(
           metode_bayar: data.metodeBayar,
           tenor: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
           diajukan_at: new Date(),
-          diputuskan_at: new Date(),
-          diputuskan_oleh: userId,
         },
       });
 

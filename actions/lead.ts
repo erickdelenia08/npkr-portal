@@ -57,6 +57,7 @@ export interface LeadCardData {
     nama: string;
     no_hp: string;
   } | null;
+  transaksi_id?: number | null;
   followUpInfo: FollowUpInfo;
 }
 
@@ -135,19 +136,6 @@ function computeLeadTahap(lead: unknown): LeadTahap {
     }
   }
 
-  // 3. If itj exists and status is 'DIAJUKAN' -> return 'ITJ DIAJUKAN'
-  if (Array.isArray(l.itj)) {
-    const hasDiajukan = l.itj.some((item) => {
-      if (typeof item === "object" && item !== null) {
-        return (item as Record<string, unknown>).status === "DIAJUKAN";
-      }
-      return false;
-    });
-    if (hasDiajukan) return "ITJ DIAJUKAN";
-  } else if (l.itj && typeof l.itj === "object") {
-    const singleItj = l.itj as Record<string, unknown>;
-    if (singleItj.status === "DIAJUKAN") return "ITJ DIAJUKAN";
-  }
 
   // 4. If survei_selesai_at is not null -> return 'SUDAH SURVEI'
   if (l.survei_selesai_at != null) {
@@ -313,9 +301,6 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
           { itj: { some: { transaksi: { closing_at: { not: null }, status_transaksi: { not: "BATAL" } } } } },
           { customer: { transaksi: { some: { closing_at: { not: null }, status_transaksi: { not: "BATAL" } } } } },
         ];
-      } else if (norm === "ITJ DIAJUKAN" || norm === "ITJ_DIAJUKAN") {
-        where.lost_at = null;
-        where.itj = { some: { status: "DIAJUKAN" } };
       } else if (norm === "SUDAH SURVEI" || norm === "SUDAH_SURVEI") {
         where.survei_selesai_at = { not: null };
         where.lost_at = null;
@@ -363,9 +348,9 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
           itj: {
             select: {
               id: true,
-              status: true,
               transaksi: {
                 select: {
+                  id: true,
                   closing_at: true,
                   status_transaksi: true,
                 },
@@ -377,6 +362,7 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
               id: true,
               transaksi: {
                 select: {
+                  id: true,
                   closing_at: true,
                   status_transaksi: true,
                 },
@@ -405,13 +391,14 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
       const followUp = l.next_follow_up_at || l.aktivitas[0]?.tgl_follow_up || null;
       const dynamicTahap = computeLeadTahap(l);
 
-      // Check for closing date from itj.transaksi or customer.transaksi
+      // Check for closing date and active transaction from itj.transaksi or customer.transaksi
       const itjTrx = l.itj?.[0]?.transaksi;
       const custTrx = l.customer?.transaksi?.[0];
-      const closingAtDate =
-        (itjTrx?.status_transaksi !== "BATAL" ? itjTrx?.closing_at : null) ||
-        (custTrx?.status_transaksi !== "BATAL" ? custTrx?.closing_at : null) ||
-        null;
+      const activeTrx =
+        (itjTrx?.status_transaksi !== "BATAL" ? itjTrx : null) ||
+        (custTrx?.status_transaksi !== "BATAL" ? custTrx : null);
+      const closingAtDate = activeTrx?.closing_at || null;
+      const transaksiId = activeTrx?.id || null;
 
       return {
         id: l.id,
@@ -432,6 +419,7 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
         jenis_aktivitas_terakhir: l.aktivitas[0]?.jenis || null,
         catatan_terakhir: l.aktivitas[0]?.catatan || null,
         marketing: l.marketing,
+        transaksi_id: transaksiId,
         followUpInfo: getFollowUpInfo(followUp),
       };
     });

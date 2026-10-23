@@ -102,9 +102,15 @@ export async function getAdminDashboardData(): Promise<
       };
     }
 
-    // 1. Metric 1: Count Itj where status = 'DIAJUKAN'
+    // 1. Metric 1: Count active Closing ITJ (transaksi not BATAL)
     const pendingItjCount = await prisma.itj.count({
-      where: { status: "DIAJUKAN" },
+      where: {
+        transaksi: {
+          is: {
+            status_transaksi: { not: "BATAL" },
+          },
+        },
+      },
     });
 
     // 2. Metric 2: Count DokumenTransaksi where status = 'MENUNGGU_VERIFIKASI'
@@ -119,9 +125,15 @@ export async function getAdminDashboardData(): Promise<
       },
     });
 
-    // 4. Widget Data 1 (Pending ITJ): Top 5 newest Itj where status = 'DIAJUKAN'
+    // 4. Widget Data 1 (Recent Closings): Top 5 newest active ITJ
     const rawPendingItj = await prisma.itj.findMany({
-      where: { status: "DIAJUKAN" },
+      where: {
+        transaksi: {
+          is: {
+            status_transaksi: { not: "BATAL" },
+          },
+        },
+      },
       orderBy: { diajukan_at: "desc" },
       take: 5,
       include: {

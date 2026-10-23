@@ -66,7 +66,6 @@ export type TransaksiMinAggregateOutputType = {
   nama_bank: string | null
   nama_notaris: string | null
   tgl_akad: Date | null
-  tgl_ajb: Date | null
   lunas_at: Date | null
   tgl_bast: Date | null
   closing_at: Date | null
@@ -94,7 +93,6 @@ export type TransaksiMaxAggregateOutputType = {
   nama_bank: string | null
   nama_notaris: string | null
   tgl_akad: Date | null
-  tgl_ajb: Date | null
   lunas_at: Date | null
   tgl_bast: Date | null
   closing_at: Date | null
@@ -122,7 +120,6 @@ export type TransaksiCountAggregateOutputType = {
   nama_bank: number
   nama_notaris: number
   tgl_akad: number
-  tgl_ajb: number
   lunas_at: number
   tgl_bast: number
   closing_at: number
@@ -176,7 +173,6 @@ export type TransaksiMinAggregateInputType = {
   nama_bank?: true
   nama_notaris?: true
   tgl_akad?: true
-  tgl_ajb?: true
   lunas_at?: true
   tgl_bast?: true
   closing_at?: true
@@ -204,7 +200,6 @@ export type TransaksiMaxAggregateInputType = {
   nama_bank?: true
   nama_notaris?: true
   tgl_akad?: true
-  tgl_ajb?: true
   lunas_at?: true
   tgl_bast?: true
   closing_at?: true
@@ -232,7 +227,6 @@ export type TransaksiCountAggregateInputType = {
   nama_bank?: true
   nama_notaris?: true
   tgl_akad?: true
-  tgl_ajb?: true
   lunas_at?: true
   tgl_bast?: true
   closing_at?: true
@@ -347,7 +341,6 @@ export type TransaksiGroupByOutputType = {
   nama_bank: string | null
   nama_notaris: string | null
   tgl_akad: Date | null
-  tgl_ajb: Date | null
   lunas_at: Date | null
   tgl_bast: Date | null
   closing_at: Date | null
@@ -398,7 +391,6 @@ export type TransaksiWhereInput = {
   nama_bank?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
-  tgl_ajb?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   lunas_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   closing_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
@@ -435,7 +427,6 @@ export type TransaksiOrderByWithRelationInput = {
   nama_bank?: Prisma.SortOrderInput | Prisma.SortOrder
   nama_notaris?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_akad?: Prisma.SortOrderInput | Prisma.SortOrder
-  tgl_ajb?: Prisma.SortOrderInput | Prisma.SortOrder
   lunas_at?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_bast?: Prisma.SortOrderInput | Prisma.SortOrder
   closing_at?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -476,7 +467,6 @@ export type TransaksiWhereUniqueInput = Prisma.AtLeast<{
   nama_bank?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
-  tgl_ajb?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   lunas_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   closing_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
@@ -513,7 +503,6 @@ export type TransaksiOrderByWithAggregationInput = {
   nama_bank?: Prisma.SortOrderInput | Prisma.SortOrder
   nama_notaris?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_akad?: Prisma.SortOrderInput | Prisma.SortOrder
-  tgl_ajb?: Prisma.SortOrderInput | Prisma.SortOrder
   lunas_at?: Prisma.SortOrderInput | Prisma.SortOrder
   tgl_bast?: Prisma.SortOrderInput | Prisma.SortOrder
   closing_at?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -549,7 +538,6 @@ export type TransaksiScalarWhereWithAggregatesInput = {
   nama_bank?: Prisma.StringNullableWithAggregatesFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableWithAggregatesFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
-  tgl_ajb?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
   lunas_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
   closing_at?: Prisma.DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
@@ -572,7 +560,6 @@ export type TransaksiCreateInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -609,7 +596,6 @@ export type TransaksiUncheckedCreateInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -637,7 +623,6 @@ export type TransaksiUpdateInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -674,7 +659,6 @@ export type TransaksiUncheckedUpdateInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -707,7 +691,6 @@ export type TransaksiCreateManyInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -730,7 +713,6 @@ export type TransaksiUpdateManyMutationInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -758,7 +740,6 @@ export type TransaksiUncheckedUpdateManyInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -807,7 +788,6 @@ export type TransaksiCountOrderByAggregateInput = {
   nama_bank?: Prisma.SortOrder
   nama_notaris?: Prisma.SortOrder
   tgl_akad?: Prisma.SortOrder
-  tgl_ajb?: Prisma.SortOrder
   lunas_at?: Prisma.SortOrder
   tgl_bast?: Prisma.SortOrder
   closing_at?: Prisma.SortOrder
@@ -847,7 +827,6 @@ export type TransaksiMaxOrderByAggregateInput = {
   nama_bank?: Prisma.SortOrder
   nama_notaris?: Prisma.SortOrder
   tgl_akad?: Prisma.SortOrder
-  tgl_ajb?: Prisma.SortOrder
   lunas_at?: Prisma.SortOrder
   tgl_bast?: Prisma.SortOrder
   closing_at?: Prisma.SortOrder
@@ -875,7 +854,6 @@ export type TransaksiMinOrderByAggregateInput = {
   nama_bank?: Prisma.SortOrder
   nama_notaris?: Prisma.SortOrder
   tgl_akad?: Prisma.SortOrder
-  tgl_ajb?: Prisma.SortOrder
   lunas_at?: Prisma.SortOrder
   tgl_bast?: Prisma.SortOrder
   closing_at?: Prisma.SortOrder
@@ -1151,7 +1129,6 @@ export type TransaksiCreateWithoutMarketingInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1186,7 +1163,6 @@ export type TransaksiUncheckedCreateWithoutMarketingInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1248,7 +1224,6 @@ export type TransaksiScalarWhereInput = {
   nama_bank?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   nama_notaris?: Prisma.StringNullableFilter<"Transaksi"> | string | null
   tgl_akad?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
-  tgl_ajb?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   lunas_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   tgl_bast?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
   closing_at?: Prisma.DateTimeNullableFilter<"Transaksi"> | Date | string | null
@@ -1271,7 +1246,6 @@ export type TransaksiCreateWithoutUnitInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1306,7 +1280,6 @@ export type TransaksiUncheckedCreateWithoutUnitInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1360,7 +1333,6 @@ export type TransaksiCreateWithoutItjInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1395,7 +1367,6 @@ export type TransaksiUncheckedCreateWithoutItjInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1439,7 +1410,6 @@ export type TransaksiUpdateWithoutItjInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1474,7 +1444,6 @@ export type TransaksiUncheckedUpdateWithoutItjInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1502,7 +1471,6 @@ export type TransaksiCreateWithoutCustomerInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1537,7 +1505,6 @@ export type TransaksiUncheckedCreateWithoutCustomerInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1591,7 +1558,6 @@ export type TransaksiCreateWithoutPengajuan_kprInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1627,7 +1593,6 @@ export type TransaksiUncheckedCreateWithoutPengajuan_kprInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1670,7 +1635,6 @@ export type TransaksiUpdateWithoutPengajuan_kprInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1706,7 +1670,6 @@ export type TransaksiUncheckedUpdateWithoutPengajuan_kprInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1733,7 +1696,6 @@ export type TransaksiCreateWithoutLogsInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1769,7 +1731,6 @@ export type TransaksiUncheckedCreateWithoutLogsInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1812,7 +1773,6 @@ export type TransaksiUpdateWithoutLogsInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1848,7 +1808,6 @@ export type TransaksiUncheckedUpdateWithoutLogsInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1875,7 +1834,6 @@ export type TransaksiCreateWithoutDokumenInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1911,7 +1869,6 @@ export type TransaksiUncheckedCreateWithoutDokumenInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -1954,7 +1911,6 @@ export type TransaksiUpdateWithoutDokumenInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1990,7 +1946,6 @@ export type TransaksiUncheckedUpdateWithoutDokumenInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2017,7 +1972,6 @@ export type TransaksiCreateWithoutInspeksi_bastInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -2053,7 +2007,6 @@ export type TransaksiUncheckedCreateWithoutInspeksi_bastInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -2096,7 +2049,6 @@ export type TransaksiUpdateWithoutInspeksi_bastInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2132,7 +2084,6 @@ export type TransaksiUncheckedUpdateWithoutInspeksi_bastInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2159,7 +2110,6 @@ export type TransaksiCreateWithoutPembayaranInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -2195,7 +2145,6 @@ export type TransaksiUncheckedCreateWithoutPembayaranInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -2238,7 +2187,6 @@ export type TransaksiUpdateWithoutPembayaranInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2274,7 +2222,6 @@ export type TransaksiUncheckedUpdateWithoutPembayaranInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2305,7 +2252,6 @@ export type TransaksiCreateManyMarketingInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -2328,7 +2274,6 @@ export type TransaksiUpdateWithoutMarketingInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2363,7 +2308,6 @@ export type TransaksiUncheckedUpdateWithoutMarketingInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2395,7 +2339,6 @@ export type TransaksiUncheckedUpdateManyWithoutMarketingInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2422,7 +2365,6 @@ export type TransaksiCreateManyUnitInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -2445,7 +2387,6 @@ export type TransaksiUpdateWithoutUnitInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2480,7 +2421,6 @@ export type TransaksiUncheckedUpdateWithoutUnitInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2512,7 +2452,6 @@ export type TransaksiUncheckedUpdateManyWithoutUnitInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2539,7 +2478,6 @@ export type TransaksiCreateManyCustomerInput = {
   nama_bank?: string | null
   nama_notaris?: string | null
   tgl_akad?: Date | string | null
-  tgl_ajb?: Date | string | null
   lunas_at?: Date | string | null
   tgl_bast?: Date | string | null
   closing_at?: Date | string | null
@@ -2562,7 +2500,6 @@ export type TransaksiUpdateWithoutCustomerInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2597,7 +2534,6 @@ export type TransaksiUncheckedUpdateWithoutCustomerInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2629,7 +2565,6 @@ export type TransaksiUncheckedUpdateManyWithoutCustomerInput = {
   nama_bank?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nama_notaris?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tgl_akad?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  tgl_ajb?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lunas_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tgl_bast?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   closing_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2724,7 +2659,6 @@ export type TransaksiSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   nama_bank?: boolean
   nama_notaris?: boolean
   tgl_akad?: boolean
-  tgl_ajb?: boolean
   lunas_at?: boolean
   tgl_bast?: boolean
   closing_at?: boolean
@@ -2764,7 +2698,6 @@ export type TransaksiSelectScalar = {
   nama_bank?: boolean
   nama_notaris?: boolean
   tgl_akad?: boolean
-  tgl_ajb?: boolean
   lunas_at?: boolean
   tgl_bast?: boolean
   closing_at?: boolean
@@ -2776,7 +2709,7 @@ export type TransaksiSelectScalar = {
   updated_at?: boolean
 }
 
-export type TransaksiOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer_id" | "unit_id" | "marketing_id" | "itj_id" | "metode_bayar" | "harga_deal" | "target_itj" | "target_dp" | "tenor_bulan" | "status_transaksi" | "tahap_detail" | "nama_bank" | "nama_notaris" | "tgl_akad" | "tgl_ajb" | "lunas_at" | "tgl_bast" | "closing_at" | "closed_at" | "cancelled_at" | "alasan_batal" | "catatan_admin" | "created_at" | "updated_at", ExtArgs["result"]["transaksi"]>
+export type TransaksiOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer_id" | "unit_id" | "marketing_id" | "itj_id" | "metode_bayar" | "harga_deal" | "target_itj" | "target_dp" | "tenor_bulan" | "status_transaksi" | "tahap_detail" | "nama_bank" | "nama_notaris" | "tgl_akad" | "lunas_at" | "tgl_bast" | "closing_at" | "closed_at" | "cancelled_at" | "alasan_batal" | "catatan_admin" | "created_at" | "updated_at", ExtArgs["result"]["transaksi"]>
 export type TransaksiInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.CustomerDefaultArgs<ExtArgs>
   unit?: boolean | Prisma.MasterUnitDefaultArgs<ExtArgs>
@@ -2819,7 +2752,6 @@ export type $TransaksiPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     nama_bank: string | null
     nama_notaris: string | null
     tgl_akad: Date | null
-    tgl_ajb: Date | null
     lunas_at: Date | null
     tgl_bast: Date | null
     closing_at: Date | null
@@ -3222,7 +3154,6 @@ export interface TransaksiFieldRefs {
   readonly nama_bank: Prisma.FieldRef<"Transaksi", 'String'>
   readonly nama_notaris: Prisma.FieldRef<"Transaksi", 'String'>
   readonly tgl_akad: Prisma.FieldRef<"Transaksi", 'DateTime'>
-  readonly tgl_ajb: Prisma.FieldRef<"Transaksi", 'DateTime'>
   readonly lunas_at: Prisma.FieldRef<"Transaksi", 'DateTime'>
   readonly tgl_bast: Prisma.FieldRef<"Transaksi", 'DateTime'>
   readonly closing_at: Prisma.FieldRef<"Transaksi", 'DateTime'>

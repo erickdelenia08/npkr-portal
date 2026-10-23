@@ -381,7 +381,11 @@ export async function checkUnitIsLocked(unitId: number): Promise<boolean> {
     prisma.itj.count({
       where: {
         unit_id: unitId,
-        status: { in: ["DIAJUKAN", "PERLU_REVISI", "DISETUJUI"] },
+        transaksi: {
+          is: {
+            status_transaksi: { not: "BATAL" },
+          },
+        },
       },
     }),
     prisma.transaksi.count({
@@ -514,7 +518,11 @@ export async function getMasterUnits(
           tipe: true,
           itj: {
             where: {
-              status: { in: ["DIAJUKAN", "PERLU_REVISI", "DISETUJUI"] },
+              transaksi: {
+                is: {
+                  status_transaksi: { not: "BATAL" },
+                },
+              },
             },
             select: { id: true },
             take: 1,
@@ -583,7 +591,11 @@ export async function getAllMasterUnits(): Promise<ActionResponse<SerializedMast
         tipe: true,
         itj: {
           where: {
-            status: { in: ["DIAJUKAN", "PERLU_REVISI", "DISETUJUI"] },
+            transaksi: {
+              is: {
+                status_transaksi: { not: "BATAL" },
+              },
+            },
           },
           select: { id: true },
           take: 1,
@@ -852,7 +864,11 @@ export async function changeUnitTipe(
           tipe: true,
           itj: {
             where: {
-              status: { in: ["DIAJUKAN", "PERLU_REVISI", "DISETUJUI"] },
+              transaksi: {
+                is: {
+                  status_transaksi: { not: "BATAL" },
+                },
+              },
             },
             select: { id: true },
             take: 1,
@@ -988,7 +1004,11 @@ export async function changeUnitTipeBulk(
               tipe: true,
               itj: {
                 where: {
-                  status: { in: ["DIAJUKAN", "PERLU_REVISI", "DISETUJUI"] },
+                  transaksi: {
+                    is: {
+                      status_transaksi: { not: "BATAL" },
+                    },
+                  },
                 },
                 select: { id: true },
                 take: 1,

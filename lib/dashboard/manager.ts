@@ -15,11 +15,9 @@
  *    - Lead Masuk: Lead.created_at, owner Lead.marketing_id, timestamp range.
  *    - Survei Dijadwalkan: Lead.survei_jadwal_at, owner Lead.marketing_id, timestamp range.
  *    - Survei Selesai: Lead.survei_selesai_at, owner Lead.marketing_id, timestamp range.
- *    - ITJ Diajukan: Itj.diajukan_at, owner Itj.marketing_id, timestamp range.
- *    - ITJ Disetujui: Itj.diputuskan_at with status DISETUJUI, owner Itj.marketing_id, timestamp range.
  *    - Closing: Transaksi.closing_at, status_transaksi != BATAL, owner Transaksi.marketing_id, DATE-ONLY range.
  *    - Kas Masuk: Pembayaran.tgl_bayar with is_void = false, DATE-ONLY range.
- * 4. ITJ is counted PER ITJ ROW (not unique leads). ITJ ownership never changes when a lead is reassigned.
+ * 4. Closing attribution follows the marketing PIC recorded on Transaksi / Itj at closing.
  * 5. Timezone: The business runs in Asia/Jakarta (WIB, UTC+7).
  *    - Timestamp columns use [start, end) where start = YYYY-MM-01T00:00:00+07:00.
  *    - Date-only columns (@db.Date) use UTC-midnight ranges: Date.UTC(year, month-1, 1).
@@ -31,7 +29,7 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { TahapTransaksi, StatusItj, SumberLead, StatusUnit } from "@/generated/prisma";
+import { TahapTransaksi, SumberLead, StatusUnit } from "@/generated/prisma";
 import {
   monthRangeWIB,
   monthRangeDateOnly,
@@ -77,7 +75,7 @@ export interface TrendMonthData {
   key: string;
   label: string;
   leadMasuk: number;
-  itjDisetujui: number;
+  surveiSelesai: number;
   closing: number;
 }
 
@@ -89,8 +87,6 @@ export interface MarketingPerformanceSummary {
   leadMasuk: number;
   surveiJadwal: number;
   surveiSelesai: number;
-  itjDiajukan: number;
-  itjDisetujui: number;
   closing: number;
 }
 
@@ -113,8 +109,9 @@ export interface ManagerDashboardData {
   kpis: {
     leadMasuk: MetricComparison;
     surveiSelesai: MetricComparison;
-    itjDisetujui: MetricComparison;
     closing: MetricComparison;
+    sp3k: MetricComparison;
+    akad: MetricComparison;
     nilaiClosing: MetricComparison;
     kasMasuk: MetricComparison;
   };
@@ -129,8 +126,6 @@ export interface ManagerDashboardData {
       leadMasuk: number;
       surveiJadwal: number;
       surveiSelesai: number;
-      itjDiajukan: number;
-      itjDisetujui: number;
       closing: number;
     };
   };
@@ -235,25 +230,24 @@ export async function getManagerDashboardData(
     currLeadMasuk,
     currSurveiSelesai,
     currSurveiJadwal,
-    currItjDisetujui,
-    currItjDiajukan,
     currClosingCount,
     currClosingSum,
     currKasMasukSum,
+    currSp3kCount,
+    currAkadCount,
 
     // Previous month KPIs
     prevLeadMasuk,
     prevSurveiSelesai,
-    prevItjDisetujui,
     prevClosingCount,
     prevClosingSum,
     prevKasMasukSum,
+    prevSp3kCount,
+    prevAkadCount,
 
     // Funnel (Cohort of leads created in selected month)
     funnelTotalLeads,
     funnelSurveiSelesai,
-    funnelAnyItj,
-    funnelItjDisetujui,
     funnelClosing,
 
     // Trend last 6 months
@@ -264,8 +258,6 @@ export async function getManagerDashboardData(
     leadMasukGroups,
     surveiJadwalGroups,
     surveiSelesaiGroups,
-    itjDiajukanGroups,
-    itjDisetujuiGroups,
     closingGroups,
 
     // Lead per Sumber (Cohort of the month)
@@ -288,15 +280,6 @@ export async function getManagerDashboardData(
     prisma.lead.count({
       where: { survei_jadwal_at: { gte: currWib.start, lt: currWib.end } },
     }),
-    prisma.itj.count({
-      where: {
-        status: StatusItj.DISETUJUI,
-        diputuskan_at: { gte: currWib.start, lt: currWib.end },
-      },
-    }),
-    prisma.itj.count({
-      where: { diajukan_at: { gte: currWib.start, lt: currWib.end } },
-    }),
     prisma.transaksi.count({
       where: closedDealWhere(currDateOnly.start, currDateOnly.end),
     }),
@@ -311,6 +294,23 @@ export async function getManagerDashboardData(
         tgl_bayar: { gte: currDateOnly.start, lt: currDateOnly.end },
       },
     }),
+    prisma.pengajuanKPRLog.count({
+      where: {
+        status_sesudah: "SP3K",
+        created_at: { gte: currWib.start, lt: currWib.end },
+        pengajuan: {
+          transaksi: {
+            status_transaksi: { not: TahapTransaksi.BATAL },
+          },
+        },
+      },
+    }),
+    prisma.transaksi.count({
+      where: {
+        tgl_akad: { gte: currDateOnly.start, lt: currDateOnly.end },
+        status_transaksi: { not: TahapTransaksi.BATAL },
+      },
+    }),
 
     // Previous month KPIs
     prisma.lead.count({
@@ -318,12 +318,6 @@ export async function getManagerDashboardData(
     }),
     prisma.lead.count({
       where: { survei_selesai_at: { gte: prevWib.start, lt: prevWib.end } },
-    }),
-    prisma.itj.count({
-      where: {
-        status: StatusItj.DISETUJUI,
-        diputuskan_at: { gte: prevWib.start, lt: prevWib.end },
-      },
     }),
     prisma.transaksi.count({
       where: closedDealWhere(prevDateOnly.start, prevDateOnly.end),
@@ -337,6 +331,23 @@ export async function getManagerDashboardData(
       where: {
         is_void: false,
         tgl_bayar: { gte: prevDateOnly.start, lt: prevDateOnly.end },
+      },
+    }),
+    prisma.pengajuanKPRLog.count({
+      where: {
+        status_sesudah: "SP3K",
+        created_at: { gte: prevWib.start, lt: prevWib.end },
+        pengajuan: {
+          transaksi: {
+            status_transaksi: { not: TahapTransaksi.BATAL },
+          },
+        },
+      },
+    }),
+    prisma.transaksi.count({
+      where: {
+        tgl_akad: { gte: prevDateOnly.start, lt: prevDateOnly.end },
+        status_transaksi: { not: TahapTransaksi.BATAL },
       },
     }),
 
@@ -353,21 +364,8 @@ export async function getManagerDashboardData(
     prisma.lead.count({
       where: {
         created_at: { gte: currWib.start, lt: currWib.end },
-        itj: { some: {} },
-      },
-    }),
-    prisma.lead.count({
-      where: {
-        created_at: { gte: currWib.start, lt: currWib.end },
-        itj: { some: { status: StatusItj.DISETUJUI } },
-      },
-    }),
-    prisma.lead.count({
-      where: {
-        created_at: { gte: currWib.start, lt: currWib.end },
         itj: {
           some: {
-            status: StatusItj.DISETUJUI,
             transaksi: {
               is: {
                 closing_at: { not: null },
@@ -384,15 +382,12 @@ export async function getManagerDashboardData(
       trendMonths.map(async (tm) => {
         const tw = monthRangeWIB(tm.year, tm.month);
         const td = monthRangeDateOnly(tm.year, tm.month);
-        const [lm, id, cl] = await Promise.all([
+        const [lm, ss, cl] = await Promise.all([
           prisma.lead.count({
             where: { created_at: { gte: tw.start, lt: tw.end } },
           }),
-          prisma.itj.count({
-            where: {
-              status: StatusItj.DISETUJUI,
-              diputuskan_at: { gte: tw.start, lt: tw.end },
-            },
+          prisma.lead.count({
+            where: { survei_selesai_at: { gte: tw.start, lt: tw.end } },
           }),
           prisma.transaksi.count({
             where: closedDealWhere(td.start, td.end),
@@ -402,7 +397,7 @@ export async function getManagerDashboardData(
           key: tm.key,
           label: bulanLabel(tm.year, tm.month),
           leadMasuk: lm,
-          itjDisetujui: id,
+          surveiSelesai: ss,
           closing: cl,
         };
       })
@@ -443,23 +438,6 @@ export async function getManagerDashboardData(
       },
       _count: { _all: true },
     }),
-    prisma.itj.groupBy({
-      by: ["marketing_id"],
-      where: {
-        marketing_id: { not: null },
-        diajukan_at: { gte: currWib.start, lt: currWib.end },
-      },
-      _count: { _all: true },
-    }),
-    prisma.itj.groupBy({
-      by: ["marketing_id"],
-      where: {
-        marketing_id: { not: null },
-        status: StatusItj.DISETUJUI,
-        diputuskan_at: { gte: currWib.start, lt: currWib.end },
-      },
-      _count: { _all: true },
-    }),
     prisma.transaksi.groupBy({
       by: ["marketing_id"],
       where: closedDealWhere(currDateOnly.start, currDateOnly.end),
@@ -478,7 +456,6 @@ export async function getManagerDashboardData(
         created_at: { gte: currWib.start, lt: currWib.end },
         itj: {
           some: {
-            status: StatusItj.DISETUJUI,
             transaksi: {
               is: {
                 closing_at: { not: null },
@@ -529,12 +506,9 @@ export async function getManagerDashboardData(
       prevSurveiSelesai,
       `${currSurveiJadwal} dijadwalkan`
     ),
-    itjDisetujui: computeComparison(
-      currItjDisetujui,
-      prevItjDisetujui,
-      `${currItjDiajukan} diajukan`
-    ),
     closing: computeComparison(currClosingCount, prevClosingCount),
+    sp3k: computeComparison(currSp3kCount, prevSp3kCount),
+    akad: computeComparison(currAkadCount, prevAkadCount),
     nilaiClosing: computeComparison(currClosingNilai, prevClosingNilai),
     kasMasuk: computeComparison(
       currKasMasukNominal,
@@ -562,65 +536,35 @@ export async function getManagerDashboardData(
         funnelTotalLeads > 0 ? (funnelSurveiSelesai / funnelTotalLeads) * 100 : 0,
     },
     {
-      key: "itj_diajukan",
-      label: "ITJ Diajukan",
-      count: funnelAnyItj,
-      pctOfTotal:
-        funnelTotalLeads > 0 ? (funnelAnyItj / funnelTotalLeads) * 100 : 0,
-      pctOfPrev:
-        funnelSurveiSelesai > 0
-          ? (funnelAnyItj / funnelSurveiSelesai) * 100
-          : 0,
-    },
-    {
-      key: "itj_disetujui",
-      label: "ITJ Disetujui",
-      count: funnelItjDisetujui,
-      pctOfTotal:
-        funnelTotalLeads > 0 ? (funnelItjDisetujui / funnelTotalLeads) * 100 : 0,
-      pctOfPrev:
-        funnelAnyItj > 0 ? (funnelItjDisetujui / funnelAnyItj) * 100 : 0,
-    },
-    {
       key: "closing",
       label: "Closing Terjual",
       count: funnelClosing,
       pctOfTotal:
         funnelTotalLeads > 0 ? (funnelClosing / funnelTotalLeads) * 100 : 0,
       pctOfPrev:
-        funnelItjDisetujui > 0 ? (funnelClosing / funnelItjDisetujui) * 100 : 0,
+        funnelSurveiSelesai > 0 ? (funnelClosing / funnelSurveiSelesai) * 100 : 0,
     },
   ];
 
   // ─── 3. ASSEMBLE PER-MARKETING PERFORMANCE ───
   const leadMasukMap = new Map<number, number>();
   for (const g of leadMasukGroups) {
-    if (g.marketing_id) leadMasukMap.set(g.marketing_id, g._count._all);
+    if (g.marketing_id) leadMasukMap.set(g.marketing_id, g._count?._all ?? 0);
   }
 
   const surveiJadwalMap = new Map<number, number>();
   for (const g of surveiJadwalGroups) {
-    if (g.marketing_id) surveiJadwalMap.set(g.marketing_id, g._count._all);
+    if (g.marketing_id) surveiJadwalMap.set(g.marketing_id, g._count?._all ?? 0);
   }
 
   const surveiSelesaiMap = new Map<number, number>();
   for (const g of surveiSelesaiGroups) {
-    if (g.marketing_id) surveiSelesaiMap.set(g.marketing_id, g._count._all);
-  }
-
-  const itjDiajukanMap = new Map<number, number>();
-  for (const g of itjDiajukanGroups) {
-    if (g.marketing_id) itjDiajukanMap.set(g.marketing_id, g._count._all);
-  }
-
-  const itjDisetujuiMap = new Map<number, number>();
-  for (const g of itjDisetujuiGroups) {
-    if (g.marketing_id) itjDisetujuiMap.set(g.marketing_id, g._count._all);
+    if (g.marketing_id) surveiSelesaiMap.set(g.marketing_id, g._count?._all ?? 0);
   }
 
   const closingMap = new Map<number, number>();
   for (const g of closingGroups) {
-    if (g.marketing_id) closingMap.set(g.marketing_id, g._count._all);
+    if (g.marketing_id) closingMap.set(g.marketing_id, g._count?._all ?? 0);
   }
 
   const marketingPerformanceRows: MarketingPerformanceSummary[] = [];
@@ -629,11 +573,9 @@ export async function getManagerDashboardData(
     const lm = leadMasukMap.get(user.id) || 0;
     const sj = surveiJadwalMap.get(user.id) || 0;
     const ss = surveiSelesaiMap.get(user.id) || 0;
-    const id = itjDiajukanMap.get(user.id) || 0;
-    const is = itjDisetujuiMap.get(user.id) || 0;
     const cl = closingMap.get(user.id) || 0;
 
-    const totalActivity = lm + sj + ss + id + is + cl;
+    const totalActivity = lm + sj + ss + cl;
 
     // Active users always shown; inactive users only shown if any non-zero metric
     if (user.isActive || totalActivity > 0) {
@@ -645,8 +587,6 @@ export async function getManagerDashboardData(
         leadMasuk: lm,
         surveiJadwal: sj,
         surveiSelesai: ss,
-        itjDiajukan: id,
-        itjDisetujui: is,
         closing: cl,
       });
     }
@@ -665,8 +605,6 @@ export async function getManagerDashboardData(
       acc.leadMasuk += row.leadMasuk;
       acc.surveiJadwal += row.surveiJadwal;
       acc.surveiSelesai += row.surveiSelesai;
-      acc.itjDiajukan += row.itjDiajukan;
-      acc.itjDisetujui += row.itjDisetujui;
       acc.closing += row.closing;
       return acc;
     },
@@ -674,8 +612,6 @@ export async function getManagerDashboardData(
       leadMasuk: 0,
       surveiJadwal: 0,
       surveiSelesai: 0,
-      itjDiajukan: 0,
-      itjDisetujui: 0,
       closing: 0,
     }
   );
@@ -693,7 +629,7 @@ export async function getManagerDashboardData(
 
   const closingSumberMap = new Map<SumberLead, number>();
   for (const g of sumberClosingGroups) {
-    closingSumberMap.set(g.sumber, g._count._all);
+    closingSumberMap.set(g.sumber, g._count?._all ?? 0);
   }
 
   const allSumberTypes = Object.values(SumberLead);

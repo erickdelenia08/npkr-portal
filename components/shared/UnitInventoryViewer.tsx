@@ -326,7 +326,7 @@ export function UnitInventoryViewer({
               <Info className="w-4 h-4 text-prism-teal shrink-0" />
               <span>
                 Siteplan Asli Perumahan New Puri Kencana. Klik atau arahkan kursor ke unit{" "}
-                <strong className="text-emerald-700">Hijau (AVAILABLE)</strong> untuk melihat detail harga &amp; mengajukan ITJ.
+                <strong className="text-emerald-700">Hijau (AVAILABLE)</strong> untuk melihat detail harga &amp; membuat ITJ.
               </span>
             </div>
 

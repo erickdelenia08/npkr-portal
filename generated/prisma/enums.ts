@@ -71,16 +71,6 @@ export const HasilAktivitas = {
 export type HasilAktivitas = (typeof HasilAktivitas)[keyof typeof HasilAktivitas]
 
 
-export const StatusItj = {
-  DIAJUKAN: 'DIAJUKAN',
-  PERLU_REVISI: 'PERLU_REVISI',
-  DISETUJUI: 'DISETUJUI',
-  DITOLAK: 'DITOLAK'
-} as const
-
-export type StatusItj = (typeof StatusItj)[keyof typeof StatusItj]
-
-
 export const StatusPernikahan = {
   MENIKAH: 'MENIKAH',
   BELUM_MENIKAH: 'BELUM_MENIKAH',

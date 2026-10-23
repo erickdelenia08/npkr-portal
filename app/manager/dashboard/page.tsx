@@ -11,6 +11,7 @@ import {
   Banknote,
   ArrowRight,
   ArrowUpRight,
+  Award,
 } from "lucide-react";
 import { requireManagerPage } from "@/lib/dashboard/guard";
 import { parseMonthParam } from "@/lib/date/wib";
@@ -64,7 +65,7 @@ export default async function ManagerDashboardPage({
             </span>
           </div>
           <p className="text-xs sm:text-sm text-slate mt-1">
-            Ringkasan metrik eksekutif prospek masuk, konversi survei, ITJ disetujui, closing unit, dan ketersediaan inventori.
+            Ringkasan metrik eksekutif prospek masuk, konversi survei, closing unit, persetujuan SP3K, pelaksanaan akad, dan ketersediaan inventori.
           </p>
         </div>
 
@@ -87,8 +88,8 @@ export default async function ManagerDashboardPage({
         </div>
       </div>
 
-      {/* ─── 1. Sales & Operational KPI Row (4 Cards) ─── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ─── 1. Sales & Operational KPI Row (5 Cards) ─── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <KpiCard
           title="Lead Masuk"
           value={formatInt(data.kpis.leadMasuk.current)}
@@ -102,16 +103,22 @@ export default async function ManagerDashboardPage({
           icon={<Calendar className="w-4 h-4" />}
         />
         <KpiCard
-          title="ITJ Disetujui"
-          value={formatInt(data.kpis.itjDisetujui.current)}
-          comparison={data.kpis.itjDisetujui}
-          icon={<FileCheck2 className="w-4 h-4" />}
-        />
-        <KpiCard
           title="Closing Penjualan"
           value={formatInt(data.kpis.closing.current)}
           comparison={data.kpis.closing}
           icon={<CheckCircle2 className="w-4 h-4" />}
+        />
+        <KpiCard
+          title="SP3K"
+          value={formatInt(data.kpis.sp3k.current)}
+          comparison={data.kpis.sp3k}
+          icon={<FileCheck2 className="w-4 h-4" />}
+        />
+        <KpiCard
+          title="Akad"
+          value={formatInt(data.kpis.akad.current)}
+          comparison={data.kpis.akad}
+          icon={<Award className="w-4 h-4" />}
         />
       </div>
 
@@ -131,7 +138,7 @@ export default async function ManagerDashboardPage({
         {/* Trend Chart (6 Months) */}
         <SectionCard
           title="Tren Performa 6 Bulan Terakhir"
-          subtitle="Grafik komparasi bulanan Lead Masuk, ITJ Disetujui, dan Closing Penjualan."
+          subtitle="Grafik komparasi bulanan Lead Masuk, Survei Selesai, dan Closing Penjualan."
         >
           <TrendChart data={data.trend} />
         </SectionCard>
@@ -161,15 +168,13 @@ export default async function ManagerDashboardPage({
                 <th scope="col" className="px-3.5 py-3 text-right">Lead Masuk</th>
                 <th scope="col" className="px-3.5 py-3 text-right">Survei Jadwal</th>
                 <th scope="col" className="px-3.5 py-3 text-right">Survei Selesai</th>
-                <th scope="col" className="px-3.5 py-3 text-right">ITJ Diajukan</th>
-                <th scope="col" className="px-3.5 py-3 text-right">ITJ Disetujui</th>
                 <th scope="col" className="px-3.5 py-3 text-right font-bold text-deep-teal">Closing</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-mist/60 bg-white">
               {data.marketingPerformance.rows.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-xs text-slate bg-bone/20">
+                  <td colSpan={7} className="px-4 py-8 text-center text-xs text-slate bg-bone/20">
                     Tidak ada aktivitas marketing untuk periode ini.
                   </td>
                 </tr>
@@ -188,8 +193,6 @@ export default async function ManagerDashboardPage({
                     <td className="px-3.5 py-2.5 text-right font-medium">{formatInt(row.leadMasuk)}</td>
                     <td className="px-3.5 py-2.5 text-right font-medium">{formatInt(row.surveiJadwal)}</td>
                     <td className="px-3.5 py-2.5 text-right font-medium">{formatInt(row.surveiSelesai)}</td>
-                    <td className="px-3.5 py-2.5 text-right font-medium">{formatInt(row.itjDiajukan)}</td>
-                    <td className="px-3.5 py-2.5 text-right font-medium">{formatInt(row.itjDisetujui)}</td>
                     <td className="px-3.5 py-2.5 text-right font-bold text-deep-teal">
                       {formatInt(row.closing)}
                     </td>
@@ -206,8 +209,6 @@ export default async function ManagerDashboardPage({
                   <td className="px-3.5 py-3 text-right">{formatInt(data.marketingPerformance.totals.leadMasuk)}</td>
                   <td className="px-3.5 py-3 text-right">{formatInt(data.marketingPerformance.totals.surveiJadwal)}</td>
                   <td className="px-3.5 py-3 text-right">{formatInt(data.marketingPerformance.totals.surveiSelesai)}</td>
-                  <td className="px-3.5 py-3 text-right">{formatInt(data.marketingPerformance.totals.itjDiajukan)}</td>
-                  <td className="px-3.5 py-3 text-right">{formatInt(data.marketingPerformance.totals.itjDisetujui)}</td>
                   <td className="px-3.5 py-3 text-right text-deep-teal">{formatInt(data.marketingPerformance.totals.closing)}</td>
                 </tr>
               </tfoot>

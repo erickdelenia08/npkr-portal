@@ -48,11 +48,6 @@ export type Aktivitas = Prisma.AktivitasModel
  */
 export type Itj = Prisma.ItjModel
 /**
- * Model ItjReview
- * 
- */
-export type ItjReview = Prisma.ItjReviewModel
-/**
  * Model Customer
  * 
  */

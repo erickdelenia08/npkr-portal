@@ -42,7 +42,7 @@ describe("actions/master-unit.action.ts - Smart Lock Guard", () => {
   });
 
   describe("checkUnitIsLocked()", () => {
-    it("returns true if unit has active ITJ record in DIAJUKAN, PERLU_REVISI, or DISETUJUI", async () => {
+    it("returns true if unit has active ITJ record with non-cancelled Transaksi", async () => {
       vi.mocked(prisma.itj.count).mockResolvedValue(1);
       vi.mocked(prisma.transaksi.count).mockResolvedValue(0);
 
@@ -52,7 +52,11 @@ describe("actions/master-unit.action.ts - Smart Lock Guard", () => {
       expect(prisma.itj.count).toHaveBeenCalledWith({
         where: {
           unit_id: 101,
-          status: { in: ["DIAJUKAN", "PERLU_REVISI", "DISETUJUI"] },
+          transaksi: {
+            is: {
+              status_transaksi: { not: "BATAL" },
+            },
+          },
         },
       });
     });

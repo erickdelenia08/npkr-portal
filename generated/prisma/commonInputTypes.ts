@@ -358,28 +358,11 @@ export type EnumHasilAktivitasWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumHasilAktivitasFilter<$PrismaModel>
 }
 
-export type EnumStatusItjFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusItj | Prisma.EnumStatusItjFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusItj[]
-  notIn?: $Enums.StatusItj[]
-  not?: Prisma.NestedEnumStatusItjFilter<$PrismaModel> | $Enums.StatusItj
-}
-
 export type EnumMetodeBayarFilter<$PrismaModel = never> = {
   equals?: $Enums.MetodeBayar | Prisma.EnumMetodeBayarFieldRefInput<$PrismaModel>
   in?: $Enums.MetodeBayar[]
   notIn?: $Enums.MetodeBayar[]
   not?: Prisma.NestedEnumMetodeBayarFilter<$PrismaModel> | $Enums.MetodeBayar
-}
-
-export type EnumStatusItjWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusItj | Prisma.EnumStatusItjFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusItj[]
-  notIn?: $Enums.StatusItj[]
-  not?: Prisma.NestedEnumStatusItjWithAggregatesFilter<$PrismaModel> | $Enums.StatusItj
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStatusItjFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStatusItjFilter<$PrismaModel>
 }
 
 export type EnumMetodeBayarWithAggregatesFilter<$PrismaModel = never> = {
@@ -1025,28 +1008,11 @@ export type NestedEnumHasilAktivitasWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumHasilAktivitasFilter<$PrismaModel>
 }
 
-export type NestedEnumStatusItjFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusItj | Prisma.EnumStatusItjFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusItj[]
-  notIn?: $Enums.StatusItj[]
-  not?: Prisma.NestedEnumStatusItjFilter<$PrismaModel> | $Enums.StatusItj
-}
-
 export type NestedEnumMetodeBayarFilter<$PrismaModel = never> = {
   equals?: $Enums.MetodeBayar | Prisma.EnumMetodeBayarFieldRefInput<$PrismaModel>
   in?: $Enums.MetodeBayar[]
   notIn?: $Enums.MetodeBayar[]
   not?: Prisma.NestedEnumMetodeBayarFilter<$PrismaModel> | $Enums.MetodeBayar
-}
-
-export type NestedEnumStatusItjWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.StatusItj | Prisma.EnumStatusItjFieldRefInput<$PrismaModel>
-  in?: $Enums.StatusItj[]
-  notIn?: $Enums.StatusItj[]
-  not?: Prisma.NestedEnumStatusItjWithAggregatesFilter<$PrismaModel> | $Enums.StatusItj
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumStatusItjFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumStatusItjFilter<$PrismaModel>
 }
 
 export type NestedEnumMetodeBayarWithAggregatesFilter<$PrismaModel = never> = {

@@ -931,7 +931,7 @@ export async function updateTransactionStatus(
         }
 
         const dateStr = validData.tglAkad?.trim() || validData.tglAjb?.trim();
-        if (!dateStr && !existingTrx.tgl_akad && !existingTrx.tgl_ajb) {
+        if (!dateStr && !existingTrx.tgl_akad) {
           throw new Error("Tanggal Akad wajib diisi.");
         }
 
@@ -986,9 +986,8 @@ export async function updateTransactionStatus(
           ? parseDateOnlyUTC(validData.tglAkad)
           : validData.tglAjb
             ? parseDateOnlyUTC(validData.tglAjb)
-            : (existingTrx.tgl_akad || existingTrx.tgl_ajb || todayDateOnlyUTC());
+            : (existingTrx.tgl_akad || todayDateOnlyUTC());
         updateData.tgl_akad = akadDate;
-        updateData.tgl_ajb = akadDate; // Keep tgl_ajb populated for backwards compatibility
       }
 
       if (targetDetail === "PELUNASAN") {
@@ -1006,7 +1005,7 @@ export async function updateTransactionStatus(
         // Fallback jika transaksi lawas belum memiliki closing_at
         if (!existingTrx.closing_at && !updateData.closing_at) {
           updateData.closing_at =
-            existingTrx.tgl_akad || existingTrx.tgl_ajb || bastDate;
+            existingTrx.tgl_akad || bastDate;
         }
       }
 
@@ -1049,23 +1048,19 @@ export async function updateTransactionStatus(
           },
         });
 
-        const activeItj = await tx.itj.findFirst({
-          where: {
-            unit_id: existingTrx.unit_id,
-            id: { not: existingTrx.itj_id },
-            status: { in: ["DIAJUKAN", "DISETUJUI"] },
-          },
-        });
-
-        if (!otherActiveTrx && !activeItj) {
+        if (!otherActiveTrx) {
           await tx.masterUnit.update({
             where: { id: existingTrx.unit_id },
             data: { status_unit: "AVAILABLE" },
           });
-        } else if (otherActiveTrx) {
+        } else {
+          const isSold =
+            otherActiveTrx.tahap_detail === "AKAD_KREDIT" ||
+            otherActiveTrx.tahap_detail === "AJB" ||
+            otherActiveTrx.status_transaksi === "SERAH_TERIMA";
           await tx.masterUnit.update({
             where: { id: existingTrx.unit_id },
-            data: { status_unit: "BOOKED" },
+            data: { status_unit: isSold ? "SOLD" : "BOOKED" },
           });
         }
       }

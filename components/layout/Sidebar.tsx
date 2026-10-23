@@ -40,8 +40,6 @@ export const ROLE_NAV_ITEMS: Record<string, NavItem[]> = {
     { title: "Lead", href: "/marketing/lead", icon: Users },
     { title: "Transaksi", href: "/marketing/transaksi", icon: ReceiptText },
     { title: "Unit", href: "/marketing/unit", icon: Building2 },
-    { title: "ITJ", href: "/marketing/itj", icon: FileCheck2 },
-    { title: "Laporan", href: "/marketing/laporan", icon: BarChart3 },
   ],
   admin: [
     { title: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },

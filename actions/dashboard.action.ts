@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import {
   todayWIB,
   monthRangeWIB,
+  monthRangeDateOnly,
   bulanLabel,
   formatTimestampWIB,
 } from "@/lib/date/wib";
@@ -16,7 +17,7 @@ export interface ActionResponse<T = unknown> {
   error?: string;
 }
 
-export type TaskCategory = "ITJ_REVISION" | "OVERDUE" | "TODAY" | "SURVEY";
+export type TaskCategory = "OVERDUE" | "TODAY" | "SURVEY";
 
 export interface MarketingTaskItem {
   id: string; // unique task key (e.g. `itj-12`, `followup-34`)
@@ -49,7 +50,7 @@ export interface MarketingDashboardData {
   };
   metrics: MarketingDashboardMetrics;
   tasks: {
-    itjActionNeeded: MarketingTaskItem[];
+    itjActionNeeded?: MarketingTaskItem[];
     overdueFollowUps: MarketingTaskItem[];
     todayFollowUps: MarketingTaskItem[];
     upcomingSurveys: MarketingTaskItem[];
@@ -139,14 +140,19 @@ export async function getMarketingDashboardData(
     });
 
     // 3. Metric 3 (Closing): Count Transaksi where marketing_id = userId AND closing_at is within current month (ITJ = Closing)
+    const { start: startOfMonthDate, end: endOfMonthDate } = monthRangeDateOnly(
+      currentYear,
+      currentMonth
+    );
+
     const closingsCount = await prisma.transaksi.count({
       where: {
         marketing_id: effectiveUserId,
         status_transaksi: { not: "BATAL" },
         cancelled_at: null,
         closing_at: {
-          gte: startOfMonth,
-          lt: endOfMonth,
+          gte: startOfMonthDate,
+          lt: endOfMonthDate,
         },
       },
     });
@@ -185,10 +191,6 @@ export async function getMarketingDashboardData(
             unit: {
               select: { blok: true },
             },
-            reviews: {
-              orderBy: { created_at: "desc" },
-              take: 1,
-            },
           },
         },
         aktivitas: {
@@ -199,48 +201,12 @@ export async function getMarketingDashboardData(
       orderBy: { updated_at: "desc" },
     });
 
-    const itjActionNeeded: MarketingTaskItem[] = [];
     const overdueFollowUps: MarketingTaskItem[] = [];
     const todayFollowUps: MarketingTaskItem[] = [];
     const upcomingSurveys: MarketingTaskItem[] = [];
 
     activeLeads.forEach((lead) => {
-      const latestItj = lead.itj[0];
-
-      // a. ITJ Action Needed: latest ITJ status is 'PERLU_REVISI' or 'DITOLAK'
-      if (
-        latestItj &&
-        (latestItj.status === "PERLU_REVISI" || latestItj.status === "DITOLAK")
-      ) {
-        const isRevisi = latestItj.status === "PERLU_REVISI";
-        const latestCatatan =
-          latestItj.reviews[0]?.catatan ||
-          (isRevisi
-            ? "Perbaiki data atau dokumen pengajuan ITJ konsumen"
-            : "Pengajuan ITJ tidak disetujui oleh manager");
-
-        itjActionNeeded.push({
-          id: `itj-${latestItj.id}`,
-          leadId: lead.id,
-          nama: lead.nama,
-          no_hp: lead.no_hp,
-          minat_tipe: lead.minat_tipe,
-          category: "ITJ_REVISION",
-          title: isRevisi
-            ? "Revisi Pengajuan ITJ Diperlukan"
-            : "Pengajuan ITJ Ditolak",
-          description: latestCatatan,
-          datetimeFormatted: formatTimestampWIB(
-            latestItj.diputuskan_at || latestItj.updated_at
-          ),
-          rawDate: (latestItj.diputuskan_at || latestItj.updated_at).toISOString(),
-          badgeText: isRevisi ? "PERLU REVISI" : "DITOLAK",
-          badgeVariant: isRevisi ? "amber" : "red",
-          unitBlok: latestItj.unit?.blok,
-        });
-      }
-
-      // b. Overdue Follow-ups: next_follow_up_at < start of today
+      // a. Overdue Follow-ups: next_follow_up_at < start of today
       if (lead.next_follow_up_at && lead.next_follow_up_at < startOfToday) {
         overdueFollowUps.push({
           id: `overdue-${lead.id}`,
@@ -260,7 +226,7 @@ export async function getMarketingDashboardData(
         });
       }
 
-      // c. Today's Follow-ups: next_follow_up_at is today
+      // b. Today's Follow-ups: next_follow_up_at is today
       if (
         lead.next_follow_up_at &&
         lead.next_follow_up_at >= startOfToday &&
@@ -284,7 +250,7 @@ export async function getMarketingDashboardData(
         });
       }
 
-      // d. Upcoming Surveys: survei_jadwal_at >= start of today and survey not finished
+      // c. Upcoming Surveys: survei_jadwal_at >= start of today and survey not finished
       if (
         lead.survei_jadwal_at &&
         lead.survei_jadwal_at >= startOfToday &&
@@ -310,13 +276,11 @@ export async function getMarketingDashboardData(
     });
 
     // Sort tasks in each bucket
-    itjActionNeeded.sort((a, b) => (b.rawDate || "").localeCompare(a.rawDate || ""));
     overdueFollowUps.sort((a, b) => (a.rawDate || "").localeCompare(b.rawDate || ""));
     todayFollowUps.sort((a, b) => (a.rawDate || "").localeCompare(b.rawDate || ""));
     upcomingSurveys.sort((a, b) => (a.rawDate || "").localeCompare(b.rawDate || ""));
 
     const totalTasks =
-      itjActionNeeded.length +
       overdueFollowUps.length +
       todayFollowUps.length +
       upcomingSurveys.length;
@@ -337,7 +301,7 @@ export async function getMarketingDashboardData(
           monthLabel: currentMonthLabel,
         },
         tasks: {
-          itjActionNeeded,
+          itjActionNeeded: [],
           overdueFollowUps,
           todayFollowUps,
           upcomingSurveys,

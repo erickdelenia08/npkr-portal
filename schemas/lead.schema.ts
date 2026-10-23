@@ -8,7 +8,6 @@ export const LeadTahapEnum = z.enum([
   "LEAD MASUK",
   "SURVEI DIJADWALKAN",
   "SUDAH SURVEI",
-  "ITJ DIAJUKAN",
   "CLOSING",
   "LOST",
   "Lead Masuk",

@@ -403,7 +403,6 @@ export const ModelName = {
   Lead: 'Lead',
   Aktivitas: 'Aktivitas',
   Itj: 'Itj',
-  ItjReview: 'ItjReview',
   Customer: 'Customer',
   Transaksi: 'Transaksi',
   Bank: 'Bank',
@@ -429,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "masterTipe" | "masterUnit" | "lead" | "aktivitas" | "itj" | "itjReview" | "customer" | "transaksi" | "bank" | "pengajuanKPR" | "pengajuanKPRLog" | "transaksiTahapLog" | "dokumenTransaksi" | "inspeksiBAST" | "inspeksiBASTLog" | "pembayaran"
+    modelProps: "user" | "masterTipe" | "masterUnit" | "lead" | "aktivitas" | "itj" | "customer" | "transaksi" | "bank" | "pengajuanKPR" | "pengajuanKPRLog" | "transaksiTahapLog" | "dokumenTransaksi" | "inspeksiBAST" | "inspeksiBASTLog" | "pembayaran"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -826,72 +825,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ItjCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ItjCountAggregateOutputType> | number
-        }
-      }
-    }
-    ItjReview: {
-      payload: Prisma.$ItjReviewPayload<ExtArgs>
-      fields: Prisma.ItjReviewFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.ItjReviewFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.ItjReviewFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload>
-        }
-        findFirst: {
-          args: Prisma.ItjReviewFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.ItjReviewFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload>
-        }
-        findMany: {
-          args: Prisma.ItjReviewFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload>[]
-        }
-        create: {
-          args: Prisma.ItjReviewCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload>
-        }
-        createMany: {
-          args: Prisma.ItjReviewCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        delete: {
-          args: Prisma.ItjReviewDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload>
-        }
-        update: {
-          args: Prisma.ItjReviewUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload>
-        }
-        deleteMany: {
-          args: Prisma.ItjReviewDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.ItjReviewUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        upsert: {
-          args: Prisma.ItjReviewUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ItjReviewPayload>
-        }
-        aggregate: {
-          args: Prisma.ItjReviewAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateItjReview>
-        }
-        groupBy: {
-          args: Prisma.ItjReviewGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ItjReviewGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.ItjReviewCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ItjReviewCountAggregateOutputType> | number
         }
       }
     }
@@ -1674,7 +1607,6 @@ export const ItjScalarFieldEnum = {
   lead_id: 'lead_id',
   unit_id: 'unit_id',
   marketing_id: 'marketing_id',
-  status: 'status',
   nik: 'nik',
   nama_ktp: 'nama_ktp',
   nominal: 'nominal',
@@ -1685,25 +1617,11 @@ export const ItjScalarFieldEnum = {
   metode_bayar: 'metode_bayar',
   tenor: 'tenor',
   diajukan_at: 'diajukan_at',
-  diputuskan_at: 'diputuskan_at',
-  diputuskan_oleh: 'diputuskan_oleh',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type ItjScalarFieldEnum = (typeof ItjScalarFieldEnum)[keyof typeof ItjScalarFieldEnum]
-
-
-export const ItjReviewScalarFieldEnum = {
-  id: 'id',
-  itj_id: 'itj_id',
-  reviewer_id: 'reviewer_id',
-  keputusan: 'keputusan',
-  catatan: 'catatan',
-  created_at: 'created_at'
-} as const
-
-export type ItjReviewScalarFieldEnum = (typeof ItjReviewScalarFieldEnum)[keyof typeof ItjReviewScalarFieldEnum]
 
 
 export const CustomerScalarFieldEnum = {
@@ -1739,7 +1657,6 @@ export const TransaksiScalarFieldEnum = {
   nama_bank: 'nama_bank',
   nama_notaris: 'nama_notaris',
   tgl_akad: 'tgl_akad',
-  tgl_ajb: 'tgl_ajb',
   lunas_at: 'lunas_at',
   tgl_bast: 'tgl_bast',
   closing_at: 'closing_at',
@@ -1942,13 +1859,6 @@ export const ItjOrderByRelevanceFieldEnum = {
 export type ItjOrderByRelevanceFieldEnum = (typeof ItjOrderByRelevanceFieldEnum)[keyof typeof ItjOrderByRelevanceFieldEnum]
 
 
-export const ItjReviewOrderByRelevanceFieldEnum = {
-  catatan: 'catatan'
-} as const
-
-export type ItjReviewOrderByRelevanceFieldEnum = (typeof ItjReviewOrderByRelevanceFieldEnum)[keyof typeof ItjReviewOrderByRelevanceFieldEnum]
-
-
 export const CustomerOrderByRelevanceFieldEnum = {
   nama_ktp: 'nama_ktp',
   nik: 'nik',
@@ -2112,13 +2022,6 @@ export type EnumJenisAktivitasFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'HasilAktivitas'
  */
 export type EnumHasilAktivitasFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'HasilAktivitas'>
-    
-
-
-/**
- * Reference to a field of type 'StatusItj'
- */
-export type EnumStatusItjFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusItj'>
     
 
 
@@ -2376,7 +2279,6 @@ export type GlobalOmitConfig = {
   lead?: Prisma.LeadOmit
   aktivitas?: Prisma.AktivitasOmit
   itj?: Prisma.ItjOmit
-  itjReview?: Prisma.ItjReviewOmit
   customer?: Prisma.CustomerOmit
   transaksi?: Prisma.TransaksiOmit
   bank?: Prisma.BankOmit

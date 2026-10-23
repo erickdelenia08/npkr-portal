@@ -5,7 +5,6 @@ import {
   Role,
   KategoriUnit,
   StatusUnit,
-  StatusItj,
   SumberLead,
   MetodeBayar,
   TahapTransaksi,
@@ -226,14 +225,12 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
         lead_id: leadOct.id,
         unit_id: masterUnitId1!,
         marketing_id: activeMarketingId1,
-        status: StatusItj.DISETUJUI,
         nik: "3201111111111111",
         nama_ktp: "Pembeli Oct",
         nominal: 1000000,
         target_dp: 10000000,
         metode_bayar: MetodeBayar.KPR,
         diajukan_at: new Date("2026-10-10T10:00:00+07:00"),
-        diputuskan_at: new Date("2026-10-12T10:00:00+07:00"),
       },
     });
     createdItjIds.push(itjOct.id);
@@ -271,14 +268,12 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
         lead_id: leadNov.id,
         unit_id: masterUnitId2!,
         marketing_id: activeMarketingId1,
-        status: StatusItj.DISETUJUI,
         nik: "3201222222222222",
         nama_ktp: "Pembeli Nov",
         nominal: 1000000,
         target_dp: 10000000,
         metode_bayar: MetodeBayar.KPR,
         diajukan_at: new Date("2026-10-20T10:00:00+07:00"),
-        diputuskan_at: new Date("2026-10-22T10:00:00+07:00"),
       },
     });
     createdItjIds.push(itjNov.id);
@@ -329,14 +324,12 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
         lead_id: leadBatal.id,
         unit_id: masterUnitId3!,
         marketing_id: activeMarketingId1,
-        status: StatusItj.DISETUJUI,
         nik: "3201333333333333",
         nama_ktp: "Pembeli Batal",
         nominal: 1000000,
         target_dp: 10000000,
         metode_bayar: MetodeBayar.CASH_KERAS,
         diajukan_at: new Date("2026-10-05T10:00:00+07:00"),
-        diputuskan_at: new Date("2026-10-06T10:00:00+07:00"),
       },
     });
     createdItjIds.push(itjBatal.id);
@@ -428,7 +421,6 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
         lead_id: leadReassign.id,
         unit_id: masterUnitId1!,
         marketing_id: activeMarketingId1, // snapshot of owner at ITJ submission
-        status: StatusItj.DIAJUKAN,
         nik: "3201444444444444",
         nama_ktp: "Pembeli Snap",
         nominal: 1000000,
@@ -438,6 +430,21 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
       },
     });
     createdItjIds.push(itjSnap.id);
+
+    const txSnap = await prisma.transaksi.create({
+      data: {
+        customer_id: customerId!,
+        unit_id: masterUnitId1!,
+        marketing_id: activeMarketingId1,
+        itj_id: itjSnap.id,
+        metode_bayar: MetodeBayar.KPR,
+        harga_deal: 200000000,
+        target_itj: 1000000,
+        target_dp: 10000000,
+        closing_at: parseDateOnlyUTC("2026-10-15"),
+      },
+    });
+    createdTransaksiIds.push(txSnap.id);
 
     // Now reassign lead to Marketing 2
     await prisma.lead.update({
@@ -449,11 +456,11 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
     const m1Row = octReport.tables[0].rows.find((r) => r.marketing_id === activeMarketingId1);
     const m2Row = octReport.tables[0].rows.find((r) => r.marketing_id === activeMarketingId2);
 
-    // Marketing 1 keeps the ITJ count because Itj.marketing_id == m1.id
-    expect((m1Row?.itj_diajukan as number) || 0).toBeGreaterThanOrEqual(1);
+    // Marketing 1 keeps the closing count because Transaksi.marketing_id == m1.id
+    expect((m1Row?.closing as number) || 0).toBeGreaterThanOrEqual(1);
 
-    // Marketing 2 does NOT get the ITJ count
-    expect(m2Row?.itj_diajukan || 0).toBe(0);
+    // Marketing 2 does NOT get the closing count
+    expect(m2Row?.closing || 0).toBe(0);
   });
 
   it("6. increases 'ITJ diajukan' by two for a lead with two ITJ submissions", async () => {
@@ -472,7 +479,6 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
         lead_id: leadDoubleItj.id,
         unit_id: masterUnitId2!,
         marketing_id: activeMarketingId2,
-        status: StatusItj.DITOLAK,
         nik: "3201555555555555",
         nama_ktp: "Pembeli Dobel",
         nominal: 1000000,
@@ -483,12 +489,26 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
     });
     createdItjIds.push(itj1.id);
 
+    const tx1 = await prisma.transaksi.create({
+      data: {
+        customer_id: customerId!,
+        unit_id: masterUnitId2!,
+        marketing_id: activeMarketingId2,
+        itj_id: itj1.id,
+        metode_bayar: MetodeBayar.KPR,
+        harga_deal: 200000000,
+        target_itj: 1000000,
+        target_dp: 10000000,
+        closing_at: parseDateOnlyUTC("2026-10-02"),
+      },
+    });
+    createdTransaksiIds.push(tx1.id);
+
     const itj2 = await prisma.itj.create({
       data: {
         lead_id: leadDoubleItj.id,
         unit_id: masterUnitId2!,
         marketing_id: activeMarketingId2,
-        status: StatusItj.DIAJUKAN,
         nik: "3201555555555555",
         nama_ktp: "Pembeli Dobel 2",
         nominal: 1000000,
@@ -499,10 +519,25 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
     });
     createdItjIds.push(itj2.id);
 
+    const tx2 = await prisma.transaksi.create({
+      data: {
+        customer_id: customerId!,
+        unit_id: masterUnitId2!,
+        marketing_id: activeMarketingId2,
+        itj_id: itj2.id,
+        metode_bayar: MetodeBayar.KPR,
+        harga_deal: 200000000,
+        target_itj: 1000000,
+        target_dp: 10000000,
+        closing_at: parseDateOnlyUTC("2026-10-08"),
+      },
+    });
+    createdTransaksiIds.push(tx2.id);
+
     const octReport = await getMarketingReport(2026, 10);
     const m2Row = octReport.tables[0].rows.find((r) => r.marketing_id === activeMarketingId2);
 
-    expect(m2Row?.itj_diajukan).toBe(2);
+    expect(m2Row?.closing).toBe(2);
   });
 
   it("7. hides inactive marketing with zero numbers and shows inactive marketing with non-zero numbers", async () => {
@@ -548,14 +583,12 @@ describe("Manager Dashboard & Reports Integration Metrics (Local DB)", () => {
         lead_id: leadCohort.id,
         unit_id: masterUnitId1!,
         marketing_id: activeMarketingId1,
-        status: StatusItj.DISETUJUI,
         nik: "3201888888888888",
         nama_ktp: "Pembeli Cohort",
         nominal: 1000000,
         target_dp: 10000000,
         metode_bayar: MetodeBayar.KPR,
         diajukan_at: new Date("2026-10-15T10:00:00+07:00"),
-        diputuskan_at: new Date("2026-10-18T10:00:00+07:00"),
       },
     });
     createdItjIds.push(itjCohort.id);

@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const leadId = Number(id);
 
   if (isNaN(leadId) || leadId <= 0) {
-    return { title: "Pengajuan ITJ | NPKR Portal" };
+    return { title: "Buat ITJ | NPKR Portal" };
   }
 
   const lead = await prisma.lead.findUnique({
@@ -24,12 +24,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
 
   if (!lead) {
-    return { title: "Pengajuan ITJ | NPKR Portal" };
+    return { title: "Buat ITJ | NPKR Portal" };
   }
 
   return {
-    title: `Pengajuan ITJ - ${lead.nama} | NPKR Portal`,
-    description: `Formulir pengajuan Ikatan Tanda Jadi (ITJ) untuk konsumen ${lead.nama}`,
+    title: `Buat ITJ - ${lead.nama} | NPKR Portal`,
+    description: `Formulir pembuatan Ikatan Tanda Jadi (ITJ) untuk konsumen ${lead.nama}`,
   };
 }
 
@@ -46,19 +46,19 @@ export default async function ItjPage({ params }: PageProps) {
     include: {
       customer: true,
       itj: {
-        orderBy: { id: "desc" },
-        take: 1,
-        include: {
-          reviews: {
-            orderBy: { id: "desc" },
-            take: 1,
-          },
-          unit: {
-            include: {
-              tipe: true,
+        where: {
+          transaksi: {
+            is: {
+              status_transaksi: { not: "BATAL" },
             },
           },
         },
+        include: {
+          transaksi: {
+            select: { id: true },
+          },
+        },
+        take: 1,
       },
     },
   });
@@ -67,9 +67,13 @@ export default async function ItjPage({ params }: PageProps) {
     notFound();
   }
 
-  // 1. Authorization: Only allow access if survei_selesai_at is NOT null, and the lead is not Lost/Closed
+  // 1. Authorization: Only allow access if survei_selesai_at is NOT null, and the lead is not Lost, and does not already have an active ITJ/Closing
+  const activeItj = lead.itj[0];
+  if (activeItj?.transaksi) {
+    redirect(`/marketing/transaksi/${activeItj.transaksi.id}`);
+  }
+
   if (!lead.survei_selesai_at || lead.lost_at !== null) {
-    // if (!lead.survei_selesai_at || lead.lost_at !== null || lead.closing_at !== null) {
     redirect(`/marketing/lead/${lead.id}`);
   }
 

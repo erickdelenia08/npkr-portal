@@ -597,14 +597,6 @@ export default async function AdminDashboardPage() {
               </Link>
             </div>
           </div>
-
-          {/* SOP Reminder Banner */}
-          <div className="p-3 rounded-lg bg-amber-50/70 border border-amber-200/80 text-amber-900 text-xs flex items-start gap-2.5">
-            <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-[11px] leading-relaxed">
-              <strong>SOP Keuangan:</strong> Selalu verifikasi mutasi rekening koran bank sebelum menyetujui ITJ. Persetujuan ITJ otomatis mengunci unit kavling ke status <strong>HOLD</strong>.
-            </p>
-          </div>
         </div>
       </div>
     </div>

@@ -556,7 +556,7 @@ export async function TransactionDetailView({
           transaksi.tgl_akad ? transaksi.tgl_akad.toISOString() : null
         }
         initialTglAjb={
-          transaksi.tgl_ajb ? transaksi.tgl_ajb.toISOString() : null
+          transaksi.tgl_akad ? transaksi.tgl_akad.toISOString() : null
         }
         initialTglBast={
           transaksi.tgl_bast ? transaksi.tgl_bast.toISOString() : null

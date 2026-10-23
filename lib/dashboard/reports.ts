@@ -9,7 +9,6 @@
 import { prisma } from "@/lib/prisma";
 import {
   TahapTransaksi,
-  StatusItj,
   SumberLead,
   StatusUnit,
   MetodeBayar,
@@ -88,8 +87,6 @@ export async function getMarketingReport(year: number, month: number): Promise<R
     leadMasukGroups,
     surveiJadwalGroups,
     surveiSelesaiGroups,
-    itjDiajukanGroups,
-    itjDisetujuiGroups,
     closingGroups,
   ] = await Promise.all([
     prisma.user.findMany({
@@ -120,23 +117,6 @@ export async function getMarketingReport(year: number, month: number): Promise<R
       },
       _count: { _all: true },
     }),
-    prisma.itj.groupBy({
-      by: ["marketing_id"],
-      where: {
-        marketing_id: { not: null },
-        diajukan_at: { gte: rangeWib.start, lt: rangeWib.end },
-      },
-      _count: { _all: true },
-    }),
-    prisma.itj.groupBy({
-      by: ["marketing_id"],
-      where: {
-        marketing_id: { not: null },
-        status: StatusItj.DISETUJUI,
-        diputuskan_at: { gte: rangeWib.start, lt: rangeWib.end },
-      },
-      _count: { _all: true },
-    }),
     prisma.transaksi.groupBy({
       by: ["marketing_id"],
       where: closedDealWhere(rangeDate.start, rangeDate.end),
@@ -145,39 +125,29 @@ export async function getMarketingReport(year: number, month: number): Promise<R
   ]);
 
   const lmMap = new Map<number, number>();
-  leadMasukGroups.forEach((g) => g.marketing_id && lmMap.set(g.marketing_id, g._count._all));
+  leadMasukGroups.forEach((g) => g.marketing_id && lmMap.set(g.marketing_id, g._count?._all ?? 0));
 
   const sjMap = new Map<number, number>();
-  surveiJadwalGroups.forEach((g) => g.marketing_id && sjMap.set(g.marketing_id, g._count._all));
+  surveiJadwalGroups.forEach((g) => g.marketing_id && sjMap.set(g.marketing_id, g._count?._all ?? 0));
 
   const ssMap = new Map<number, number>();
-  surveiSelesaiGroups.forEach((g) => g.marketing_id && ssMap.set(g.marketing_id, g._count._all));
-
-  const idMap = new Map<number, number>();
-  itjDiajukanGroups.forEach((g) => g.marketing_id && idMap.set(g.marketing_id, g._count._all));
-
-  const isMap = new Map<number, number>();
-  itjDisetujuiGroups.forEach((g) => g.marketing_id && isMap.set(g.marketing_id, g._count._all));
+  surveiSelesaiGroups.forEach((g) => g.marketing_id && ssMap.set(g.marketing_id, g._count?._all ?? 0));
 
   const clMap = new Map<number, number>();
-  closingGroups.forEach((g) => g.marketing_id && clMap.set(g.marketing_id, g._count._all));
+  closingGroups.forEach((g) => g.marketing_id && clMap.set(g.marketing_id, g._count?._all ?? 0));
 
   const rows: Record<string, unknown>[] = [];
   let tLm = 0,
     tSj = 0,
     tSs = 0,
-    tId = 0,
-    tIs = 0,
     tCl = 0;
 
   for (const u of marketingUsers) {
     const lm = lmMap.get(u.id) || 0;
     const sj = sjMap.get(u.id) || 0;
     const ss = ssMap.get(u.id) || 0;
-    const id = idMap.get(u.id) || 0;
-    const is = isMap.get(u.id) || 0;
     const cl = clMap.get(u.id) || 0;
-    const sum = lm + sj + ss + id + is + cl;
+    const sum = lm + sj + ss + cl;
 
     if (u.isActive || sum > 0) {
       rows.push({
@@ -188,16 +158,12 @@ export async function getMarketingReport(year: number, month: number): Promise<R
         lead_masuk: lm,
         survei_jadwal: sj,
         survei_selesai: ss,
-        itj_diajukan: id,
-        itj_disetujui: is,
         closing: cl,
       });
 
       tLm += lm;
       tSj += sj;
       tSs += ss;
-      tId += id;
-      tIs += is;
       tCl += cl;
     }
   }
@@ -217,19 +183,17 @@ export async function getMarketingReport(year: number, month: number): Promise<R
     { key: "lead_masuk", label: "Lead Masuk", type: "int" },
     { key: "survei_jadwal", label: "Survei Dijadwalkan", type: "int" },
     { key: "survei_selesai", label: "Survei Selesai", type: "int" },
-    { key: "itj_diajukan", label: "ITJ Diajukan", type: "int" },
-    { key: "itj_disetujui", label: "ITJ Disetujui", type: "int" },
-    { key: "closing", label: "Closing", type: "int" },
+    { key: "closing", label: "Closing Penjualan", type: "int" },
   ];
 
   return {
     key: "marketing",
     title: `Laporan Kinerja Bulanan Marketing (${bulanLabel(year, month)})`,
     description:
-      "Rekapitulasi funnel performa per marketing: Lead Masuk -> Survei Dijadwalkan -> Survei Selesai -> ITJ Diajukan -> ITJ Disetujui -> Closing.",
+      "Rekapitulasi funnel performa per marketing: Lead Masuk -> Survei Dijadwalkan -> Survei Selesai -> Closing.",
     notes: [
       "Metrik berbasis tanggal peristiwa (event-date), closing bulan ini dapat berasal dari lead bulan sebelumnya.",
-      "ITJ dihitung per pengajuan ITJ dan mengikuti marketing yang tercatat saat pengajuan dibuat.",
+      "Closing dihitung per transaksi aktif yang terkait dengan ITJ (status transaksi bukan BATAL).",
       "Lead tanpa PIC marketing tidak ditampilkan pada tabel ini (lihat tab Laporan Prospek).",
       "Tabel performa ini sengaja tidak menyertakan persentase konversi rasio (persentase konversi tersedia pada cohort funnel di Dashboard).",
     ],
@@ -245,8 +209,6 @@ export async function getMarketingReport(year: number, month: number): Promise<R
           lead_masuk: tLm,
           survei_jadwal: tSj,
           survei_selesai: tSs,
-          itj_diajukan: tId,
-          itj_disetujui: tIs,
           closing: tCl,
         },
       },
@@ -886,26 +848,30 @@ export async function getBankReport(year: number, month: number): Promise<Report
 
 // ─── 7. REPORT: DURASI ───
 export async function getDurasiReport(year: number, month: number): Promise<ReportResult> {
-  const rangeWib = monthRangeWIB(year, month);
   const rangeDate = monthRangeDateOnly(year, month);
 
-  const [itjDecisions, monthClosings, monthBasts] = await Promise.all([
-    // Table 1: Decisions made in the month
-    prisma.itj.findMany({
-      where: {
-        diputuskan_at: { gte: rangeWib.start, lt: rangeWib.end },
-      },
-      select: {
-        status: true,
-        diajukan_at: true,
-        diputuskan_at: true,
-      },
-    }),
-    // Table 2: Closings in the month
+  const [monthClosings, monthAkads, monthBasts] = await Promise.all([
+    // Table 1: Closings in the month (with lead created_at)
     prisma.transaksi.findMany({
       where: closedDealWhere(rangeDate.start, rangeDate.end),
       include: {
-        itj: { select: { diputuskan_at: true } },
+        itj: {
+          select: {
+            lead: { select: { created_at: true } },
+          },
+        },
+      },
+    }),
+    // Table 2: Transaksi with tgl_akad in the month
+    prisma.transaksi.findMany({
+      where: {
+        tgl_akad: { gte: rangeDate.start, lt: rangeDate.end },
+        status_transaksi: { not: TahapTransaksi.BATAL },
+      },
+      select: {
+        metode_bayar: true,
+        closing_at: true,
+        tgl_akad: true,
       },
     }),
     // Table 3: BAST in the month
@@ -922,26 +888,26 @@ export async function getDurasiReport(year: number, month: number): Promise<Repo
     }),
   ]);
 
-  // Table 1: ITJ Review time (diajukan_at to diputuskan_at) grouped by status
-  const itjStatusGroups = new Map<StatusItj, number[]>();
-  for (const itj of itjDecisions) {
-    if (itj.diputuskan_at) {
-      const diff = dayDiff(toWibDay(itj.diajukan_at), toWibDay(itj.diputuskan_at));
-      if (!itjStatusGroups.has(itj.status)) {
-        itjStatusGroups.set(itj.status, []);
+  // Table 1: Lead Masuk to Closing (Lead.created_at to Transaksi.closing_at) grouped by metode_bayar
+  const leadToClosingMethodGroups = new Map<MetodeBayar, number[]>();
+  const allLeadToClosingDays: number[] = [];
+  for (const tx of monthClosings) {
+    if (tx.itj?.lead?.created_at && tx.closing_at) {
+      const diff = dayDiff(toWibDay(tx.itj.lead.created_at), toWibDay(tx.closing_at));
+      if (!leadToClosingMethodGroups.has(tx.metode_bayar)) {
+        leadToClosingMethodGroups.set(tx.metode_bayar, []);
       }
-      itjStatusGroups.get(itj.status)!.push(diff);
+      leadToClosingMethodGroups.get(tx.metode_bayar)!.push(diff);
+      allLeadToClosingDays.push(diff);
     }
   }
 
   const table1Rows: Record<string, unknown>[] = [];
-  const allItjDays: number[] = [];
-  for (const status of Object.values(StatusItj)) {
-    const days = itjStatusGroups.get(status) || [];
-    allItjDays.push(...days);
+  for (const method of Object.values(MetodeBayar)) {
+    const days = leadToClosingMethodGroups.get(method) || [];
     const stats = calcDurationStats(days);
     table1Rows.push({
-      kelompok: humanizeEnum(status),
+      kelompok: humanizeEnum(method),
       jumlah: stats.count,
       rata_rata: stats.avg,
       median: stats.median,
@@ -949,24 +915,33 @@ export async function getDurasiReport(year: number, month: number): Promise<Repo
       terlama: stats.max,
     });
   }
+  const allLeadToClosingStats = calcDurationStats(allLeadToClosingDays);
+  table1Rows.push({
+    kelompok: "Semua Metode Bayar",
+    jumlah: allLeadToClosingStats.count,
+    rata_rata: allLeadToClosingStats.avg,
+    median: allLeadToClosingStats.median,
+    tercepat: allLeadToClosingStats.min,
+    terlama: allLeadToClosingStats.max,
+  });
 
-  // Table 2: ITJ approved to closing (diputuskan_at to closing_at) grouped by metode_bayar
-  const closingMethodGroups = new Map<MetodeBayar, number[]>();
-  const allClosingDays: number[] = [];
-  for (const tx of monthClosings) {
-    if (tx.itj?.diputuskan_at && tx.closing_at) {
-      const diff = dayDiff(toWibDay(tx.itj.diputuskan_at), toWibDay(tx.closing_at));
-      if (!closingMethodGroups.has(tx.metode_bayar)) {
-        closingMethodGroups.set(tx.metode_bayar, []);
+  // Table 2: Closing to Akad / AJB (closing_at to tgl_akad) grouped by metode_bayar
+  const closingToAkadMethodGroups = new Map<MetodeBayar, number[]>();
+  const allClosingToAkadDays: number[] = [];
+  for (const tx of monthAkads) {
+    if (tx.closing_at && tx.tgl_akad) {
+      const diff = dayDiff(toWibDay(tx.closing_at), toWibDay(tx.tgl_akad));
+      if (!closingToAkadMethodGroups.has(tx.metode_bayar)) {
+        closingToAkadMethodGroups.set(tx.metode_bayar, []);
       }
-      closingMethodGroups.get(tx.metode_bayar)!.push(diff);
-      allClosingDays.push(diff);
+      closingToAkadMethodGroups.get(tx.metode_bayar)!.push(diff);
+      allClosingToAkadDays.push(diff);
     }
   }
 
   const table2Rows: Record<string, unknown>[] = [];
   for (const method of Object.values(MetodeBayar)) {
-    const days = closingMethodGroups.get(method) || [];
+    const days = closingToAkadMethodGroups.get(method) || [];
     const stats = calcDurationStats(days);
     table2Rows.push({
       kelompok: humanizeEnum(method),
@@ -977,14 +952,14 @@ export async function getDurasiReport(year: number, month: number): Promise<Repo
       terlama: stats.max,
     });
   }
-  const allClosingStats = calcDurationStats(allClosingDays);
+  const allClosingToAkadStats = calcDurationStats(allClosingToAkadDays);
   table2Rows.push({
     kelompok: "Semua Metode Bayar",
-    jumlah: allClosingStats.count,
-    rata_rata: allClosingStats.avg,
-    median: allClosingStats.median,
-    tercepat: allClosingStats.min,
-    terlama: allClosingStats.max,
+    jumlah: allClosingToAkadStats.count,
+    rata_rata: allClosingToAkadStats.avg,
+    median: allClosingToAkadStats.median,
+    tercepat: allClosingToAkadStats.min,
+    terlama: allClosingToAkadStats.max,
   });
 
   // Table 3: Closing to BAST (closing_at to tgl_bast) grouped by metode_bayar
@@ -1037,20 +1012,21 @@ export async function getDurasiReport(year: number, month: number): Promise<Repo
     key: "durasi",
     title: `Laporan Analisis Durasi Proses SLA (${bulanLabel(year, month)})`,
     description:
-      "Statistik durasi hari kalender penyelesaian tahapan dari review ITJ, persetujuan ke closing, hingga serah terima unit (BAST).",
+      "Statistik durasi hari kalender penyelesaian tahapan dari prospek lead masuk ke closing, pelaksanaan akad, hingga serah terima unit (BAST).",
     notes: [
       "Durasi dihitung dalam selisih hari kalender murni di zona waktu Asia/Jakarta (WIB).",
-      "Durasi ITJ ke closing dihitung dari tanggal persetujuan ITJ hingga tanggal closing resmi (Transaksi.closing_at).",
+      "Durasi lead ke closing dihitung dari tanggal lead dibuat hingga tanggal closing resmi (Transaksi.closing_at).",
+      "Durasi closing ke akad dihitung dari closing hingga pelaksanaan akad kredit atau penandatanganan AJB (Transaksi.tgl_akad).",
       "Durasi closing ke BAST dihitung untuk seluruh transaksi yang mencatatkan tanggal serah terima (tgl_bast) pada periode ini.",
     ],
     tables: [
       {
-        title: "Durasi Review & Keputusan ITJ",
+        title: "Durasi Prospek Lead Masuk ke Closing Penjualan",
         columns: durationColumns,
         rows: table1Rows,
       },
       {
-        title: "Durasi ITJ Disetujui ke Closing Penjualan",
+        title: "Durasi Closing Penjualan ke Pelaksanaan Akad / AJB",
         columns: durationColumns,
         rows: table2Rows,
       },

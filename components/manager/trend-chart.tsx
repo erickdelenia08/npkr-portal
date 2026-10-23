@@ -9,7 +9,7 @@ interface TrendChartProps {
 export function TrendChart({ data }: TrendChartProps) {
   // Find highest value across all 6 months to scale bars
   const maxValue = Math.max(
-    ...data.map((d) => Math.max(d.leadMasuk, d.itjDisetujui, d.closing)),
+    ...data.map((d) => Math.max(d.leadMasuk, d.surveiSelesai, d.closing)),
     10
   );
 
@@ -22,8 +22,8 @@ export function TrendChart({ data }: TrendChartProps) {
           <span>Lead Masuk</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-xs bg-teal-400 inline-block" />
-          <span>ITJ Disetujui</span>
+          <span className="w-3 h-3 rounded-xs bg-indigo-400 inline-block" />
+          <span>Survei Selesai</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-xs bg-deep-teal inline-block" />
@@ -38,7 +38,7 @@ export function TrendChart({ data }: TrendChartProps) {
       >
         {data.map((m) => {
           const hLead = Math.max((m.leadMasuk / maxValue) * 120, 4);
-          const hItj = Math.max((m.itjDisetujui / maxValue) * 120, 4);
+          const hSurvei = Math.max((m.surveiSelesai / maxValue) * 120, 4);
           const hClose = Math.max((m.closing / maxValue) * 120, 4);
 
           return (
@@ -60,15 +60,15 @@ export function TrendChart({ data }: TrendChartProps) {
                   />
                 </div>
 
-                {/* ITJ Disetujui Bar */}
+                {/* Survei Selesai Bar */}
                 <div className="flex flex-col items-center flex-1 max-w-[20px]">
-                  <span className="text-[10px] text-teal-600 mb-1 font-semibold">
-                    {m.itjDisetujui}
+                  <span className="text-[10px] text-indigo-600 mb-1 font-semibold">
+                    {m.surveiSelesai}
                   </span>
                   <div
-                    className="w-full bg-teal-400 rounded-t-xs"
-                    style={{ height: `${hItj}px` }}
-                    title={`ITJ Disetujui: ${m.itjDisetujui}`}
+                    className="w-full bg-indigo-400 rounded-t-xs"
+                    style={{ height: `${hSurvei}px` }}
+                    title={`Survei Selesai: ${m.surveiSelesai}`}
                   />
                 </div>
 
@@ -105,7 +105,7 @@ export function TrendChart({ data }: TrendChartProps) {
             <tr>
               <th scope="col">Bulan</th>
               <th scope="col">Lead Masuk</th>
-              <th scope="col">ITJ Disetujui</th>
+              <th scope="col">Survei Selesai</th>
               <th scope="col">Closing Penjualan</th>
             </tr>
           </thead>
@@ -114,7 +114,7 @@ export function TrendChart({ data }: TrendChartProps) {
               <tr key={m.key}>
                 <td>{m.label}</td>
                 <td>{m.leadMasuk}</td>
-                <td>{m.itjDisetujui}</td>
+                <td>{m.surveiSelesai}</td>
                 <td>{m.closing}</td>
               </tr>
             ))}

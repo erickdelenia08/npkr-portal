@@ -80,8 +80,6 @@ export function MarketingLeadTable({ leads }: MarketingLeadTableProps) {
         return "bg-purple-50 text-purple-700 border-purple-200";
       case "SUDAH SURVEI":
         return "bg-indigo-50 text-indigo-700 border-indigo-200";
-      case "ITJ DIAJUKAN":
-        return "bg-amber-50 text-amber-700 border-amber-200";
       case "CLOSING":
         return "bg-emerald-50 text-emerald-700 border-emerald-200";
       case "LOST":
@@ -156,7 +154,7 @@ export function MarketingLeadTable({ leads }: MarketingLeadTableProps) {
           {leads.map((lead) => {
             const isDropdownOpen = activeDropdownId === lead.id;
             const waUrl = formatWhatsAppUrl(lead.no_hp, lead.nama);
-            const canAjukanItj =
+            const canBuatItj =
               lead.tahap === "Sudah Survei" || lead.survei_selesai_at !== null;
             const isClosing = lead.tahap === "Closing" || lead.closing_at !== null;
 
@@ -257,14 +255,25 @@ export function MarketingLeadTable({ leads }: MarketingLeadTableProps) {
                             <span>Lihat Detail Lead</span>
                           </Link>
 
-                          {canAjukanItj && !isClosing && (
+                          {canBuatItj && !isClosing && (
                             <Link
                               href={`/marketing/lead/${lead.id}/itj`}
                               onClick={() => setActiveDropdownId(null)}
                               className="flex items-center gap-2 px-3.5 py-2 text-xs text-emerald-700 hover:bg-emerald-50 transition-colors font-semibold"
                             >
                               <FileText className="w-4 h-4 text-emerald-600" />
-                              <span>Ajukan ITJ</span>
+                              <span>Buat ITJ</span>
+                            </Link>
+                          )}
+
+                          {isClosing && lead.transaksi_id && (
+                            <Link
+                              href={`/marketing/transaksi/${lead.transaksi_id}`}
+                              onClick={() => setActiveDropdownId(null)}
+                              className="flex items-center gap-2 px-3.5 py-2 text-xs text-emerald-700 hover:bg-emerald-50 transition-colors font-semibold"
+                            >
+                              <FileText className="w-4 h-4 text-emerald-600" />
+                              <span>Buka Transaksi</span>
                             </Link>
                           )}
 

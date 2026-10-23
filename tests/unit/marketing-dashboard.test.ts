@@ -80,31 +80,9 @@ describe("Marketing Dashboard Server Action Tests", () => {
     const tomorrow = new Date(`${todayStr}T10:00:00+07:00`);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Mock active leads representing 4 categories
+    // Mock active leads representing 3 categories: Overdue, Today, Survey
     const mockLeads = [
-      // 1. ITJ Action Needed (Perlu Revisi)
-      {
-        id: 1,
-        nama: "Customer A",
-        no_hp: "08123456789",
-        minat_tipe: "36/60",
-        next_follow_up_at: null,
-        survei_jadwal_at: null,
-        survei_selesai_at: null,
-        itj: [
-          {
-            id: 101,
-            status: "PERLU_REVISI",
-            diajukan_at: new Date(),
-            diputuskan_at: new Date(),
-            updated_at: new Date(),
-            unit: { blok: "F-11" },
-            reviews: [{ catatan: "KTP buram, mohon upload ulang" }],
-          },
-        ],
-        aktivitas: [],
-      },
-      // 2. Overdue Follow-up
+      // 1. Overdue Follow-up
       {
         id: 2,
         nama: "Customer B",
@@ -116,7 +94,7 @@ describe("Marketing Dashboard Server Action Tests", () => {
         itj: [],
         aktivitas: [{ catatan: "Minta info skema cicilan" }],
       },
-      // 3. Today's Follow-up
+      // 2. Today's Follow-up
       {
         id: 3,
         nama: "Customer C",
@@ -128,7 +106,7 @@ describe("Marketing Dashboard Server Action Tests", () => {
         itj: [],
         aktivitas: [{ catatan: "Janji telepon jam makan siang" }],
       },
-      // 4. Upcoming Survey
+      // 3. Upcoming Survey
       {
         id: 4,
         nama: "Customer D",
@@ -147,10 +125,6 @@ describe("Marketing Dashboard Server Action Tests", () => {
     const res = await getMarketingDashboardData();
 
     expect(res.success).toBe(true);
-    expect(res.data?.tasks.itjActionNeeded.length).toBe(1);
-    expect(res.data?.tasks.itjActionNeeded[0].nama).toBe("Customer A");
-    expect(res.data?.tasks.itjActionNeeded[0].unitBlok).toBe("F-11");
-    expect(res.data?.tasks.itjActionNeeded[0].badgeText).toBe("PERLU REVISI");
 
     expect(res.data?.tasks.overdueFollowUps.length).toBe(1);
     expect(res.data?.tasks.overdueFollowUps[0].nama).toBe("Customer B");
@@ -164,6 +138,6 @@ describe("Marketing Dashboard Server Action Tests", () => {
     expect(res.data?.tasks.upcomingSurveys[0].nama).toBe("Customer D");
     expect(res.data?.tasks.upcomingSurveys[0].badgeText).toBe("JADWAL SURVEI");
 
-    expect(res.data?.tasks.totalTasks).toBe(4);
+    expect(res.data?.tasks.totalTasks).toBe(3);
   });
 });

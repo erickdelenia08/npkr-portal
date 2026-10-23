@@ -6,7 +6,6 @@ import {
   UserPlus,
   CalendarCheck2,
   Award,
-  AlertTriangle,
   ClockAlert,
   CalendarClock,
   MapPin,
@@ -14,11 +13,7 @@ import {
   Phone,
   Search,
   CheckCircle2,
-  Filter,
   Building2,
-  Sparkles,
-  Layers,
-  ArrowUpRight,
 } from "lucide-react";
 import {
   MarketingDashboardData,
@@ -41,9 +36,6 @@ export function MarketingDashboardClient({ data }: MarketingDashboardClientProps
   const filteredTasks = useMemo(() => {
     const list: MarketingTaskItem[] = [];
 
-    if (activeCategory === "ALL" || activeCategory === "ITJ_REVISION") {
-      list.push(...tasks.itjActionNeeded);
-    }
     if (activeCategory === "ALL" || activeCategory === "OVERDUE") {
       list.push(...tasks.overdueFollowUps);
     }
@@ -86,8 +78,6 @@ export function MarketingDashboardClient({ data }: MarketingDashboardClientProps
 
   const getCategoryIcon = (category: TaskCategory) => {
     switch (category) {
-      case "ITJ_REVISION":
-        return <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />;
       case "OVERDUE":
         return <ClockAlert className="w-4 h-4 text-rose-600 shrink-0" />;
       case "TODAY":
@@ -194,7 +184,7 @@ export function MarketingDashboardClient({ data }: MarketingDashboardClientProps
               {metrics.closingsThisMonth}
             </span>
             <span className="text-[10px] sm:text-xs text-slate block mt-0.5 truncate">
-              Akad / AJB Deal
+              ITJ Closing Deal
             </span>
           </div>
         </div>
@@ -245,23 +235,6 @@ export function MarketingDashboardClient({ data }: MarketingDashboardClientProps
             <span>Semua</span>
             <span className="font-mono text-[10px] opacity-80">
               ({tasks.totalTasks})
-            </span>
-          </button>
-
-          {/* 1. ITJ Action Needed (Red/Amber) */}
-          <button
-            type="button"
-            onClick={() => setActiveCategory("ITJ_REVISION")}
-            className={`px-3 py-1.5 rounded-lg font-semibold shrink-0 transition-all flex items-center gap-1.5 ${
-              activeCategory === "ITJ_REVISION"
-                ? "bg-amber-600 text-white shadow-xs"
-                : "bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200"
-            }`}
-          >
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-            <span>Revisi ITJ</span>
-            <span className="font-mono text-[10px] font-bold">
-              ({tasks.itjActionNeeded.length})
             </span>
           </button>
 

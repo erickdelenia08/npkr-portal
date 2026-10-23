@@ -5,14 +5,12 @@ import React, { useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   Calendar,
-  Clock,
   CheckCircle2,
   CalendarCheck2,
   FileText,
   Edit3,
   Loader2,
   X,
-  FileWarning,
   Sparkles,
   ArrowRight,
 } from "lucide-react";
@@ -29,30 +27,15 @@ interface LeadDynamicActionCardProps {
 /* ------------------------------------------------------------------ */
 /* KONFIGURASI — samakan dengan enum di schema.prisma                  */
 /* ------------------------------------------------------------------ */
-const ITJ_APPROVED = ["DISETUJUI", "APPROVED"];
-const ITJ_PENDING = ["MENUNGGU", "DIAJUKAN", "PENDING"];
-const ITJ_REJECTED = ["DITOLAK", "REJECTED"];
-
-// true  = setelah ITJ ditolak, marketing boleh ajukan ulang
-// false = tombol ajukan hilang setelah ditolak
-const ALLOW_RESUBMIT_AFTER_REJECT = true;
-
-/** Bentuk minimal data ITJ yang dibaca komponen ini (aman untuk objek maupun array). */
+/** Bentuk minimal data ITJ yang dibaca komponen ini. */
 interface ItjLike {
-  status?: string | null;
+  id?: number;
   nominal?: number | null;
   diajukan_at?: Date | string | null;
-  alasan_tolak?: string | null;
   unit?: { blok?: string | null } | null;
   transaksi_id?: number | string | null;
-  transaksi?: { id?: number | string | null } | null;
+  transaksi?: { id?: number | string | null; status_transaksi?: string | null } | null;
 }
-
-const toTime = (v: Date | string | null | undefined): number => {
-  if (!v) return 0;
-  const t = (typeof v === "string" ? new Date(v) : v).getTime();
-  return Number.isNaN(t) ? 0 : t;
-};
 
 const pad = (n: number) => n.toString().padStart(2, "0");
 
@@ -108,7 +91,7 @@ function ItjSummary({ itj, tone }: { itj: ItjLike; tone: "emerald" | "amber" | "
         </div>
       )}
       <div>
-        <dt className="opacity-70">Tgl pengajuan</dt>
+        <dt className="opacity-70">Tgl Pembuatan</dt>
         <dd className="font-bold">{formatDateOnly(itj.diajukan_at)}</dd>
       </div>
     </dl>
@@ -125,37 +108,26 @@ export function LeadDynamicActionCard({
   const [surveyDateTime, setSurveyDateTime] = useState<string>("");
 
   /* -------------------------- Derive state -------------------------- */
-  const { activeItj, isApproved, isWaiting, isRejected } = useMemo(() => {
+  const { activeItj, hasActiveClosing } = useMemo(() => {
     const raw: unknown = lead.itj;
     const list: ItjLike[] = !raw ? [] : Array.isArray(raw) ? (raw as ItjLike[]) : [raw as ItjLike];
 
-    // Terbaru di depan
-    const sorted = [...list].sort((a, b) => toTime(b.diajukan_at) - toTime(a.diajukan_at));
-
-    // Prioritas: disetujui > menunggu > yang terbaru (mis. ditolak)
-    const active =
-      sorted.find((i) => ITJ_APPROVED.includes(String(i.status).toUpperCase())) ??
-      sorted.find((i) => ITJ_PENDING.includes(String(i.status).toUpperCase())) ??
-      sorted[0];
-
-    const status = String(active?.status ?? "").toUpperCase();
+    // Temukan ITJ yang memiliki transaksi tidak BATAL
+    const active = list.find(
+      (i) => i.transaksi && i.transaksi.status_transaksi !== "BATAL"
+    );
 
     return {
-      activeItj: active,
-      isApproved: ITJ_APPROVED.includes(status) || Boolean(lead.closing_at),
-      isWaiting: ITJ_PENDING.includes(status),
-      isRejected: ITJ_REJECTED.includes(status),
+      activeItj: active || null,
+      hasActiveClosing: Boolean(active || lead.closing_at),
     };
   }, [lead.itj, lead.closing_at]);
 
   const isSurveyCompleted = Boolean(lead.survei_selesai_at);
   const isSurveyScheduled = Boolean(lead.survei_jadwal_at) && !isSurveyCompleted;
 
-  // Sumber kebenaran tunggal untuk tombol "Ajukan ITJ"
-  const canSubmitItj =
-    !isApproved &&
-    !isWaiting &&
-    (isRejected ? ALLOW_RESUBMIT_AFTER_REJECT : isSurveyCompleted);
+  // Sumber kebenaran tunggal untuk tombol "Buat ITJ"
+  const canSubmitItj = !hasActiveClosing && isSurveyCompleted;
 
   // Route transaksi dinamis (transaksi/[id]): tombol hanya muncul jika id sudah ada
   const transaksiId =
@@ -231,17 +203,17 @@ export function LeadDynamicActionCard({
   return (
     <>
       <div className="bg-white rounded-2xl border border-mist p-5 shadow-2xs space-y-4">
-        {/* 1. ITJ disetujui / closing -> tombol ke transaksi */}
-        {isApproved && (
+        {/* 1. Closing / Transaksi Aktif -> tombol ke transaksi */}
+        {hasActiveClosing && (
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 space-y-3">
             <div className="flex items-start gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-emerald-950">ITJ disetujui, transaksi aktif</h3>
+                <h3 className="text-sm font-bold text-emerald-950">Closing, transaksi aktif</h3>
                 <p className="text-xs text-emerald-700">
-                  Unit sudah di-booking. Lanjutkan proses dokumen di halaman transaksi.
+                  ITJ telah diterbitkan dan unit telah ter-booking. Lanjutkan proses di halaman transaksi.
                 </p>
               </div>
             </div>
@@ -261,71 +233,8 @@ export function LeadDynamicActionCard({
           </div>
         )}
 
-        {/* 2. ITJ menunggu persetujuan -> tidak ada tombol ajukan */}
-        {!isApproved && isWaiting && activeItj && (
-          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 space-y-3">
-            <div className="flex items-start gap-2.5">
-              <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-amber-950">Menunggu persetujuan ITJ</h3>
-                <p className="text-xs text-amber-800">
-                  Pengajuan sudah dikirim. Tombol ajukan disembunyikan agar tidak terkirim dua kali.
-                </p>
-              </div>
-            </div>
-            <ItjSummary itj={activeItj} tone="amber" />
-
-            {transaksiHref && (
-              <Link
-                href={transaksiHref}
-                className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-white hover:bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold transition-colors"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Buka Transaksi</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            )}
-          </div>
-        )}
-
-        {/* 3. ITJ ditolak -> alasan + ajukan ulang (opsional) */}
-        {!isApproved && !isWaiting && isRejected && (
-          <div className="space-y-3">
-            <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 space-y-3">
-              <div className="flex items-start gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-rose-600 text-white flex items-center justify-center shrink-0">
-                  <FileWarning className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-rose-950">Pengajuan ITJ ditolak</h3>
-                  <p className="text-xs text-rose-800">
-                    {activeItj?.alasan_tolak
-                      ? `Alasan: ${activeItj.alasan_tolak}`
-                      : ALLOW_RESUBMIT_AFTER_REJECT
-                        ? "Perbaiki data lalu ajukan ulang."
-                        : "Hubungi admin jika perlu pengajuan baru."}
-                  </p>
-                </div>
-              </div>
-              {activeItj && <ItjSummary itj={activeItj} tone="rose" />}
-            </div>
-
-            {canSubmitItj && (
-              <Link
-                href={`${basePath}/lead/${lead.id}/itj`}
-                className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-prism-teal hover:bg-deep-teal active:bg-deep-teal text-white text-xs font-bold shadow-subtle transition-all"
-              >
-                <FileText className="w-4 h-4" />
-                <span>Ajukan Ulang ITJ</span>
-              </Link>
-            )}
-          </div>
-        )}
-
-        {/* 4. Belum ada ITJ -> alur survei */}
-        {!isApproved && !isWaiting && !isRejected && (
+        {/* 2. Belum ada Closing -> alur survei dan pembuatan ITJ */}
+        {!hasActiveClosing && (
           <>
             {isSurveyCompleted ? (
               <div className="space-y-3">
@@ -336,7 +245,7 @@ export function LeadDynamicActionCard({
                   <div>
                     <h3 className="text-xs font-bold text-teal-950">Survei lokasi sudah terlaksana</h3>
                     <p className="text-[11px] text-teal-700">
-                      Selesai {formatDateOnly(lead.survei_selesai_at)}. Lanjutkan dengan mengajukan Ikatan Tanda Jadi (ITJ).
+                      Selesai {formatDateOnly(lead.survei_selesai_at)}. Lanjutkan dengan membuat Ikatan Tanda Jadi (ITJ).
                     </p>
                   </div>
                 </div>
@@ -347,7 +256,7 @@ export function LeadDynamicActionCard({
                     className="inline-flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-prism-teal hover:bg-deep-teal active:bg-deep-teal text-white text-xs font-bold shadow-subtle transition-all"
                   >
                     <FileText className="w-4 h-4" />
-                    <span>Ajukan ITJ</span>
+                    <span>Buat ITJ</span>
                   </Link>
                 )}
               </div>

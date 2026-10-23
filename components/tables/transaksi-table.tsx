@@ -90,18 +90,6 @@ const formatDate = (isoString: string): string =>
 const getStatusBadge = (status: string) => {
   const norm = status.toUpperCase();
 
-  if (norm.includes("ITJ_DIAJUKAN") || norm.includes("PENGAJUAN")) {
-    return {
-      label: "ITJ Diajukan",
-      className: "bg-amber-50 text-amber-700 border-amber-200",
-    };
-  }
-  if (norm.includes("ITJ_DITERIMA") || norm.includes("DITERIMA")) {
-    return {
-      label: "ITJ Diterima",
-      className: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    };
-  }
   if (norm.includes("PEMBERKASAN")) {
     return {
       label: status,

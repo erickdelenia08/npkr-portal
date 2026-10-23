@@ -17,7 +17,6 @@ export type LeadTahap =
   | "LEAD MASUK"
   | "SURVEI DIJADWALKAN"
   | "SUDAH SURVEI"
-  | "ITJ DIAJUKAN"
   | "CLOSING"
   | "LOST"
   | "Lead Masuk"
@@ -36,14 +35,12 @@ export interface LeadMilestoneFields {
 export interface LeadTahapInput extends LeadMilestoneFields {
   itj?:
   | Array<{
-    status: string;
     transaksi?: {
       closing_at?: Date | string | null;
       status_transaksi?: string | null;
     } | null;
   }>
   | {
-    status: string;
     transaksi?: {
       closing_at?: Date | string | null;
       status_transaksi?: string | null;
@@ -98,13 +95,6 @@ export function getLeadTahap(lead?: LeadTahapInput | null): LeadTahap {
     return "CLOSING";
   }
 
-  // 3. If itj exists and status is 'DIAJUKAN' -> return 'ITJ DIAJUKAN'
-  if (Array.isArray(lead.itj)) {
-    const hasDiajukan = lead.itj.some((item) => item.status === "DIAJUKAN");
-    if (hasDiajukan) return "ITJ DIAJUKAN";
-  } else if (lead.itj?.status === "DIAJUKAN") {
-    return "ITJ DIAJUKAN";
-  }
 
   // 4. If survei_selesai_at is not null -> return 'SUDAH SURVEI'
   if (lead.survei_selesai_at != null) {
@@ -220,8 +210,6 @@ export function getLeadSortPriority<
   if (norm === "LOST") return 50000;
   // Tier 4: Closing at bottom
   if (norm === "CLOSING") return 40000;
-  // Tier 3.5: ITJ Diajukan
-  if (norm === "ITJ DIAJUKAN") return 35000;
 
   const fuStatus =
     lead.followUpInfo?.status ||

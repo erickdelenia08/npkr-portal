@@ -57,7 +57,6 @@ export const ModelName = {
   Lead: 'Lead',
   Aktivitas: 'Aktivitas',
   Itj: 'Itj',
-  ItjReview: 'ItjReview',
   Customer: 'Customer',
   Transaksi: 'Transaksi',
   Bank: 'Bank',
@@ -166,7 +165,6 @@ export const ItjScalarFieldEnum = {
   lead_id: 'lead_id',
   unit_id: 'unit_id',
   marketing_id: 'marketing_id',
-  status: 'status',
   nik: 'nik',
   nama_ktp: 'nama_ktp',
   nominal: 'nominal',
@@ -177,25 +175,11 @@ export const ItjScalarFieldEnum = {
   metode_bayar: 'metode_bayar',
   tenor: 'tenor',
   diajukan_at: 'diajukan_at',
-  diputuskan_at: 'diputuskan_at',
-  diputuskan_oleh: 'diputuskan_oleh',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type ItjScalarFieldEnum = (typeof ItjScalarFieldEnum)[keyof typeof ItjScalarFieldEnum]
-
-
-export const ItjReviewScalarFieldEnum = {
-  id: 'id',
-  itj_id: 'itj_id',
-  reviewer_id: 'reviewer_id',
-  keputusan: 'keputusan',
-  catatan: 'catatan',
-  created_at: 'created_at'
-} as const
-
-export type ItjReviewScalarFieldEnum = (typeof ItjReviewScalarFieldEnum)[keyof typeof ItjReviewScalarFieldEnum]
 
 
 export const CustomerScalarFieldEnum = {
@@ -231,7 +215,6 @@ export const TransaksiScalarFieldEnum = {
   nama_bank: 'nama_bank',
   nama_notaris: 'nama_notaris',
   tgl_akad: 'tgl_akad',
-  tgl_ajb: 'tgl_ajb',
   lunas_at: 'lunas_at',
   tgl_bast: 'tgl_bast',
   closing_at: 'closing_at',
@@ -432,13 +415,6 @@ export const ItjOrderByRelevanceFieldEnum = {
 } as const
 
 export type ItjOrderByRelevanceFieldEnum = (typeof ItjOrderByRelevanceFieldEnum)[keyof typeof ItjOrderByRelevanceFieldEnum]
-
-
-export const ItjReviewOrderByRelevanceFieldEnum = {
-  catatan: 'catatan'
-} as const
-
-export type ItjReviewOrderByRelevanceFieldEnum = (typeof ItjReviewOrderByRelevanceFieldEnum)[keyof typeof ItjReviewOrderByRelevanceFieldEnum]
 
 
 export const CustomerOrderByRelevanceFieldEnum = {

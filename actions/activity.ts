@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { activitySchema, ActivityInput } from "@/schemas/activity.schema";
 import { getLeadTahap, LeadTahap } from "@/lib/lead-utils";
-import { JenisAktivitas, HasilAktivitas, StatusItj, Prisma } from "@/generated/prisma";
+import { JenisAktivitas, HasilAktivitas, Prisma } from "@/generated/prisma";
 
 export interface SerializedAktivitas {
   id: number;
@@ -19,20 +19,18 @@ export interface SerializedAktivitas {
 
 export interface SerializedItjSummary {
   id: number;
-  status: StatusItj;
   nominal: number;
   target_dp: number;
   metode_bayar: string;
   tenor: number | null;
   diajukan_at: Date;
-  diputuskan_at: Date | null;
   unit: {
     blok: string;
   } | null;
-  latestReview: {
-    keputusan: StatusItj;
-    catatan: string | null;
-    created_at: Date;
+  transaksi?: {
+    id: number;
+    status_transaksi: string;
+    closing_at: Date | null;
   } | null;
 }
 
@@ -92,9 +90,12 @@ export async function getLeadDetail(
             unit: {
               select: { blok: true },
             },
-            reviews: {
-              orderBy: { created_at: "desc" },
-              take: 1,
+            transaksi: {
+              select: {
+                id: true,
+                status_transaksi: true,
+                closing_at: true,
+              },
             },
           },
           orderBy: { created_at: "desc" },
@@ -114,22 +115,19 @@ export async function getLeadDetail(
       const latest = lead.itj[0];
       itjSummary = {
         id: latest.id,
-        status: latest.status,
         nominal: Number(latest.nominal),
         target_dp: Number(latest.target_dp),
         metode_bayar: latest.metode_bayar,
         tenor: latest.tenor,
         diajukan_at: latest.diajukan_at,
-        diputuskan_at: latest.diputuskan_at,
         unit: latest.unit ? { blok: latest.unit.blok } : null,
-        latestReview:
-          latest.reviews && latest.reviews.length > 0
-            ? {
-                keputusan: latest.reviews[0].keputusan,
-                catatan: latest.reviews[0].catatan,
-                created_at: latest.reviews[0].created_at,
-              }
-            : null,
+        transaksi: latest.transaksi
+          ? {
+              id: latest.transaksi.id,
+              status_transaksi: latest.transaksi.status_transaksi,
+              closing_at: latest.transaksi.closing_at,
+            }
+          : null,
       };
     }
 
