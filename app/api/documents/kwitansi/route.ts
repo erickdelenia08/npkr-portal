@@ -6,6 +6,8 @@ import { formatTerbilangRupiah } from "@/lib/doc-generator/terbilang";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     // 1. Validasi Autentikasi

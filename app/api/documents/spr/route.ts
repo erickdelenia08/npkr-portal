@@ -19,6 +19,8 @@ function formatArea(value: unknown): string {
   return Number.isFinite(n) ? String(n) : String(value);
 }
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();

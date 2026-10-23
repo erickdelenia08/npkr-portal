@@ -43,6 +43,23 @@ function handleActionError<T = unknown>(
   error: unknown,
   fallbackMessage: string
 ): ActionResponse<T> {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "digest" in error &&
+    typeof (error as { digest: unknown }).digest === "string"
+  ) {
+    const digest = (error as { digest: string }).digest;
+    if (
+      digest.startsWith("DYNAMIC_SERVER_USAGE") ||
+      digest.startsWith("NEXT_REDIRECT") ||
+      digest.startsWith("NEXT_NOT_FOUND") ||
+      digest.startsWith("HANGING_PROMISE_REJECTION")
+    ) {
+      throw error;
+    }
+  }
+
   if (error instanceof BusinessError) {
     return { success: false, message: error.message };
   }

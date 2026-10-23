@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   description: "Cek ketersediaan kavling, tipe komersil, dan unit subsidi secara real-time",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function MarketingUnitPage() {
   const res = await getAllMasterUnits();
   const units = res.success && res.data ? res.data : [];

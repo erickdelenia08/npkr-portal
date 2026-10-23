@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   description: "Pantauan ketersediaan blok kavling dan unit perumahan New Puri Kencana",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ManagerUnitPage() {
   const res = await getAllMasterUnits();
   const units = res.success && res.data ? res.data : [];

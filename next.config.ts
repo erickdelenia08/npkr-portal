@@ -6,8 +6,6 @@ const nextConfig: NextConfig = {
     agentFeedback: true,
   },
   allowedDevOrigins: ['retiree-urethane-dexterity.ngrok-free.dev'],
-  cacheComponents: true,
-  partialPrefetching: true,
   turbopack: {
     rules: {
       "*.css": {
