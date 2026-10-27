@@ -730,7 +730,8 @@ export async function getBankReport(year: number, month: number): Promise<Report
     const s = app.status;
     if (s === "DIAJUKAN" || s === "WAWANCARA" || s === "OTS" || s === "VERIFIKASI") {
       b.dalam_proses += 1;
-    } else if (s === "SP3K" || s === "DISETUJUI") {
+      // } else if (s === "SP3K" || s === "DISETUJUI") {
+    } else if (s === "SP3K") {
       b.sp3k_disetujui += 1;
     } else if (s === "DITOLAK") {
       b.ditolak += 1;

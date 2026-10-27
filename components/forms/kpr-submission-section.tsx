@@ -479,7 +479,8 @@ export function KprSubmissionSection({
                         Aksi Tahap Bank:
                       </span>
                       {forwardOptions.length === 0 ? (
-                        submission.status === "SP3K" || submission.status === "DISETUJUI" ? (
+                        submission.status === "SP3K" ? (
+                          // submission.status === "SP3K" || submission.status === "DISETUJUI" ? (
                           <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
                             <CheckCircle2 className="h-4 w-4" />
                             SP3K terbit. Lanjutkan ke proses Akad.
@@ -490,7 +491,8 @@ export function KprSubmissionSection({
                       ) : (
                         forwardOptions.map((stage) => {
                           const isSuccessStep =
-                            stage === "SP3K" || stage === "DISETUJUI";
+                            stage === "SP3K";
+                          // stage === "SP3K" || stage === "DISETUJUI";
                           return (
                             <Button
                               key={stage}
