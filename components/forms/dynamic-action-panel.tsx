@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useMemo, useState, useTransition, useRef, useEffect } from "react";
+import React, { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Workflow,
   CheckCircle2,
-  FileCheck,
   Loader2,
   Home,
   AlertTriangle,
@@ -17,7 +16,6 @@ import {
   Edit2,
   Undo2,
   Building2,
-  Calendar,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -26,6 +24,7 @@ import {
   verifyDokumenTransaksi,
   updateProfilPemberkasan,
 } from "@/actions/transaksi.action";
+import { updateInspeksiBAST } from "@/actions/bast.action";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
@@ -40,6 +39,7 @@ import type {
   MetodeBayar,
   JenisDokumen,
   ItemBAST,
+  StatusInspeksi,
   StatusPernikahan,
   StatusPekerjaan,
 } from "@/generated/prisma";
@@ -51,13 +51,25 @@ import {
 } from "@/lib/transaksi/stage-map";
 import {
   getRequiredDocuments,
-  isProfilPemberkasanLengkap,
   isDokumenTerverifikasi,
 } from "@/lib/transaksi/document-rules";
 
 // --------------------------------------------------
 // Types & Defaults
 // --------------------------------------------------
+
+export interface InspeksiBastPropItem {
+  item: ItemBAST;
+  status: StatusInspeksi;
+  catatan?: string | null;
+}
+
+interface ItemInspectionState {
+  status: StatusInspeksi;
+  catatan: string;
+  isPerluPerbaikanOpen: boolean;
+  error?: string;
+}
 
 interface DynamicActionPanelProps {
   transaksiId: number;
@@ -73,7 +85,7 @@ interface DynamicActionPanelProps {
   initialLunasAt?: string | null;
   initialCatatan: string | null;
   initialVerifiedDocs?: string[];
-  initialBastItems?: string[];
+  initialInspeksiBast?: InspeksiBastPropItem[];
   initialPengajuanKpr?: PengajuanKPRItem[];
   masterBanks?: BankItem[];
   canEdit?: boolean;
@@ -131,8 +143,26 @@ const MASTER_BAST_ITEMS: BastItemDef[] = [
 ];
 
 const EMPTY_STRINGS: string[] = [];
+const EMPTY_INSPEKSI: InspeksiBastPropItem[] = [];
 const EMPTY_PENGAJUAN: PengajuanKPRItem[] = [];
 const EMPTY_BANKS: BankItem[] = [];
+
+function buildInitialInspeksiMap(
+  initial: InspeksiBastPropItem[] = []
+): Record<ItemBAST, ItemInspectionState> {
+  const map = {} as Record<ItemBAST, ItemInspectionState>;
+  MASTER_BAST_ITEMS.forEach((def) => {
+    const found = initial.find((x) => x.item === def.key);
+    const status = found?.status ?? "BELUM_DICEK";
+    map[def.key] = {
+      status,
+      catatan: found?.catatan ?? "",
+      isPerluPerbaikanOpen:
+        status === "PERLU_PERBAIKAN" || status === "SELESAI_DIPERBAIKI",
+    };
+  });
+  return map;
+}
 
 // --------------------------------------------------
 // Helpers
@@ -214,7 +244,7 @@ export function DynamicActionPanel({
   initialLunasAt,
   initialCatatan,
   initialVerifiedDocs = EMPTY_STRINGS,
-  initialBastItems = EMPTY_STRINGS,
+  initialInspeksiBast = EMPTY_INSPEKSI,
   initialPengajuanKpr = EMPTY_PENGAJUAN,
   masterBanks = EMPTY_BANKS,
   canEdit = true,
@@ -304,7 +334,10 @@ export function DynamicActionPanel({
   );
   const [catatanAdmin, setCatatanAdmin] = useState(initialCatatan ?? "");
   const [verifiedDocs, setVerifiedDocs] = useState<string[]>(initialVerifiedDocs);
-  const [selectedBastItems, setSelectedBastItems] = useState<string[]>(initialBastItems);
+  const [inspeksiMap, setInspeksiMap] = useState<Record<ItemBAST, ItemInspectionState>>(() =>
+    buildInitialInspeksiMap(initialInspeksiBast)
+  );
+  const [savingItems, setSavingItems] = useState<Partial<Record<ItemBAST, boolean>>>({});
   const [lahanChecked, setLahanChecked] = useState(false); // default false for Kavling BAST
 
   // ---------- State: Opsi Lainnya (Mundur / Batal) ----------
@@ -336,7 +369,9 @@ export function DynamicActionPanel({
     initialLunasAt,
     initialCatatan,
     [...initialVerifiedDocs].sort(),
-    [...initialBastItems].sort(),
+    initialInspeksiBast
+      .map((b) => `${b.item}:${b.status}:${b.catatan ?? ""}`)
+      .sort(),
   ]);
   const [prevServerKey, setPrevServerKey] = useState(serverKey);
 
@@ -350,7 +385,8 @@ export function DynamicActionPanel({
     setTglBast(initialTglBast ? toDateInput(initialTglBast) : "");
     setCatatanAdmin(initialCatatan ?? "");
     setVerifiedDocs(initialVerifiedDocs);
-    setSelectedBastItems(initialBastItems);
+    setInspeksiMap(buildInitialInspeksiMap(initialInspeksiBast));
+    setSavingItems({});
     setLahanChecked(false);
   }
 
@@ -387,10 +423,29 @@ export function DynamicActionPanel({
   const isAkadStage = currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB";
 
   // BAST completeness check
-  const verifiedBastCount = selectedBastItems.length;
+  const okCount = useMemo(() => {
+    return MASTER_BAST_ITEMS.filter((item) => {
+      const s = inspeksiMap[item.key]?.status;
+      return s === "SESUAI" || s === "SELESAI_DIPERBAIKI";
+    }).length;
+  }, [inspeksiMap]);
+
+  const perluPerbaikanCount = useMemo(() => {
+    return MASTER_BAST_ITEMS.filter((item) => {
+      const s = inspeksiMap[item.key]?.status;
+      return s === "PERLU_PERBAIKAN";
+    }).length;
+  }, [inspeksiMap]);
+
+  const belumDicekCount = MASTER_BAST_ITEMS.length - okCount - perluPerbaikanCount;
+
+  const isSavingAnyItem = useMemo(() => {
+    return Object.values(savingItems).some(Boolean);
+  }, [savingItems]);
+
   const isBastFormComplete = isKavling
     ? lahanChecked
-    : verifiedBastCount >= MASTER_BAST_ITEMS.length;
+    : okCount === MASTER_BAST_ITEMS.length;
 
   // ---------- Handlers: Document Toggle (Optimistic) ----------
   const handleToggleDoc = async (docKey: JenisDokumen, currentChecked: boolean) => {
@@ -459,12 +514,167 @@ export function DynamicActionPanel({
     });
   };
 
-  // ---------- Handlers: BAST Checklist Toggle ----------
-  const toggleBastItem = (key: string) => {
-    if (!canEdit || isPending) return;
-    setSelectedBastItems((prev) =>
-      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
-    );
+  // ---------- Handlers: BAST Inspection Items ----------
+  const handleMarkSesuai = async (key: ItemBAST) => {
+    if (!canEdit || isPending || savingItems[key]) return;
+
+    const prevState = inspeksiMap[key];
+    // Optimistic UI update
+    setInspeksiMap((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        status: "SESUAI",
+        isPerluPerbaikanOpen: false,
+        error: undefined,
+      },
+    }));
+    setSavingItems((prev) => ({ ...prev, [key]: true }));
+
+    try {
+      const res = await updateInspeksiBAST({
+        transaksiId,
+        itemId: key,
+        newStatus: "SESUAI",
+        note: prevState?.catatan?.trim() || null,
+      });
+
+      if (!res.success) {
+        // Rollback
+        setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
+        toast.error(res.error || "Gagal memperbarui status inspeksi.");
+      } else {
+        toast.success(res.message || "Item inspeksi ditandai Sesuai.");
+      }
+    } catch (err: unknown) {
+      // Rollback
+      setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
+      toast.error(msg);
+    } finally {
+      setSavingItems((prev) => ({ ...prev, [key]: false }));
+    }
+  };
+
+  const handleOpenPerluPerbaikan = (key: ItemBAST) => {
+    if (!canEdit || isPending || savingItems[key]) return;
+    setInspeksiMap((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        isPerluPerbaikanOpen: true,
+        error: undefined,
+      },
+    }));
+    setTimeout(() => {
+      document.getElementById(`bast-catatan-${key}`)?.focus();
+    }, 50);
+  };
+
+  const handleCatatanChange = (key: ItemBAST, val: string) => {
+    setInspeksiMap((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        catatan: val,
+        error: prev[key]?.error && val.trim().length >= 3 ? undefined : prev[key]?.error,
+      },
+    }));
+  };
+
+  const handleSavePerluPerbaikan = async (key: ItemBAST) => {
+    if (!canEdit || isPending || savingItems[key]) return;
+
+    const currentItem = inspeksiMap[key];
+    const cleanNote = currentItem.catatan.trim();
+    if (cleanNote.length < 3) {
+      setInspeksiMap((prev) => ({
+        ...prev,
+        [key]: {
+          ...prev[key],
+          error: "Catatan perbaikan wajib diisi minimal 3 karakter.",
+        },
+      }));
+      document.getElementById(`bast-catatan-${key}`)?.focus();
+      return;
+    }
+
+    const prevState = currentItem;
+    // Optimistic UI update
+    setInspeksiMap((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        status: "PERLU_PERBAIKAN",
+        error: undefined,
+      },
+    }));
+    setSavingItems((prev) => ({ ...prev, [key]: true }));
+
+    try {
+      const res = await updateInspeksiBAST({
+        transaksiId,
+        itemId: key,
+        newStatus: "PERLU_PERBAIKAN",
+        note: cleanNote,
+      });
+
+      if (!res.success) {
+        // Rollback
+        setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
+        toast.error(res.error || "Gagal menyimpan catatan perbaikan.");
+      } else {
+        toast.success(res.message || "Status perlu perbaikan dan catatan berhasil disimpan.");
+      }
+    } catch (err: unknown) {
+      setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
+      toast.error(msg);
+    } finally {
+      setSavingItems((prev) => ({ ...prev, [key]: false }));
+    }
+  };
+
+  const handleMarkSudahDiperbaiki = async (key: ItemBAST) => {
+    if (!canEdit || isPending || savingItems[key]) return;
+
+    const currentItem = inspeksiMap[key];
+    const cleanNote = currentItem.catatan.trim();
+    const prevState = currentItem;
+
+    // Optimistic UI update
+    setInspeksiMap((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        status: "SELESAI_DIPERBAIKI",
+        error: undefined,
+      },
+    }));
+    setSavingItems((prev) => ({ ...prev, [key]: true }));
+
+    try {
+      const res = await updateInspeksiBAST({
+        transaksiId,
+        itemId: key,
+        newStatus: "SELESAI_DIPERBAIKI",
+        note: cleanNote || null,
+      });
+
+      if (!res.success) {
+        // Rollback
+        setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
+        toast.error(res.error || "Gagal memperbarui status perbaikan.");
+      } else {
+        toast.success(res.message || "Item inspeksi ditandai sudah selesai diperbaiki.");
+      }
+    } catch (err: unknown) {
+      setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
+      toast.error(msg);
+    } finally {
+      setSavingItems((prev) => ({ ...prev, [key]: false }));
+    }
   };
 
   // ---------- Handlers: Advance Stage ----------
@@ -481,7 +691,6 @@ export function DynamicActionPanel({
           lunasAt: currentStage.detail === "PELUNASAN" ? tglPelunasan : null,
           tglBast: targetDetail === "BAST" ? tglBast : null,
           catatanAdmin: catatanAdmin.trim() || null,
-          bastItems: targetDetail === "BAST" && !isKavling ? selectedBastItems : null,
         });
 
         if (!result.success) {
@@ -528,14 +737,45 @@ export function DynamicActionPanel({
     if (nextStage.detail === "BAST") {
       if (!tglBast) errors.tglBast = "Tanggal serah terima (BAST) wajib diisi.";
       if (!isBastFormComplete) {
-        errors.bast = isKavling
-          ? "Centang konfirmasi serah terima fisik lahan terlebih dahulu."
-          : `Lengkapi seluruh ${MASTER_BAST_ITEMS.length} item checklist inspeksi BAST.`;
+        if (isKavling) {
+          errors.bast = "Centang konfirmasi serah terima fisik lahan terlebih dahulu.";
+        } else {
+          const parts: string[] = [];
+          if (perluPerbaikanCount > 0) {
+            parts.push(`${perluPerbaikanCount} item masih perlu perbaikan`);
+          }
+          if (belumDicekCount > 0) {
+            parts.push(`${belumDicekCount} item belum diperiksa`);
+          }
+          errors.bast = `Inspeksi BAST belum tuntas: ${parts.join(" dan ")}. Seluruh ${MASTER_BAST_ITEMS.length} item wajib berstatus Sesuai atau Selesai Diperbaiki.`;
+        }
       }
     }
 
     setFormErrors(errors);
     if (Object.keys(errors).length > 0) {
+      if (errors.tglBast) {
+        document.getElementById("fld-tglBast")?.focus();
+        return;
+      }
+      if (errors.bast) {
+        if (isKavling) {
+          document.getElementById("bast-kavling-check")?.focus();
+        } else {
+          const firstIncomplete = MASTER_BAST_ITEMS.find((item) => {
+            const s = inspeksiMap[item.key]?.status;
+            return s !== "SESUAI" && s !== "SELESAI_DIPERBAIKI";
+          });
+          if (firstIncomplete) {
+            const el =
+              document.getElementById(`bast-catatan-${firstIncomplete.key}`) ||
+              document.getElementById(`btn-sesuai-${firstIncomplete.key}`) ||
+              document.getElementById(`bast-item-${firstIncomplete.key}`);
+            el?.focus();
+          }
+        }
+        return;
+      }
       const firstKey = Object.keys(errors)[0];
       document.getElementById(`fld-${firstKey}`)?.focus();
       return;
@@ -751,7 +991,15 @@ export function DynamicActionPanel({
                 </h4>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                  {isKavling ? "Lahan Terverifikasi" : `${initialBastItems.length}/${MASTER_BAST_ITEMS.length} Item Selesai`}
+                  {isKavling
+                    ? "Lahan Terverifikasi"
+                    : `${
+                        initialInspeksiBast.filter(
+                          (b) =>
+                            b.status === "SESUAI" ||
+                            b.status === "SELESAI_DIPERBAIKI"
+                        ).length
+                      }/${MASTER_BAST_ITEMS.length} Item Selesai`}
                 </span>
               </div>
 
@@ -762,22 +1010,58 @@ export function DynamicActionPanel({
               ) : (
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {MASTER_BAST_ITEMS.map((item) => {
-                    const isPassed = initialBastItems.includes(item.key);
+                    const found = initialInspeksiBast.find((b) => b.item === item.key);
+                    const isPassed =
+                      found?.status === "SESUAI" ||
+                      found?.status === "SELESAI_DIPERBAIKI";
+
                     return (
                       <div
                         key={item.key}
-                        className={`flex items-start gap-2.5 rounded-lg border p-2.5 text-xs ${isPassed
-                          ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
-                          : "border-slate-200 bg-slate-50 text-slate-500"
-                          }`}
+                        className={`flex flex-col gap-1.5 rounded-lg border p-2.5 text-xs ${
+                          isPassed
+                            ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
+                            : "border-slate-200 bg-slate-50 text-slate-500"
+                        }`}
                       >
-                        <CheckCircle2
-                          className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${isPassed ? "text-emerald-600" : "text-slate-400"
+                        <div className="flex items-start gap-2">
+                          <CheckCircle2
+                            className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${
+                              isPassed ? "text-emerald-600" : "text-slate-400"
                             }`}
-                        />
-                        <div>
-                          <p className="font-semibold">{item.title}</p>
-                          <p className="text-[11px] opacity-75">{item.description}</p>
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-1">
+                              <p className="font-semibold">{item.title}</p>
+                              {found?.status && (
+                                <span
+                                  className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
+                                    found.status === "SESUAI"
+                                      ? "border-teal-200 bg-teal-50 text-teal-700"
+                                      : found.status === "SELESAI_DIPERBAIKI"
+                                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                                      : found.status === "PERLU_PERBAIKAN"
+                                      ? "border-rose-200 bg-rose-50 text-rose-700"
+                                      : "border-slate-200 bg-slate-100 text-slate-600"
+                                  }`}
+                                >
+                                  {found.status === "SESUAI"
+                                    ? "Sesuai"
+                                    : found.status === "SELESAI_DIPERBAIKI"
+                                    ? "Selesai Diperbaiki"
+                                    : found.status === "PERLU_PERBAIKAN"
+                                    ? "Perlu Perbaikan"
+                                    : "Belum Dicek"}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[11px] opacity-75">{item.description}</p>
+                            {found?.catatan && (
+                              <p className="mt-1.5 rounded border border-slate-200/60 bg-white/80 p-1.5 text-[11px] italic text-slate-700">
+                                Catatan: {found.catatan}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
@@ -1286,47 +1570,221 @@ export function DynamicActionPanel({
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="text-xs text-slate-600">
-                        Centang seluruh 8 item fisik bangunan yang telah lolos inspeksi mutu sebelum serah terima.
+                        Inspeksi fisik per item sebelum serah terima. Catat temuan jika perlu perbaikan.
                       </p>
-                      <span
-                        className={`rounded-md border px-2.5 py-1 text-xs font-bold ${isBastFormComplete
-                          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                          : "border-amber-200 bg-amber-50 text-amber-900"
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span
+                          className={`rounded-md border px-2.5 py-1 text-xs font-bold ${
+                            okCount === MASTER_BAST_ITEMS.length
+                              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                              : "border-slate-200 bg-slate-50 text-slate-700"
                           }`}
-                      >
-                        {verifiedBastCount}/{MASTER_BAST_ITEMS.length} Item Terverifikasi
-                      </span>
+                        >
+                          {okCount}/{MASTER_BAST_ITEMS.length} OK
+                        </span>
+                        {perluPerbaikanCount > 0 && (
+                          <span className="rounded-md border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
+                            · {perluPerbaikanCount} perlu perbaikan
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {MASTER_BAST_ITEMS.map((item) => {
-                        const checked = selectedBastItems.includes(item.key);
-                        const id = `bast-${item.key}`;
+                        const itemState = inspeksiMap[item.key] || {
+                          status: "BELUM_DICEK",
+                          catatan: "",
+                          isPerluPerbaikanOpen: false,
+                        };
+                        const isSavingThis = Boolean(savingItems[item.key]);
+                        const isOk =
+                          itemState.status === "SESUAI" ||
+                          itemState.status === "SELESAI_DIPERBAIKI";
+                        const isPerlu = itemState.status === "PERLU_PERBAIKAN";
+                        const isSelesai = itemState.status === "SELESAI_DIPERBAIKI";
+                        const showCatatanInput =
+                          itemState.isPerluPerbaikanOpen || isPerlu || isSelesai;
 
                         return (
-                          <label
+                          <div
                             key={item.key}
-                            htmlFor={id}
-                            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${checked
-                              ? "border-teal-300 bg-teal-50/60"
-                              : "border-slate-200 bg-white hover:bg-slate-50"
-                              }`}
+                            id={`bast-item-${item.key}`}
+                            tabIndex={-1}
+                            className={`flex flex-col justify-between rounded-lg border p-3.5 text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/30 ${
+                              isOk
+                                ? "border-teal-200 bg-teal-50/30"
+                                : isPerlu
+                                ? "border-rose-200 bg-rose-50/30"
+                                : "border-slate-200 bg-white"
+                            }`}
                           >
-                            <input
-                              id={id}
-                              type="checkbox"
-                              checked={checked}
-                              disabled={!canEdit || isPending}
-                              onChange={() => toggleBastItem(item.key)}
-                              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
-                            />
-                            <div className="min-w-0 flex-1">
-                              <span className="block font-semibold text-slate-900">{item.title}</span>
-                              <span className="block text-[11px] text-slate-500">{item.description}</span>
+                            <div>
+                              {/* Header & Status Badge */}
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-semibold text-slate-900">
+                                  {item.title}
+                                </span>
+                                <div className="flex items-center gap-1 shrink-0">
+                                  {isSavingThis && (
+                                    <Loader2 className="h-3 w-3 animate-spin text-slate-400" />
+                                  )}
+                                  <span
+                                    className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
+                                      itemState.status === "SESUAI"
+                                        ? "border-teal-200 bg-teal-50 text-teal-800"
+                                        : itemState.status === "SELESAI_DIPERBAIKI"
+                                        ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                        : itemState.status === "PERLU_PERBAIKAN"
+                                        ? "border-rose-200 bg-rose-50 text-rose-800"
+                                        : "border-slate-200 bg-slate-100 text-slate-500"
+                                    }`}
+                                  >
+                                    {itemState.status === "SESUAI"
+                                      ? "Sesuai"
+                                      : itemState.status === "SELESAI_DIPERBAIKI"
+                                      ? "Selesai Diperbaiki"
+                                      : itemState.status === "PERLU_PERBAIKAN"
+                                      ? "Perlu Perbaikan"
+                                      : "Belum Dicek"}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <p className="mt-1 text-[11px] text-slate-500">
+                                {item.description}
+                              </p>
+
+                              {/* Action Buttons: Sesuai & Perlu Perbaikan */}
+                              <div className="mt-3 flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  id={`btn-sesuai-${item.key}`}
+                                  aria-label={`Tandai ${item.title} sesuai`}
+                                  disabled={!canEdit || isPending || isSavingThis}
+                                  onClick={() => handleMarkSesuai(item.key)}
+                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                                    itemState.status === "SESUAI"
+                                      ? "border-teal-700 bg-teal-700 text-white shadow-sm"
+                                      : "border-slate-300 bg-white text-slate-700 hover:border-teal-500 hover:bg-teal-50/50"
+                                  }`}
+                                >
+                                  <span className="flex items-center justify-center gap-1">
+                                    <Check className="h-3.5 w-3.5" />
+                                    Sesuai
+                                  </span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  aria-label={`Tandai ${item.title} perlu perbaikan`}
+                                  disabled={!canEdit || isPending || isSavingThis}
+                                  onClick={() => handleOpenPerluPerbaikan(item.key)}
+                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                                    isPerlu
+                                      ? "border-rose-600 bg-rose-600 text-white shadow-sm"
+                                      : itemState.isPerluPerbaikanOpen && !isOk
+                                      ? "border-rose-400 bg-rose-50 text-rose-800"
+                                      : "border-slate-300 bg-white text-slate-700 hover:border-rose-400 hover:bg-rose-50/50"
+                                  }`}
+                                >
+                                  <span className="flex items-center justify-center gap-1">
+                                    <AlertTriangle className="h-3.5 w-3.5" />
+                                    Perlu Perbaikan
+                                  </span>
+                                </button>
+                              </div>
                             </div>
-                          </label>
+
+                            {/* Section Catatan & Tombol Sudah Diperbaiki */}
+                            {showCatatanInput && (
+                              <div className="mt-3 border-t border-slate-200/80 pt-2.5 space-y-2">
+                                <div>
+                                  <label
+                                    htmlFor={`bast-catatan-${item.key}`}
+                                    className="block text-[11px] font-semibold text-slate-700 mb-1"
+                                  >
+                                    Catatan Temuan / Cacat Fisik{" "}
+                                    <span className="text-red-600">*</span>
+                                  </label>
+                                  <textarea
+                                    id={`bast-catatan-${item.key}`}
+                                    aria-label={`Catatan perbaikan ${item.title}`}
+                                    value={itemState.catatan}
+                                    readOnly={isSelesai || !canEdit || isSavingThis}
+                                    onChange={(e) =>
+                                      handleCatatanChange(item.key, e.target.value)
+                                    }
+                                    placeholder="Jelaskan bagian yang cacat / perlu diperbaiki (min. 3 karakter)..."
+                                    rows={2}
+                                    className={`w-full rounded-md border p-2 text-xs outline-none focus:ring-1 ${
+                                      isSelesai
+                                        ? "bg-slate-100 text-slate-600 border-slate-300 cursor-not-allowed"
+                                        : itemState.error
+                                        ? "border-red-400 focus:border-red-500 focus:ring-red-400/25 bg-red-50/30"
+                                        : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20 bg-white"
+                                    }`}
+                                  />
+                                  {itemState.error && (
+                                    <p
+                                      role="alert"
+                                      className="mt-1 text-[11px] font-medium text-red-600"
+                                    >
+                                      {itemState.error}
+                                    </p>
+                                  )}
+                                </div>
+
+                                <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
+                                  {!isSelesai && (
+                                    <button
+                                      type="button"
+                                      aria-label={`Simpan catatan perbaikan ${item.title}`}
+                                      disabled={!canEdit || isPending || isSavingThis}
+                                      onClick={() => handleSavePerluPerbaikan(item.key)}
+                                      className="rounded-md border border-rose-300 bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-800 hover:bg-rose-100 disabled:opacity-50 transition-colors"
+                                    >
+                                      {isPerlu ? "Perbarui Catatan" : "Simpan Catatan Temuan"}
+                                    </button>
+                                  )}
+
+                                  {isPerlu && (
+                                    <button
+                                      type="button"
+                                      aria-label={`Tandai perbaikan ${item.title} sudah selesai`}
+                                      disabled={!canEdit || isPending || isSavingThis}
+                                      onClick={() => handleMarkSudahDiperbaiki(item.key)}
+                                      className="flex items-center gap-1 rounded-md bg-emerald-700 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-emerald-800 disabled:opacity-50 transition-colors shadow-sm"
+                                    >
+                                      <CheckCircle2 className="h-3 w-3" />
+                                      Sudah diperbaiki
+                                    </button>
+                                  )}
+
+                                  {isSelesai && (
+                                    <div className="flex w-full items-center justify-between text-[11px] text-emerald-800 font-medium">
+                                      <span className="flex items-center gap-1">
+                                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                                        Perbaikan terverifikasi selesai
+                                      </span>
+                                      {canEdit && (
+                                        <button
+                                          type="button"
+                                          aria-label={`Buka kembali catatan ${item.title}`}
+                                          onClick={() => handleOpenPerluPerbaikan(item.key)}
+                                          className="text-slate-500 hover:text-slate-800 underline text-[10px]"
+                                        >
+                                          Ubah Catatan
+                                        </button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         );
                       })}
                     </div>
@@ -1334,7 +1792,12 @@ export function DynamicActionPanel({
                 )}
 
                 {formErrors.bast && (
-                  <p className="text-xs font-medium text-red-700 bg-red-50 p-2.5 rounded-md border border-red-200">
+                  <p
+                    id="fld-bast"
+                    tabIndex={-1}
+                    role="alert"
+                    className="text-xs font-medium text-red-700 bg-red-50 p-2.5 rounded-md border border-red-200 outline-none"
+                  >
                     {formErrors.bast}
                   </p>
                 )}
@@ -1343,7 +1806,7 @@ export function DynamicActionPanel({
                   {canEdit && (
                     <Button
                       type="submit"
-                      disabled={isPending || !isBastFormComplete}
+                      disabled={isPending || isSavingAnyItem || !isBastFormComplete || !tglBast}
                       className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
                     >
                       {isPending ? (

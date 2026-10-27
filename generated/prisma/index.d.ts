@@ -231,7 +231,6 @@ export const StatusPengajuanKPR: {
   OTS: 'OTS',
   VERIFIKASI: 'VERIFIKASI',
   SP3K: 'SP3K',
-  DISETUJUI: 'DISETUJUI',
   DITOLAK: 'DITOLAK',
   DIBATALKAN: 'DIBATALKAN'
 };

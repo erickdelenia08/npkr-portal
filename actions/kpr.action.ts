@@ -379,7 +379,7 @@ export async function updateStatusPengajuanKPR(
       });
 
       // 3. Update PengajuanKPR
-      const isDecision = status === "SP3K" || status === "DISETUJUI" || status === "DITOLAK" || status === "DIBATALKAN";
+      const isDecision = status === "SP3K" || status === "DITOLAK" || status === "DIBATALKAN";
 
       const updated = await tx.pengajuanKPR.update({
         where: { id: pengajuanId },
@@ -402,7 +402,7 @@ export async function updateStatusPengajuanKPR(
         if (status === "WAWANCARA") mappedDetail = "WAWANCARA";
         else if (status === "OTS") mappedDetail = "OTS";
         else if (status === "VERIFIKASI") mappedDetail = "VERIFIKASI";
-        else if (status === "SP3K" || status === "DISETUJUI") mappedDetail = "SP3K";
+        else if (status === "SP3K") mappedDetail = "SP3K";
 
         if (
           mappedDetail &&

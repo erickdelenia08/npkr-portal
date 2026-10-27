@@ -20,7 +20,6 @@ import {
   StatusInspeksi,
   MetodeBayar,
   StatusDokumen,
-  StatusPengajuanKPR,
 } from "@/generated/prisma";
 import {
   createPembayaranSchema,
@@ -29,7 +28,6 @@ import {
   updateTransactionStatusSchema,
   updateProfilPemberkasanSchema,
   type CreatePembayaranInput,
-  type VoidPembayaranInput,
   type VerifyDokumenInput,
   type UpdateTransactionStatusInput,
   type UpdateProfilPemberkasanInput,
@@ -523,7 +521,7 @@ export async function updateTransactionStatus(
           ...maybeData,
         };
 
-    const { adminId } = await requireCanEditTransaksi(rawInput.transaksiId);
+    const { adminId, user } = await requireCanEditTransaksi(rawInput.transaksiId);
 
     const parsed = updateTransactionStatusSchema.safeParse(rawInput);
     if (!parsed.success) {
@@ -717,89 +715,7 @@ export async function updateTransactionStatus(
         }
       }
 
-      // 5.1. BAST Checklist Persistence & Audit Logging
-      const ALL_BAST_ITEMS: ItemBAST[] = [
-        "PONDASI_STRUKTUR",
-        "DINDING_PLESTER_CAT",
-        "ATAP_PLAFON",
-        "LANTAI_KERAMIK",
-        "KUSEN_PINTU_JENDELA",
-        "KELISTRIKAN",
-        "SANITASI_AIR_POMPA",
-        "FASAD_KEBERSIHAN",
-      ];
 
-      const currentBastMap = new Map<ItemBAST, { id: number; status: StatusInspeksi }>(
-        existingTrx.inspeksi_bast.map((b) => [b.item, { id: b.id, status: b.status }])
-      );
-
-      if (validData.bastItems !== undefined && validData.bastItems !== null) {
-        const submittedBastSet = new Set(validData.bastItems);
-
-        for (const bastItem of ALL_BAST_ITEMS) {
-          const isChecked = submittedBastSet.has(bastItem);
-          const existing = currentBastMap.get(bastItem);
-
-          if (isChecked) {
-            if (!existing || (existing.status !== "SESUAI" && existing.status !== "SELESAI_DIPERBAIKI")) {
-              const updated = await tx.inspeksiBAST.upsert({
-                where: {
-                  transaksi_id_item: {
-                    transaksi_id: existingTrx.id,
-                    item: bastItem,
-                  },
-                },
-                create: {
-                  transaksi_id: existingTrx.id,
-                  item: bastItem,
-                  status: "SESUAI",
-                  catatan: "Diverifikasi via checklist BAST",
-                  inspektur_id: adminId,
-                  diperiksa_at: new Date(),
-                },
-                update: {
-                  status: "SESUAI",
-                  inspektur_id: adminId,
-                  diperiksa_at: new Date(),
-                },
-              });
-
-              await tx.inspeksiBASTLog.create({
-                data: {
-                  inspeksi_bast_id: updated.id,
-                  status_sebelum: existing ? existing.status : null,
-                  status_sesudah: "SESUAI",
-                  catatan: "Diverifikasi via checklist BAST",
-                  inspektur_id: adminId,
-                },
-              });
-
-              currentBastMap.set(bastItem, { id: updated.id, status: "SESUAI" });
-            }
-          } else if (existing && (existing.status === "SESUAI" || existing.status === "SELESAI_DIPERBAIKI")) {
-            const updated = await tx.inspeksiBAST.update({
-              where: { id: existing.id },
-              data: {
-                status: "BELUM_DICEK",
-                inspektur_id: adminId,
-                diperiksa_at: new Date(),
-              },
-            });
-
-            await tx.inspeksiBASTLog.create({
-              data: {
-                inspeksi_bast_id: existing.id,
-                status_sebelum: existing.status,
-                status_sesudah: "BELUM_DICEK",
-                catatan: "Checklist BAST dicabut",
-                inspektur_id: adminId,
-              },
-            });
-
-            currentBastMap.set(bastItem, { id: updated.id, status: "BELUM_DICEK" });
-          }
-        }
-      }
 
       // 6. Specific Stage Prerequisites
       // A. KPR Stage Validations & Active Bank Invariant
@@ -823,7 +739,8 @@ export async function updateTransactionStatus(
 
         // Regression from AKAD_KREDIT into SP3K
         if (isRegression && existingTrx.tahap_detail === "AKAD_KREDIT" && targetDetail === "SP3K") {
-          if (activeKpr && activeKpr.status === "DISETUJUI") {
+          // if (activeKpr && activeKpr.status === "DISETUJUI") {
+          if (activeKpr && activeKpr.status === "SP3K") {
             await tx.pengajuanKPR.update({
               where: { id: activeKpr.id },
               data: { status: "SP3K" },
@@ -832,7 +749,8 @@ export async function updateTransactionStatus(
             await tx.pengajuanKPRLog.create({
               data: {
                 pengajuan_id: activeKpr.id,
-                status_sebelum: "DISETUJUI",
+                // status_sebelum: "DISETUJUI",
+                status_sebelum: activeKpr.status,
                 status_sesudah: "SP3K",
                 admin_id: adminId,
                 catatan: `Status KPR di ${activeKpr.bank.nama} dikembalikan ke SP3K seiring pemunduran tahap dari Akad Kredit. Alasan: ${validData.catatanAdmin?.trim() || "-"}`,
@@ -848,7 +766,8 @@ export async function updateTransactionStatus(
             );
           }
 
-          const isValidStatus = activeKpr.status === "SP3K" || (isSameStage && activeKpr.status === "DISETUJUI");
+          const isValidStatus = activeKpr.status === "SP3K" || isSameStage;
+          // const isValidStatus = activeKpr.status === "SP3K" || (isSameStage && activeKpr.status === "DISETUJUI");
           if (!isValidStatus) {
             throw new Error(
               `Akad Kredit KPR belum dapat diproses: Status pengajuan KPR di ${activeKpr.bank.nama} saat ini adalah "${activeKpr.status}". Status harus SP3K Terbit sebelum dapat melanjutkan ke Akad Kredit.`
@@ -864,11 +783,12 @@ export async function updateTransactionStatus(
           }
 
           // Otomatis tandai bank aktif sebagai DISETUJUI saat masuk ke Akad Kredit
-          if (activeKpr.status !== "DISETUJUI") {
+          // if (activeKpr.status !== "DISETUJUI") {
+          if (activeKpr.status !== "SP3K") {
             await tx.pengajuanKPR.update({
               where: { id: activeKpr.id },
               data: {
-                status: "DISETUJUI",
+                status: "SP3K",
                 tanggal_keputusan: new Date(),
               },
             });
@@ -877,7 +797,8 @@ export async function updateTransactionStatus(
               data: {
                 pengajuan_id: activeKpr.id,
                 status_sebelum: activeKpr.status,
-                status_sesudah: "DISETUJUI",
+                // status_sesudah: "DISETUJUI",
+                status_sesudah: "SP3K",
                 admin_id: adminId,
                 catatan: `Status KPR di ${activeKpr.bank.nama} otomatis disetujui seiring pelaksanaan Akad Kredit`,
               },
@@ -942,18 +863,43 @@ export async function updateTransactionStatus(
 
       // C. BAST Handover Inspection Validations
       if (targetDetail === "BAST") {
+        if (user.role !== "ADMIN") {
+          throw new Error("Hanya Admin yang berwenang menyelesaikan serah terima (BAST).");
+        }
+
         const isKavling = existingTrx.unit?.tipe?.kategori === "KAVLING";
 
         if (!isKavling) {
-          const incompleteItems = ALL_BAST_ITEMS.filter((item) => {
-            const st = currentBastMap.get(item)?.status;
-            return st !== "SESUAI" && st !== "SELESAI_DIPERBAIKI";
+          const allItemEnums = Object.values(ItemBAST);
+          const currentInspections = await tx.inspeksiBAST.findMany({
+            where: { transaksi_id: existingTrx.id },
+          });
+
+          const inspectionMap = new Map<ItemBAST, StatusInspeksi>(
+            currentInspections.map((b) => [b.item, b.status])
+          );
+
+          const incompleteItems = allItemEnums.filter((item) => {
+            const status = inspectionMap.get(item);
+            return status !== "SESUAI" && status !== "SELESAI_DIPERBAIKI";
           });
 
           if (incompleteItems.length > 0) {
+            const perluPerbaikanCount = allItemEnums.filter(
+              (item) => inspectionMap.get(item) === "PERLU_PERBAIKAN"
+            ).length;
+            const belumDicekCount = incompleteItems.length - perluPerbaikanCount;
+
+            const errorDetails: string[] = [];
+            if (perluPerbaikanCount > 0) {
+              errorDetails.push(`${perluPerbaikanCount} item masih perlu perbaikan`);
+            }
+            if (belumDicekCount > 0) {
+              errorDetails.push(`${belumDicekCount} item belum diperiksa`);
+            }
+
             throw new Error(
-              `Serah Terima (BAST) gagal: Terdapat ${incompleteItems.length
-              } item fisik unit yang belum berstatus SESUAI atau SELESAI DIPERBAIKI pada checklist BAST.`
+              `Serah Terima (BAST) gagal: Seluruh ${allItemEnums.length} item inspeksi fisik unit wajib berstatus SESUAI atau SELESAI DIPERBAIKI (${errorDetails.join(", ")}).`
             );
           }
         }

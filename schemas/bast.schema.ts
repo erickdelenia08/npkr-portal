@@ -18,11 +18,24 @@ export const StatusInspeksiEnum = z.enum([
   "SELESAI_DIPERBAIKI",
 ]);
 
-export const updateInspeksiBASTSchema = z.object({
-  transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
-  itemId: z.union([ItemBASTEnum, z.number().int().positive()]),
-  newStatus: StatusInspeksiEnum,
-  note: z.string().trim().optional().nullable(),
-});
+export const updateInspeksiBASTSchema = z
+  .object({
+    transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
+    itemId: z.union([ItemBASTEnum, z.number().int().positive()]),
+    newStatus: StatusInspeksiEnum,
+    note: z.string().trim().optional().nullable(),
+  })
+  .refine(
+    (data) => {
+      if (data.newStatus === "PERLU_PERBAIKAN") {
+        return typeof data.note === "string" && data.note.trim().length >= 3;
+      }
+      return true;
+    },
+    {
+      message: "Catatan perbaikan wajib diisi minimal 3 karakter.",
+      path: ["note"],
+    }
+  );
 
 export type UpdateInspeksiBASTInput = z.infer<typeof updateInspeksiBASTSchema>;

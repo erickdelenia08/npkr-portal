@@ -30,7 +30,7 @@ export interface BastActionResponse {
  * Inside a transaction:
  * 1. Upserts the InspeksiBAST record.
  * 2. Creates an audit log record in InspeksiBASTLog capturing status_sebelum and status_sesudah.
- * Role required: ADMIN or MANAGER
+ * Role required: ADMIN
  */
 export async function updateInspeksiBAST(
   inputOrTransaksiId: number | UpdateInspeksiBASTInput,

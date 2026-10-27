@@ -79,8 +79,8 @@ const STATUS_LABEL: Record<StatusPengajuanKPR, string> = {
   WAWANCARA: "Wawancara",
   OTS: "OTS (Survey)",
   VERIFIKASI: "Verifikasi",
-  SP3K: "SP3K Terbit",
-  DISETUJUI: "Disetujui",
+  SP3K: "SP3K Terbit (Disetujui Bank)",
+  // DISETUJUI: "Disetujui",
   DITOLAK: "Ditolak",
   DIBATALKAN: "Dibatalkan",
 };
@@ -91,7 +91,7 @@ const STATUS_BADGE_STYLE: Record<StatusPengajuanKPR, string> = {
   OTS: "bg-indigo-50 text-indigo-700 border-indigo-200",
   VERIFIKASI: "bg-amber-50 text-amber-800 border-amber-200",
   SP3K: "bg-teal-50 text-teal-800 border-teal-200",
-  DISETUJUI: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  // DISETUJUI: "bg-emerald-50 text-emerald-800 border-emerald-200",
   DITOLAK: "bg-rose-50 text-rose-700 border-rose-200",
   DIBATALKAN: "bg-slate-100 text-slate-600 border-slate-300",
 };
@@ -259,7 +259,6 @@ export function KprSubmissionSection({
     // Critical or final transitions require confirmation
     const isCritical =
       nextStatus === "SP3K" ||
-      nextStatus === "DISETUJUI" ||
       nextStatus === "DIBATALKAN";
 
     if (isCritical) {
@@ -423,9 +422,8 @@ export function KprSubmissionSection({
                         • Pengajuan #{submission.nomor_pengajuan}
                       </span>
                       <span
-                        className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-bold ${
-                          STATUS_BADGE_STYLE[submission.status]
-                        }`}
+                        className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-bold ${STATUS_BADGE_STYLE[submission.status]
+                          }`}
                       >
                         {STATUS_LABEL[submission.status]}
                       </span>
@@ -481,10 +479,14 @@ export function KprSubmissionSection({
                         Aksi Tahap Bank:
                       </span>
                       {forwardOptions.length === 0 ? (
-                        <span className="text-xs text-slate-500 italic">
-                          Tahap pengajuan telah mencapai tahap akhir (
-                          {STATUS_LABEL[submission.status]}).
-                        </span>
+                        submission.status === "SP3K" || submission.status === "DISETUJUI" ? (
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                            <CheckCircle2 className="h-4 w-4" />
+                            SP3K terbit. Lanjutkan ke proses Akad.
+                          </span>
+                        ) : (
+                          <span className="text-xs text-slate-500 italic">Tidak ada tahap lanjutan.</span>
+                        )
                       ) : (
                         forwardOptions.map((stage) => {
                           const isSuccessStep =
@@ -499,11 +501,10 @@ export function KprSubmissionSection({
                               onClick={() =>
                                 handleRequestStatusChange(submission, stage)
                               }
-                              className={`h-8 text-xs font-semibold ${
-                                isSuccessStep
-                                  ? "bg-teal-700 hover:bg-teal-800 text-white"
-                                  : "border-slate-300 text-slate-800 hover:bg-slate-50"
-                              }`}
+                              className={`h-8 text-xs font-semibold ${isSuccessStep
+                                ? "bg-teal-700 hover:bg-teal-800 text-white"
+                                : "border-slate-300 text-slate-800 hover:bg-slate-50"
+                                }`}
                             >
                               <ArrowRight className="mr-1 h-3.5 w-3.5" />
                               Lanjut ke {STATUS_LABEL[stage]}
@@ -699,11 +700,10 @@ export function KprSubmissionSection({
                 }}
                 aria-invalid={Boolean(bankError)}
                 aria-describedby={bankError ? "kpr-bank-error" : undefined}
-                className={`w-full rounded-md border bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 ${
-                  bankError
-                    ? "border-red-400 focus:ring-red-400/30"
-                    : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
-                }`}
+                className={`w-full rounded-md border bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 ${bankError
+                  ? "border-red-400 focus:ring-red-400/30"
+                  : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
+                  }`}
               >
                 <option value="">Pilih bank</option>
                 {masterBanks.map((bank) => (
@@ -801,9 +801,8 @@ export function KprSubmissionSection({
                       (Pengajuan #{item.nomor_pengajuan})
                     </span>
                     <span
-                      className={`inline-flex rounded-md border px-2 py-0.5 text-[11px] font-bold ${
-                        STATUS_BADGE_STYLE[item.status]
-                      }`}
+                      className={`inline-flex rounded-md border px-2 py-0.5 text-[11px] font-bold ${STATUS_BADGE_STYLE[item.status]
+                        }`}
                     >
                       {STATUS_LABEL[item.status]}
                     </span>

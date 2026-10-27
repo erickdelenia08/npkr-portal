@@ -62,9 +62,9 @@ export function LeadMilestoneStepper({ lead }: LeadMilestoneStepperProps) {
     {
       key: "closing",
       label: "Closing",
-      date: lead.closing_at,
-      isCompleted: hasClosing,
-      isActive: hasClosing && !isLost,
+      date: lead.itj?.transaksi?.closing_at,
+      isCompleted: Boolean(lead.itj?.transaksi?.closing_at),
+      isActive: Boolean(lead.itj?.transaksi?.closing_at && !isLost),
     },
   ];
 
@@ -96,24 +96,22 @@ export function LeadMilestoneStepper({ lead }: LeadMilestoneStepperProps) {
                 {/* Connecting Line to next step */}
                 {!isLast && (
                   <div
-                    className={`absolute top-4 left-1/2 w-full h-[2px] -z-0 transition-colors ${
-                      steps[idx + 1].isCompleted
-                        ? "bg-teal-500"
-                        : "bg-slate-200"
-                    }`}
+                    className={`absolute top-4 left-1/2 w-full h-[2px] -z-0 transition-colors ${steps[idx + 1].isCompleted
+                      ? "bg-teal-500"
+                      : "bg-slate-200"
+                      }`}
                     style={{ transform: "translateY(-50%)" }}
                   />
                 )}
 
                 {/* Step Circle Indicator */}
                 <div
-                  className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
-                    step.isCompleted
-                      ? "bg-teal-600 text-white ring-4 ring-teal-50"
-                      : step.isActive
+                  className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all ${step.isCompleted
+                    ? "bg-teal-600 text-white ring-4 ring-teal-50"
+                    : step.isActive
                       ? "bg-white text-teal-700 border-2 border-teal-600 ring-4 ring-teal-50/70"
                       : "bg-bone text-slate-400 border border-mist"
-                  }`}
+                    }`}
                 >
                   {step.isCompleted ? (
                     <Check className="w-4 h-4 stroke-[2.5]" />
@@ -125,11 +123,10 @@ export function LeadMilestoneStepper({ lead }: LeadMilestoneStepperProps) {
                 {/* Step Title & Date */}
                 <div className="mt-2 space-y-0.5 px-0.5">
                   <p
-                    className={`text-[11px] sm:text-xs font-bold leading-tight ${
-                      step.isCompleted || step.isActive
-                        ? "text-carbon-ink"
-                        : "text-slate-400"
-                    }`}
+                    className={`text-[11px] sm:text-xs font-bold leading-tight ${step.isCompleted || step.isActive
+                      ? "text-carbon-ink"
+                      : "text-slate-400"
+                      }`}
                   >
                     {step.label}
                   </p>

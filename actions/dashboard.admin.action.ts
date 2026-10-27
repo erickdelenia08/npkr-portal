@@ -189,7 +189,7 @@ export async function getAdminDashboardData(): Promise<
     const rawActiveKpr = await prisma.pengajuanKPR.findMany({
       where: {
         status: {
-          notIn: ["DISETUJUI", "DITOLAK", "DIBATALKAN"],
+          notIn: ["DITOLAK", "DIBATALKAN"],
         },
       },
       orderBy: { updated_at: "desc" },

@@ -379,7 +379,7 @@ enum StatusPengajuanKPR {
   OTS
   VERIFIKASI
   SP3K
-  DISETUJUI
+  // DISETUJUI
   DITOLAK
   DIBATALKAN
 }

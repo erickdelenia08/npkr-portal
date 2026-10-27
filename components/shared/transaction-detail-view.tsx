@@ -570,12 +570,11 @@ export async function TransactionDetailView({
         initialVerifiedDocs={transaksi.dokumen
           .filter((d) => d.status === "TERVERIFIKASI")
           .map((d) => d.jenis)}
-        initialBastItems={transaksi.inspeksi_bast
-          .filter(
-            (b) =>
-              b.status === "SESUAI" || b.status === "SELESAI_DIPERBAIKI"
-          )
-          .map((b) => b.item)}
+        initialInspeksiBast={transaksi.inspeksi_bast.map((b) => ({
+          item: b.item,
+          status: b.status,
+          catatan: b.catatan,
+        }))}
         initialPengajuanKpr={transaksi.pengajuan_kpr}
         masterBanks={masterBanks}
       />

@@ -118,7 +118,6 @@ export const updateTransactionStatusSchema = z.object({
   lunasAt: z.string().trim().optional().nullable(),
   catatanAdmin: z.string().trim().optional().nullable(),
   documents: z.array(z.string()).optional().nullable(),
-  bastItems: z.array(z.string()).optional().nullable(),
 });
 
 export type UpdateTransactionStatusInput = z.infer<
