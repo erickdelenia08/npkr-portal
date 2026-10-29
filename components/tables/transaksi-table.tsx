@@ -34,7 +34,7 @@ export interface SerializedTransaksi {
   customer: {
     id: number;
     nama_ktp: string;
-    no_hp: string;
+    no_hp: string | null;
     nik: string;
   };
   unit: {
@@ -213,7 +213,7 @@ export function TransaksiTable({ data }: TransaksiTableProps) {
                             {trx.customer.nama_ktp}
                           </span>
                           <span className="text-[11px] font-mono text-zinc-400 mt-0.5">
-                            {trx.customer.no_hp}
+                            {trx.customer.no_hp || "—"}
                           </span>
                         </div>
                       </td>
