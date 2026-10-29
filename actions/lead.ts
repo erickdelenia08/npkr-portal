@@ -180,7 +180,7 @@ export async function createLead(input: LeadInput): Promise<CreateLeadResponse> 
       tgl_follow_up,
     } = parsed.data;
 
-    const cleanNoHp = normalizePhoneNumber(no_hp);
+    const cleanNoHp = normalizePhoneNumber(no_hp || "");
     const mappedSumber: SumberLead = mapToSumberLead(sumber);
 
     // Determine assigned marketing_id
@@ -225,16 +225,16 @@ export async function createLead(input: LeadInput): Promise<CreateLeadResponse> 
         lost_reason: null,
         ...(hasInitialActivity &&
           actorUserId && {
-            aktivitas: {
-              create: {
-                user_id: actorUserId,
-                jenis: "WHATSAPP",
-                hasil: "TERTARIK",
-                catatan: effectiveNotes || null,
-                tgl_follow_up: isValidFollowUp ? parsedFollowUpDate : null,
-              },
+          aktivitas: {
+            create: {
+              user_id: actorUserId,
+              jenis: "WHATSAPP",
+              hasil: "TERTARIK",
+              catatan: effectiveNotes || null,
+              tgl_follow_up: isValidFollowUp ? parsedFollowUpDate : null,
             },
-          }),
+          },
+        }),
       },
     });
 
@@ -253,7 +253,7 @@ export async function createLead(input: LeadInput): Promise<CreateLeadResponse> 
       data: {
         id: newLead.id,
         nama: newLead.nama,
-        no_hp: newLead.no_hp,
+        no_hp: newLead.no_hp || "",
         sumber: newLead.sumber,
         minat_tipe: newLead.minat_tipe,
         tahap: dynamicTahap,
@@ -403,7 +403,7 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
       return {
         id: l.id,
         nama: l.nama,
-        no_hp: l.no_hp,
+        no_hp: l.no_hp || "",
         sumber: l.sumber,
         minat_tipe: l.minat_tipe,
         tahap: dynamicTahap,

@@ -6,30 +6,19 @@ import { connection } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import {
-  ReceiptText,
-  Building2,
-  Banknote,
-  CheckCircle2,
-  FileText,
-  Clock,
-  ShieldCheck,
-} from "lucide-react";
-import {
   ManagerTransaksiTable,
   SerializedManagerTransaksi,
 } from "@/components/tables/manager-transaksi-table";
 
 export const metadata: Metadata = {
-  title: "Pantauan Transaksi (Read-Only) | Manager Portal",
-  description:
-    "Monitoring alur transaksi konsumen, proses pemberkasan bank, approval SP3K, hingga akad dan BAST.",
+  title: "Pantauan Transaksi | Manager Portal",
+  description: "Monitoring alur transaksi konsumen, proses pemberkasan, approval bank, hingga akad dan BAST.",
 };
 
 export default async function ManagerTransaksiPage() {
   await connection();
   const session = await auth();
 
-  // Strict RBAC Enforcement
   if (!session?.user) {
     redirect("/login");
   }
@@ -39,7 +28,6 @@ export default async function ManagerTransaksiPage() {
     redirect("/marketing/dashboard");
   }
 
-  // Fetch all Transaksi records with required relations
   const rawTransaksi = await prisma.transaksi.findMany({
     include: {
       itj: {
@@ -81,9 +69,7 @@ export default async function ManagerTransaksiPage() {
     },
   });
 
-  // Safe Serialization for Client Component
   const serialized: SerializedManagerTransaksi[] = rawTransaksi.map((trx) => {
-    // Tanggal ITJ: ambil dari ITJ disetujui atau fallback ke trx.created_at
     const approvedItjDate = trx.itj?.diajukan_at;
     const tglItjIso = approvedItjDate
       ? approvedItjDate.toISOString()
@@ -139,7 +125,6 @@ export default async function ManagerTransaksiPage() {
     };
   });
 
-  // Calculate Quick Executive Metrics
   const totalTransaksi = serialized.length;
   const countPemberkasan = serialized.filter((t) => {
     const s = t.status_transaksi.toUpperCase();
@@ -162,104 +147,65 @@ export default async function ManagerTransaksiPage() {
   }).format(totalNilaiPipeline);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
-      {/* ─── Header Banner ─── */}
-      <div className="bg-white p-5 sm:p-6 rounded-2xl border border-mist shadow-2xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-teal-50 border border-teal-200 text-prism-teal flex items-center justify-center shrink-0">
-              <ReceiptText className="w-6 h-6" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-carbon-ink tracking-tight">
-                  Pantauan Transaksi &amp; Akad
-                </h1>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                  Read-Only Mode
-                </span>
-              </div>
-              <p className="text-xs sm:text-sm text-slate mt-0.5">
-                Pengawasan langsung status tahapan transaksi oleh Admin: Pemberkasan, BI Checking/SP3K Bank, hingga Akad Kredit &amp; BAST.
-              </p>
-            </div>
+    <div className="space-y-6 font-sans text-zinc-900">
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
+              Pantauan Transaksi
+            </h1>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium">
+              Read-Only
+            </span>
           </div>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Monitoring tahapan berkas, evaluasi perbankan, hingga akad dan serah terima unit (BAST).
+          </p>
+        </div>
 
-          <div className="text-right shrink-0">
-            <span className="text-[10px] text-slate font-bold uppercase tracking-wider block">
-              Total Nilai Transaksi
-            </span>
-            <span className="text-lg sm:text-xl font-bold text-carbon-ink font-mono">
-              {formattedTotalNilai}
-            </span>
-          </div>
+        <div className="text-left sm:text-right">
+          <span className="text-[11px] text-zinc-400 font-medium block">
+            Total Nilai Transaksi
+          </span>
+          <span className="text-lg font-semibold text-zinc-900 font-mono tracking-tight">
+            {formattedTotalNilai}
+          </span>
         </div>
       </div>
 
-      {/* ─── Summary Metric Cards ─── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {/* Total Transaksi */}
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-2xs flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-teal-50 text-prism-teal flex items-center justify-center shrink-0">
-            <ReceiptText className="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <p className="text-[10px] text-slate font-bold uppercase tracking-wider">
-              Total Transaksi
-            </p>
-            <p className="text-lg font-bold text-carbon-ink tabular-nums">
-              {totalTransaksi}
-            </p>
-          </div>
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Total Transaksi</span>
+          <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
+            {totalTransaksi}
+          </span>
         </div>
 
-        {/* Tahap Pemberkasan */}
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-2xs flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center shrink-0">
-            <FileText className="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <p className="text-[10px] text-slate font-bold uppercase tracking-wider">
-              Pemberkasan (Orange)
-            </p>
-            <p className="text-lg font-bold text-amber-950 tabular-nums">
-              {countPemberkasan}
-            </p>
-          </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Pemberkasan</span>
+          <span className="text-xl font-semibold text-amber-700 mt-1 block tabular-nums">
+            {countPemberkasan}
+          </span>
         </div>
 
-        {/* Proses Bank / SP3K */}
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-2xs flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <Building2 className="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <p className="text-[10px] text-slate font-bold uppercase tracking-wider">
-              Bank / SP3K (Blue)
-            </p>
-            <p className="text-lg font-bold text-blue-950 tabular-nums">
-              {countProsesBank}
-            </p>
-          </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Proses Bank / SP3K</span>
+          <span className="text-xl font-semibold text-blue-700 mt-1 block tabular-nums">
+            {countProsesBank}
+          </span>
         </div>
 
-        {/* Akad / BAST Selesai */}
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-2xs flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <p className="text-[10px] text-slate font-bold uppercase tracking-wider">
-              Akad / BAST (Green)
-            </p>
-            <p className="text-lg font-bold text-emerald-950 tabular-nums">
-              {countAkadBast}
-            </p>
-          </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Akad &amp; BAST</span>
+          <span className="text-xl font-semibold text-emerald-700 mt-1 block tabular-nums">
+            {countAkadBast}
+          </span>
         </div>
       </div>
 
-      {/* ─── Manager Read-Only Data Table ─── */}
+      {/* Main Table */}
       <ManagerTransaksiTable data={serialized} />
     </div>
   );

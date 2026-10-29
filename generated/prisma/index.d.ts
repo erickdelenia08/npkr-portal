@@ -7798,7 +7798,7 @@ export namespace Prisma {
     marketing_id: number | null
     customer_id: number | null
     nama: string
-    no_hp: string
+    no_hp: string | null
     sumber: $Enums.SumberLead
     minat_tipe: string | null
     survei_jadwal_at: Date | null
@@ -7895,7 +7895,7 @@ export namespace Prisma {
       marketing_id: number | null
       customer_id: number | null
       nama: string
-      no_hp: string
+      no_hp: string | null
       sumber: $Enums.SumberLead
       minat_tipe: string | null
       survei_jadwal_at: Date | null
@@ -11142,7 +11142,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date
     alamat_ktp: string
-    no_hp: string
+    no_hp: string | null
     status_pernikahan: $Enums.StatusPernikahan | null
     status_pekerjaan: $Enums.StatusPekerjaan | null
     created_at: Date
@@ -11221,7 +11221,7 @@ export namespace Prisma {
       tempat_lahir: string
       tgl_lahir: Date
       alamat_ktp: string
-      no_hp: string
+      no_hp: string | null
       status_pernikahan: $Enums.StatusPernikahan | null
       status_pekerjaan: $Enums.StatusPekerjaan | null
       created_at: Date
@@ -22740,7 +22740,7 @@ export namespace Prisma {
     marketing_id?: IntNullableFilter<"Lead"> | number | null
     customer_id?: IntNullableFilter<"Lead"> | number | null
     nama?: StringFilter<"Lead"> | string
-    no_hp?: StringFilter<"Lead"> | string
+    no_hp?: StringNullableFilter<"Lead"> | string | null
     sumber?: EnumSumberLeadFilter<"Lead"> | $Enums.SumberLead
     minat_tipe?: StringNullableFilter<"Lead"> | string | null
     survei_jadwal_at?: DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -22762,7 +22762,7 @@ export namespace Prisma {
     marketing_id?: SortOrderInput | SortOrder
     customer_id?: SortOrderInput | SortOrder
     nama?: SortOrder
-    no_hp?: SortOrder
+    no_hp?: SortOrderInput | SortOrder
     sumber?: SortOrder
     minat_tipe?: SortOrderInput | SortOrder
     survei_jadwal_at?: SortOrderInput | SortOrder
@@ -22788,7 +22788,7 @@ export namespace Prisma {
     marketing_id?: IntNullableFilter<"Lead"> | number | null
     customer_id?: IntNullableFilter<"Lead"> | number | null
     nama?: StringFilter<"Lead"> | string
-    no_hp?: StringFilter<"Lead"> | string
+    no_hp?: StringNullableFilter<"Lead"> | string | null
     sumber?: EnumSumberLeadFilter<"Lead"> | $Enums.SumberLead
     minat_tipe?: StringNullableFilter<"Lead"> | string | null
     survei_jadwal_at?: DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -22810,7 +22810,7 @@ export namespace Prisma {
     marketing_id?: SortOrderInput | SortOrder
     customer_id?: SortOrderInput | SortOrder
     nama?: SortOrder
-    no_hp?: SortOrder
+    no_hp?: SortOrderInput | SortOrder
     sumber?: SortOrder
     minat_tipe?: SortOrderInput | SortOrder
     survei_jadwal_at?: SortOrderInput | SortOrder
@@ -22836,7 +22836,7 @@ export namespace Prisma {
     marketing_id?: IntNullableWithAggregatesFilter<"Lead"> | number | null
     customer_id?: IntNullableWithAggregatesFilter<"Lead"> | number | null
     nama?: StringWithAggregatesFilter<"Lead"> | string
-    no_hp?: StringWithAggregatesFilter<"Lead"> | string
+    no_hp?: StringNullableWithAggregatesFilter<"Lead"> | string | null
     sumber?: EnumSumberLeadWithAggregatesFilter<"Lead"> | $Enums.SumberLead
     minat_tipe?: StringNullableWithAggregatesFilter<"Lead"> | string | null
     survei_jadwal_at?: DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
@@ -23057,7 +23057,7 @@ export namespace Prisma {
     tempat_lahir?: StringFilter<"Customer"> | string
     tgl_lahir?: DateTimeFilter<"Customer"> | Date | string
     alamat_ktp?: StringFilter<"Customer"> | string
-    no_hp?: StringFilter<"Customer"> | string
+    no_hp?: StringNullableFilter<"Customer"> | string | null
     status_pernikahan?: EnumStatusPernikahanNullableFilter<"Customer"> | $Enums.StatusPernikahan | null
     status_pekerjaan?: EnumStatusPekerjaanNullableFilter<"Customer"> | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFilter<"Customer"> | Date | string
@@ -23073,7 +23073,7 @@ export namespace Prisma {
     tempat_lahir?: SortOrder
     tgl_lahir?: SortOrder
     alamat_ktp?: SortOrder
-    no_hp?: SortOrder
+    no_hp?: SortOrderInput | SortOrder
     status_pernikahan?: SortOrderInput | SortOrder
     status_pekerjaan?: SortOrderInput | SortOrder
     created_at?: SortOrder
@@ -23093,7 +23093,7 @@ export namespace Prisma {
     tempat_lahir?: StringFilter<"Customer"> | string
     tgl_lahir?: DateTimeFilter<"Customer"> | Date | string
     alamat_ktp?: StringFilter<"Customer"> | string
-    no_hp?: StringFilter<"Customer"> | string
+    no_hp?: StringNullableFilter<"Customer"> | string | null
     status_pernikahan?: EnumStatusPernikahanNullableFilter<"Customer"> | $Enums.StatusPernikahan | null
     status_pekerjaan?: EnumStatusPekerjaanNullableFilter<"Customer"> | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFilter<"Customer"> | Date | string
@@ -23109,7 +23109,7 @@ export namespace Prisma {
     tempat_lahir?: SortOrder
     tgl_lahir?: SortOrder
     alamat_ktp?: SortOrder
-    no_hp?: SortOrder
+    no_hp?: SortOrderInput | SortOrder
     status_pernikahan?: SortOrderInput | SortOrder
     status_pekerjaan?: SortOrderInput | SortOrder
     created_at?: SortOrder
@@ -23131,7 +23131,7 @@ export namespace Prisma {
     tempat_lahir?: StringWithAggregatesFilter<"Customer"> | string
     tgl_lahir?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
     alamat_ktp?: StringWithAggregatesFilter<"Customer"> | string
-    no_hp?: StringWithAggregatesFilter<"Customer"> | string
+    no_hp?: StringNullableWithAggregatesFilter<"Customer"> | string | null
     status_pernikahan?: EnumStatusPernikahanNullableWithAggregatesFilter<"Customer"> | $Enums.StatusPernikahan | null
     status_pekerjaan?: EnumStatusPekerjaanNullableWithAggregatesFilter<"Customer"> | $Enums.StatusPekerjaan | null
     created_at?: DateTimeWithAggregatesFilter<"Customer"> | Date | string
@@ -24347,7 +24347,7 @@ export namespace Prisma {
 
   export type LeadCreateInput = {
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -24369,7 +24369,7 @@ export namespace Prisma {
     marketing_id?: number | null
     customer_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -24386,7 +24386,7 @@ export namespace Prisma {
 
   export type LeadUpdateInput = {
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24408,7 +24408,7 @@ export namespace Prisma {
     marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
     customer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24428,7 +24428,7 @@ export namespace Prisma {
     marketing_id?: number | null
     customer_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -24443,7 +24443,7 @@ export namespace Prisma {
 
   export type LeadUpdateManyMutationInput = {
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24461,7 +24461,7 @@ export namespace Prisma {
     marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
     customer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24683,7 +24683,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date | string
     alamat_ktp: string
-    no_hp: string
+    no_hp?: string | null
     status_pernikahan?: $Enums.StatusPernikahan | null
     status_pekerjaan?: $Enums.StatusPekerjaan | null
     created_at?: Date | string
@@ -24699,7 +24699,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date | string
     alamat_ktp: string
-    no_hp: string
+    no_hp?: string | null
     status_pernikahan?: $Enums.StatusPernikahan | null
     status_pekerjaan?: $Enums.StatusPekerjaan | null
     created_at?: Date | string
@@ -24714,7 +24714,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24730,7 +24730,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24746,7 +24746,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date | string
     alamat_ktp: string
-    no_hp: string
+    no_hp?: string | null
     status_pernikahan?: $Enums.StatusPernikahan | null
     status_pekerjaan?: $Enums.StatusPekerjaan | null
     created_at?: Date | string
@@ -24759,7 +24759,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24773,7 +24773,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26227,13 +26227,6 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type EnumSumberLeadFilter<$PrismaModel = never> = {
-    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
-    in?: $Enums.SumberLead[]
-    notIn?: $Enums.SumberLead[]
-    not?: NestedEnumSumberLeadFilter<$PrismaModel> | $Enums.SumberLead
-  }
-
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | null
@@ -26247,6 +26240,13 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     search?: string
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type EnumSumberLeadFilter<$PrismaModel = never> = {
+    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
+    in?: $Enums.SumberLead[]
+    notIn?: $Enums.SumberLead[]
+    not?: NestedEnumSumberLeadFilter<$PrismaModel> | $Enums.SumberLead
   }
 
   export type DateTimeNullableFilter<$PrismaModel = never> = {
@@ -26342,16 +26342,6 @@ export namespace Prisma {
     customer_id?: SortOrder
   }
 
-  export type EnumSumberLeadWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
-    in?: $Enums.SumberLead[]
-    notIn?: $Enums.SumberLead[]
-    not?: NestedEnumSumberLeadWithAggregatesFilter<$PrismaModel> | $Enums.SumberLead
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSumberLeadFilter<$PrismaModel>
-    _max?: NestedEnumSumberLeadFilter<$PrismaModel>
-  }
-
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | null
@@ -26368,6 +26358,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumSumberLeadWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
+    in?: $Enums.SumberLead[]
+    notIn?: $Enums.SumberLead[]
+    not?: NestedEnumSumberLeadWithAggregatesFilter<$PrismaModel> | $Enums.SumberLead
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSumberLeadFilter<$PrismaModel>
+    _max?: NestedEnumSumberLeadFilter<$PrismaModel>
   }
 
   export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -28448,12 +28448,12 @@ export namespace Prisma {
     connect?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
   }
 
-  export type EnumSumberLeadFieldUpdateOperationsInput = {
-    set?: $Enums.SumberLead
-  }
-
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type EnumSumberLeadFieldUpdateOperationsInput = {
+    set?: $Enums.SumberLead
   }
 
   export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -29660,13 +29660,6 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedEnumSumberLeadFilter<$PrismaModel = never> = {
-    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
-    in?: $Enums.SumberLead[]
-    notIn?: $Enums.SumberLead[]
-    not?: NestedEnumSumberLeadFilter<$PrismaModel> | $Enums.SumberLead
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | null
@@ -29682,6 +29675,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedEnumSumberLeadFilter<$PrismaModel = never> = {
+    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
+    in?: $Enums.SumberLead[]
+    notIn?: $Enums.SumberLead[]
+    not?: NestedEnumSumberLeadFilter<$PrismaModel> | $Enums.SumberLead
+  }
+
   export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
     in?: Date[] | string[] | null
@@ -29691,16 +29691,6 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedEnumSumberLeadWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
-    in?: $Enums.SumberLead[]
-    notIn?: $Enums.SumberLead[]
-    not?: NestedEnumSumberLeadWithAggregatesFilter<$PrismaModel> | $Enums.SumberLead
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumSumberLeadFilter<$PrismaModel>
-    _max?: NestedEnumSumberLeadFilter<$PrismaModel>
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -29719,6 +29709,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumSumberLeadWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SumberLead | EnumSumberLeadFieldRefInput<$PrismaModel>
+    in?: $Enums.SumberLead[]
+    notIn?: $Enums.SumberLead[]
+    not?: NestedEnumSumberLeadWithAggregatesFilter<$PrismaModel> | $Enums.SumberLead
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSumberLeadFilter<$PrismaModel>
+    _max?: NestedEnumSumberLeadFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -30060,7 +30060,7 @@ export namespace Prisma {
 
   export type LeadCreateWithoutMarketingInput = {
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -30080,7 +30080,7 @@ export namespace Prisma {
     id?: number
     customer_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -30544,7 +30544,7 @@ export namespace Prisma {
     marketing_id?: IntNullableFilter<"Lead"> | number | null
     customer_id?: IntNullableFilter<"Lead"> | number | null
     nama?: StringFilter<"Lead"> | string
-    no_hp?: StringFilter<"Lead"> | string
+    no_hp?: StringNullableFilter<"Lead"> | string | null
     sumber?: EnumSumberLeadFilter<"Lead"> | $Enums.SumberLead
     minat_tipe?: StringNullableFilter<"Lead"> | string | null
     survei_jadwal_at?: DateTimeNullableFilter<"Lead"> | Date | string | null
@@ -31664,7 +31664,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date | string
     alamat_ktp: string
-    no_hp: string
+    no_hp?: string | null
     status_pernikahan?: $Enums.StatusPernikahan | null
     status_pekerjaan?: $Enums.StatusPekerjaan | null
     created_at?: Date | string
@@ -31679,7 +31679,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date | string
     alamat_ktp: string
-    no_hp: string
+    no_hp?: string | null
     status_pernikahan?: $Enums.StatusPernikahan | null
     status_pekerjaan?: $Enums.StatusPekerjaan | null
     created_at?: Date | string
@@ -31841,7 +31841,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31856,7 +31856,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31898,7 +31898,7 @@ export namespace Prisma {
 
   export type LeadCreateWithoutAktivitasInput = {
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -31919,7 +31919,7 @@ export namespace Prisma {
     marketing_id?: number | null
     customer_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -32001,7 +32001,7 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutAktivitasInput = {
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -32022,7 +32022,7 @@ export namespace Prisma {
     marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
     customer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -32094,7 +32094,7 @@ export namespace Prisma {
 
   export type LeadCreateWithoutItjInput = {
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -32115,7 +32115,7 @@ export namespace Prisma {
     marketing_id?: number | null
     customer_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -32291,7 +32291,7 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutItjInput = {
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -32312,7 +32312,7 @@ export namespace Prisma {
     marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
     customer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -32561,7 +32561,7 @@ export namespace Prisma {
 
   export type LeadCreateWithoutCustomerInput = {
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -32581,7 +32581,7 @@ export namespace Prisma {
     id?: number
     marketing_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -32644,7 +32644,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date | string
     alamat_ktp: string
-    no_hp: string
+    no_hp?: string | null
     status_pernikahan?: $Enums.StatusPernikahan | null
     status_pekerjaan?: $Enums.StatusPekerjaan | null
     created_at?: Date | string
@@ -32659,7 +32659,7 @@ export namespace Prisma {
     tempat_lahir: string
     tgl_lahir: Date | string
     alamat_ktp: string
-    no_hp: string
+    no_hp?: string | null
     status_pernikahan?: $Enums.StatusPernikahan | null
     status_pekerjaan?: $Enums.StatusPekerjaan | null
     created_at?: Date | string
@@ -32984,7 +32984,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32999,7 +32999,7 @@ export namespace Prisma {
     tempat_lahir?: StringFieldUpdateOperationsInput | string
     tgl_lahir?: DateTimeFieldUpdateOperationsInput | Date | string
     alamat_ktp?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     status_pernikahan?: NullableEnumStatusPernikahanFieldUpdateOperationsInput | $Enums.StatusPernikahan | null
     status_pekerjaan?: NullableEnumStatusPekerjaanFieldUpdateOperationsInput | $Enums.StatusPekerjaan | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34995,7 +34995,7 @@ export namespace Prisma {
     id?: number
     customer_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -35161,7 +35161,7 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutMarketingInput = {
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35181,7 +35181,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35200,7 +35200,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -36179,7 +36179,7 @@ export namespace Prisma {
     id?: number
     marketing_id?: number | null
     nama: string
-    no_hp: string
+    no_hp?: string | null
     sumber?: $Enums.SumberLead
     minat_tipe?: string | null
     survei_jadwal_at?: Date | string | null
@@ -36281,7 +36281,7 @@ export namespace Prisma {
 
   export type LeadUpdateWithoutCustomerInput = {
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -36301,7 +36301,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -36320,7 +36320,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
     nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
+    no_hp?: NullableStringFieldUpdateOperationsInput | string | null
     sumber?: EnumSumberLeadFieldUpdateOperationsInput | $Enums.SumberLead
     minat_tipe?: NullableStringFieldUpdateOperationsInput | string | null
     survei_jadwal_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

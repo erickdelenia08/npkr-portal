@@ -74,15 +74,17 @@ export function getRequiredDocuments({
   statusPernikahan,
   statusPekerjaan,
 }: DocumentRulesParams): DocumentRulesResult {
+  const isKpr = metode === "KPR";
   const missingFields: Array<"status_pernikahan" | "status_pekerjaan"> = [];
 
-  if (!statusPernikahan) {
-    missingFields.push("status_pernikahan");
-  }
-
-  // Untuk metode KPR, status pekerjaan wajib ditentukan untuk menentukan matriks dokumen income
-  if (!statusPekerjaan && metode === "KPR") {
-    missingFields.push("status_pekerjaan");
+  // Status pernikahan dan pekerjaan hanya wajib untuk KPR
+  if (isKpr) {
+    if (!statusPernikahan) {
+      missingFields.push("status_pernikahan");
+    }
+    if (!statusPekerjaan) {
+      missingFields.push("status_pekerjaan");
+    }
   }
 
   if (missingFields.length > 0) {
@@ -99,7 +101,6 @@ export function getRequiredDocuments({
     };
   }
 
-  const isKpr = metode === "KPR";
   const isSubsidi = kategori === "SUBSIDI";
   const isKomersil = kategori === "KOMERSIL";
 
@@ -132,14 +133,18 @@ export function getRequiredDocuments({
     list.push({
       key: "KTP_PASANGAN",
       label: "KTP Pasangan (Suami/Istri)",
-      required: true,
-      description: "KTP elektronik asli pasangan pemohon",
+      required: isKpr,
+      description: isKpr
+        ? "KTP elektronik asli pasangan pemohon (Wajib KPR)"
+        : "KTP elektronik asli pasangan pemohon (Opsional Cash)",
     });
     list.push({
       key: "BUKU_NIKAH",
       label: "Buku Nikah / Akta Nikah",
-      required: true,
-      description: "Kutipan akta nikah resmi KUA / Catatan Sipil",
+      required: isKpr,
+      description: isKpr
+        ? "Kutipan akta nikah resmi KUA / Catatan Sipil (Wajib KPR)"
+        : "Kutipan akta nikah resmi KUA / Catatan Sipil (Opsional Cash)",
     });
   } else if (statusPernikahan === "BELUM_MENIKAH") {
     list.push({
@@ -154,8 +159,10 @@ export function getRequiredDocuments({
     list.push({
       key: "AKTA_CERAI",
       label: "Akta Cerai / Surat Kematian Pasangan",
-      required: true,
-      description: "Putusan pengadilan agama / akta kematian pasangan",
+      required: isKpr,
+      description: isKpr
+        ? "Putusan pengadilan agama / akta kematian pasangan (Wajib KPR)"
+        : "Putusan pengadilan agama / akta kematian pasangan (Opsional Cash)",
     });
   }
 
@@ -234,9 +241,10 @@ export function isProfilPemberkasanLengkap(
   statusPekerjaan?: StatusPekerjaan | null,
   metode?: MetodeBayar
 ): boolean {
-  if (!statusPernikahan) return false;
-  if (metode === "KPR" && !statusPekerjaan) return false;
-  if (!statusPekerjaan) return false;
+  if (metode === "KPR") {
+    if (!statusPernikahan) return false;
+    if (!statusPekerjaan) return false;
+  }
   return true;
 }
 

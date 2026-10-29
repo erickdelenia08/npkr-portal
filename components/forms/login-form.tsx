@@ -156,9 +156,10 @@ export function LoginForm() {
       </div>
 
       {/* System Security Notice */}
-      <div className="pt-3 border-t border-mist/70 flex items-center justify-center gap-1.5 text-[11px] text-slate">
-        <ShieldCheck className="w-3.5 h-3.5 text-prism-teal shrink-0" />
-        <span>Akses Terenkripsi &amp; Terproteksi RBAC</span>
+      <div className="pt-3 border-mist/70 flex items-center justify-center gap-1.5 text-[11px] text-slate">
+        {/* <ShieldCheck className="w-3.5 h-3.5 text-prism-teal shrink-0" />
+        <span>Akses Terenkripsi &amp; Terproteksi RBAC</span> */}
+        <p>© 2026 PT. Simanduta Surya Sentosa.</p>
       </div>
     </form>
   );

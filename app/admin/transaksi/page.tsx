@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import { ReceiptText, Building2, Banknote, ShieldCheck } from "lucide-react";
+import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
   TransaksiTable,
@@ -8,12 +8,14 @@ import {
 } from "@/components/tables/transaksi-table";
 
 export const metadata: Metadata = {
-  title: "Dashboard Transaksi | NPKR Portal",
+  title: "Manajemen Transaksi | Admin Portal",
   description:
-    "Manajemen data transaksi, monitoring progres pembayaran konsumen, dan berkas properti.",
+    "Monitoring progres transaksi, administrasi pembayaran konsumen, dan berkas unit properti.",
 };
 
 export default async function AdminTransaksiPage() {
+  await connection();
+
   const transaksi = await prisma.transaksi.findMany({
     include: {
       customer: true,
@@ -34,7 +36,6 @@ export default async function AdminTransaksiPage() {
     orderBy: { created_at: "desc" },
   });
 
-  // Serialize Date & Decimal values for Client Component
   const serialized: SerializedTransaksi[] = transaksi.map((trx) => ({
     id: trx.id,
     customer_id: trx.customer_id,
@@ -76,14 +77,13 @@ export default async function AdminTransaksiPage() {
     pembayaran: trx.pembayaran.map((p) => ({
       id: p.id,
       nominal: Number(p.nominal),
-      jenis_pembayaran: p.jenis_pembayaran,
+      jenis_pembayaran: p.jenis_pembayaran as "ITJ" | "DP" | "CICILAN" | "PELUNASAN",
       catatan: p.catatan,
       is_void: p.is_void,
       created_at: p.created_at.toISOString(),
     })),
   }));
 
-  // Quick statistics
   const totalTransaksi = serialized.length;
   const countKpr = serialized.filter((t) => t.metode_bayar === "KPR").length;
   const countCash = serialized.filter(
@@ -98,85 +98,71 @@ export default async function AdminTransaksiPage() {
   }).format(totalNilaiDeal);
 
   return (
-    <div className="space-y-6">
-      {/* ─── Header Banner ─── */}
-      <div className="bg-white p-5 rounded-lg border border-mist shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-lg bg-teal-50 text-deep-teal flex items-center justify-center shrink-0 mt-0.5">
-            <ReceiptText className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-carbon-ink tracking-tight">
-              Manajemen Transaksi & Dokumen
+    <div className="space-y-6 font-sans text-zinc-900">
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
+        <div>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
+              Transaksi &amp; Pembayaran
             </h1>
-            <p className="text-sm text-slate mt-0.5">
-              Kelola tahapan pembayaran (ITJ, DP, KPR, Pelunasan) dan pantau
-              progres transaksi unit konsumen.
-            </p>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium">
+              {totalTransaksi} Transaksi
+            </span>
           </div>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Kelola tahapan pembayaran (ITJ, DP, KPR, Pelunasan) dan verifikasi progres transaksi unit konsumen.
+          </p>
+        </div>
+
+        <div className="text-left sm:text-right">
+          <span className="text-[11px] text-zinc-400 font-medium block">
+            Total Nilai Transaksi
+          </span>
+          <span className="text-lg font-semibold text-zinc-900 font-mono tracking-tight">
+            {formattedTotalDeal}
+          </span>
         </div>
       </div>
 
-      {/* ─── Summary Metrics Cards ─── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg border border-mist shadow-subtle flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-            <ReceiptText className="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <p className="text-[11px] text-slate font-medium uppercase tracking-wider">
-              Total Transaksi
-            </p>
-            <p className="text-lg font-bold text-carbon-ink tabular-nums">
-              {totalTransaksi}
-            </p>
-          </div>
+      {/* Metric Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Total Unit Terjual</span>
+          <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
+            {totalTransaksi}
+          </span>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-mist shadow-subtle flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-            <Building2 className="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <p className="text-[11px] text-slate font-medium uppercase tracking-wider">
-              Skema KPR
-            </p>
-            <p className="text-lg font-bold text-carbon-ink tabular-nums">
-              {countKpr}
-            </p>
-          </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Skema KPR</span>
+          <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
+            {countKpr}
+          </span>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-mist shadow-subtle flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-            <Banknote className="w-4.5 h-4.5" />
-          </div>
-          <div>
-            <p className="text-[11px] text-slate font-medium uppercase tracking-wider">
-              Skema Cash
-            </p>
-            <p className="text-lg font-bold text-carbon-ink tabular-nums">
-              {countCash}
-            </p>
-          </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Skema Cash (Keras/Tempo)</span>
+          <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
+            {countCash}
+          </span>
         </div>
 
-        <div className="bg-white p-4 rounded-lg border border-mist shadow-subtle flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-teal-50 text-deep-teal flex items-center justify-center shrink-0">
-            <ShieldCheck className="w-4.5 h-4.5" />
-          </div>
-          <div className="truncate">
-            <p className="text-[11px] text-slate font-medium uppercase tracking-wider">
-              Total Nilai Deal
-            </p>
-            <p className="text-base font-bold text-carbon-ink font-mono truncate">
-              {formattedTotalDeal}
-            </p>
-          </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Rata-rata Nilai / Unit</span>
+          <span className="text-sm font-semibold text-zinc-900 font-mono mt-2 block truncate">
+            {totalTransaksi > 0
+              ? new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                maximumFractionDigits: 0,
+              }).format(totalNilaiDeal / totalTransaksi)
+              : "Rp 0"}
+          </span>
         </div>
       </div>
 
-      {/* ─── Data Table with Filter Tabs ─── */}
+      {/* Main Table */}
       <TransaksiTable data={serialized} />
     </div>
   );

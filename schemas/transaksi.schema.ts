@@ -35,7 +35,7 @@ export type StatusPekerjaanType = z.infer<typeof StatusPekerjaanEnum>;
 
 export const updateProfilPemberkasanSchema = z.object({
   transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
-  statusPernikahan: StatusPernikahanEnum,
+  statusPernikahan: StatusPernikahanEnum.optional().nullable(),
   statusPekerjaan: StatusPekerjaanEnum.optional().nullable(),
 });
 export type UpdateProfilPemberkasanInput = z.infer<
@@ -118,6 +118,7 @@ export const updateTransactionStatusSchema = z.object({
   lunasAt: z.string().trim().optional().nullable(),
   catatanAdmin: z.string().trim().optional().nullable(),
   documents: z.array(z.string()).optional().nullable(),
+  lahanConfirmed: z.boolean().optional().nullable(),
 });
 
 export type UpdateTransactionStatusInput = z.infer<

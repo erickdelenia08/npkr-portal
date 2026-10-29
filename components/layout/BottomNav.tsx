@@ -23,8 +23,8 @@ const MARKETING_BOTTOM_ITEMS: BottomNavItem[] = [
   { title: "Dashboard", href: "/marketing/dashboard", icon: LayoutDashboard },
   { title: "Lead", href: "/marketing/lead", icon: Users },
   { title: "Unit", href: "/marketing/unit", icon: Building2 },
-  { title: "ITJ", href: "/marketing/itj", icon: FileCheck2 },
-  { title: "Laporan", href: "/marketing/laporan", icon: BarChart3 },
+  { title: "ITJ", href: "/marketing/transaksi", icon: FileCheck2 },
+  // { title: "Laporan", href: "/marketing/laporan", icon: BarChart3 },
 ];
 
 export function BottomNav() {

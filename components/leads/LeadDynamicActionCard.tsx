@@ -13,6 +13,7 @@ import {
   X,
   Sparkles,
   ArrowRight,
+  Megaphone,
 } from "lucide-react";
 import { toast } from "sonner";
 import { SerializedLeadDetail } from "@/actions/activity";
@@ -315,7 +316,7 @@ export function LeadDynamicActionCard({
               <div className="space-y-3">
                 <div className="flex items-start gap-3 p-3.5 rounded-xl bg-bone/70 border border-mist">
                   <div className="w-8 h-8 rounded-lg bg-teal-50 text-prism-teal flex items-center justify-center shrink-0">
-                    <Sparkles className="w-4 h-4" />
+                    <Megaphone className="w-4 h-4" />
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-carbon-ink">Survei lokasi belum dijadwalkan</h3>

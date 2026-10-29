@@ -17,6 +17,7 @@ import { leadSchema, LeadInput } from "@/schemas/lead.schema";
 import { createLead, CreateLeadResponse } from "@/actions/lead";
 import { getMasterTipeList } from "@/actions/master-unit.action";
 import type { SerializedMasterTipe } from "@/actions/master-unit.action";
+import z from "zod";
 
 export interface CreateLeadFormProps {
   onSuccess?: (newLead: NonNullable<CreateLeadResponse["data"]>) => void;
@@ -52,38 +53,52 @@ export function CreateLeadForm({
   const [isLoadingTipe, setIsLoadingTipe] = useState(false);
 
   // Auto fetch master tipe if not provided as props
+
   useEffect(() => {
+    // Data sudah tersedia dari props, tidak perlu fetch.
     if (tipeList && tipeList.length > 0) {
-      setInternalTipeList(tipeList);
       return;
     }
 
     let isMounted = true;
-    setIsLoadingTipe(true);
-    getMasterTipeList()
-      .then((res) => {
+
+    const loadTipe = async () => {
+      setIsLoadingTipe(true);
+
+      try {
+        const res = await getMasterTipeList();
+
         if (isMounted && res.success && res.data) {
           setInternalTipeList(res.data);
         }
-      })
-      .catch((err: unknown) => {
+      } catch (err: unknown) {
         console.error("Gagal memuat master tipe:", err);
-      })
-      .finally(() => {
-        if (isMounted) setIsLoadingTipe(false);
-      });
+      } finally {
+        if (isMounted) {
+          setIsLoadingTipe(false);
+        }
+      }
+    };
+
+    void loadTipe();
 
     return () => {
       isMounted = false;
     };
   }, [tipeList]);
 
+
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<LeadInput>({
+  } = useForm<
+    z.input<typeof leadSchema>,
+    unknown,
+    z.output<typeof leadSchema>
+  >({
     resolver: zodResolver(leadSchema),
     defaultValues: {
       nama: "",
@@ -95,6 +110,7 @@ export function CreateLeadForm({
       next_follow_up: null,
     },
   });
+
 
   const onSubmit = async (data: LeadInput) => {
     setErrorMessage(null);

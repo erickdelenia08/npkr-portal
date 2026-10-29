@@ -187,9 +187,8 @@ export function InteractiveSiteplanSvg({
                 role="button"
                 tabIndex={0}
                 aria-label={`Unit Blok ${plot.blok}${unit ? ` status ${unit.status_unit}` : " belum terdaftar"}`}
-                className={`${opacityClass} ${
-                  isAvailable ? "cursor-pointer group" : isRegistered ? "cursor-pointer" : "cursor-default"
-                } outline-none focus-visible:ring-2 focus-visible:ring-prism-teal`}
+                className={`${opacityClass} ${isAvailable ? "cursor-pointer group" : isRegistered ? "cursor-pointer" : "cursor-default"
+                  } outline-none focus-visible:ring-2 focus-visible:ring-prism-teal`}
                 onClick={() => {
                   if (unit) {
                     onSelectUnit(unit);
@@ -226,11 +225,8 @@ export function InteractiveSiteplanSvg({
                   strokeWidth={isSelected ? "3" : "1.25"}
                   strokeMiterlimit="10"
                   className={
-                    isAvailable
-                      ? "transition-all duration-150 group-hover:stroke-emerald-950 group-hover:stroke-[2.5px] group-hover:brightness-105"
-                      : isRegistered
-                      ? "transition-all duration-150 hover:stroke-[2px]"
-                      : ""
+                    "transition-all duration-150 group-hover:stroke-emerald-950 group-hover:stroke-[2.5px] group-hover:brightness-105"
+
                   }
                 />
 
@@ -247,8 +243,8 @@ export function InteractiveSiteplanSvg({
                       unit.status_unit === "AVAILABLE"
                         ? "#ffffff"
                         : unit.status_unit === "SOLD"
-                        ? "#ffffff"
-                        : "#78350f"
+                          ? "#ffffff"
+                          : "#78350f"
                     }
                     pointerEvents="none"
                   >
@@ -287,7 +283,7 @@ export function InteractiveSiteplanSvg({
           <text className="siteplan-block-letter" transform="translate(359.41 466.52)">R</text>
 
           {/* Unit Numbers for guidance */}
-          <text className="siteplan-unit-num" transform="translate(560.19 829.37) rotate(-3.84)">22</text>
+          {/* <text className="siteplan-unit-num" transform="translate(560.19 829.37) rotate(-3.84)">22</text>
           <text className="siteplan-unit-num" transform="translate(394.67 791.3) rotate(-3.84)">2</text>
           <text className="siteplan-unit-num" transform="translate(512.79 783.52) rotate(-3.84)">7</text>
           <text className="siteplan-unit-num" transform="translate(515.9 830.15) rotate(-3.84)">8</text>
@@ -295,7 +291,7 @@ export function InteractiveSiteplanSvg({
           <text className="siteplan-unit-num" transform="translate(508.13 1029.09) rotate(-3.84)">6</text>
           <text className="siteplan-unit-num" transform="translate(449.84 571.37) rotate(-3.84)">1</text>
           <text className="siteplan-unit-num" transform="translate(543.1 565.16) rotate(-3.84)">5</text>
-          <text className="siteplan-unit-num" transform="translate(656.56 821.6) rotate(-3.84)">18</text>
+          <text className="siteplan-unit-num" transform="translate(656.56 821.6) rotate(-3.84)">18</text> */}
 
           {/* Street Name */}
           <text className="siteplan-street-text" transform="translate(74.52 880.66) rotate(86)">

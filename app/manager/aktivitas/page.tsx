@@ -6,19 +6,16 @@ import { connection } from "next/server";
 import { auth } from "@/auth";
 import { getGlobalActivities, getActivityActors } from "@/actions/activity";
 import { ManagerActivityTable } from "@/components/tables/manager-activity-table";
-import { Activity, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Audit Aktivitas Global | Manager Portal",
-  description:
-    "Pantau log aktivitas follow-up, interaksi konsumen, dan pengalihan PIC seluruh tim secara global.",
+  description: "Log aktivitas follow-up, komunikasi prospek, dan audit pengalihan PIC.",
 };
 
 export default async function ManagerAktivitasPage() {
   await connection();
   const session = await auth();
 
-  // Strict RBAC Enforcement
   if (!session?.user) {
     redirect("/login");
   }
@@ -28,7 +25,6 @@ export default async function ManagerAktivitasPage() {
     redirect("/marketing/dashboard");
   }
 
-  // Parallel prefetch for global activities and actor filter list
   const [activitiesRes, actorsRes] = await Promise.all([
     getGlobalActivities(),
     getActivityActors(),
@@ -38,32 +34,24 @@ export default async function ManagerAktivitasPage() {
   const actors = actorsRes.success && actorsRes.data ? actorsRes.data : [];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* ─── Header Section ─── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
-        <div className="space-y-1">
+    <div className="space-y-6 font-sans text-zinc-900">
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
+        <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-200 text-deep-teal flex items-center justify-center shrink-0">
-              <Activity className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-carbon-ink tracking-tight">
-                Audit Aktivitas Global
-              </h1>
-              <p className="text-xs text-slate">
-                Monitoring log follow-up tim penjualan, komunikasi prospek, dan audit pengalihan PIC (Oper PIC).
-              </p>
-            </div>
+            <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
+              Audit Aktivitas
+            </h1>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium">
+              Log Global
+            </span>
           </div>
-        </div>
-
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-mist text-xs text-slate shadow-2xs">
-          <ShieldCheck className="w-4 h-4 text-deep-teal" />
-          <span>Akses Monitoring Eksekutif</span>
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Pencatatan interaksi prospek, riwayat follow-up sales, dan riwayat delegasi PIC unit.
+          </p>
         </div>
       </div>
 
-      {/* ─── Main Activity Table & Filter Component ─── */}
       <ManagerActivityTable
         initialActivities={initialActivities}
         actors={actors}

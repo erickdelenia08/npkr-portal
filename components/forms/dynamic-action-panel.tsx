@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Workflow,
@@ -71,6 +72,16 @@ interface ItemInspectionState {
   error?: string;
 }
 
+export interface FinancialSummaryProp {
+  hargaDeal: number;
+  totalPaid: number;
+  targetDp: number;
+  dpPaid: number;
+  sisaPelunasan: number;
+  sisaDp: number;
+  lastPaymentDate: string | null;
+}
+
 interface DynamicActionPanelProps {
   transaksiId: number;
   leadId: number;
@@ -91,6 +102,7 @@ interface DynamicActionPanelProps {
   canEdit?: boolean;
   statusPernikahan?: StatusPernikahan | null;
   statusPekerjaan?: StatusPekerjaan | null;
+  financialSummary?: FinancialSummaryProp;
 }
 
 interface BastItemDef {
@@ -174,6 +186,13 @@ const humanize = (value: string): string =>
     .replace(/_/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
+const formatRupiah = (val?: number | null): string =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(val ?? 0);
+
 function toDateInput(value?: string | null): string {
   if (!value) return "";
   const datePart = value.slice(0, 10);
@@ -186,6 +205,15 @@ function toDateInput(value?: string | null): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function getDefaultLunasDate(
+  initialLunasAt?: string | null,
+  lastPaymentDate?: string | null
+): string {
+  if (initialLunasAt) return toDateInput(initialLunasAt);
+  if (lastPaymentDate) return toDateInput(lastPaymentDate);
+  return toDateInput(new Date().toISOString());
 }
 
 const inputClass = (invalid: boolean) =>
@@ -250,6 +278,7 @@ export function DynamicActionPanel({
   canEdit = true,
   statusPernikahan: initialStatusPernikahan,
   statusPekerjaan: initialStatusPekerjaan,
+  financialSummary,
 }: DynamicActionPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -321,14 +350,19 @@ export function DynamicActionPanel({
     initialStatusPekerjaan ?? ""
   );
 
+  // Default lunas date helper
+  const lastPaymentDate = financialSummary?.lastPaymentDate ?? null;
+  const defaultLunasDate = useMemo(
+    () => getDefaultLunasDate(initialLunasAt, lastPaymentDate),
+    [initialLunasAt, lastPaymentDate]
+  );
+
   // ---------- State: Form Data ----------
   const [namaNotaris, setNamaNotaris] = useState(initialNotaris ?? "");
   const [tglAkad, setTglAkad] = useState(() =>
     initialTglAkad ? toDateInput(initialTglAkad) : (initialTglAjb ? toDateInput(initialTglAjb) : "")
   );
-  const [tglPelunasan, setTglPelunasan] = useState(() =>
-    initialLunasAt ? toDateInput(initialLunasAt) : ""
-  );
+  const [tglPelunasan, setTglPelunasan] = useState(() => defaultLunasDate);
   const [tglBast, setTglBast] = useState(() =>
     initialTglBast ? toDateInput(initialTglBast) : ""
   );
@@ -367,6 +401,7 @@ export function DynamicActionPanel({
     initialTglAjb,
     initialTglBast,
     initialLunasAt,
+    lastPaymentDate,
     initialCatatan,
     [...initialVerifiedDocs].sort(),
     initialInspeksiBast
@@ -381,7 +416,7 @@ export function DynamicActionPanel({
     setStatusPekerjaan(initialStatusPekerjaan ?? null);
     setNamaNotaris(initialNotaris ?? "");
     setTglAkad(initialTglAkad ? toDateInput(initialTglAkad) : (initialTglAjb ? toDateInput(initialTglAjb) : ""));
-    setTglPelunasan(initialLunasAt ? toDateInput(initialLunasAt) : "");
+    setTglPelunasan(defaultLunasDate);
     setTglBast(initialTglBast ? toDateInput(initialTglBast) : "");
     setCatatanAdmin(initialCatatan ?? "");
     setVerifiedDocs(initialVerifiedDocs);
@@ -486,8 +521,8 @@ export function DynamicActionPanel({
 
   // ---------- Handlers: Update Profil Konsumen ----------
   const handleSaveProfile = () => {
-    if (!profileFormPernikahan || !profileFormPekerjaan) {
-      toast.error("Pilih status pernikahan dan status pekerjaan konsumen.");
+    if (isKpr && (!profileFormPernikahan || !profileFormPekerjaan)) {
+      toast.error("Pilih status pernikahan dan status pekerjaan konsumen untuk skema KPR.");
       return;
     }
 
@@ -495,13 +530,13 @@ export function DynamicActionPanel({
       try {
         const res = await updateProfilPemberkasan({
           transaksiId,
-          statusPernikahan: profileFormPernikahan as StatusPernikahan,
-          statusPekerjaan: profileFormPekerjaan as StatusPekerjaan,
+          statusPernikahan: (profileFormPernikahan as StatusPernikahan) || null,
+          statusPekerjaan: (profileFormPekerjaan as StatusPekerjaan) || null,
         });
 
         if (res.success) {
-          setStatusPernikahan(profileFormPernikahan as StatusPernikahan);
-          setStatusPekerjaan(profileFormPekerjaan as StatusPekerjaan);
+          setStatusPernikahan((profileFormPernikahan as StatusPernikahan) || null);
+          setStatusPekerjaan((profileFormPekerjaan as StatusPekerjaan) || null);
           setProfileDialogOpen(false);
           toast.success(res.message);
           router.refresh();
@@ -681,15 +716,20 @@ export function DynamicActionPanel({
   const executeAdvance = (targetDetail: TahapDetail) => {
     startTransition(async () => {
       try {
+        const isTargetAjb = targetDetail === "AJB";
+        const isTargetPelunasan = targetDetail === "PELUNASAN";
+        const isTargetBast = targetDetail === "BAST";
+
         const result = await updateTransactionStatus({
           transaksiId,
           leadId,
           tahapDetail: targetDetail,
-          namaNotaris: isAkadStage || isKprSp3k ? namaNotaris.trim() : null,
-          tglAkad: (isAkadStage || isKprSp3k) && tglAkad ? tglAkad : null,
-          tglAjb: currentStage.detail === "AJB" && tglAkad ? tglAkad : null,
-          lunasAt: currentStage.detail === "PELUNASAN" ? tglPelunasan : null,
-          tglBast: targetDetail === "BAST" ? tglBast : null,
+          namaNotaris: isAkadStage || isKprSp3k || isTargetAjb ? namaNotaris.trim() : null,
+          tglAkad: (isAkadStage || isKprSp3k || isTargetAjb) && tglAkad ? tglAkad : null,
+          tglAjb: isTargetAjb && tglAkad ? tglAkad : null,
+          lunasAt: isTargetPelunasan || currentStage.detail === "PELUNASAN" ? (tglPelunasan || null) : null,
+          tglBast: isTargetBast ? (tglBast || null) : null,
+          lahanConfirmed: isKavling && isTargetBast ? lahanChecked : null,
           catatanAdmin: catatanAdmin.trim() || null,
         });
 
@@ -722,15 +762,37 @@ export function DynamicActionPanel({
       if (!tglAkad) errors.tglAkad = "Tanggal akad kredit wajib diisi.";
     }
 
-    // Validation for Cash PELUNASAN -> AJB
-    if (currentStage.detail === "PELUNASAN") {
-      if (!tglPelunasan) errors.tglPelunasan = "Tanggal pelunasan wajib diisi.";
+    // Validation for Cash MENUNGGU_PELUNASAN -> PELUNASAN (Cash Keras)
+    if (currentStage.detail === "MENUNGGU_PELUNASAN") {
+      if ((financialSummary?.sisaPelunasan ?? 0) > 0) {
+        errors.pelunasan = `Sisa tagihan ${formatRupiah(financialSummary?.sisaPelunasan)} belum lunas. Catat pembayaran di riwayat pembayaran terlebih dahulu.`;
+      }
+      if (!tglPelunasan) {
+        errors.tglPelunasan = "Tanggal pelunasan wajib diisi.";
+      }
     }
 
-    // Validation for Cash AJB -> BAST
-    if (currentStage.detail === "AJB") {
+    // Validation for Cash PEMBAYARAN_DP -> CICILAN_BERJALAN (Cash Tempo)
+    if (currentStage.detail === "PEMBAYARAN_DP") {
+      if ((financialSummary?.sisaDp ?? 0) > 0) {
+        errors.dp = `Pembayaran DP belum memenuhi target. Kurang ${formatRupiah(financialSummary?.sisaDp)}. Catat pembayaran DP terlebih dahulu.`;
+      }
+    }
+
+    // Validation for Cash CICILAN_BERJALAN -> PELUNASAN (Cash Tempo)
+    if (currentStage.detail === "CICILAN_BERJALAN") {
+      if ((financialSummary?.sisaPelunasan ?? 0) > 0) {
+        errors.pelunasan = `Sisa tagihan ${formatRupiah(financialSummary?.sisaPelunasan)} belum lunas. Catat pembayaran di riwayat pembayaran terlebih dahulu.`;
+      }
+      if (!tglPelunasan) {
+        errors.tglPelunasan = "Tanggal pelunasan wajib diisi.";
+      }
+    }
+
+    // Validation for Cash PELUNASAN -> AJB (Persiapan Akad)
+    if (currentStage.detail === "PELUNASAN") {
       if (!namaNotaris.trim()) errors.notaris = "Nama notaris/PPAT wajib diisi.";
-      if (!tglAkad) errors.tglAkad = "Tanggal akad wajib diisi.";
+      if (!tglAkad) errors.tglAkad = "Tanggal pelaksanaan akad (AJB) wajib diisi.";
     }
 
     // Validation for Akad -> BAST
@@ -754,6 +816,22 @@ export function DynamicActionPanel({
 
     setFormErrors(errors);
     if (Object.keys(errors).length > 0) {
+      if (errors.pelunasan || errors.dp) {
+        toast.error(errors.pelunasan || errors.dp);
+        return;
+      }
+      if (errors.tglPelunasan) {
+        document.getElementById("fld-tglPelunasan")?.focus();
+        return;
+      }
+      if (errors.notaris) {
+        document.getElementById("fld-notaris")?.focus();
+        return;
+      }
+      if (errors.tglAkad) {
+        document.getElementById("fld-tglAkad")?.focus();
+        return;
+      }
       if (errors.tglBast) {
         document.getElementById("fld-tglBast")?.focus();
         return;
@@ -993,13 +1071,12 @@ export function DynamicActionPanel({
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                   {isKavling
                     ? "Lahan Terverifikasi"
-                    : `${
-                        initialInspeksiBast.filter(
-                          (b) =>
-                            b.status === "SESUAI" ||
-                            b.status === "SELESAI_DIPERBAIKI"
-                        ).length
-                      }/${MASTER_BAST_ITEMS.length} Item Selesai`}
+                    : `${initialInspeksiBast.filter(
+                      (b) =>
+                        b.status === "SESUAI" ||
+                        b.status === "SELESAI_DIPERBAIKI"
+                    ).length
+                    }/${MASTER_BAST_ITEMS.length} Item Selesai`}
                 </span>
               </div>
 
@@ -1018,40 +1095,37 @@ export function DynamicActionPanel({
                     return (
                       <div
                         key={item.key}
-                        className={`flex flex-col gap-1.5 rounded-lg border p-2.5 text-xs ${
-                          isPassed
-                            ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
-                            : "border-slate-200 bg-slate-50 text-slate-500"
-                        }`}
+                        className={`flex flex-col gap-1.5 rounded-lg border p-2.5 text-xs ${isPassed
+                          ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
+                          : "border-slate-200 bg-slate-50 text-slate-500"
+                          }`}
                       >
                         <div className="flex items-start gap-2">
                           <CheckCircle2
-                            className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${
-                              isPassed ? "text-emerald-600" : "text-slate-400"
-                            }`}
+                            className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${isPassed ? "text-emerald-600" : "text-slate-400"
+                              }`}
                           />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-1">
                               <p className="font-semibold">{item.title}</p>
                               {found?.status && (
                                 <span
-                                  className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
-                                    found.status === "SESUAI"
-                                      ? "border-teal-200 bg-teal-50 text-teal-700"
-                                      : found.status === "SELESAI_DIPERBAIKI"
+                                  className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${found.status === "SESUAI"
+                                    ? "border-teal-200 bg-teal-50 text-teal-700"
+                                    : found.status === "SELESAI_DIPERBAIKI"
                                       ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                                       : found.status === "PERLU_PERBAIKAN"
-                                      ? "border-rose-200 bg-rose-50 text-rose-700"
-                                      : "border-slate-200 bg-slate-100 text-slate-600"
-                                  }`}
+                                        ? "border-rose-200 bg-rose-50 text-rose-700"
+                                        : "border-slate-200 bg-slate-100 text-slate-600"
+                                    }`}
                                 >
                                   {found.status === "SESUAI"
                                     ? "Sesuai"
                                     : found.status === "SELESAI_DIPERBAIKI"
-                                    ? "Selesai Diperbaiki"
-                                    : found.status === "PERLU_PERBAIKAN"
-                                    ? "Perlu Perbaikan"
-                                    : "Belum Dicek"}
+                                      ? "Selesai Diperbaiki"
+                                      : found.status === "PERLU_PERBAIKAN"
+                                        ? "Perlu Perbaikan"
+                                        : "Belum Dicek"}
                                 </span>
                               )}
                             </div>
@@ -1174,13 +1248,17 @@ export function DynamicActionPanel({
                       ? "Proses Pengajuan Bank (Wawancara / Verifikasi / SP3K)"
                       : isKprSp3k
                         ? "Pelaksanaan Akad Kredit"
-                        : currentStage.detail === "PELUNASAN"
-                          ? "Konfirmasi Pelunasan & Persiapan Akad"
-                          : currentStage.detail === "AJB"
-                            ? "Pelaksanaan Akad (Cash)"
-                            : nextStage?.detail === "BAST"
-                              ? "Serah Terima Bangunan & Lahan (BAST)"
-                              : `Lanjut ke ${nextStage?.label ?? "Tahap Berikutnya"}`}
+                        : currentStage.detail === "MENUNGGU_PELUNASAN"
+                          ? "Konfirmasi Pelunasan (Cash Keras)"
+                          : currentStage.detail === "PEMBAYARAN_DP"
+                            ? "Pemenuhan Uang Muka DP (Cash Tempo)"
+                            : currentStage.detail === "CICILAN_BERJALAN"
+                              ? "Progres Cicilan & Pelunasan (Cash Tempo)"
+                              : currentStage.detail === "PELUNASAN"
+                                ? "Pelaksanaan Akad / AJB"
+                                : currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB"
+                                  ? "Serah Terima Bangunan & Lahan (BAST)"
+                                  : `Lanjut ke ${nextStage?.label ?? "Tahap Berikutnya"}`}
                 </h3>
               </div>
             </div>
@@ -1195,8 +1273,8 @@ export function DynamicActionPanel({
                     <span className="text-xs text-slate-600 font-medium">Profil Konsumen:</span>
                     <span className="text-xs font-bold text-slate-900">
                       {metodeBayar === "KPR" ? "KPR" : humanize(metodeBayar)} · {humanize(kategoriUnit)} ·{" "}
-                      {statusPernikahan ? humanize(statusPernikahan) : "Pernikahan (?)"} ·{" "}
-                      {statusPekerjaan ? (statusPekerjaan === "TETAP" ? "Pegawai Tetap" : "Wirausaha") : "Pekerjaan (?)"}
+                      {statusPernikahan ? humanize(statusPernikahan) : (isKpr ? "Pernikahan (?)" : "Pernikahan (-)")} ·{" "}
+                      {statusPekerjaan ? (statusPekerjaan === "TETAP" ? "Pegawai Tetap" : "Wirausaha") : (isKpr ? "Pekerjaan (?)" : "Pekerjaan (-)")}
                     </span>
                   </div>
 
@@ -1440,59 +1518,322 @@ export function DynamicActionPanel({
               </form>
             )}
 
-            {/* ── STAGE D: CASH PELUNASAN / AKAD (AJB) ── */}
-            {!isKpr && (currentStage.detail === "PELUNASAN" || currentStage.detail === "AJB") && (
+            {/* ── STAGE CASH 1: MENUNGGU PELUNASAN (CASH KERAS) ── */}
+            {!isKpr && currentStage.detail === "MENUNGGU_PELUNASAN" && (
               <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
-                {currentStage.detail === "PELUNASAN" && (
-                  <div className="max-w-sm">
-                    <Field id="fld-tglPelunasan" label="Tanggal Pelunasan (100%)" required error={formErrors.tglPelunasan}>
-                      <input
-                        id="fld-tglPelunasan"
-                        type="date"
-                        value={tglPelunasan}
-                        disabled={!canEdit || isPending}
-                        onChange={(e) => {
-                          setTglPelunasan(e.target.value);
-                          if (formErrors.tglPelunasan) setFormErrors((p) => ({ ...p, tglPelunasan: "" }));
-                        }}
-                        className={inputClass(Boolean(formErrors.tglPelunasan))}
-                      />
-                    </Field>
+                <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-700">Ringkasan Tagihan & Pelunasan</span>
+                    {financialSummary && financialSummary.sisaPelunasan === 0 ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-800 border border-emerald-200">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        Lunas 100%
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-800 border border-amber-200">
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                        Belum Lunas
+                      </span>
+                    )}
                   </div>
-                )}
 
-                {currentStage.detail === "AJB" && (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
-                      <input
-                        id="fld-notaris"
-                        type="text"
-                        value={namaNotaris}
-                        disabled={!canEdit || isPending}
-                        onChange={(e) => {
-                          setNamaNotaris(e.target.value);
-                          if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
-                        }}
-                        placeholder="Nama Notaris / PPAT"
-                        className={inputClass(Boolean(formErrors.notaris))}
-                      />
-                    </Field>
-
-                    <Field id="fld-tglAkad" label="Tanggal Akad" required error={formErrors.tglAkad}>
-                      <input
-                        id="fld-tglAkad"
-                        type="date"
-                        value={tglAkad}
-                        disabled={!canEdit || isPending}
-                        onChange={(e) => {
-                          setTglAkad(e.target.value);
-                          if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
-                        }}
-                        className={inputClass(Boolean(formErrors.tglAkad))}
-                      />
-                    </Field>
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 text-xs">
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Harga Kesepakatan</span>
+                      <span className="font-mono font-bold text-slate-900">
+                        {formatRupiah(financialSummary?.hargaDeal)}
+                      </span>
+                    </div>
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Total Masuk (Sah)</span>
+                      <span className="font-mono font-bold text-emerald-700">
+                        {formatRupiah(financialSummary?.totalPaid)}
+                      </span>
+                    </div>
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Sisa Pelunasan</span>
+                      <span
+                        className={`font-mono font-bold ${(financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                          }`}
+                      >
+                        {formatRupiah(financialSummary?.sisaPelunasan)}
+                      </span>
+                    </div>
                   </div>
-                )}
+
+                  {(financialSummary?.sisaPelunasan ?? 0) > 0 && (
+                    <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900">
+                      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-700 mt-0.5" />
+                      <div>
+                        <span>Sisa tagihan <strong>{formatRupiah(financialSummary?.sisaPelunasan)}</strong> belum lunas. Catat pembayaran di </span>
+                        <Link href="#riwayat-pembayaran" className="font-bold underline text-amber-950 hover:text-black">
+                          Riwayat Pembayaran
+                        </Link>
+                        <span> terlebih dahulu untuk dapat melanjutkan ke tahap berikutnya.</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="max-w-sm">
+                  <Field id="fld-tglPelunasan" label="Tanggal Pelunasan (100%)" required error={formErrors.tglPelunasan}>
+                    <input
+                      id="fld-tglPelunasan"
+                      type="date"
+                      value={tglPelunasan}
+                      disabled={!canEdit || isPending || (financialSummary?.sisaPelunasan ?? 0) > 0}
+                      onChange={(e) => {
+                        setTglPelunasan(e.target.value);
+                        if (formErrors.tglPelunasan) setFormErrors((p) => ({ ...p, tglPelunasan: "" }));
+                      }}
+                      className={inputClass(Boolean(formErrors.tglPelunasan))}
+                    />
+                  </Field>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                  {canEdit && nextStage && (
+                    <Button
+                      type="submit"
+                      disabled={isPending || (financialSummary?.sisaPelunasan ?? 0) > 0 || !tglPelunasan}
+                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          Menyimpan...
+                        </>
+                      ) : (
+                        `Lanjut ke ${nextStage.label}`
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </form>
+            )}
+
+            {/* ── STAGE CASH 2: PEMBAYARAN DP (CASH TEMPO) ── */}
+            {!isKpr && currentStage.detail === "PEMBAYARAN_DP" && (
+              <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
+                <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-700">Progress Pemenuhan Uang Muka (DP)</span>
+                    {financialSummary && financialSummary.sisaDp === 0 ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-800 border border-emerald-200">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        DP Terpenuhi
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-800 border border-amber-200">
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                        DP Belum Terpenuhi
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 text-xs">
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Target Uang Muka (DP)</span>
+                      <span className="font-mono font-bold text-slate-900">
+                        {formatRupiah(financialSummary?.targetDp)}
+                      </span>
+                    </div>
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">DP Terbayar (Sah)</span>
+                      <span className="font-mono font-bold text-emerald-700">
+                        {formatRupiah(financialSummary?.dpPaid)}
+                      </span>
+                    </div>
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Sisa Target DP</span>
+                      <span
+                        className={`font-mono font-bold ${(financialSummary?.sisaDp ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                          }`}
+                      >
+                        {formatRupiah(financialSummary?.sisaDp)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {(financialSummary?.sisaDp ?? 0) > 0 && (
+                    <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900">
+                      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-700 mt-0.5" />
+                      <div>
+                        <span>Pembayaran DP kurang <strong>{formatRupiah(financialSummary?.sisaDp)}</strong> dari target. Catat penerimaan DP di </span>
+                        <Link href="#riwayat-pembayaran" className="font-bold underline text-amber-950 hover:text-black">
+                          Riwayat Pembayaran
+                        </Link>
+                        <span> untuk melanjutkan ke tahap cicilan.</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                  {canEdit && nextStage && (
+                    <Button
+                      type="submit"
+                      disabled={isPending || (financialSummary?.sisaDp ?? 0) > 0}
+                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          Menyimpan...
+                        </>
+                      ) : (
+                        `Lanjut ke ${nextStage.label}`
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </form>
+            )}
+
+            {/* ── STAGE CASH 3: CICILAN BERJALAN (CASH TEMPO) ── */}
+            {!isKpr && currentStage.detail === "CICILAN_BERJALAN" && (
+              <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
+                <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-slate-700">Progress Cicilan & Pelunasan</span>
+                    {financialSummary && financialSummary.sisaPelunasan === 0 ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-800 border border-emerald-200">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                        Lunas 100%
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-800 border border-amber-200">
+                        <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                        Cicilan Berjalan
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 text-xs">
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Harga Kesepakatan</span>
+                      <span className="font-mono font-bold text-slate-900">
+                        {formatRupiah(financialSummary?.hargaDeal)}
+                      </span>
+                    </div>
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Total Masuk (Sah)</span>
+                      <span className="font-mono font-bold text-emerald-700">
+                        {formatRupiah(financialSummary?.totalPaid)}
+                      </span>
+                    </div>
+                    <div className="rounded border border-slate-200 bg-white p-2.5">
+                      <span className="block text-slate-500 text-[11px]">Sisa Pelunasan</span>
+                      <span
+                        className={`font-mono font-bold ${(financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                          }`}
+                      >
+                        {formatRupiah(financialSummary?.sisaPelunasan)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {(financialSummary?.sisaPelunasan ?? 0) > 0 && (
+                    <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-2.5 text-xs text-amber-900">
+                      <AlertTriangle className="h-4 w-4 shrink-0 text-amber-700 mt-0.5" />
+                      <div>
+                        <span>Sisa tagihan cicilan <strong>{formatRupiah(financialSummary?.sisaPelunasan)}</strong> belum lunas. Catat pembayaran di </span>
+                        <Link href="#riwayat-pembayaran" className="font-bold underline text-amber-950 hover:text-black">
+                          Riwayat Pembayaran
+                        </Link>
+                        <span> hingga mencapai pelunasan 100%.</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="max-w-sm">
+                  <Field id="fld-tglPelunasan" label="Tanggal Pelunasan (100%)" required error={formErrors.tglPelunasan}>
+                    <input
+                      id="fld-tglPelunasan"
+                      type="date"
+                      value={tglPelunasan}
+                      disabled={!canEdit || isPending || (financialSummary?.sisaPelunasan ?? 0) > 0}
+                      onChange={(e) => {
+                        setTglPelunasan(e.target.value);
+                        if (formErrors.tglPelunasan) setFormErrors((p) => ({ ...p, tglPelunasan: "" }));
+                      }}
+                      className={inputClass(Boolean(formErrors.tglPelunasan))}
+                    />
+                  </Field>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                  {canEdit && nextStage && (
+                    <Button
+                      type="submit"
+                      disabled={isPending || (financialSummary?.sisaPelunasan ?? 0) > 0 || !tglPelunasan}
+                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          Menyimpan...
+                        </>
+                      ) : (
+                        `Lanjut ke ${nextStage.label}`
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </form>
+            )}
+
+            {/* ── STAGE CASH 4: PELUNASAN -> AJB (PERSIAPAN AKAD) ── */}
+            {!isKpr && currentStage.detail === "PELUNASAN" && (
+              <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
+                <div className="rounded-lg border border-teal-200 bg-teal-50/60 p-3.5 flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2 className="h-5 w-5 text-teal-700" />
+                    <div>
+                      <p className="text-xs font-semibold text-teal-900">
+                        Pembayaran Lunas 100%
+                      </p>
+                      <p className="text-xs text-slate-600">
+                        Tentukan Notaris/PPAT dan jadwal pelaksanaan Akad (AJB) untuk melanjutkan.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="rounded-md border border-teal-300 bg-white px-2 py-0.5 text-xs font-bold text-teal-800">
+                    Lunas
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
+                    <input
+                      id="fld-notaris"
+                      type="text"
+                      value={namaNotaris}
+                      disabled={!canEdit || isPending}
+                      onChange={(e) => {
+                        setNamaNotaris(e.target.value);
+                        if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
+                      }}
+                      placeholder="Nama Notaris / PPAT"
+                      className={inputClass(Boolean(formErrors.notaris))}
+                    />
+                  </Field>
+
+                  <Field id="fld-tglAkad" label="Tanggal Pelaksanaan Akad (AJB)" required error={formErrors.tglAkad}>
+                    <input
+                      id="fld-tglAkad"
+                      type="date"
+                      value={tglAkad}
+                      disabled={!canEdit || isPending}
+                      onChange={(e) => {
+                        setTglAkad(e.target.value);
+                        if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
+                      }}
+                      className={inputClass(Boolean(formErrors.tglAkad))}
+                    />
+                  </Field>
+                </div>
 
                 <div className="pt-3 border-t border-slate-100 flex justify-end">
                   {canEdit && nextStage && (
@@ -1515,8 +1856,8 @@ export function DynamicActionPanel({
               </form>
             )}
 
-            {/* ── STAGE E: AKAD -> BAST ── */}
-            {(currentStage.detail === "AKAD_KREDIT" || (currentStage.detail === "AJB" && nextStage?.detail === "BAST")) && (
+            {/* ── STAGE E: AKAD -> BAST (KPR AKAD KREDIT ATAU CASH AJB) ── */}
+            {(currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB") && (
               <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
                 <div className="max-w-sm">
                   <Field id="fld-tglBast" label="Tanggal Serah Terima (BAST)" required error={formErrors.tglBast}>
@@ -1576,11 +1917,10 @@ export function DynamicActionPanel({
                       </p>
                       <div className="flex flex-wrap items-center gap-1.5">
                         <span
-                          className={`rounded-md border px-2.5 py-1 text-xs font-bold ${
-                            okCount === MASTER_BAST_ITEMS.length
-                              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                              : "border-slate-200 bg-slate-50 text-slate-700"
-                          }`}
+                          className={`rounded-md border px-2.5 py-1 text-xs font-bold ${okCount === MASTER_BAST_ITEMS.length
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                            : "border-slate-200 bg-slate-50 text-slate-700"
+                            }`}
                         >
                           {okCount}/{MASTER_BAST_ITEMS.length} OK
                         </span>
@@ -1613,13 +1953,12 @@ export function DynamicActionPanel({
                             key={item.key}
                             id={`bast-item-${item.key}`}
                             tabIndex={-1}
-                            className={`flex flex-col justify-between rounded-lg border p-3.5 text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/30 ${
-                              isOk
-                                ? "border-teal-200 bg-teal-50/30"
-                                : isPerlu
+                            className={`flex flex-col justify-between rounded-lg border p-3.5 text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/30 ${isOk
+                              ? "border-teal-200 bg-teal-50/30"
+                              : isPerlu
                                 ? "border-rose-200 bg-rose-50/30"
                                 : "border-slate-200 bg-white"
-                            }`}
+                              }`}
                           >
                             <div>
                               {/* Header & Status Badge */}
@@ -1632,23 +1971,22 @@ export function DynamicActionPanel({
                                     <Loader2 className="h-3 w-3 animate-spin text-slate-400" />
                                   )}
                                   <span
-                                    className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
-                                      itemState.status === "SESUAI"
-                                        ? "border-teal-200 bg-teal-50 text-teal-800"
-                                        : itemState.status === "SELESAI_DIPERBAIKI"
+                                    className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${itemState.status === "SESUAI"
+                                      ? "border-teal-200 bg-teal-50 text-teal-800"
+                                      : itemState.status === "SELESAI_DIPERBAIKI"
                                         ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                                         : itemState.status === "PERLU_PERBAIKAN"
-                                        ? "border-rose-200 bg-rose-50 text-rose-800"
-                                        : "border-slate-200 bg-slate-100 text-slate-500"
-                                    }`}
+                                          ? "border-rose-200 bg-rose-50 text-rose-800"
+                                          : "border-slate-200 bg-slate-100 text-slate-500"
+                                      }`}
                                   >
                                     {itemState.status === "SESUAI"
                                       ? "Sesuai"
                                       : itemState.status === "SELESAI_DIPERBAIKI"
-                                      ? "Selesai Diperbaiki"
-                                      : itemState.status === "PERLU_PERBAIKAN"
-                                      ? "Perlu Perbaikan"
-                                      : "Belum Dicek"}
+                                        ? "Selesai Diperbaiki"
+                                        : itemState.status === "PERLU_PERBAIKAN"
+                                          ? "Perlu Perbaikan"
+                                          : "Belum Dicek"}
                                   </span>
                                 </div>
                               </div>
@@ -1665,11 +2003,10 @@ export function DynamicActionPanel({
                                   aria-label={`Tandai ${item.title} sesuai`}
                                   disabled={!canEdit || isPending || isSavingThis}
                                   onClick={() => handleMarkSesuai(item.key)}
-                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-                                    itemState.status === "SESUAI"
-                                      ? "border-teal-700 bg-teal-700 text-white shadow-sm"
-                                      : "border-slate-300 bg-white text-slate-700 hover:border-teal-500 hover:bg-teal-50/50"
-                                  }`}
+                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${itemState.status === "SESUAI"
+                                    ? "border-teal-700 bg-teal-700 text-white shadow-sm"
+                                    : "border-slate-300 bg-white text-slate-700 hover:border-teal-500 hover:bg-teal-50/50"
+                                    }`}
                                 >
                                   <span className="flex items-center justify-center gap-1">
                                     <Check className="h-3.5 w-3.5" />
@@ -1682,13 +2019,12 @@ export function DynamicActionPanel({
                                   aria-label={`Tandai ${item.title} perlu perbaikan`}
                                   disabled={!canEdit || isPending || isSavingThis}
                                   onClick={() => handleOpenPerluPerbaikan(item.key)}
-                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
-                                    isPerlu
-                                      ? "border-rose-600 bg-rose-600 text-white shadow-sm"
-                                      : itemState.isPerluPerbaikanOpen && !isOk
+                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${isPerlu
+                                    ? "border-rose-600 bg-rose-600 text-white shadow-sm"
+                                    : itemState.isPerluPerbaikanOpen && !isOk
                                       ? "border-rose-400 bg-rose-50 text-rose-800"
                                       : "border-slate-300 bg-white text-slate-700 hover:border-rose-400 hover:bg-rose-50/50"
-                                  }`}
+                                    }`}
                                 >
                                   <span className="flex items-center justify-center gap-1">
                                     <AlertTriangle className="h-3.5 w-3.5" />
@@ -1719,13 +2055,12 @@ export function DynamicActionPanel({
                                     }
                                     placeholder="Jelaskan bagian yang cacat / perlu diperbaiki (min. 3 karakter)..."
                                     rows={2}
-                                    className={`w-full rounded-md border p-2 text-xs outline-none focus:ring-1 ${
-                                      isSelesai
-                                        ? "bg-slate-100 text-slate-600 border-slate-300 cursor-not-allowed"
-                                        : itemState.error
+                                    className={`w-full rounded-md border p-2 text-xs outline-none focus:ring-1 ${isSelesai
+                                      ? "bg-slate-100 text-slate-600 border-slate-300 cursor-not-allowed"
+                                      : itemState.error
                                         ? "border-red-400 focus:border-red-500 focus:ring-red-400/25 bg-red-50/30"
                                         : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20 bg-white"
-                                    }`}
+                                      }`}
                                   />
                                   {itemState.error && (
                                     <p
@@ -1978,7 +2313,8 @@ export function DynamicActionPanel({
             <div className="space-y-3">
               <div>
                 <label className="mb-1 block text-xs font-semibold text-slate-700">
-                  Status Pernikahan <span className="text-red-600">*</span>
+                  Status Pernikahan {isKpr && <span className="text-red-600">*</span>}
+                  {!isKpr && <span className="text-slate-400 font-normal ml-1">(Opsional untuk Cash)</span>}
                 </label>
                 <select
                   value={profileFormPernikahan}
@@ -1994,7 +2330,8 @@ export function DynamicActionPanel({
 
               <div>
                 <label className="mb-1 block text-xs font-semibold text-slate-700">
-                  Status Pekerjaan <span className="text-red-600">*</span>
+                  Status Pekerjaan {isKpr && <span className="text-red-600">*</span>}
+                  {!isKpr && <span className="text-slate-400 font-normal ml-1">(Opsional untuk Cash)</span>}
                 </label>
                 <select
                   value={profileFormPekerjaan}
@@ -2022,7 +2359,10 @@ export function DynamicActionPanel({
               <Button
                 type="button"
                 size="sm"
-                disabled={!profileFormPernikahan || !profileFormPekerjaan || isPending}
+                disabled={
+                  (isKpr && (!profileFormPernikahan || !profileFormPekerjaan)) ||
+                  isPending
+                }
                 onClick={handleSaveProfile}
                 className="h-8 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
               >

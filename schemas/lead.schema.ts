@@ -17,16 +17,32 @@ export const LeadTahapEnum = z.enum([
   "Lost",
 ]);
 
+
 export const leadSchema = z.object({
   nama: z.string().trim().min(2, "Nama minimal 2 karakter"),
+
   no_hp: z
     .string()
     .trim()
-    .min(9, "Nomor HP minimal 9 digit")
-    .max(16, "Nomor HP maksimal 16 digit")
-    .regex(/^[0-9+\s-]+$/, "Format nomor HP tidak valid (hanya angka, +, dan spasi)"),
-  sumber: z.string().trim().min(1, "Sumber prospek wajib dipilih"),
+    .optional()
+    .transform((value) => value || undefined)
+    .refine(
+      (value) => {
+        if (value === undefined) return true;
+
+        const digits = value.replace(/\D/g, "");
+
+        return (
+          /^[0-9+\s-]+$/.test(value) &&
+          digits.length >= 9 &&
+          digits.length <= 16
+        );
+      },
+      "Nomor HP harus berisi 9–16 digit angka"
+    ),
+
   minat_tipe: z.string().trim().optional().nullable(),
+  sumber: z.string().trim().optional().nullable(),
   marketing_id: z.number().optional().nullable(),
   notes: z.string().trim().optional().nullable(),
   catatan: z.string().trim().optional().nullable(),

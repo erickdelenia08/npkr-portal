@@ -1,43 +1,47 @@
 import React from "react";
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { getCustomers } from "@/actions/customer.action";
 import { CustomerTable } from "@/components/tables/customer-table";
-import { Contact, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Buku Induk Customer | Admin Portal NPKR",
-  description: "Direktori lengkap seluruh customer dan riwayat aset unit yang dimiliki",
+  description:
+    "Direktori lengkap data customer, verifikasi identitas NIK, dan riwayat aset unit properti.",
 };
 
 export default async function AdminCustomerPage() {
+  await connection();
   const res = await getCustomers();
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div className="bg-white p-5 rounded-lg border border-mist shadow-subtle flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="space-y-6 font-sans text-zinc-900">
+      {/* Header Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
         <div>
-          <div className="flex items-center gap-2 text-deep-teal text-xs font-semibold uppercase tracking-wider mb-1">
-            <Contact className="w-4 h-4" />
-            <span>Master Data Customer</span>
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
+              Buku Induk Customer
+            </h1>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium">
+              Master Data
+            </span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold text-carbon-ink tracking-tight font-heading">
-            Buku Induk Customer
-          </h1>
-          <p className="text-xs md:text-sm text-slate mt-0.5">
-            Database profil tunggal berbasis NIK, riwayat kepemilikan unit, dan pantauan repeat buyer
+          <p className="text-xs text-zinc-500 mt-0.5">
+            Database profil tunggal berbasis NIK, riwayat kepemilikan unit, dan pantauan repeat buyer.
           </p>
         </div>
       </div>
 
       {/* Error State or Table */}
       {!res.success || !res.data ? (
-        <div className="bg-white p-8 rounded-lg border border-rose-200 text-center space-y-2">
-          <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
-          <h2 className="text-base font-bold text-carbon-ink font-heading">
+        <div className="p-8 rounded-lg border border-red-200 bg-red-50/30 text-center space-y-2">
+          <AlertCircle className="w-6 h-6 text-red-600 mx-auto" />
+          <h2 className="text-sm font-semibold text-zinc-900">
             Gagal Memuat Data Customer
           </h2>
-          <p className="text-xs text-slate">{res.message}</p>
+          <p className="text-xs text-zinc-500">{res.message || "Terjadi kendala saat mengambil data dari database."}</p>
         </div>
       ) : (
         <CustomerTable initialCustomers={res.data} basePath="/admin" />

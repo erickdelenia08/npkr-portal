@@ -129,7 +129,7 @@ model Lead {
   marketing_id Int?
   customer_id  Int?
   nama         String
-  no_hp        String
+  no_hp        String?
   sumber       SumberLead @default(LAINNYA)
   minat_tipe   String?
 
@@ -234,7 +234,7 @@ model Customer {
   tempat_lahir      String
   tgl_lahir         DateTime          @db.Date // CHANGED: tanggal murni
   alamat_ktp        String            @db.Text
-  no_hp             String
+  no_hp             String?
   status_pernikahan StatusPernikahan?
   status_pekerjaan  StatusPekerjaan?
 

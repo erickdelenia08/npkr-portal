@@ -106,9 +106,9 @@ export function LeadDetailClient({
   const [isPending, startTransition] = useTransition();
 
   // Sinkronkan jika server component mengirim data baru (setelah router.refresh())
-  useEffect(() => {
-    setLead(initialLead);
-  }, [initialLead]);
+  // useEffect(() => {
+  //   setLead(initialLead);
+  // }, [initialLead]);
 
   // Tutup modal Lost dengan tombol Escape
   useEffect(() => {

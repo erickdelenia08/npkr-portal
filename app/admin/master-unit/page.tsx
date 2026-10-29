@@ -1,5 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import {
   getMasterTipeList,
   getMasterUnits,
@@ -10,7 +11,7 @@ import { MasterUnitClient } from "@/components/tables/master-unit-client";
 
 export const metadata: Metadata = {
   title: "Master Unit & Tipe | Admin Portal NPKR",
-  description: "Manajemen data master tipe perumahan dan inventori blok unit",
+  description: "Manajemen data master tipe perumahan dan inventori blok unit siteplan.",
 };
 
 interface MasterUnitPageProps {
@@ -25,6 +26,7 @@ interface MasterUnitPageProps {
 }
 
 export default async function MasterUnitPage({ searchParams }: MasterUnitPageProps) {
+  await connection();
   const params = await searchParams;
 
   const page = params.page ? parseInt(params.page, 10) : 1;
@@ -34,7 +36,6 @@ export default async function MasterUnitPage({ searchParams }: MasterUnitPagePro
   const kategori = params.kategori || "";
   const activeTab = params.tab || "units";
 
-  // Fetch initial data on the server for fast, SEO-friendly initial render
   const [tipeRes, unitsRes, summaryRes, roleRes] = await Promise.all([
     getMasterTipeList(),
     getMasterUnits({
@@ -60,12 +61,12 @@ export default async function MasterUnitPage({ searchParams }: MasterUnitPagePro
     summaryRes.success && summaryRes.data
       ? summaryRes.data
       : {
-          total: 0,
-          available: 0,
-          proses: 0,
-          sold: 0,
-          perKategori: { SUBSIDI: 0, KOMERSIL: 0, KAVLING: 0 },
-        };
+        total: 0,
+        available: 0,
+        proses: 0,
+        sold: 0,
+        perKategori: { SUBSIDI: 0, KOMERSIL: 0, KAVLING: 0 },
+      };
 
   return (
     <MasterUnitClient

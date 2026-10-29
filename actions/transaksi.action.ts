@@ -456,7 +456,7 @@ export async function updateProfilPemberkasan(
       const updatedCustomer = await tx.customer.update({
         where: { id: trx.customer_id },
         data: {
-          status_pernikahan: statusPernikahan,
+          status_pernikahan: statusPernikahan || null,
           status_pekerjaan: statusPekerjaan || null,
         },
       });
@@ -869,7 +869,11 @@ export async function updateTransactionStatus(
 
         const isKavling = existingTrx.unit?.tipe?.kategori === "KAVLING";
 
-        if (!isKavling) {
+        if (isKavling) {
+          if (!validData.tglBast?.trim() && !existingTrx.tgl_bast) {
+            throw new Error("Tanggal serah terima (BAST) fisik lahan wajib diisi.");
+          }
+        } else {
           const allItemEnums = Object.values(ItemBAST);
           const currentInspections = await tx.inspeksiBAST.findMany({
             where: { transaksi_id: existingTrx.id },
@@ -936,7 +940,7 @@ export async function updateTransactionStatus(
         updateData.tgl_akad = akadDate;
       }
 
-      if (targetDetail === "PELUNASAN") {
+      if (targetDetail === "PELUNASAN" || (targetDetail === "AJB" && validData.lunasAt)) {
         updateData.lunas_at = validData.lunasAt
           ? parseDateOnlyUTC(validData.lunasAt)
           : (existingTrx.lunas_at || todayDateOnlyUTC());
@@ -1020,6 +1024,12 @@ export async function updateTransactionStatus(
       // 9. Audit Logging (TransaksiTahapLog & Aktivitas)
       // Only insert stage log if status actually changed or cancellation note added
       if (!isSameStage || isCancellation) {
+        let finalLogCatatan = validData.catatanAdmin?.trim() || null;
+        if (targetDetail === "BAST" && existingTrx.unit?.tipe?.kategori === "KAVLING") {
+          const kavlingNote = "Serah terima fisik lahan dikonfirmasi: patok batas dan aksesibilitas lahan terverifikasi.";
+          finalLogCatatan = finalLogCatatan ? `${finalLogCatatan} • ${kavlingNote}` : kavlingNote;
+        }
+
         await tx.transaksiTahapLog.create({
           data: {
             transaksi_id: existingTrx.id,
@@ -1028,7 +1038,7 @@ export async function updateTransactionStatus(
             detail_sebelum: existingTrx.tahap_detail,
             detail_sesudah: targetDetail,
             admin_id: adminId,
-            catatan: validData.catatanAdmin?.trim() || null,
+            catatan: finalLogCatatan,
           },
         });
 

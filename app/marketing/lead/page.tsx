@@ -279,8 +279,8 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
 
   const hasActiveFilters = Boolean(
     (rawSumber && rawSumber !== "ALL") ||
-      (rawFollowUp && rawFollowUp !== "all") ||
-      rawSearch
+    (rawFollowUp && rawFollowUp !== "all") ||
+    rawSearch
   );
 
   return (
@@ -313,11 +313,10 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
           <Link
             href={buildQueryUrl({ follow_up: undefined })}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${
-              !rawFollowUp || rawFollowUp === "all"
-                ? "bg-slate-900 text-white"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${!rawFollowUp || rawFollowUp === "all"
+              ? "bg-slate-900 text-white"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
           >
             <span>Semua</span>
             <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20">
@@ -327,13 +326,12 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
 
           <Link
             href={buildQueryUrl({ follow_up: "terlambat" })}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${
-              rawFollowUp === "terlambat"
-                ? "bg-red-700 text-white"
-                : countTerlambat > 0
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${rawFollowUp === "terlambat"
+              ? "bg-red-700 text-white"
+              : countTerlambat > 0
                 ? "bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
+              }`}
           >
             <AlertCircle className="w-3.5 h-3.5" />
             <span>Terlambat</span>
@@ -344,13 +342,12 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
 
           <Link
             href={buildQueryUrl({ follow_up: "hari_ini" })}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${
-              rawFollowUp === "hari_ini"
-                ? "bg-teal-700 text-white"
-                : countHariIni > 0
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${rawFollowUp === "hari_ini"
+              ? "bg-teal-700 text-white"
+              : countHariIni > 0
                 ? "bg-teal-50 text-teal-800 hover:bg-teal-100 border border-teal-200"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-            }`}
+              }`}
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Hari Ini</span>
@@ -361,11 +358,10 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
 
           <Link
             href={buildQueryUrl({ follow_up: "belum_dijadwal" })}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${
-              rawFollowUp === "belum_dijadwal"
-                ? "bg-amber-600 text-white"
-                : "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200"
-            }`}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-semibold transition-colors shrink-0 ${rawFollowUp === "belum_dijadwal"
+              ? "bg-amber-600 text-white"
+              : "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200"
+              }`}
           >
             <Clock className="w-3.5 h-3.5" />
             <span>Belum Dijadwal</span>
@@ -490,7 +486,7 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
                 <tbody className="divide-y divide-slate-100">
                   {filteredLeads.map((lead) => {
                     const badge = getTahapBadge(lead.computedTahap);
-                    const waUrl = formatWhatsAppUrl(lead.no_hp, lead.nama);
+                    const waUrl = formatWhatsAppUrl(lead.no_hp || "", lead.nama);
 
                     return (
                       <tr
@@ -588,7 +584,7 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
           <div className="md:hidden space-y-3">
             {filteredLeads.map((lead) => {
               const badge = getTahapBadge(lead.computedTahap);
-              const waUrl = formatWhatsAppUrl(lead.no_hp, lead.nama);
+              const waUrl = formatWhatsAppUrl(lead.no_hp || "", lead.nama);
 
               return (
                 <div

@@ -295,9 +295,8 @@ export function MasterUnitTable({
             </thead>
 
             <tbody
-              className={`divide-y divide-mist transition-opacity duration-150 ${
-                isLoading && units.length > 0 ? "opacity-50 pointer-events-none" : "opacity-100"
-              }`}
+              className={`divide-y divide-mist transition-opacity duration-150 ${isLoading && units.length > 0 ? "opacity-50 pointer-events-none" : "opacity-100"
+                }`}
             >
               {isLoading && units.length === 0 ? (
                 // Skeleton loading rows ONLY on initial load
@@ -353,18 +352,17 @@ export function MasterUnitTable({
 
                   const specialPriceFormatted = unit.harga_khusus
                     ? new Intl.NumberFormat("id-ID", {
-                        style: "currency",
-                        currency: "IDR",
-                        maximumFractionDigits: 0,
-                      }).format(unit.harga_khusus)
+                      style: "currency",
+                      currency: "IDR",
+                      maximumFractionDigits: 0,
+                    }).format(unit.harga_khusus)
                     : null;
 
                   return (
                     <tr
                       key={unit.id}
-                      className={`hover:bg-bone/40 transition-colors ${
-                        isSelected ? "bg-teal-50/30" : ""
-                      }`}
+                      className={`hover:bg-bone/40 transition-colors ${isSelected ? "bg-teal-50/30" : ""
+                        }`}
                     >
                       {/* Checkbox: disabled if not available */}
                       {isAdmin && (
@@ -405,9 +403,9 @@ export function MasterUnitTable({
                       {/* Tipe with LB/LT underneath */}
                       <td className="px-5 py-3.5">
                         <div className="flex flex-col">
-                          <span className="font-mono font-bold text-xs text-graphite">
+                          {/* <span className="font-mono font-bold text-xs text-graphite">
                             {unit.tipe.nama_tipe}
-                          </span>
+                          </span> */}
                           <span className="text-[11px] text-slate font-medium">
                             {unit.tipe.kategori === "KAVLING" ? (
                               <span>LT: {unit.tipe.luas_tanah} m² (Kavling)</span>
@@ -587,7 +585,7 @@ export function MasterUnitTable({
               onClick={() => setIsBulkDrawerOpen(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold shadow-subtle transition-colors"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              {/* <Sparkles className="w-3.5 h-3.5" /> */}
               <span>Ganti Tipe Massal ({selectedUnits.length})</span>
             </button>
           </div>

@@ -4,24 +4,13 @@
 import React, { useState, useTransition, useMemo } from "react";
 import Link from "next/link";
 import {
-  Activity,
   Search,
-  Filter,
   RefreshCw,
-  Calendar,
-  Clock,
-  User,
+  ExternalLink,
   Phone,
   MessageCircle,
   Users,
-  CalendarCheck,
-  FileText,
-  ExternalLink,
-  RotateCcw,
   Tag,
-  ArrowRight,
-  Shield,
-  HelpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -63,13 +52,12 @@ export function ManagerActivityTable({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
-  // Helper date formatter (WIB / id-ID)
   const formatDateTime = (dateVal: Date | string | null | undefined): string => {
-    if (!dateVal) return "-";
+    if (!dateVal) return "—";
     const d = typeof dateVal === "string" ? new Date(dateVal) : dateVal;
-    if (isNaN(d.getTime())) return "-";
+    if (isNaN(d.getTime())) return "—";
     return d.toLocaleString("id-ID", {
-      day: "2-digit",
+      day: "numeric",
       month: "short",
       year: "numeric",
       hour: "2-digit",
@@ -78,70 +66,66 @@ export function ManagerActivityTable({
   };
 
   const formatDateOnly = (dateVal: Date | string | null | undefined): string => {
-    if (!dateVal) return "-";
+    if (!dateVal) return "—";
     const d = typeof dateVal === "string" ? new Date(dateVal) : dateVal;
-    if (isNaN(d.getTime())) return "-";
+    if (isNaN(d.getTime())) return "—";
     return d.toLocaleDateString("id-ID", {
-      day: "2-digit",
+      day: "numeric",
       month: "short",
       year: "numeric",
     });
   };
 
-  // Helper badge for Jenis Aktivitas
-  const getJenisBadge = (jenis: JenisAktivitas) => {
+  const renderJenisBadge = (jenis: JenisAktivitas) => {
     switch (jenis) {
       case "WHATSAPP":
-        return {
-          label: "WhatsApp",
-          icon: MessageCircle,
-          className: "bg-emerald-50 text-emerald-700 border-emerald-200",
-        };
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-800">
+            <MessageCircle className="w-3 h-3 text-emerald-600" />
+            WhatsApp
+          </span>
+        );
       case "TELEPON":
-        return {
-          label: "Telepon",
-          icon: Phone,
-          className: "bg-blue-50 text-blue-700 border-blue-200",
-        };
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-blue-800">
+            <Phone className="w-3 h-3 text-blue-600" />
+            Telepon
+          </span>
+        );
       case "BERTEMU":
-        return {
-          label: "Bertemu Langsung",
-          icon: Users,
-          className: "bg-purple-50 text-purple-700 border-purple-200",
-        };
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-purple-800">
+            <Users className="w-3 h-3 text-purple-600" />
+            Tatap Muka
+          </span>
+        );
       case "LAINNYA":
       default:
-        return {
-          label: "Lainnya",
-          icon: Tag,
-          className: "bg-bone text-graphite border-mist",
-        };
+        return (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-600">
+            <Tag className="w-3 h-3 text-zinc-400" />
+            Lainnya
+          </span>
+        );
     }
   };
 
-  // Helper badge for Hasil Aktivitas
-  const getHasilBadge = (hasil: HasilAktivitas) => {
+  const renderHasilBadge = (hasil: HasilAktivitas) => {
     switch (hasil) {
       case "TERTARIK":
-        return "bg-teal-50 text-deep-teal border-teal-200";
+        return "bg-emerald-50 text-emerald-800 border-emerald-200";
       case "MINTA_INFO_LAGI":
-        return "bg-sky-50 text-sky-700 border-sky-200";
+        return "bg-blue-50 text-blue-800 border-blue-200";
       case "MASIH_MIKIR":
-        return "bg-amber-50 text-amber-700 border-amber-200";
-      case "TIDAK_DIJAWAB":
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-amber-50 text-amber-800 border-amber-200";
       case "TIDAK_JADI":
-        return "bg-rose-50 text-rose-700 border-rose-200";
+        return "bg-zinc-100 text-zinc-500 border-zinc-200";
+      case "TIDAK_DIJAWAB":
       default:
-        return "bg-bone text-graphite border-mist";
+        return "bg-zinc-100 text-zinc-700 border-zinc-200";
     }
   };
 
-  const formatHasilLabel = (hasil: string): string => {
-    return hasil.replace(/_/g, " ");
-  };
-
-  // Server-side filter fetch trigger
   const applyFilters = (
     userIdVal: string,
     jenisVal: string,
@@ -163,364 +147,234 @@ export function ManagerActivityTable({
           toast.error(res.error || "Gagal memuat log aktivitas.");
         }
       } catch (err: unknown) {
-        const errorMsg =
-          err instanceof Error ? err.message : "Terjadi kesalahan saat memuat aktivitas.";
-        toast.error(errorMsg);
+        toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
       }
     });
   };
 
-  const handleUserChange = (val: string) => {
-    setSelectedUserId(val);
-    applyFilters(val, selectedJenis, startDate, endDate);
-  };
-
-  const handleJenisChange = (val: string) => {
-    setSelectedJenis(val);
-    applyFilters(selectedUserId, val, startDate, endDate);
-  };
-
-  const handleStartDateChange = (val: string) => {
-    setStartDate(val);
-    applyFilters(selectedUserId, selectedJenis, val, endDate);
-  };
-
-  const handleEndDateChange = (val: string) => {
-    setEndDate(val);
-    applyFilters(selectedUserId, selectedJenis, startDate, val);
-  };
-
-  const handleResetFilters = () => {
-    setSelectedUserId("");
-    setSelectedJenis("");
-    setStartDate("");
-    setEndDate("");
-    setSearchQuery("");
-    applyFilters("", "", "", "");
-  };
-
-  const handleRefresh = () => {
-    applyFilters(selectedUserId, selectedJenis, startDate, endDate);
-  };
-
-  // Client-side quick search over filtered records
   const filteredActivities = useMemo(() => {
     if (!searchQuery.trim()) return activities;
     const q = searchQuery.toLowerCase().trim();
     return activities.filter((item) => {
-      const actorMatch = item.user.nama.toLowerCase().includes(q);
-      const leadMatch = item.lead.nama.toLowerCase().includes(q);
-      const noteMatch = (item.catatan || "").toLowerCase().includes(q);
-      const phoneMatch = (item.lead.no_hp || "").includes(q);
-      return actorMatch || leadMatch || noteMatch || phoneMatch;
+      return (
+        item.user.nama.toLowerCase().includes(q) ||
+        item.lead.nama.toLowerCase().includes(q) ||
+        (item.catatan || "").toLowerCase().includes(q) ||
+        (item.lead.no_hp || "").includes(q)
+      );
     });
   }, [activities, searchQuery]);
 
-  // Aggregate statistics for Executive Glance
   const stats = useMemo(() => {
-    const total = filteredActivities.length;
-    const whatsapp = filteredActivities.filter((a) => a.jenis === "WHATSAPP").length;
-    const telepon = filteredActivities.filter((a) => a.jenis === "TELEPON").length;
-    const bertemu = filteredActivities.filter((a) => a.jenis === "BERTEMU").length;
-    const handovers = filteredActivities.filter((a) =>
-      (a.catatan || "").includes("[HANDOVER PIC]")
-    ).length;
-
-    return { total, whatsapp, telepon, bertemu, handovers };
+    return {
+      total: filteredActivities.length,
+      wa: filteredActivities.filter((a) => a.jenis === "WHATSAPP").length,
+      call: filteredActivities.filter((a) => a.jenis === "TELEPON").length,
+      meet: filteredActivities.filter((a) => a.jenis === "BERTEMU").length,
+      operPic: filteredActivities.filter((a) => (a.catatan || "").includes("[HANDOVER PIC]")).length,
+    };
   }, [filteredActivities]);
 
   return (
-    <div className="space-y-6">
-      {/* ─── 1. EXECUTIVE KPI SUMMARY TILES ─── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-subtle">
-          <div className="flex items-center justify-between text-slate text-xs mb-1">
-            <span className="font-semibold">Total Log</span>
-            <Activity className="w-4 h-4 text-prism-teal" />
-          </div>
-          <p className="text-2xl font-bold text-carbon-ink font-mono">{stats.total}</p>
-          <span className="text-[11px] text-slate mt-0.5 block">Semua aktivitas tercatat</span>
+    <div className="space-y-4">
+      {/* Metrics Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div className="p-3 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Total Aktivitas</span>
+          <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
+            {stats.total}
+          </span>
         </div>
-
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-subtle">
-          <div className="flex items-center justify-between text-slate text-xs mb-1">
-            <span className="font-semibold">WhatsApp</span>
-            <MessageCircle className="w-4 h-4 text-emerald-600" />
-          </div>
-          <p className="text-2xl font-bold text-emerald-700 font-mono">{stats.whatsapp}</p>
-          <span className="text-[11px] text-slate mt-0.5 block">Pesan &amp; follow-up</span>
+        <div className="p-3 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">WhatsApp</span>
+          <span className="text-xl font-semibold text-emerald-800 mt-1 block tabular-nums">
+            {stats.wa}
+          </span>
         </div>
-
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-subtle">
-          <div className="flex items-center justify-between text-slate text-xs mb-1">
-            <span className="font-semibold">Telepon</span>
-            <Phone className="w-4 h-4 text-blue-600" />
-          </div>
-          <p className="text-2xl font-bold text-blue-700 font-mono">{stats.telepon}</p>
-          <span className="text-[11px] text-slate mt-0.5 block">Panggilan konsumen</span>
+        <div className="p-3 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Telepon</span>
+          <span className="text-xl font-semibold text-blue-800 mt-1 block tabular-nums">
+            {stats.call}
+          </span>
         </div>
-
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-subtle">
-          <div className="flex items-center justify-between text-slate text-xs mb-1">
-            <span className="font-semibold">Pertemuan Langsung</span>
-            <Users className="w-4 h-4 text-purple-600" />
-          </div>
-          <p className="text-2xl font-bold text-purple-700 font-mono">{stats.bertemu}</p>
-          <span className="text-[11px] text-slate mt-0.5 block">Survei &amp; tatap muka</span>
+        <div className="p-3 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[11px] font-medium text-zinc-500 block">Tatap Muka</span>
+          <span className="text-xl font-semibold text-purple-800 mt-1 block tabular-nums">
+            {stats.meet}
+          </span>
         </div>
-
-        <div className="bg-white p-4 rounded-xl border border-mist shadow-subtle col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between text-slate text-xs mb-1">
-            <span className="font-semibold">Oper PIC</span>
-            <Shield className="w-4 h-4 text-amber-600" />
-          </div>
-          <p className="text-2xl font-bold text-amber-700 font-mono">{stats.handovers}</p>
-          <span className="text-[11px] text-slate mt-0.5 block">Pengalihan PIC lead</span>
+        <div className="p-3 rounded-lg border border-zinc-200 bg-white col-span-2 sm:col-span-1">
+          <span className="text-[11px] font-medium text-zinc-500 block">Oper PIC</span>
+          <span className="text-xl font-semibold text-amber-800 mt-1 block tabular-nums">
+            {stats.operPic}
+          </span>
         </div>
       </div>
 
-      {/* ─── 2. FILTER BAR ─── */}
-      <div className="bg-white p-4 sm:p-5 rounded-xl border border-mist shadow-subtle space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-mist/80 pb-3">
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-deep-teal" />
-            <h2 className="text-xs font-bold text-carbon-ink uppercase tracking-wider">
-              Filter Log Aktivitas
-            </h2>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {(selectedUserId || selectedJenis || startDate || endDate || searchQuery) && (
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                disabled={isPending}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-mist text-xs font-semibold text-slate hover:text-carbon-ink hover:bg-bone transition-colors disabled:opacity-50 cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset</span>
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={handleRefresh}
-              disabled={isPending}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 border border-teal-200 text-xs font-semibold text-deep-teal hover:bg-teal-100 transition-colors disabled:opacity-50 cursor-pointer"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
-              <span>Segarkan</span>
-            </button>
-          </div>
+      {/* Control bar */}
+      <div className="flex flex-wrap items-center gap-2.5 bg-zinc-50/60 p-2.5 rounded-lg border border-zinc-200">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="w-4 h-4 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Cari prospek, personel, catatan..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-zinc-200 bg-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
+          />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          {/* Quick Search */}
-          <div className="lg:col-span-1">
-            <label className="block text-[11px] font-semibold text-slate mb-1">
-              Pencarian Cepat
-            </label>
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate" />
-              <input
-                type="text"
-                placeholder="Nama lead, catatan..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-mist bg-white text-carbon-ink placeholder:text-fog focus:outline-none focus:border-prism-teal"
-              />
-            </div>
-          </div>
+        <select
+          value={selectedUserId}
+          onChange={(e) => {
+            setSelectedUserId(e.target.value);
+            applyFilters(e.target.value, selectedJenis, startDate, endDate);
+          }}
+          className="h-8 px-2.5 text-xs rounded-md border border-zinc-200 bg-white text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+        >
+          <option value="">Semua Personel</option>
+          {actors.map((actor) => (
+            <option key={actor.id} value={actor.id}>
+              {actor.nama} ({actor.role})
+            </option>
+          ))}
+        </select>
 
-          {/* Filter Actor / Personel */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate mb-1">
-              Personel (Actor)
-            </label>
-            <select
-              value={selectedUserId}
-              onChange={(e) => handleUserChange(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-mist bg-white text-carbon-ink focus:outline-none focus:border-prism-teal"
-            >
-              <option value="">Semua Personel</option>
-              {actors.map((actor) => (
-                <option key={actor.id} value={actor.id}>
-                  {actor.nama} ({actor.role})
-                </option>
-              ))}
-            </select>
-          </div>
+        <select
+          value={selectedJenis}
+          onChange={(e) => {
+            setSelectedJenis(e.target.value);
+            applyFilters(selectedUserId, e.target.value, startDate, endDate);
+          }}
+          className="h-8 px-2.5 text-xs rounded-md border border-zinc-200 bg-white text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+        >
+          <option value="">Semua Metode</option>
+          <option value="WHATSAPP">WhatsApp</option>
+          <option value="TELEPON">Telepon</option>
+          <option value="BERTEMU">Tatap Muka</option>
+          <option value="LAINNYA">Lainnya</option>
+        </select>
 
-          {/* Filter Jenis Aktivitas */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate mb-1">
-              Jenis Aktivitas
-            </label>
-            <select
-              value={selectedJenis}
-              onChange={(e) => handleJenisChange(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-mist bg-white text-carbon-ink focus:outline-none focus:border-prism-teal"
-            >
-              <option value="">Semua Jenis</option>
-              <option value="WHATSAPP">WhatsApp</option>
-              <option value="TELEPON">Telepon</option>
-              <option value="BERTEMU">Bertemu Langsung</option>
-              <option value="LAINNYA">Lainnya / Handover</option>
-            </select>
-          </div>
-
-          {/* Start Date */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate mb-1">
-              Dari Tanggal
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => handleStartDateChange(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-mist bg-white text-carbon-ink focus:outline-none focus:border-prism-teal"
-            />
-          </div>
-
-          {/* End Date */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate mb-1">
-              Sampai Tanggal
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => handleEndDateChange(e.target.value)}
-              className="w-full px-3 py-2 text-xs rounded-lg border border-mist bg-white text-carbon-ink focus:outline-none focus:border-prism-teal"
-            />
-          </div>
+        <div className="flex items-center gap-1.5 text-xs text-zinc-400">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => {
+              setStartDate(e.target.value);
+              applyFilters(selectedUserId, selectedJenis, e.target.value, endDate);
+            }}
+            className="h-8 px-2 text-xs rounded-md border border-zinc-200 bg-white text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+          />
+          <span>—</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => {
+              setEndDate(e.target.value);
+              applyFilters(selectedUserId, selectedJenis, startDate, e.target.value);
+            }}
+            className="h-8 px-2 text-xs rounded-md border border-zinc-200 bg-white text-zinc-700 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+          />
         </div>
+
+        <button
+          type="button"
+          onClick={() => applyFilters(selectedUserId, selectedJenis, startDate, endDate)}
+          disabled={isPending}
+          className="p-2 rounded-md border border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-50"
+          title="Muat Ulang"
+        >
+          <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
+        </button>
       </div>
 
-      {/* ─── 3. ACTIVITY TABLE VIEW (DESKTOP & TABLET) ─── */}
-      <div className="hidden md:block bg-white rounded-xl border border-mist shadow-subtle overflow-hidden">
+      {/* Main Table */}
+      <div className="rounded-lg border border-zinc-200 bg-white overflow-hidden shadow-2xs">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-44">Waktu (Time)</TableHead>
-              <TableHead className="w-48">Personel (Actor)</TableHead>
-              <TableHead className="w-36">Jenis (Type)</TableHead>
-              <TableHead className="w-56">Lead Konsumen</TableHead>
-              <TableHead>Hasil &amp; Catatan (Note / Result)</TableHead>
+            <TableRow className="border-b border-zinc-200 bg-zinc-50/75 hover:bg-zinc-50/75">
+              <TableHead className="w-40 text-xs font-medium text-zinc-500">Waktu</TableHead>
+              <TableHead className="w-44 text-xs font-medium text-zinc-500">Personel</TableHead>
+              <TableHead className="w-32 text-xs font-medium text-zinc-500">Metode</TableHead>
+              <TableHead className="w-52 text-xs font-medium text-zinc-500">Prospek</TableHead>
+              <TableHead className="text-xs font-medium text-zinc-500">Hasil &amp; Catatan</TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="text-xs text-zinc-700 divide-y divide-zinc-100">
             {filteredActivities.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="py-12 text-center">
-                  <div className="max-w-sm mx-auto space-y-2">
-                    <Activity className="w-8 h-8 text-slate/40 mx-auto" />
-                    <p className="text-sm font-semibold text-carbon-ink">
-                      Tidak ada aktivitas ditemukan
-                    </p>
-                    <p className="text-xs text-slate">
-                      Silakan sesuaikan parameter pencarian atau tanggal pada filter di atas.
-                    </p>
-                  </div>
+                <TableCell colSpan={5} className="py-12 text-center text-zinc-500">
+                  <p className="text-sm font-medium text-zinc-900">Tidak ada log aktivitas</p>
+                  <p className="text-xs text-zinc-500 mt-1">Ubah kata kunci atau reset filter tanggal.</p>
                 </TableCell>
               </TableRow>
             ) : (
               filteredActivities.map((act) => {
-                const jenisInfo = getJenisBadge(act.jenis);
-                const JenisIcon = jenisInfo.icon;
                 const isHandover = (act.catatan || "").includes("[HANDOVER PIC]");
 
                 return (
-                  <TableRow key={act.id} className="hover:bg-bone/40 transition-colors">
-                    {/* 1. Time Column */}
+                  <TableRow key={act.id} className="hover:bg-zinc-50/60 transition-colors">
+                    {/* Waktu */}
+                    <TableCell className="align-top whitespace-nowrap font-mono text-[11px] text-zinc-500">
+                      {formatDateTime(act.created_at)}
+                    </TableCell>
+
+                    {/* Personel */}
                     <TableCell className="align-top whitespace-nowrap">
-                      <div className="space-y-0.5">
-                        <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-carbon-ink">
-                          <Clock className="w-3.5 h-3.5 text-slate" />
-                          <span>{formatDateTime(act.created_at)}</span>
-                        </div>
-                        <span className="text-[10px] text-slate block pl-5">
-                          ID Aktivitas #{act.id}
-                        </span>
+                      <div className="flex flex-col">
+                        <span className="font-medium text-zinc-900">{act.user.nama}</span>
+                        <span className="text-[10px] text-zinc-400">{act.user.role}</span>
                       </div>
                     </TableCell>
 
-                    {/* 2. Actor Column */}
+                    {/* Metode */}
                     <TableCell className="align-top whitespace-nowrap">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-6 h-6 rounded-full bg-teal-50 text-deep-teal border border-teal-200 flex items-center justify-center text-[11px] font-bold shrink-0">
-                            {act.user.nama.charAt(0).toUpperCase()}
-                          </div>
-                          <span className="font-semibold text-carbon-ink text-xs">
-                            {act.user.nama}
-                          </span>
-                        </div>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-bone text-graphite border border-mist">
-                          {act.user.role}
-                        </span>
-                      </div>
+                      {renderJenisBadge(act.jenis)}
                     </TableCell>
 
-                    {/* 3. Type Column */}
-                    <TableCell className="align-top whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${jenisInfo.className}`}
-                      >
-                        <JenisIcon className="w-3.5 h-3.5" />
-                        <span>{jenisInfo.label}</span>
-                      </span>
-                    </TableCell>
-
-                    {/* 4. Lead Name Column (Link to detail) */}
+                    {/* Lead */}
                     <TableCell className="align-top">
-                      <div className="space-y-1">
+                      <div className="flex flex-col">
                         <Link
                           href={`${basePath}/lead/${act.lead.id}`}
-                          className="font-bold text-xs text-carbon-ink hover:text-deep-teal inline-flex items-center gap-1 group transition-colors"
+                          className="font-medium text-zinc-900 hover:underline inline-flex items-center gap-1 group"
                         >
-                          <span className="underline decoration-mist group-hover:decoration-deep-teal underline-offset-2">
-                            {act.lead.nama}
-                          </span>
-                          <ExternalLink className="w-3 h-3 text-slate group-hover:text-deep-teal transition-colors" />
+                          <span>{act.lead.nama}</span>
+                          <ExternalLink className="w-3 h-3 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </Link>
-                        <div className="flex items-center gap-1 font-mono text-[11px] text-slate">
-                          <Phone className="w-3 h-3 text-slate" />
-                          <span>{act.lead.no_hp}</span>
-                        </div>
+                        <span className="font-mono text-[11px] text-zinc-400 mt-0.5">
+                          {act.lead.no_hp}
+                        </span>
                       </div>
                     </TableCell>
 
-                    {/* 5. Note / Result Column */}
+                    {/* Catatan & Hasil */}
                     <TableCell className="align-top">
-                      <div className="space-y-1.5 max-w-lg">
-                        <div className="flex items-center gap-2 flex-wrap">
+                      <div className="space-y-1 max-w-xl">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${getHasilBadge(
+                            className={`inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-medium border ${renderHasilBadge(
                               act.hasil
                             )}`}
                           >
-                            {formatHasilLabel(act.hasil)}
+                            {act.hasil.replace(/_/g, " ")}
                           </span>
 
                           {isHandover && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300">
-                              <Shield className="w-3 h-3" />
+                            <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
                               Oper PIC
                             </span>
                           )}
 
                           {act.tgl_follow_up && (
-                            <span className="inline-flex items-center gap-1 text-[11px] text-slate">
-                              <CalendarCheck className="w-3 h-3 text-prism-teal" />
-                              <span>Next: {formatDateOnly(act.tgl_follow_up)}</span>
+                            <span className="text-[11px] text-zinc-500 font-mono">
+                              Next: {formatDateOnly(act.tgl_follow_up)}
                             </span>
                           )}
                         </div>
 
-                        <p className="text-xs text-graphite leading-relaxed break-words">
-                          {act.catatan || (
-                            <span className="italic text-fog">Tidak ada catatan tertulis</span>
-                          )}
+                        <p className="text-zinc-600 leading-relaxed">
+                          {act.catatan || <span className="text-zinc-400 italic">Tidak ada catatan</span>}
                         </p>
                       </div>
                     </TableCell>
@@ -530,109 +384,10 @@ export function ManagerActivityTable({
             )}
           </TableBody>
         </Table>
-      </div>
 
-      {/* ─── 4. ACTIVITY LIST VIEW (MOBILE COMPACT CARDS) ─── */}
-      <div className="block md:hidden space-y-3">
-        {filteredActivities.length === 0 ? (
-          <div className="bg-white p-8 rounded-xl border border-mist text-center space-y-2">
-            <Activity className="w-7 h-7 text-slate/40 mx-auto" />
-            <p className="text-xs font-semibold text-carbon-ink">
-              Tidak ada aktivitas ditemukan
-            </p>
-            <p className="text-[11px] text-slate">
-              Coba sesuaikan filter atau rentang tanggal.
-            </p>
-          </div>
-        ) : (
-          filteredActivities.map((act) => {
-            const jenisInfo = getJenisBadge(act.jenis);
-            const JenisIcon = jenisInfo.icon;
-            const isHandover = (act.catatan || "").includes("[HANDOVER PIC]");
-
-            return (
-              <div
-                key={act.id}
-                className="bg-white p-4 rounded-xl border border-mist shadow-subtle space-y-3"
-              >
-                {/* Header: Waktu & Jenis */}
-                <div className="flex items-center justify-between gap-2 border-b border-mist/80 pb-2">
-                  <div className="flex items-center gap-1.5 text-xs text-slate font-mono">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{formatDateTime(act.created_at)}</span>
-                  </div>
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${jenisInfo.className}`}
-                  >
-                    <JenisIcon className="w-3 h-3" />
-                    <span>{jenisInfo.label}</span>
-                  </span>
-                </div>
-
-                {/* Lead Name & Action Link */}
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <span className="text-[10px] text-slate uppercase tracking-wider block">
-                      Lead Konsumen
-                    </span>
-                    <Link
-                      href={`${basePath}/lead/${act.lead.id}`}
-                      className="font-bold text-sm text-carbon-ink hover:text-deep-teal inline-flex items-center gap-1 group mt-0.5"
-                    >
-                      <span className="underline decoration-mist group-hover:decoration-deep-teal">
-                        {act.lead.nama}
-                      </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-slate group-hover:text-deep-teal" />
-                    </Link>
-                    <span className="text-xs font-mono text-slate block mt-0.5">
-                      {act.lead.no_hp}
-                    </span>
-                  </div>
-
-                  {/* Actor Badge */}
-                  <div className="text-right">
-                    <span className="text-[10px] text-slate uppercase tracking-wider block">
-                      Personel
-                    </span>
-                    <span className="text-xs font-semibold text-carbon-ink block mt-0.5">
-                      {act.user.nama}
-                    </span>
-                    <span className="text-[10px] text-slate">({act.user.role})</span>
-                  </div>
-                </div>
-
-                {/* Hasil & Catatan */}
-                <div className="p-3 rounded-lg bg-bone/50 border border-mist space-y-1.5 text-xs">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span
-                      className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${getHasilBadge(
-                        act.hasil
-                      )}`}
-                    >
-                      {formatHasilLabel(act.hasil)}
-                    </span>
-                    {isHandover && (
-                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300">
-                        <Shield className="w-2.5 h-2.5" />
-                        Oper PIC
-                      </span>
-                    )}
-                    {act.tgl_follow_up && (
-                      <span className="text-[11px] text-slate">
-                        Next: {formatDateOnly(act.tgl_follow_up)}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-graphite leading-relaxed">
-                    {act.catatan || (
-                      <span className="italic text-fog">Tidak ada catatan tertulis</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            );
-          })
-        )}
+        <div className="px-4 py-2.5 border-t border-zinc-200 bg-zinc-50/50 text-xs text-zinc-500">
+          Menampilkan <span className="font-medium text-zinc-800">{filteredActivities.length}</span> log aktivitas
+        </div>
       </div>
     </div>
   );

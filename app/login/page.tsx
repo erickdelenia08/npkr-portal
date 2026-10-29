@@ -26,9 +26,9 @@ export default function LoginPage() {
           {/* Company Branding & Logo Header */}
           <div className="text-center mb-6">
             {/* Logo Badge */}
-            <div className="w-12 h-12 rounded-xl bg-prism-teal/10 text-white flex items-center justify-center mx-auto mb-3 shadow-md border border-carbon-ink/10">
+            <div className="w-12 h-12 rounded-xl bg-white text-white flex items-center justify-center mx-auto mb-3 shadow-md border border-carbon-ink/10">
               {/* <Building2 className="w-6 h-6 text-prism-teal" /> */}
-              <NpkrLogo className="w-6 h-6 text-prism-teal" />
+              <NpkrLogo className="w-6 h-6" />
 
             </div>
 
@@ -46,9 +46,9 @@ export default function LoginPage() {
               <span className="text-xs text-slate">CRM &amp; Sales Management</span>
             </div>
 
-            <p className="text-xs text-slate mt-2 max-w-xs mx-auto leading-relaxed">
+            {/* <p className="text-xs text-slate mt-2 max-w-xs mx-auto leading-relaxed">
               Silakan masukkan kredensial akun Anda untuk mengakses dashboard operasional.
-            </p>
+            </p> */}
           </div>
 
           {/* Form Component */}
@@ -56,12 +56,12 @@ export default function LoginPage() {
         </div>
 
         {/* Footer info */}
-        <div className="text-center mt-6 text-xs text-slate space-y-1">
+        {/* <div className="text-center mt-6 text-xs text-slate space-y-1">
           <p>© 2026 PT. Simanduta Surya Sentosa. Hak Cipta Dilindungi.</p>
           <p className="text-[11px] text-fog">
             Kendala akses akun? Hubungi Administrator TI Kantor Pusat.
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

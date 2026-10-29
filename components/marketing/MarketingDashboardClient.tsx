@@ -4,16 +4,14 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
   UserPlus,
-  CalendarCheck2,
-  Award,
+  Building2,
+  Search,
+  ChevronRight,
+  Phone,
+  CheckCircle2,
   ClockAlert,
   CalendarClock,
   MapPin,
-  ChevronRight,
-  Phone,
-  Search,
-  CheckCircle2,
-  Building2,
 } from "lucide-react";
 import {
   MarketingDashboardData,
@@ -28,11 +26,9 @@ interface MarketingDashboardClientProps {
 export function MarketingDashboardClient({ data }: MarketingDashboardClientProps) {
   const { marketingUser, metrics, tasks } = data;
 
-  // Active Category Filter: "ALL" | TaskCategory
   const [activeCategory, setActiveCategory] = useState<"ALL" | TaskCategory>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Filter tasks based on selected category & search query
   const filteredTasks = useMemo(() => {
     const list: MarketingTaskItem[] = [];
 
@@ -60,331 +56,244 @@ export function MarketingDashboardClient({ data }: MarketingDashboardClientProps
     });
   }, [tasks, activeCategory, searchQuery]);
 
-  // Helper for badge colors
-  const getBadgeStyle = (variant: MarketingTaskItem["badgeVariant"]) => {
-    switch (variant) {
-      case "red":
-        return "bg-rose-50 border-rose-200 text-rose-700";
-      case "amber":
-        return "bg-amber-50 border-amber-200 text-amber-700";
-      case "yellow":
-        return "bg-amber-50 border-amber-300 text-amber-800";
-      case "purple":
-        return "bg-purple-50 border-purple-200 text-purple-700";
-      default:
-        return "bg-slate-50 border-slate-200 text-slate-700";
+  const renderBadge = (task: MarketingTaskItem) => {
+    if (task.category === "OVERDUE") {
+      return (
+        <span className="inline-flex px-1.5 py-0.2 rounded text-[10px] font-medium border border-rose-200 bg-rose-50 text-rose-700">
+          {task.badgeText}
+        </span>
+      );
     }
-  };
-
-  const getCategoryIcon = (category: TaskCategory) => {
-    switch (category) {
-      case "OVERDUE":
-        return <ClockAlert className="w-4 h-4 text-rose-600 shrink-0" />;
-      case "TODAY":
-        return <CalendarClock className="w-4 h-4 text-emerald-600 shrink-0" />;
-      case "SURVEY":
-        return <MapPin className="w-4 h-4 text-purple-600 shrink-0" />;
+    if (task.category === "TODAY") {
+      return (
+        <span className="inline-flex px-1.5 py-0.2 rounded text-[10px] font-medium border border-amber-200 bg-amber-50 text-amber-800">
+          Hari Ini
+        </span>
+      );
     }
+    return (
+      <span className="inline-flex px-1.5 py-0.2 rounded text-[10px] font-medium border border-zinc-200 bg-zinc-100 text-zinc-700">
+        {task.badgeText}
+      </span>
+    );
   };
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto pb-12">
-      {/* 1. Header & Greeting Bar (Mobile-Optimized) */}
-      <div className="bg-white p-4 sm:p-5 rounded-xl border border-mist shadow-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="space-y-4 sm:space-y-5 max-w-5xl mx-auto font-sans text-zinc-900 pb-12">
+      {/* 1. Header & Greeting Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-200 pb-3 sm:pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-prism-teal/10 text-deep-teal">
-              Marketing Assistant
-            </span>
-            <span className="text-xs text-slate font-medium">
-              Periode {metrics.monthLabel}
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-zinc-900">
+              Halo, {marketingUser.nama}
+            </h1>
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium">
+              {metrics.monthLabel}
             </span>
           </div>
-          <h1 className="text-lg sm:text-2xl font-bold text-carbon-ink tracking-tight font-heading mt-1">
-            Halo, {marketingUser.nama} 👋
-          </h1>
-          <p className="text-xs sm:text-sm text-slate mt-0.5">
-            Berikut ringkasan performa dan daftar tugas prioritas harian Anda.
+          <p className="text-[11px] sm:text-xs text-zinc-500 mt-0.5">
+            Ringkasan capaian bulanan dan daftar prioritas tindak lanjut konsumen.
           </p>
         </div>
 
-        {/* Quick Shortcut Buttons */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Shortcuts */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <Link
             href="/marketing/unit"
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-bone hover:bg-slate-200 text-graphite text-xs font-semibold transition-colors border border-mist"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-zinc-200 bg-white text-zinc-700 text-xs font-medium hover:bg-zinc-50 active:bg-zinc-100 transition-colors h-8"
           >
-            <Building2 className="w-3.5 h-3.5 text-prism-teal" />
+            <Building2 className="w-3.5 h-3.5 text-zinc-400" />
             <span>Katalog Unit</span>
           </Link>
           <Link
             href="/marketing/lead"
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold transition-colors shadow-xs"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium transition-colors h-8"
           >
             <UserPlus className="w-3.5 h-3.5" />
-            <span>+ Lead Baru</span>
+            <span>Tambah Lead</span>
           </Link>
         </div>
       </div>
 
-      {/* 2. TOP SECTION: 3 METRICS (Horizontal scrollable on mobile / 3-column grid) */}
-      <div className="grid grid-cols-3 gap-2.5 sm:gap-4 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-        {/* Metric 1: New Leads */}
-        <div className="bg-gradient-to-br from-white to-teal-50/40 p-3 sm:p-4 rounded-xl border border-teal-100/80 shadow-subtle flex flex-col justify-between min-w-[105px] transition-all hover:border-teal-300">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-semibold text-slate uppercase tracking-wider line-clamp-1">
-              Lead Baru
-            </span>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-teal-100/70 text-prism-teal flex items-center justify-center shrink-0">
-              <UserPlus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
-          </div>
-          <div className="mt-2 sm:mt-3">
-            <span className="font-mono text-xl sm:text-3xl font-extrabold text-carbon-ink tracking-tight block">
-              {metrics.newLeadsThisMonth}
-            </span>
-            <span className="text-[10px] sm:text-xs text-slate block mt-0.5 truncate">
-              Bulan {metrics.monthLabel.split(" ")[0]}
-            </span>
-          </div>
+      {/* 2. Ringkasan Metrik Bulanan (Clean Grid) */}
+      <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
+        <div className="p-3 sm:p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
+            Lead Masuk
+          </span>
+          <span className="text-lg sm:text-2xl font-semibold text-zinc-900 font-mono mt-1 block tabular-nums">
+            {metrics.newLeadsThisMonth}
+          </span>
+          <span className="text-[10px] text-zinc-400 block mt-0.5 truncate">
+            Bulan berjalan
+          </span>
         </div>
 
-        {/* Metric 2: Surveys */}
-        <div className="bg-gradient-to-br from-white to-indigo-50/40 p-3 sm:p-4 rounded-xl border border-indigo-100/80 shadow-subtle flex flex-col justify-between min-w-[105px] transition-all hover:border-indigo-300">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-semibold text-slate uppercase tracking-wider line-clamp-1">
-              Survei
-            </span>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-indigo-100/70 text-indigo-600 flex items-center justify-center shrink-0">
-              <CalendarCheck2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
-          </div>
-          <div className="mt-2 sm:mt-3">
-            <span className="font-mono text-xl sm:text-3xl font-extrabold text-carbon-ink tracking-tight block">
-              {metrics.surveysThisMonth}
-            </span>
-            <span className="text-[10px] sm:text-xs text-slate block mt-0.5 truncate">
-              Kunjungan tuntas
-            </span>
-          </div>
+        <div className="p-3 sm:p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
+            Kunjungan Survei
+          </span>
+          <span className="text-lg sm:text-2xl font-semibold text-zinc-900 font-mono mt-1 block tabular-nums">
+            {metrics.surveysThisMonth}
+          </span>
+          <span className="text-[10px] text-zinc-400 block mt-0.5 truncate">
+            Terjadwal &amp; tuntas
+          </span>
         </div>
 
-        {/* Metric 3: Closing */}
-        <div className="bg-gradient-to-br from-white to-emerald-50/40 p-3 sm:p-4 rounded-xl border border-emerald-100/80 shadow-subtle flex flex-col justify-between min-w-[105px] transition-all hover:border-emerald-300">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] sm:text-xs font-semibold text-slate uppercase tracking-wider line-clamp-1">
-              Closing Deal
-            </span>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-100/70 text-emerald-600 flex items-center justify-center shrink-0">
-              <Award className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </div>
-          </div>
-          <div className="mt-2 sm:mt-3">
-            <span className="font-mono text-xl sm:text-3xl font-extrabold text-carbon-ink tracking-tight block">
-              {metrics.closingsThisMonth}
-            </span>
-            <span className="text-[10px] sm:text-xs text-slate block mt-0.5 truncate">
-              ITJ Closing Deal
-            </span>
-          </div>
+        <div className="p-3 sm:p-3.5 rounded-lg border border-zinc-200 bg-white">
+          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
+            Closing Deal
+          </span>
+          <span className="text-lg sm:text-2xl font-semibold text-emerald-700 font-mono mt-1 block tabular-nums">
+            {metrics.closingsThisMonth}
+          </span>
+          <span className="text-[10px] text-zinc-400 block mt-0.5 truncate">
+            ITJ tervalidasi
+          </span>
         </div>
       </div>
 
-      {/* 3. TASK LIST SECTION (Mobile-First To-Do List) */}
-      <div className="bg-white rounded-xl border border-mist shadow-subtle p-4 sm:p-5 space-y-4">
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-mist">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base sm:text-lg font-bold text-carbon-ink tracking-tight font-heading">
-                Agenda &amp; To-Do List
-              </h2>
-              <span className="px-2 py-0.5 rounded-full text-xs font-mono font-bold bg-slate-100 text-carbon-ink border border-slate-200">
-                {tasks.totalTasks} Tugas
-              </span>
-            </div>
-            <p className="text-xs text-slate mt-0.5">
-              Fokuskan perhatian pada tugas paling mendesak hari ini.
-            </p>
+      {/* 3. Section To-Do List */}
+      <div className="rounded-lg border border-zinc-200 bg-white p-3.5 sm:p-4 space-y-3.5 shadow-2xs">
+        {/* Header Toolbar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-zinc-900">
+              Agenda &amp; Prioritas
+            </h2>
+            <span className="text-[11px] font-mono font-medium px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-600">
+              {tasks.totalTasks} Tugas
+            </span>
           </div>
 
-          {/* Search Input for Mobile & Desktop */}
-          <div className="relative w-full sm:w-64">
-            <Search className="w-3.5 h-3.5 text-slate absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative w-full sm:w-60">
+            <Search className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Cari nama atau telepon..."
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal"
+              placeholder="Cari prospek atau nomor HP..."
+              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-md border border-zinc-200 bg-white placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 focus:border-zinc-400"
             />
           </div>
         </div>
 
-        {/* Category Filter Pills (Order of Importance) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-xs">
+        {/* Filter Bar (Scrollable on small screens) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar -mx-3.5 px-3.5 sm:mx-0 sm:px-0 text-xs">
           <button
             type="button"
             onClick={() => setActiveCategory("ALL")}
-            className={`px-3 py-1.5 rounded-lg font-semibold shrink-0 transition-all flex items-center gap-1.5 ${
-              activeCategory === "ALL"
-                ? "bg-slate-900 text-white shadow-xs"
-                : "bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200"
-            }`}
+            className={`px-2.5 py-1 rounded-md font-medium shrink-0 transition-colors ${activeCategory === "ALL"
+              ? "bg-zinc-900 text-white"
+              : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              }`}
           >
-            <span>Semua</span>
-            <span className="font-mono text-[10px] opacity-80">
-              ({tasks.totalTasks})
-            </span>
+            Semua ({tasks.totalTasks})
           </button>
 
-          {/* 2. Overdue Follow-ups (Red) */}
           <button
             type="button"
             onClick={() => setActiveCategory("OVERDUE")}
-            className={`px-3 py-1.5 rounded-lg font-semibold shrink-0 transition-all flex items-center gap-1.5 ${
-              activeCategory === "OVERDUE"
-                ? "bg-rose-600 text-white shadow-xs"
-                : "bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200"
-            }`}
+            className={`px-2.5 py-1 rounded-md font-medium shrink-0 transition-colors inline-flex items-center gap-1.5 ${activeCategory === "OVERDUE"
+              ? "bg-zinc-900 text-white"
+              : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              }`}
           >
-            <ClockAlert className="w-3.5 h-3.5 shrink-0" />
-            <span>Terlewat</span>
-            <span className="font-mono text-[10px] font-bold">
-              ({tasks.overdueFollowUps.length})
-            </span>
+            <ClockAlert className={`w-3.5 h-3.5 ${activeCategory === "OVERDUE" ? "text-white" : "text-rose-600"}`} />
+            <span>Terlewat ({tasks.overdueFollowUps.length})</span>
           </button>
 
-          {/* 3. Today's Follow-up (Yellow/Green) */}
           <button
             type="button"
             onClick={() => setActiveCategory("TODAY")}
-            className={`px-3 py-1.5 rounded-lg font-semibold shrink-0 transition-all flex items-center gap-1.5 ${
-              activeCategory === "TODAY"
-                ? "bg-emerald-700 text-white shadow-xs"
-                : "bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200"
-            }`}
+            className={`px-2.5 py-1 rounded-md font-medium shrink-0 transition-colors inline-flex items-center gap-1.5 ${activeCategory === "TODAY"
+              ? "bg-zinc-900 text-white"
+              : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              }`}
           >
-            <CalendarClock className="w-3.5 h-3.5 shrink-0" />
-            <span>Hari Ini</span>
-            <span className="font-mono text-[10px] font-bold">
-              ({tasks.todayFollowUps.length})
-            </span>
+            <CalendarClock className={`w-3.5 h-3.5 ${activeCategory === "TODAY" ? "text-white" : "text-amber-600"}`} />
+            <span>Hari Ini ({tasks.todayFollowUps.length})</span>
           </button>
 
-          {/* 4. Upcoming Surveys (Purple) */}
           <button
             type="button"
             onClick={() => setActiveCategory("SURVEY")}
-            className={`px-3 py-1.5 rounded-lg font-semibold shrink-0 transition-all flex items-center gap-1.5 ${
-              activeCategory === "SURVEY"
-                ? "bg-purple-600 text-white shadow-xs"
-                : "bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200"
-            }`}
+            className={`px-2.5 py-1 rounded-md font-medium shrink-0 transition-colors inline-flex items-center gap-1.5 ${activeCategory === "SURVEY"
+              ? "bg-zinc-900 text-white"
+              : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+              }`}
           >
-            <MapPin className="w-3.5 h-3.5 shrink-0" />
-            <span>Survei</span>
-            <span className="font-mono text-[10px] font-bold">
-              ({tasks.upcomingSurveys.length})
-            </span>
+            <MapPin className={`w-3.5 h-3.5 ${activeCategory === "SURVEY" ? "text-white" : "text-zinc-600"}`} />
+            <span>Survei ({tasks.upcomingSurveys.length})</span>
           </button>
         </div>
 
-        {/* Task Cards List (Order of Importance) */}
+        {/* Task Cards List */}
         {filteredTasks.length === 0 ? (
-          <div className="p-8 sm:p-12 text-center rounded-xl border border-dashed border-mist bg-slate-50/50">
-            <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2 opacity-80" />
-            <h3 className="text-sm font-bold text-carbon-ink">
-              Semua tugas telah diselesaikan!
-            </h3>
-            <p className="text-xs text-slate mt-1 max-w-sm mx-auto">
+          <div className="py-10 text-center text-xs text-zinc-500 rounded border border-zinc-100 bg-zinc-50/50">
+            <CheckCircle2 className="w-6 h-6 text-emerald-600 mx-auto mb-1.5 opacity-80" />
+            <p className="font-medium text-zinc-900">Tidak ada agenda tertunda</p>
+            <p className="text-zinc-400 mt-0.5">
               {searchQuery
-                ? `Tidak ada tugas yang sesuai dengan kata kunci "${searchQuery}".`
-                : "Tidak ada to-do mendesak dalam kategori ini saat ini. Manfaatkan waktu untuk menjaring prospek baru!"}
+                ? `Tidak ada hasil pencarian untuk "${searchQuery}".`
+                : "Semua agenda follow-up dalam kategori ini telah diselesaikan."}
             </p>
           </div>
         ) : (
-          <div className="space-y-2.5">
-            {filteredTasks.map((task) => {
-              const badgeStyle = getBadgeStyle(task.badgeVariant);
-
-              return (
-                <Link
-                  key={task.id}
-                  href={`/marketing/lead/${task.leadId}`}
-                  className="block bg-white hover:bg-slate-50/80 rounded-xl border border-mist hover:border-prism-teal/60 shadow-xs hover:shadow-subtle transition-all p-3.5 sm:p-4 group"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    {/* Left: Lead Identity & Action Title */}
-                    <div className="space-y-1.5 flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {/* Category Icon */}
-                        {getCategoryIcon(task.category)}
-
-                        {/* Lead Name */}
-                        <span className="font-bold text-sm sm:text-base text-carbon-ink group-hover:text-deep-teal transition-colors truncate">
-                          {task.nama}
-                        </span>
-
-                        {/* Status Badge */}
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeStyle}`}
-                        >
-                          {task.badgeText}
-                        </span>
-
-                        {/* Unit Blok if available */}
-                        {task.unitBlok && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-bone text-graphite border border-mist">
-                            Blok {task.unitBlok}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Action Title & Notes */}
-                      <div className="text-xs text-slate space-y-0.5">
-                        <p className="font-semibold text-graphite">
-                          {task.title}
-                        </p>
-                        {task.description && (
-                          <p className="text-slate line-clamp-2 text-[11px] sm:text-xs leading-relaxed">
-                            {task.description}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Phone & Date Info Bar */}
-                      <div className="flex items-center gap-3 pt-1 text-[11px] text-slate flex-wrap font-mono">
-                        <span className="flex items-center gap-1">
-                          <Phone className="w-3 h-3 text-slate" />
-                          <span>{task.no_hp}</span>
-                        </span>
-
-                        <span>•</span>
-
-                        <span className="font-semibold text-carbon-ink">
-                          {task.datetimeFormatted}
-                        </span>
-
-                        {task.minat_tipe && (
-                          <>
-                            <span>•</span>
-                            <span className="text-prism-teal font-medium">
-                              Tipe: {task.minat_tipe}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Right: Chevron Arrow */}
-                    <div className="self-center shrink-0 w-8 h-8 rounded-lg bg-bone/70 group-hover:bg-prism-teal group-hover:text-white flex items-center justify-center transition-all">
-                      <ChevronRight className="w-4 h-4 text-slate group-hover:text-white transition-colors" />
-                    </div>
+          <div className="divide-y divide-zinc-100 border border-zinc-200 rounded-md overflow-hidden">
+            {filteredTasks.map((task) => (
+              <Link
+                key={task.id}
+                href={`/marketing/lead/${task.leadId}`}
+                className="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-zinc-50/70 transition-colors group block bg-white"
+              >
+                <div className="space-y-1 min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-xs sm:text-[13px] text-zinc-900 group-hover:underline truncate">
+                      {task.nama}
+                    </span>
+                    {renderBadge(task)}
+                    {task.unitBlok && (
+                      <span className="font-mono text-[10px] text-zinc-500 px-1 py-0.2 rounded bg-zinc-100 border border-zinc-200">
+                        Blok {task.unitBlok}
+                      </span>
+                    )}
                   </div>
-                </Link>
-              );
-            })}
+
+                  <p className="text-xs text-zinc-700 font-medium truncate">
+                    {task.title}
+                  </p>
+
+                  {task.description && (
+                    <p className="text-[11px] text-zinc-500 line-clamp-1 leading-relaxed">
+                      {task.description}
+                    </p>
+                  )}
+
+                  <div className="flex items-center gap-2 pt-0.5 text-[11px] text-zinc-400 font-mono">
+                    <span className="inline-flex items-center gap-1 text-zinc-600">
+                      <Phone className="w-3 h-3 text-zinc-400" />
+                      {task.no_hp}
+                    </span>
+                    <span>•</span>
+                    <span className="text-zinc-700 font-medium">
+                      {task.datetimeFormatted}
+                    </span>
+                    {task.minat_tipe && (
+                      <>
+                        <span>•</span>
+                        <span className="text-zinc-500 truncate">
+                          Tipe {task.minat_tipe}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <ChevronRight className="w-4 h-4 text-zinc-400 group-hover:text-zinc-700 shrink-0 transition-colors" />
+              </Link>
+            ))}
           </div>
         )}
       </div>

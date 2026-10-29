@@ -192,6 +192,17 @@ export async function TransactionDetailView({
   const sisaDp = Math.max(0, targetDp - dpPaid);
   const sisaPelunasan = Math.max(0, hargaDeal - totalPaid);
 
+  const lastPayment =
+    validPayments.length > 0
+      ? [...validPayments].sort(
+        (a, b) =>
+          new Date(b.tgl_bayar).getTime() - new Date(a.tgl_bayar).getTime()
+      )[0]
+      : null;
+  const lastPaymentDate = lastPayment
+    ? lastPayment.tgl_bayar.toISOString()
+    : null;
+
   const getJenisBayarBadge = (jenis: string) => {
     switch (jenis) {
       case "ITJ":
@@ -237,18 +248,18 @@ export async function TransactionDetailView({
       {/* ─── 1. HEADER CARD ─── */}
       <div className="bg-white p-5 rounded-lg border border-mist shadow-subtle flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-start gap-3.5">
-          <div className="w-11 h-11 rounded-lg bg-teal-50 text-deep-teal flex items-center justify-center shrink-0 mt-0.5">
+          {/* <div className="w-11 h-11 rounded-lg bg-teal-50 text-deep-teal flex items-center justify-center shrink-0 mt-0.5">
             <Receipt className="w-6 h-6" />
-          </div>
+          </div> */}
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-xl md:text-2xl font-bold text-carbon-ink tracking-tight">
                 {transaksi.customer.nama_ktp}
               </h1>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-bone text-carbon-ink border border-mist">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-mono font-bold bg-bone text-carbon-ink border border-mist">
                 Unit {transaksi.unit.blok}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-50 text-deep-teal border border-teal-200">
+              <span className="px-2.5 py-0.5 rounded-sm text-xs font-semibold bg-teal-50 text-deep-teal border border-teal-200">
                 {transaksi.status_transaksi}
               </span>
             </div>
@@ -426,7 +437,10 @@ export async function TransactionDetailView({
       </div>
 
       {/* ─── 3. PAYMENT HISTORY CARD ─── */}
-      <div className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden">
+      <div
+        id="riwayat-pembayaran"
+        className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden"
+      >
         <div className="p-5 border-b border-mist flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
@@ -485,9 +499,8 @@ export async function TransactionDetailView({
                 {transaksi.pembayaran.map((bayar) => (
                   <tr
                     key={bayar.id}
-                    className={`hover:bg-bone/30 transition-colors ${
-                      bayar.is_void ? "opacity-50 line-through bg-rose-50/30" : ""
-                    }`}
+                    className={`hover:bg-bone/30 transition-colors ${bayar.is_void ? "opacity-50 line-through bg-rose-50/30" : ""
+                      }`}
                   >
                     {/* Tanggal */}
                     <td className="px-5 py-3.5 text-slate font-medium whitespace-nowrap">
@@ -577,6 +590,15 @@ export async function TransactionDetailView({
         }))}
         initialPengajuanKpr={transaksi.pengajuan_kpr}
         masterBanks={masterBanks}
+        financialSummary={{
+          hargaDeal,
+          totalPaid,
+          targetDp,
+          dpPaid,
+          sisaPelunasan,
+          sisaDp,
+          lastPaymentDate,
+        }}
       />
     </div>
   );

@@ -2,20 +2,12 @@
 
 import React, { useState, useEffect, useRef, useTransition } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
-  Building2,
   Layers,
-  PlusCircle,
-  Sparkles,
-  RefreshCw,
-  CheckCircle2,
-  Clock,
-  Map,
   Plus,
-  Lock,
+  RefreshCw,
   AlertTriangle,
-  RotateCcw,
   ChevronDown,
 } from "lucide-react";
 import {
@@ -71,13 +63,13 @@ export function MasterUnitClient({
 }: MasterUnitClientProps) {
   const router = useRouter();
 
-  // Active Tab: "units" | "types" | "siteplan"
+  // Active Tab
   const [activeTab, setActiveTab] = useState<"units" | "types" | "siteplan">(
     initialParams?.tab === "types" || initialParams?.tab === "tipe"
       ? "types"
       : initialParams?.tab === "siteplan"
-      ? "siteplan"
-      : "units"
+        ? "siteplan"
+        : "units"
   );
 
   // Master Tipe State
@@ -85,7 +77,7 @@ export function MasterUnitClient({
   const [isTipeModalOpen, setIsTipeModalOpen] = useState<boolean>(false);
   const [editingTipe, setEditingTipe] = useState<SerializedMasterTipe | null>(null);
 
-  // Preset props for MasterTipeForm (when launched from ChangeTipeDrawer)
+  // Presets
   const [presetKategori, setPresetKategori] = useState<KategoriUnitType | undefined>(undefined);
   const [presetLuasTanah, setPresetLuasTanah] = useState<number | undefined>(undefined);
   const [pendingUnitForDrawer, setPendingUnitForDrawer] = useState<SerializedMasterUnit | null>(null);
@@ -96,7 +88,7 @@ export function MasterUnitClient({
   const [currentPage, setCurrentPage] = useState<number>(initialUnitsResult.page);
   const [totalPages, setTotalPages] = useState<number>(initialUnitsResult.totalPages);
 
-  // Server Summary State
+  // Summary State
   const [summary, setSummary] = useState<MasterUnitSummary>(initialSummary);
 
   // Filters
@@ -105,23 +97,17 @@ export function MasterUnitClient({
   const [tipeFilter, setTipeFilter] = useState<number>(initialParams?.tipe || 0);
   const [kategoriFilter, setKategoriFilter] = useState<string>(initialParams?.kategori || "");
 
-  // Modal State for Single Unit Creation
   const [isUnitModalOpen, setIsUnitModalOpen] = useState<boolean>(false);
-
-  // Change Tipe Drawer State
   const [changingUnit, setChangingUnit] = useState<SerializedMasterUnit | null>(null);
 
-  // Siteplan All-Units State (Lazy loaded)
   const [allSiteplanUnits, setAllSiteplanUnits] = useState<SerializedMasterUnit[] | null>(null);
   const [isSiteplanLoading, setIsSiteplanLoading] = useState<boolean>(false);
 
   const [isPending, startTransition] = useTransition();
-
-  // Out-of-order request guard
   const latestRequestId = useRef(0);
   const isInitialMount = useRef(true);
 
-  // Sync state to URL with router.replace (debounced)
+  // Sync state to URL and fetch units
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -141,14 +127,15 @@ export function MasterUnitClient({
       const newUrl = `/admin/master-unit${queryStr ? `?${queryStr}` : ""}`;
       router.replace(newUrl, { scroll: false });
 
-      // Trigger server fetch with request ID guard
-      refreshUnits(currentPage, search, statusFilter, tipeFilter, kategoriFilter);
+      if (activeTab === "units") {
+        refreshUnits(currentPage, search, statusFilter, tipeFilter, kategoriFilter);
+      }
     }, 250);
 
     return () => clearTimeout(timer);
   }, [activeTab, search, statusFilter, tipeFilter, kategoriFilter, currentPage, router]);
 
-  // Lazy load all siteplan units when Siteplan tab opens
+  // Lazy load siteplan
   useEffect(() => {
     if (activeTab === "siteplan" && allSiteplanUnits === null && !isSiteplanLoading) {
       loadAllSiteplanUnits();
@@ -169,23 +156,16 @@ export function MasterUnitClient({
     }
   };
 
-  // Refresh Tipe List
   const refreshTipeList = async () => {
     const res = await getMasterTipeList();
-    if (res.success && res.data) {
-      setTipeList(res.data);
-    }
+    if (res.success && res.data) setTipeList(res.data);
   };
 
-  // Refresh Summary
   const refreshSummary = async () => {
     const res = await getMasterUnitSummary();
-    if (res.success && res.data) {
-      setSummary(res.data);
-    }
+    if (res.success && res.data) setSummary(res.data);
   };
 
-  // Refresh Units with request-id guard
   const refreshUnits = async (
     page = currentPage,
     query = search,
@@ -205,7 +185,6 @@ export function MasterUnitClient({
         kategori: kategori && kategori !== "ALL" ? kategori : undefined,
       });
 
-      // Ignore out-of-order response if a newer request was sent
       if (reqId !== latestRequestId.current) return;
 
       if (res.success && res.data) {
@@ -235,13 +214,11 @@ export function MasterUnitClient({
     setIsTipeModalOpen(true);
   };
 
-  // After single unit creation, reset to page 1
   const handleSingleUnitCreated = () => {
     setCurrentPage(1);
     handleFullRefresh();
   };
 
-  // Refresh all data
   const handleFullRefresh = () => {
     refreshTipeList();
     refreshSummary();
@@ -251,7 +228,6 @@ export function MasterUnitClient({
     }
   };
 
-  // Handler when ChangeTipeDrawer requests creating a compatible new tipe
   const handleRequestCreateTipeForDrawer = (preset: {
     kategori: KategoriUnitType;
     luas_tanah: number;
@@ -265,61 +241,54 @@ export function MasterUnitClient({
     setIsTipeModalOpen(true);
   };
 
-  // Rule: hasNoUnits must be summary.total === 0 (not filtered totalUnits)
   const hasNoTipe = tipeList.length === 0;
   const hasNoUnits = !hasNoTipe && summary.total === 0;
 
   return (
-    <div className="space-y-4">
-      {/* Page Title & Top Actions Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-4 rounded-lg border border-mist shadow-subtle">
+    <div className="space-y-4 sm:space-y-5 font-sans text-zinc-900 w-full overflow-hidden">
+      {/* ─── Header Bar: Mobile-Stack Friendly ─── */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-zinc-200 pb-3 sm:pb-4">
         <div>
-          <h1 className="text-xl font-bold text-carbon-ink tracking-tight font-heading">
-            Master Unit &amp; Tipe
-          </h1>
-          <p className="text-xs text-slate mt-0.5">
-            Manajemen spesifikasi tipe properti dan inventori blok unit berdasarkan siteplan legal
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-zinc-900">
+              Master Unit &amp; Tipe
+            </h1>
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium whitespace-nowrap">
+              {summary.total} Unit
+            </span>
+          </div>
+          <p className="text-[11px] sm:text-xs text-zinc-500 mt-0.5 leading-relaxed">
+            Spesifikasi tipe properti dan alokasi blok unit berdasarkan siteplan.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Header Actions for Admin */}
+        {/* Action Controls */}
+        <div className="flex items-center gap-2 self-start sm:self-auto w-full sm:w-auto">
           {isAdmin && (
             <DropdownMenu>
-              <DropdownMenuTrigger
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md bg-white border border-mist text-carbon-ink text-xs font-semibold hover:bg-bone transition-colors shadow-2xs outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                aria-label="Menu Setup Unit Siteplan"
-              >
-                <Layers className="w-4 h-4 text-prism-teal" />
-                <span>Setup Unit Siteplan</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate ml-0.5" />
+              <DropdownMenuTrigger className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-zinc-200 bg-white text-zinc-800 text-xs font-medium hover:bg-zinc-50 active:bg-zinc-100 transition-colors h-8">
+                <Layers className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                <span>Setup Unit</span>
+                <ChevronDown className="w-3 h-3 text-zinc-400 shrink-0" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-52 text-xs">
                 <DropdownMenuItem className="p-0">
                   <Link
                     href="/admin/master-unit/setup"
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-graphite hover:bg-bone"
+                    className="w-full px-3 py-2 text-zinc-700 hover:bg-zinc-50 block"
                   >
-                    <Sparkles className="w-4 h-4 text-prism-teal shrink-0" />
-                    <div>
-                      <span className="font-semibold block">Setup Siteplan (wizard)</span>
-                      <span className="text-[10px] text-slate block">
-                        Wizard 3-langkah setup unit massal
-                      </span>
-                    </div>
+                    <span className="font-medium block">Wizard Setup Siteplan</span>
+                    <span className="text-[10px] text-zinc-400 block">Inisialisasi nomor unit massal</span>
                   </Link>
                 </DropdownMenuItem>
-
                 <DropdownMenuSeparator />
-
                 <DropdownMenuItem
                   onClick={() => setIsUnitModalOpen(true)}
-                  className="gap-2 cursor-pointer text-xs"
+                  className="px-3 py-2 cursor-pointer"
                 >
-                  <Plus className="w-4 h-4 text-slate" />
                   <div>
-                    <span className="font-semibold block">Tambah Satu Unit</span>
-                    <span className="text-[10px] text-slate block">Input nomor unit satuan</span>
+                    <span className="font-medium block">Tambah Satu Unit</span>
+                    <span className="text-[10px] text-zinc-400 block">Input nomor unit manual</span>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -330,61 +299,50 @@ export function MasterUnitClient({
             <button
               type="button"
               onClick={handleAddTipe}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-prism-teal text-white text-xs font-semibold hover:bg-deep-teal transition-colors shadow-2xs"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium transition-colors h-8"
             >
-              <PlusCircle className="w-4 h-4" />
+              <Plus className="w-3.5 h-3.5" />
               <span>Tambah Tipe</span>
             </button>
           )}
 
-          {/* Full Refresh Button */}
           <button
             type="button"
             onClick={handleFullRefresh}
             disabled={isPending}
-            className="p-1.5 rounded-md border border-mist bg-white text-slate hover:text-graphite hover:bg-bone transition-colors disabled:opacity-50"
-            title="Muat ulang seluruh data inventori"
+            className="p-2 rounded-md border border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 active:bg-zinc-100 transition-colors disabled:opacity-50 h-8 w-8 flex items-center justify-center shrink-0"
+            title="Muat Ulang Seluruh Data"
           >
-            <RefreshCw className={`w-4 h-4 ${isPending ? "animate-spin text-prism-teal" : ""}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin text-zinc-900" : ""}`} />
           </button>
         </div>
       </div>
 
-      {/* ERROR PANEL: When initial server load fails */}
+      {/* ─── Error Alert ─── */}
       {loadError && (
-        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 flex items-center justify-between text-xs text-rose-800">
-          <div className="flex items-center gap-2.5">
-            <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
-            <div>
-              <strong className="block font-semibold">Gagal Memuat Sebagian Data</strong>
-              <span>Terjadi kendala jaringan saat menghubungi database.</span>
-            </div>
+        <div className="p-3 rounded-lg border border-red-200 bg-red-50/40 text-xs text-red-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
+            <span>Sebagian data gagal dimuat dari server database.</span>
           </div>
           <button
             type="button"
             onClick={handleFullRefresh}
-            className="px-3 py-1.5 rounded bg-white border border-rose-300 text-rose-700 hover:bg-rose-100 font-semibold"
+            className="self-start sm:self-auto px-2.5 py-1 rounded border border-red-300 bg-white text-red-700 hover:bg-red-50 font-medium"
           >
             Coba Lagi
           </button>
         </div>
       )}
 
-      {/* Guided Empty States (Do NOT render if loadError is true) */}
+      {/* ─── Guided Alerts: No Tipe / No Units ─── */}
       {!loadError && hasNoTipe && (
-        <div className="bg-amber-50/80 border border-amber-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in duration-200">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-md bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-              <Building2 className="w-4 h-4 text-amber-700" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-amber-900 font-heading">
-                Langkah 1: Mulai dengan membuat tipe unit
-              </h3>
-              <p className="text-xs text-amber-800 mt-0.5">
-                Spesifikasi tipe unit diperlukan sebelum Anda dapat menghasilkan blok unit pada siteplan.
-              </p>
-            </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-zinc-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+          <div>
+            <h3 className="font-medium text-zinc-900">Belum ada tipe unit</h3>
+            <p className="text-zinc-500 mt-0.5">
+              Buat spesifikasi tipe terlebih dahulu sebelum menghasilkan unit pada blok.
+            </p>
           </div>
           {isAdmin && (
             <button
@@ -393,263 +351,171 @@ export function MasterUnitClient({
                 setActiveTab("types");
                 handleAddTipe();
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold shrink-0 shadow-xs transition-colors"
+              className="self-start sm:self-auto px-3 py-1.5 rounded bg-zinc-900 text-white hover:bg-zinc-800 font-medium"
             >
-              <PlusCircle className="w-4 h-4" />
-              <span>Tambah Tipe Sekarang</span>
+              Tambah Tipe
             </button>
           )}
         </div>
       )}
 
       {!loadError && hasNoUnits && (
-        <div className="bg-teal-50/80 border border-teal-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-in fade-in duration-200">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-md bg-teal-100 text-teal-800 flex items-center justify-center shrink-0">
-              <Layers className="w-4 h-4 text-prism-teal" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-deep-teal font-heading">
-                Langkah 2: Setup blok unit siteplan Anda
-              </h3>
-              <p className="text-xs text-teal-800 mt-0.5">
-                Tipe unit sudah tersedia. Gunakan wizard setup untuk menginisialisasi nomor unit kavling.
-              </p>
-            </div>
+        <div className="p-3.5 rounded-lg border border-zinc-200 bg-zinc-50 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+          <div>
+            <h3 className="font-medium text-zinc-900">Tipe unit siap, blok belum dibuat</h3>
+            <p className="text-zinc-500 mt-0.5">
+              Gunakan wizard setup untuk menginisialisasi nomor unit secara otomatis.
+            </p>
           </div>
           {isAdmin && (
             <Link
               href="/admin/master-unit/setup"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-prism-teal hover:bg-deep-teal text-white text-xs font-semibold shrink-0 shadow-xs transition-colors"
+              className="self-start sm:self-auto px-3 py-1.5 rounded bg-zinc-900 text-white hover:bg-zinc-800 font-medium"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>Mulai Setup Siteplan (Wizard)</span>
+              Mulai Wizard
             </Link>
           )}
         </div>
       )}
 
-      {/* Compact Metric Summary Cards (All on 1 row with label + number + icon) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
-        {/* Total Unit Card */}
+      {/* ─── Metric Filter Cards: Clean 2x2 Grid on Mobile ─── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+        {/* Total */}
         <button
           type="button"
-          aria-pressed={statusFilter === "" || statusFilter === "ALL"}
           onClick={() => setStatusFilter("")}
-          className={`p-3 rounded-lg border text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-carbon-ink ${
-            statusFilter === "" || statusFilter === "ALL"
-              ? "bg-white border-carbon-ink ring-1 ring-carbon-ink/10 shadow-xs"
-              : "bg-white border-mist hover:border-slate/60 shadow-2xs"
-          }`}
-          title="Klik untuk melihat semua unit"
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "" || statusFilter === "ALL"
+            ? "border-zinc-900 bg-zinc-50/70"
+            : "border-zinc-200 bg-white hover:border-zinc-300"
+            }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-slate uppercase tracking-wider">
-              Total Unit
-            </span>
-            <div className="w-6 h-6 rounded bg-blue-50 text-blue-600 flex items-center justify-center">
-              <Layers className="w-3.5 h-3.5" />
-            </div>
-          </div>
-          <div className="mt-1 flex items-baseline justify-between">
-            <span className="text-xl font-bold text-carbon-ink font-mono">
+          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
+            Total Unit
+          </span>
+          <div className="mt-1">
+            <span className="text-lg sm:text-xl font-semibold text-zinc-900 font-mono tabular-nums block">
               {summary.total}
             </span>
-            <span className="text-[10px] text-slate font-mono">
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 font-mono block truncate mt-0.5">
               S:{summary.perKategori.SUBSIDI} • K:{summary.perKategori.KOMERSIL} • V:{summary.perKategori.KAVLING}
             </span>
           </div>
         </button>
 
-        {/* Available Card */}
+        {/* Available */}
         <button
           type="button"
-          aria-pressed={statusFilter === "AVAILABLE"}
           onClick={() => setStatusFilter(statusFilter === "AVAILABLE" ? "" : "AVAILABLE")}
-          className={`p-3 rounded-lg border text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
-            statusFilter === "AVAILABLE"
-              ? "bg-emerald-50/40 border-emerald-500 ring-1 ring-emerald-500/20 shadow-xs"
-              : "bg-white border-mist hover:border-emerald-300 shadow-2xs"
-          }`}
-          title="Klik untuk memfilter unit AVAILABLE"
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "AVAILABLE"
+            ? "border-zinc-900 bg-zinc-50/70"
+            : "border-zinc-200 bg-white hover:border-zinc-300"
+            }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">
-              AVAILABLE
-            </span>
-            <div className="w-6 h-6 rounded bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-            </div>
-          </div>
+          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
+            Available
+          </span>
           <div className="mt-1">
-            <span className="text-xl font-bold text-emerald-600 font-mono">
+            <span className="text-lg sm:text-xl font-semibold text-emerald-700 font-mono tabular-nums block">
               {summary.available}
             </span>
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 block truncate mt-0.5">
+              Siap Dipasarkan
+            </span>
           </div>
         </button>
 
-        {/* Dalam Proses Card (PROSES -> HOLD + BOOKED) */}
+        {/* Proses */}
         <button
           type="button"
-          aria-pressed={statusFilter === "PROSES"}
           onClick={() => setStatusFilter(statusFilter === "PROSES" ? "" : "PROSES")}
-          className={`p-3 rounded-lg border text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
-            statusFilter === "PROSES"
-              ? "bg-amber-50/40 border-amber-500 ring-1 ring-amber-500/20 shadow-xs"
-              : "bg-white border-mist hover:border-amber-300 shadow-2xs"
-          }`}
-          title="Klik untuk memfilter unit Dalam Proses (HOLD + BOOKED)"
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "PROSES"
+            ? "border-zinc-900 bg-zinc-50/70"
+            : "border-zinc-200 bg-white hover:border-zinc-300"
+            }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-amber-800 uppercase tracking-wider">
-              Dalam Proses
-            </span>
-            <div className="w-6 h-6 rounded bg-amber-50 text-amber-600 flex items-center justify-center">
-              <Clock className="w-3.5 h-3.5" />
-            </div>
-          </div>
+          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
+            Proses
+          </span>
           <div className="mt-1">
-            <span className="text-xl font-bold text-amber-600 font-mono">
+            <span className="text-lg sm:text-xl font-semibold text-amber-700 font-mono tabular-nums block">
               {summary.proses}
             </span>
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 block truncate mt-0.5">
+              Hold &amp; Booked
+            </span>
           </div>
         </button>
 
-        {/* Sold Card */}
+        {/* Sold */}
         <button
           type="button"
-          aria-pressed={statusFilter === "SOLD"}
           onClick={() => setStatusFilter(statusFilter === "SOLD" ? "" : "SOLD")}
-          className={`p-3 rounded-lg border text-left transition-all outline-none focus-visible:ring-2 focus-visible:ring-slate-500 ${
-            statusFilter === "SOLD"
-              ? "bg-slate-100 border-slate-500 ring-1 ring-slate-500/20 shadow-xs"
-              : "bg-white border-mist hover:border-slate/60 shadow-2xs"
-          }`}
-          title="Klik untuk memfilter unit Terjual (SOLD)"
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "SOLD"
+            ? "border-zinc-900 bg-zinc-50/70"
+            : "border-zinc-200 bg-white hover:border-zinc-300"
+            }`}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold text-slate uppercase tracking-wider">
-              SOLD
-            </span>
-            <div className="w-6 h-6 rounded bg-slate-100 text-slate-700 flex items-center justify-center">
-              <Lock className="w-3.5 h-3.5" />
-            </div>
-          </div>
+          <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
+            Terjual (Sold)
+          </span>
           <div className="mt-1">
-            <span className="text-xl font-bold text-slate-700 font-mono">
+            <span className="text-lg sm:text-xl font-semibold text-zinc-900 font-mono tabular-nums block">
               {summary.sold}
             </span>
+            <span className="text-[9px] sm:text-[10px] text-zinc-400 block truncate mt-0.5">
+              Sudah Akad / BAST
+            </span>
           </div>
         </button>
       </div>
 
-      {/* Recap Chips: Scrollable single row of chips that filter by tipe */}
-      {tipeList.length > 0 && (
-        <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin text-xs">
-          <span className="text-slate font-semibold text-[11px] shrink-0 mr-1 flex items-center gap-1">
-            <Building2 className="w-3.5 h-3.5 text-prism-teal" />
-            <span>Tipe:</span>
-          </span>
-          {tipeList.map((t) => {
-            const count = t.jumlah_unit ?? t._count?.units ?? 0;
-            const isSelected = tipeFilter === t.id;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setTipeFilter(isSelected ? 0 : t.id)}
-                className={`px-2.5 py-1 rounded text-xs shrink-0 transition-all flex items-center gap-1.5 border ${
-                  isSelected
-                    ? "bg-deep-teal text-white border-deep-teal font-semibold shadow-xs"
-                    : "bg-white text-graphite border-mist hover:bg-bone"
-                }`}
-              >
-                <span className="font-mono">{t.nama_tipe}</span>
-                <span
-                  className={`font-mono text-[10px] px-1.5 py-0.2 rounded font-bold ${
-                    isSelected ? "bg-white/20 text-white" : "bg-bone text-deep-teal"
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-          <div className="px-2.5 py-1 rounded bg-bone border border-mist flex items-center gap-1.5 shrink-0 ml-auto">
-            <span className="text-[11px] text-slate">Total Unit:</span>
-            <span className="font-mono font-bold text-deep-teal">{summary.total}</span>
-          </div>
+      {/* ─── Tabs Navigation: Horizontal Scroll on Mobile ─── */}
+      <div className="border-b border-zinc-200 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex items-center gap-4 sm:gap-6 text-xs whitespace-nowrap min-w-max">
+          <button
+            type="button"
+            onClick={() => setActiveTab("units")}
+            className={`pb-2.5 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${activeTab === "units"
+              ? "border-zinc-900 text-zinc-900"
+              : "border-transparent text-zinc-500 hover:text-zinc-800"
+              }`}
+          >
+            <span>Daftar Unit</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-600 font-mono">
+              {totalUnits}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("types")}
+            className={`pb-2.5 font-medium border-b-2 transition-colors flex items-center gap-1.5 ${activeTab === "types"
+              ? "border-zinc-900 text-zinc-900"
+              : "border-transparent text-zinc-500 hover:text-zinc-800"
+              }`}
+          >
+            <span>Tipe Properti</span>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-600 font-mono">
+              {tipeList.length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("siteplan")}
+            className={`pb-2.5 font-medium border-b-2 transition-colors ${activeTab === "siteplan"
+              ? "border-zinc-900 text-zinc-900"
+              : "border-transparent text-zinc-500 hover:text-zinc-800"
+              }`}
+          >
+            <span>Siteplan Visual</span>
+          </button>
         </div>
-      )}
-
-      {/* Accessible Tabs Navigation */}
-      <div
-        role="tablist"
-        aria-label="Navigasi Master Unit"
-        className="flex items-center gap-2 border-b border-mist pt-1"
-      >
-        <button
-          id="tab-units"
-          role="tab"
-          type="button"
-          aria-selected={activeTab === "units"}
-          aria-controls="panel-units"
-          onClick={() => setActiveTab("units")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold border-b-2 transition-all outline-none focus-visible:ring-1 focus-visible:ring-prism-teal ${
-            activeTab === "units"
-              ? "border-prism-teal text-deep-teal bg-teal-50/40"
-              : "border-transparent text-slate hover:text-graphite hover:bg-bone/50"
-          }`}
-        >
-          <Layers className="w-4 h-4" />
-          <span>Daftar Blok / Unit</span>
-          <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-bone text-graphite font-mono">
-            {totalUnits}
-          </span>
-        </button>
-
-        <button
-          id="tab-types"
-          role="tab"
-          type="button"
-          aria-selected={activeTab === "types"}
-          aria-controls="panel-types"
-          onClick={() => setActiveTab("types")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold border-b-2 transition-all outline-none focus-visible:ring-1 focus-visible:ring-prism-teal ${
-            activeTab === "types"
-              ? "border-prism-teal text-deep-teal bg-teal-50/40"
-              : "border-transparent text-slate hover:text-graphite hover:bg-bone/50"
-          }`}
-        >
-          <Building2 className="w-4 h-4" />
-          <span>Tipe Unit</span>
-          <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-bone text-graphite font-mono">
-            {tipeList.length}
-          </span>
-        </button>
-
-        <button
-          id="tab-siteplan"
-          role="tab"
-          type="button"
-          aria-selected={activeTab === "siteplan"}
-          aria-controls="panel-siteplan"
-          onClick={() => setActiveTab("siteplan")}
-          className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold border-b-2 transition-all outline-none focus-visible:ring-1 focus-visible:ring-prism-teal ${
-            activeTab === "siteplan"
-              ? "border-prism-teal text-deep-teal bg-teal-50/40"
-              : "border-transparent text-slate hover:text-graphite hover:bg-bone/50"
-          }`}
-        >
-          <Map className="w-4 h-4" />
-          <span>Siteplan Visual</span>
-        </button>
       </div>
 
-      {/* Tab Panels */}
-      {/* Panel 1: Daftar Blok / Unit */}
+      {/* ─── Panels ─── */}
       {activeTab === "units" && (
-        <div id="panel-units" role="tabpanel" aria-labelledby="tab-units">
+        <div className="w-full">
           <MasterUnitTable
             units={units}
             tipeList={tipeList}
@@ -673,9 +539,8 @@ export function MasterUnitClient({
         </div>
       )}
 
-      {/* Panel 2: Tipe Unit */}
       {activeTab === "types" && (
-        <div id="panel-types" role="tabpanel" aria-labelledby="tab-types">
+        <div className="w-full">
           <MasterTipeTable
             data={tipeList}
             onEdit={handleEditTipe}
@@ -685,19 +550,18 @@ export function MasterUnitClient({
         </div>
       )}
 
-      {/* Panel 3: Siteplan Visual (Lazy loaded, independent of table pagination) */}
       {activeTab === "siteplan" && (
-        <div id="panel-siteplan" role="tabpanel" aria-labelledby="tab-siteplan">
+        <div className="w-full">
           {isSiteplanLoading && allSiteplanUnits === null ? (
-            <div className="bg-white rounded-lg border border-mist p-12 text-center text-xs text-slate space-y-3">
-              <div className="w-8 h-8 rounded-full border-2 border-prism-teal border-t-transparent animate-spin mx-auto" />
-              <p className="font-medium text-graphite">Memuat seluruh unit siteplan...</p>
+            <div className="p-8 sm:p-12 text-center text-xs text-zinc-500 border border-zinc-200 rounded-lg bg-white">
+              <RefreshCw className="w-4 h-4 animate-spin mx-auto mb-2 text-zinc-400" />
+              <p>Memuat peta interaktif siteplan...</p>
             </div>
           ) : (
             <UnitInventoryViewer
               units={allSiteplanUnits || []}
-              title="Siteplan Visual & Zonasi Master Unit"
-              subtitle="Tampilan visual tata letak blok kavling, perumahan subsidi, dan komersil"
+              title="Siteplan Visual &amp; Zonasi"
+              subtitle="Tata letak blok kavling, perumahan subsidi, dan komersil"
               hideHeader={true}
               showListView={false}
               onChangeTipe={isAdmin ? setChangingUnit : undefined}
@@ -706,7 +570,7 @@ export function MasterUnitClient({
         </div>
       )}
 
-      {/* Modal: Form Tambah/Edit Tipe */}
+      {/* Form Modal: Tipe */}
       <MasterTipeForm
         isOpen={isTipeModalOpen}
         initialData={editingTipe}
@@ -719,8 +583,7 @@ export function MasterUnitClient({
           setPresetKategori(undefined);
           setPresetLuasTanah(undefined);
         }}
-        onCreated={(createdTipe) => {
-          // If launched from ChangeTipeDrawer, reopen the drawer with this newly created tipe
+        onCreated={() => {
           if (pendingUnitForDrawer) {
             setChangingUnit(pendingUnitForDrawer);
             setPendingUnitForDrawer(null);
@@ -729,7 +592,7 @@ export function MasterUnitClient({
         onSuccess={handleFullRefresh}
       />
 
-      {/* Modal: Tambah Satu Unit */}
+      {/* Form Modal: Single Unit */}
       <MasterUnitForm
         isOpen={isUnitModalOpen}
         tipeList={tipeList}
