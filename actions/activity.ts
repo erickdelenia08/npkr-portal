@@ -29,7 +29,7 @@ export interface GlobalActivityItem {
   lead: {
     id: number;
     nama: string;
-    no_hp: string;
+    no_hp: string | null;
     marketing_id: number | null;
   };
 }
@@ -64,7 +64,7 @@ export interface SerializedItjSummary {
 export interface SerializedLeadDetail {
   id: number;
   nama: string;
-  no_hp: string;
+  no_hp: string | null;
   sumber: string;
   minat_tipe: string | null;
   tahap: LeadTahap;

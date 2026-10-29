@@ -59,7 +59,7 @@ const formatDate = (val: Date | string | null | undefined, options?: Intl.DateTi
 };
 
 /** Normalisasi nomor HP Indonesia -> format wa.me (62xxxxxxxx). */
-const formatWaLink = (noHp: string, nama: string): string => {
+const formatWaLink = (noHp: string | null, nama: string): string => {
   let clean = (noHp || "").replace(/\D/g, "");
   if (clean.startsWith("0")) clean = "62" + clean.slice(1);
   else if (clean.startsWith("8")) clean = "62" + clean;
@@ -265,7 +265,7 @@ export function LeadDetailClient({
               </div>
               <div className="flex items-center gap-2 mt-1 text-xs font-mono text-slate">
                 <Phone className="w-3.5 h-3.5" />
-                <span>{lead.no_hp}</span>
+                <span>{lead.no_hp || "-"}</span>
               </div>
             </div>
           </div>

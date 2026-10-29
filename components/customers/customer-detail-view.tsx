@@ -150,14 +150,18 @@ export function CustomerDetailView({
               </span>
               <div className="flex items-center gap-2 text-carbon-ink font-mono font-medium">
                 <Phone className="w-4 h-4 text-slate shrink-0" />
-                <a
-                  href={`https://wa.me/${customer.no_hp.replace(/\D/g, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-prism-teal hover:underline"
-                >
-                  {customer.no_hp}
-                </a>
+                {customer.no_hp ? (
+                  <a
+                    href={`https://wa.me/${customer.no_hp.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-prism-teal hover:underline"
+                  >
+                    {customer.no_hp}
+                  </a>
+                ) : (
+                  <span>—</span>
+                )}
               </div>
             </div>
 

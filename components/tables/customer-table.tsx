@@ -49,7 +49,7 @@ export function CustomerTable({
       return (
         c.nama_ktp.toLowerCase().includes(term) ||
         c.nik.toLowerCase().includes(term) ||
-        c.no_hp.toLowerCase().includes(term) ||
+        (c.no_hp ? c.no_hp.toLowerCase().includes(term) : false) ||
         (c.alamat_ktp && c.alamat_ktp.toLowerCase().includes(term))
       );
     });
@@ -161,7 +161,7 @@ export function CustomerTable({
                       <td className="px-4 py-3 whitespace-nowrap font-mono text-[11px] text-zinc-600">
                         <span className="inline-flex items-center gap-1.5">
                           <Phone className="w-3.5 h-3.5 text-zinc-400" />
-                          <span>{cust.no_hp}</span>
+                          <span>{cust.no_hp || "—"}</span>
                         </span>
                       </td>
 

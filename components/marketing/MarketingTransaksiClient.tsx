@@ -157,7 +157,7 @@ export function MarketingTransaksiClient({
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
         const matchCustomer = trx.customer.nama_ktp.toLowerCase().includes(q);
-        const matchPhone = trx.customer.no_hp.toLowerCase().includes(q);
+        const matchPhone = trx.customer.no_hp?.toLowerCase().includes(q) ?? false;
         const matchNik = trx.customer.nik.toLowerCase().includes(q);
         const matchBlok = trx.unit.blok.toLowerCase().includes(q);
         const matchTipe = trx.unit.tipe?.nama_tipe.toLowerCase().includes(q) ?? false;
@@ -347,7 +347,7 @@ export function MarketingTransaksiClient({
                         <span>•</span>
                         <span className="inline-flex items-center gap-1 text-zinc-700">
                           <Phone className="w-3 h-3 text-zinc-400" />
-                          {trx.customer.no_hp}
+                          {trx.customer.no_hp || "—"}
                         </span>
                       </div>
                     </div>

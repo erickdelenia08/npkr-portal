@@ -41,7 +41,7 @@ export interface SerializedCustomerListItem {
   id: number;
   nama_ktp: string;
   nik: string;
-  no_hp: string;
+  no_hp: string | null;
   alamat_ktp: string;
   tempat_lahir: string;
   tgl_lahir: string;
@@ -77,7 +77,7 @@ export interface SerializedCustomerDetail {
   tempat_lahir: string;
   tgl_lahir: string;
   alamat_ktp: string;
-  no_hp: string;
+  no_hp: string | null;
   created_at: string;
   updated_at: string;
   jumlah_unit: number;

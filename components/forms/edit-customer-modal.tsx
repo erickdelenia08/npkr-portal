@@ -26,7 +26,7 @@ export function EditCustomerModal({
   const [tempatLahir, setTempatLahir] = useState<string>(customer.tempat_lahir);
   const [tglLahir, setTglLahir] = useState<string>(customer.tgl_lahir);
   const [alamatKtp, setAlamatKtp] = useState<string>(customer.alamat_ktp);
-  const [noHp, setNoHp] = useState<string>(customer.no_hp);
+  const [noHp, setNoHp] = useState<string>(customer.no_hp || "");
   const [formError, setFormError] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 

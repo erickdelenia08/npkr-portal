@@ -1107,7 +1107,7 @@ export interface MarketingTransaksiItem {
   customer: {
     id: number;
     nama_ktp: string;
-    no_hp: string;
+    no_hp: string | null;
     nik: string;
   };
   unit: {

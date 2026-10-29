@@ -29,7 +29,7 @@ export interface SerializedManagerTransaksi {
   customer: {
     id: number;
     nama_ktp: string;
-    no_hp: string;
+    no_hp: string | null;
     nik: string;
     alamat_ktp?: string;
   };
@@ -238,7 +238,7 @@ export function ManagerTransaksiTable({ data }: ManagerTransaksiTableProps) {
                             {trx.customer.nama_ktp}
                           </span>
                           <span className="text-[11px] font-mono text-zinc-400 mt-0.5">
-                            {trx.customer.no_hp}
+                            {trx.customer.no_hp || "—"}
                           </span>
                         </div>
                       </td>
