@@ -101,18 +101,21 @@ describe("Document Rules Matrix SSOT", () => {
 
     expect(result.isProfileComplete).toBe(true);
     if (result.isProfileComplete) {
+      const allDocKeys = result.documents.map((d) => d.key);
       const requiredKeys = result.documents.filter((d) => d.required).map((d) => d.key);
 
       expect(requiredKeys).toContain("KTP_PEMOHON");
       expect(requiredKeys).toContain("KARTU_KELUARGA");
       expect(requiredKeys).toContain("NPWP");
-      expect(requiredKeys).toContain("AKTA_CERAI");
+      // Marital documents are included in checklist but optional for Cash
+      expect(allDocKeys).toContain("AKTA_CERAI");
+      expect(result.documents.find((d) => d.key === "AKTA_CERAI")?.required).toBe(false);
 
       // No income docs for cash
-      expect(requiredKeys).not.toContain("SLIP_GAJI");
-      expect(requiredKeys).not.toContain("SURAT_KET_KERJA");
-      expect(requiredKeys).not.toContain("REKENING_KORAN");
-      expect(requiredKeys).not.toContain("SKU_WIRAUSAHA");
+      expect(allDocKeys).not.toContain("SLIP_GAJI");
+      expect(allDocKeys).not.toContain("SURAT_KET_KERJA");
+      expect(allDocKeys).not.toContain("REKENING_KORAN");
+      expect(allDocKeys).not.toContain("SKU_WIRAUSAHA");
     }
   });
 

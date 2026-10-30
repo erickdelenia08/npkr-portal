@@ -1272,7 +1272,7 @@ export function DynamicActionPanel({
                     <UserCheck className="h-4 w-4 text-teal-700 shrink-0" />
                     <span className="text-xs text-slate-600 font-medium">Profil Konsumen:</span>
                     <span className="text-xs font-bold text-slate-900">
-                      {metodeBayar === "KPR" ? "KPR" : humanize(metodeBayar)} · {humanize(kategoriUnit)} ·{" "}
+                      {/* {metodeBayar === "KPR" ? "KPR" : humanize(metodeBayar)} · {humanize(kategoriUnit)} ·{" "} */}
                       {statusPernikahan ? humanize(statusPernikahan) : (isKpr ? "Pernikahan (?)" : "Pernikahan (-)")} ·{" "}
                       {statusPekerjaan ? (statusPekerjaan === "TETAP" ? "Pegawai Tetap" : "Wirausaha") : (isKpr ? "Pekerjaan (?)" : "Pekerjaan (-)")}
                     </span>
@@ -1333,8 +1333,8 @@ export function DynamicActionPanel({
                       <p className="text-xs text-slate-600">
                         Centang berkas yang telah diverifikasi fisik dan validitasnya.
                       </p>
-                      <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800">
-                        {verifiedRequiredCount} dari {requiredDocs.length} Wajib Terverifikasi
+                      <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 text-nowrap">
+                        {verifiedRequiredCount} dari {requiredDocs.length} <span className="md:block hidden">Wajib Terverifikasi</span>
                       </span>
                     </div>
 

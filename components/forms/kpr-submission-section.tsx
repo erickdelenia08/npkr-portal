@@ -327,7 +327,7 @@ export function KprSubmissionSection({
   };
 
   return (
-    <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+    <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 sm:p-4">
       {/* ─── 1. HEADER RINGKASAN PENGAJUAN BANK ─── */}
       {!hideHeader && (
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
@@ -678,7 +678,7 @@ export function KprSubmissionSection({
               <Send className="h-4 w-4 text-teal-700" aria-hidden="true" />
               Ajukan KPR ke Bank
             </h4>
-            <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900">
+            <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 sm:block hidden">
               Belum ada pengajuan aktif
             </span>
           </div>

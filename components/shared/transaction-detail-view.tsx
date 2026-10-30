@@ -138,12 +138,12 @@ export async function TransactionDetailView({
     await prisma.bank.createMany({
       data: [
         { nama: "Bank BTN", kode: "BTN" },
-        { nama: "Bank BTN Syariah", kode: "BTNS" },
-        { nama: "Bank BSI (Bank Syariah Indonesia)", kode: "BSI" },
-        { nama: "Bank Mandiri", kode: "MANDIRI" },
+        // { nama: "Bank BTN Syariah", kode: "BTNS" },
+        // { nama: "Bank BSI (Bank Syariah Indonesia)", kode: "BSI" },
+        // { nama: "Bank Mandiri", kode: "MANDIRI" },
         { nama: "Bank BRI", kode: "BRI" },
         { nama: "Bank BNI", kode: "BNI" },
-        { nama: "Bank BCA", kode: "BCA" },
+        // { nama: "Bank BCA", kode: "BCA" },
       ],
       skipDuplicates: true,
     });

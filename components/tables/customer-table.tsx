@@ -66,12 +66,12 @@ export function CustomerTable({
           </span>
         </div>
 
-        <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
+        {/* <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
           <span className="text-[11px] font-medium text-zinc-500 block">Repeat Buyer (&gt; 1 Unit)</span>
           <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
             {repeatBuyersCount}
           </span>
-        </div>
+        </div> */}
 
         <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
           <span className="text-[11px] font-medium text-zinc-500 block">Total Unit Terikat</span>

@@ -14,6 +14,8 @@ import {
   changeTipeBulkSchema,
   ChangeTipeBulkInput,
   setupUnitsBatchSchema,
+  updateMasterUnitStatusSchema,
+  UpdateMasterUnitStatusInput,
 } from "@/schemas/master-unit.schema";
 import { Prisma } from "@/generated/prisma";
 import { buildNamaTipe, parseBlok } from "@/lib/tipe-name";
@@ -507,17 +509,26 @@ export interface SerializedUnitTipeLog {
 
 /**
  * Smart Lock Guard: Checks whether a unit is locked by active ITJ or active Transaksi.
+ * Considers both:
+ * 1. Standalone active ITJ or ITJ with non-BATAL transaction
+ * 2. Active or completed transactions (not BATAL and not cancelled)
  */
 export async function checkUnitIsLocked(unitId: number): Promise<boolean> {
   const [activeItjCount, activeTrxCount] = await Promise.all([
     prisma.itj.count({
       where: {
         unit_id: unitId,
-        transaksi: {
-          is: {
-            status_transaksi: { not: "BATAL" },
+        OR: [
+          { transaksi: null },
+          {
+            transaksi: {
+              is: {
+                status_transaksi: { not: "BATAL" },
+                cancelled_at: null,
+              },
+            },
           },
-        },
+        ],
       },
     }),
     prisma.transaksi.count({
@@ -530,6 +541,72 @@ export async function checkUnitIsLocked(unitId: number): Promise<boolean> {
   ]);
 
   return activeItjCount > 0 || activeTrxCount > 0;
+}
+
+/**
+ * Detailed transaction binding inspection within an active Prisma transaction client.
+ * Returns clear, human-readable reasons if the unit is bound.
+ */
+export async function checkUnitTransactionBinding(
+  tx: Prisma.TransactionClient,
+  unitId: number
+): Promise<{ isBound: boolean; reason?: string }> {
+  // 1. Check for active or completed transactions (status !== BATAL and cancelled_at === null)
+  const bindingTransaksi = await tx.transaksi.findFirst({
+    where: {
+      unit_id: unitId,
+      status_transaksi: { not: "BATAL" },
+      cancelled_at: null,
+    },
+    select: {
+      id: true,
+      status_transaksi: true,
+      tahap_detail: true,
+      customer: { select: { nama_ktp: true } },
+    },
+  });
+
+  if (bindingTransaksi) {
+    const isDone = bindingTransaksi.status_transaksi === "SERAH_TERIMA";
+    const stageDesc = isDone
+      ? "transaksi selesai (Serah Terima / BAST)"
+      : `transaksi aktif tahap ${bindingTransaksi.status_transaksi.replace(/_/g, " ")}`;
+    return {
+      isBound: true,
+      reason: `Unit terikat dengan ${stageDesc} (ID: #${bindingTransaksi.id} a.n. ${bindingTransaksi.customer?.nama_ktp || "Konsumen"}).`,
+    };
+  }
+
+  // 2. Check for active ITJ (standalone ITJ without transaksi, or ITJ with non-BATAL transaksi)
+  const bindingItj = await tx.itj.findFirst({
+    where: {
+      unit_id: unitId,
+      OR: [
+        { transaksi: null },
+        {
+          transaksi: {
+            is: {
+              status_transaksi: { not: "BATAL" },
+              cancelled_at: null,
+            },
+          },
+        },
+      ],
+    },
+    select: {
+      id: true,
+      nama_ktp: true,
+    },
+  });
+
+  if (bindingItj) {
+    return {
+      isBound: true,
+      reason: `Unit terikat dengan pengajuan ITJ aktif (ID: #${bindingItj.id} a.n. ${bindingItj.nama_ktp}).`,
+    };
+  }
+
+  return { isBound: false };
 }
 
 /**
@@ -656,11 +733,17 @@ export async function getMasterUnits(
           tipe: true,
           itj: {
             where: {
-              transaksi: {
-                is: {
-                  status_transaksi: { not: "BATAL" },
+              OR: [
+                { transaksi: null },
+                {
+                  transaksi: {
+                    is: {
+                      status_transaksi: { not: "BATAL" },
+                      cancelled_at: null,
+                    },
+                  },
                 },
-              },
+              ],
             },
             select: { id: true },
             take: 1,
@@ -732,11 +815,17 @@ export async function getAllMasterUnits(): Promise<ActionResponse<SerializedMast
         tipe: true,
         itj: {
           where: {
-            transaksi: {
-              is: {
-                status_transaksi: { not: "BATAL" },
+            OR: [
+              { transaksi: null },
+              {
+                transaksi: {
+                  is: {
+                    status_transaksi: { not: "BATAL" },
+                    cancelled_at: null,
+                  },
+                },
               },
-            },
+            ],
           },
           select: { id: true },
           take: 1,
@@ -1626,6 +1715,115 @@ export async function updateUnitHargaKhusus(
     };
   } catch (error: unknown) {
     return handleActionError(error, "Gagal mengatur harga khusus");
+  }
+}
+
+/**
+ * Update unit status manually by ADMIN.
+ * Rules:
+ * - ADMIN authority only (enforceAdminRole).
+ * - Full freedom across all 4 statuses: AVAILABLE, HOLD, BOOKED, SOLD.
+ * - Allowed IF AND ONLY IF the unit has no active transaction or binding ITJ.
+ * - Concurrency protection: optimistic lock via updateMany({ where: { id, status_unit: currentStatus } }).
+ * - Idempotency: if target status == current status, returns cleanly without writing DB.
+ * - Does not alter tipe_id, blok, harga_khusus, or any other unit attributes.
+ */
+export async function updateMasterUnitStatus(
+  input: UpdateMasterUnitStatusInput
+): Promise<ActionResponse<SerializedMasterUnit>> {
+  try {
+    await enforceAdminRole();
+
+    const parsed = updateMasterUnitStatusSchema.safeParse(input);
+    if (!parsed.success) {
+      throw new BusinessError(
+        parsed.error.issues[0]?.message ?? "Input perubahan status tidak valid."
+      );
+    }
+
+    const { unitId, newStatus } = parsed.data;
+
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Fetch current unit
+      const unit = await tx.masterUnit.findUnique({
+        where: { id: unitId },
+        include: { tipe: true },
+      });
+
+      if (!unit) {
+        throw new BusinessError("Unit tidak ditemukan di database.");
+      }
+
+      // 2. If status is already the requested status, return early without DB write
+      if (unit.status_unit === newStatus) {
+        return { unit, noChange: true };
+      }
+
+      // 3. Strict transaction binding check
+      const binding = await checkUnitTransactionBinding(tx, unitId);
+      if (binding.isBound) {
+        throw new BusinessError(
+          binding.reason ?? "Status unit tidak dapat diubah karena sedang terikat transaksi."
+        );
+      }
+
+      // 4. Atomic conditional update to guard against race conditions
+      const updateResult = await tx.masterUnit.updateMany({
+        where: {
+          id: unitId,
+          status_unit: unit.status_unit,
+        },
+        data: {
+          status_unit: newStatus,
+        },
+      });
+
+      if (updateResult.count !== 1) {
+        throw new BusinessError(
+          "Gagal memperbarui status: Kondisi unit telah berubah bersamaan oleh proses lain. Silakan muat ulang halaman."
+        );
+      }
+
+      const finalUnit = await tx.masterUnit.findUniqueOrThrow({
+        where: { id: unitId },
+        include: { tipe: true },
+      });
+
+      return { unit: finalUnit, noChange: false };
+    });
+
+    revalidatePath("/admin/master-unit");
+    revalidatePath("/manager/unit");
+    revalidatePath("/marketing/unit");
+
+    const serialized: SerializedMasterUnit = {
+      id: result.unit.id,
+      tipe_id: result.unit.tipe_id,
+      blok: result.unit.blok,
+      blok_prefix: result.unit.blok_prefix,
+      blok_nomor: result.unit.blok_nomor,
+      status_unit: result.unit.status_unit,
+      harga_khusus: result.unit.harga_khusus ? Number(result.unit.harga_khusus) : null,
+      isLocked: false,
+      tipe: {
+        id: result.unit.tipe.id,
+        nama_tipe: result.unit.tipe.nama_tipe,
+        kategori: result.unit.tipe.kategori,
+        luas_bangunan: result.unit.tipe.luas_bangunan,
+        luas_tanah: result.unit.tipe.luas_tanah,
+        harga_dasar: Number(result.unit.tipe.harga_dasar),
+      },
+    };
+
+    return {
+      success: true,
+      message: result.noChange
+        ? `Status unit ${result.unit.blok} sudah berstatus '${newStatus}'.`
+        : `Status unit ${result.unit.blok} berhasil diubah menjadi '${newStatus}'.`,
+      data: serialized,
+    };
+  } catch (error: unknown) {
+    return handleActionError(error, "Gagal mengubah status unit");
   }
 }
 

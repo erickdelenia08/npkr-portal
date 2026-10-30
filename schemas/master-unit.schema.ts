@@ -118,3 +118,14 @@ export const updateHargaKhususSchema = z.object({
 });
 
 export type UpdateHargaKhususInput = z.infer<typeof updateHargaKhususSchema>;
+
+/**
+ * Validation schema for manual status change by ADMIN
+ */
+export const updateMasterUnitStatusSchema = z.object({
+  unitId: z.number().int().positive("ID unit tidak valid"),
+  newStatus: StatusUnitEnum,
+});
+
+export type UpdateMasterUnitStatusInput = z.infer<typeof updateMasterUnitStatusSchema>;
+

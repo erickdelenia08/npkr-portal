@@ -434,13 +434,12 @@ export function SetupWizardClient({
                   if (item.step === 1) setCurrentStep(1);
                   if (item.step === 2) setCurrentStep(2);
                 }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-                  currentStep === item.step
-                    ? "bg-prism-teal text-white shadow-xs"
-                    : currentStep > item.step
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${currentStep === item.step
+                  ? "bg-prism-teal text-white shadow-xs"
+                  : currentStep > item.step
                     ? "bg-teal-50 text-deep-teal hover:bg-teal-100/70"
                     : "bg-bone text-slate opacity-60"
-                }`}
+                  }`}
               >
                 <span>{item.label}</span>
               </button>
@@ -549,13 +548,12 @@ export function SetupWizardClient({
                             </td>
                             <td className="px-4 py-2.5">
                               <span
-                                className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                                  t.kategori === "SUBSIDI"
-                                    ? "bg-amber-100 text-amber-800"
-                                    : t.kategori === "KOMERSIL"
+                                className={`px-2 py-0.5 rounded text-[10px] font-semibold ${t.kategori === "SUBSIDI"
+                                  ? "bg-amber-100 text-amber-800"
+                                  : t.kategori === "KOMERSIL"
                                     ? "bg-teal-100 text-teal-800"
                                     : "bg-slate-200 text-slate-800"
-                                }`}
+                                  }`}
                               >
                                 {t.kategori}
                               </span>
@@ -605,7 +603,7 @@ export function SetupWizardClient({
               {/* Optional Excel Paste bar & Plot Helper */}
               <div className="flex flex-wrap items-center justify-between gap-3 bg-teal-50/50 border border-teal-200/80 rounded-lg p-3.5">
                 <div className="flex items-center gap-2 text-xs text-deep-teal">
-                  <Sparkles className="w-4 h-4 text-prism-teal" />
+                  {/* <Sparkles className="w-4 h-4 text-prism-teal" /> */}
                   <span>
                     Atur rentang nomor blok per baris. Tanda hubung &apos;-&apos; otomatis ditambahkan pada prefix.
                   </span>
@@ -664,9 +662,8 @@ export function SetupWizardClient({
                         return (
                           <tr
                             key={row.id}
-                            className={`hover:bg-bone/20 transition-colors ${
-                              hasRowError ? "bg-rose-50/40" : ""
-                            }`}
+                            className={`hover:bg-bone/20 transition-colors ${hasRowError ? "bg-rose-50/40" : ""
+                              }`}
                           >
                             {/* Prefix */}
                             <td className="px-3 py-2">
@@ -767,11 +764,10 @@ export function SetupWizardClient({
                             {/* Jumlah Unit */}
                             <td className="px-3 py-2 text-center">
                               <span
-                                className={`inline-block px-2 py-0.5 rounded font-mono font-bold text-xs ${
-                                  count > 0
-                                    ? "bg-teal-50 text-deep-teal border border-teal-200"
-                                    : "bg-bone text-slate"
-                                }`}
+                                className={`inline-block px-2 py-0.5 rounded font-mono font-bold text-xs ${count > 0
+                                  ? "bg-teal-50 text-deep-teal border border-teal-200"
+                                  : "bg-bone text-slate"
+                                  }`}
                               >
                                 {count}
                               </span>
@@ -818,7 +814,7 @@ export function SetupWizardClient({
 
                   <div className="flex items-center gap-3 text-xs">
                     <span className="text-slate">Total Unit yang Dihasilkan:</span>
-                    <span className="font-mono font-bold text-sm text-deep-teal bg-teal-100/70 px-2.5 py-0.5 rounded border border-teal-200">
+                    <span className="font-mono font-bold text-xs text-deep-teal bg-teal-100/70 px-2.5 py-0.5 rounded border border-teal-200">
                       {parsedRows.totalBloks} Unit
                     </span>
                   </div>
@@ -990,9 +986,8 @@ export function SetupWizardClient({
                                   {rc.count} Unit
                                 </span>
                                 <ChevronDown
-                                  className={`w-4 h-4 text-slate transition-transform ${
-                                    isExpanded ? "rotate-180" : ""
-                                  }`}
+                                  className={`w-4 h-4 text-slate transition-transform ${isExpanded ? "rotate-180" : ""
+                                    }`}
                                 />
                               </div>
                             </button>

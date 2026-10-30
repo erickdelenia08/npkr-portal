@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Clock,
   Ban,
+  Repeat2,
 } from "lucide-react";
 import { SerializedCustomerDetail } from "@/actions/customer.action";
 import { EditCustomerModal } from "@/components/forms/edit-customer-modal";
@@ -77,9 +78,11 @@ export function CustomerDetailView({
         </Link>
 
         {isRepeatBuyer && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs">
-            <Sparkles className="w-3.5 h-3.5 text-purple-600" />
-            <span>REPEAT BUYER ({customer.jumlah_unit} Unit Dimiliki)</span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200 shadow-2xs">
+            <Repeat2 className="w-3.5 h-3.5 text-purple-600" />
+            <span>Repeat Buyer
+              {/* ({customer.jumlah_unit} Unit Dimiliki) */}
+            </span>
           </span>
         )}
       </div>
@@ -199,7 +202,7 @@ export function CustomerDetailView({
               </p>
             </div>
 
-            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-bone text-graphite font-mono">
+            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-bone text-graphite font-mono md:block hidden">
               {customer.transaksi.length} Transaksi
             </span>
           </div>
@@ -262,8 +265,8 @@ export function CustomerDetailView({
                             {t.metode_bayar === "CASH_KERAS"
                               ? "Cash Keras"
                               : t.metode_bayar === "CASH_TEMPO"
-                              ? "Cash Tempo"
-                              : "KPR"}
+                                ? "Cash Tempo"
+                                : "KPR"}
                           </span>
                         </div>
 

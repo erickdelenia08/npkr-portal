@@ -23,16 +23,16 @@ export interface DocumentRulesParams {
 
 export type DocumentRulesResult =
   | {
-      isProfileComplete: true;
-      missingFields: [];
-      documents: DocumentRuleItem[];
-    }
+    isProfileComplete: true;
+    missingFields: [];
+    documents: DocumentRuleItem[];
+  }
   | {
-      isProfileComplete: false;
-      missingFields: Array<"status_pernikahan" | "status_pekerjaan">;
-      message: string;
-      documents: DocumentRuleItem[];
-    };
+    isProfileComplete: false;
+    missingFields: Array<"status_pernikahan" | "status_pekerjaan">;
+    message: string;
+    documents: DocumentRuleItem[];
+  };
 
 /**
  * DEFAULT DOCUMENT REQUIREMENT MATRIX

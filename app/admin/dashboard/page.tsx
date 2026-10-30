@@ -281,14 +281,14 @@ export default async function AdminDashboardPage() {
                           </span>
                         </td>
                         <td className="py-3 px-3">
-                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700">
+                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700 text-nowrap">
                             {itj.unitBlok}
                           </span>
                         </td>
                         <td className="py-3 px-3 text-right font-medium tabular-nums text-slate-900">
                           {formatPrice(itj.nominal)}
                         </td>
-                        <td className="py-3 px-3 text-xs text-slate-500">
+                        <td className="py-3 px-3 text-xs text-slate-500 text-nowrap">
                           {itj.diajukanAt}
                         </td>
                         <td className="py-3 px-4 text-center">
@@ -457,14 +457,14 @@ export default async function AdminDashboardPage() {
                           key={kpr.id}
                           className="hover:bg-slate-50 transition-colors"
                         >
-                          <td className="py-3 px-4 font-bold text-carbon-ink">
+                          <td className="py-3 px-4 font-bold text-carbon-ink text-nowrap">
                             {kpr.bankNama}
                           </td>
                           <td className="py-3 px-3 font-semibold text-graphite">
                             {kpr.customerNama}
                           </td>
                           <td className="py-3 px-3">
-                            <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700">
+                            <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700 text-nowrap">
                               {kpr.unitBlok}
                             </span>
                           </td>
