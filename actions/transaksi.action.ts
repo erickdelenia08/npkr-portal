@@ -697,9 +697,11 @@ export async function updateTransactionStatus(
           throw new Error(`Pemberkasan belum lengkap: ${docEvaluation.message}`);
         }
 
-        const requiredDocs = docEvaluation.documents.filter((d) => d.required);
+        const requiredDocs = docEvaluation.documents.filter(
+          (d) => d.required && !d.bisaMenyusul
+        );
         const missingRequiredDocs = requiredDocs.filter((doc) => {
-          if (doc.key === "KTP_PEMOHON") {
+          if (doc.key === "KTP_PEMOHON" || doc.key === "KTP_SUAMI_ISTRI") {
             return !verifiedDocKeys.has("KTP_PEMOHON") && !verifiedDocKeys.has("KTP_SUAMI_ISTRI");
           }
           return !verifiedDocKeys.has(doc.key);

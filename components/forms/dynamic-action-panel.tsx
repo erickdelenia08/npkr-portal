@@ -445,11 +445,33 @@ export function DynamicActionPanel({
   const ruleDocs = ruleResult.documents;
 
   const requiredDocs = useMemo(() => ruleDocs.filter((d) => d.required), [ruleDocs]);
+  const blockingRequiredDocs = useMemo(
+    () => ruleDocs.filter((d) => d.required && !d.bisaMenyusul),
+    [ruleDocs]
+  );
   const verifiedRequiredCount = useMemo(
     () => requiredDocs.filter((d) => isDokumenTerverifikasi(d.key, verifiedDocs)).length,
     [requiredDocs, verifiedDocs]
   );
-  const allRequiredVerified = isProfileComplete && verifiedRequiredCount >= requiredDocs.length;
+  const verifiedBlockingCount = useMemo(
+    () => blockingRequiredDocs.filter((d) => isDokumenTerverifikasi(d.key, verifiedDocs)).length,
+    [blockingRequiredDocs, verifiedDocs]
+  );
+  const allRequiredVerified = isProfileComplete && verifiedBlockingCount >= blockingRequiredDocs.length;
+
+  const groupedDocs = useMemo(() => {
+    const groups: { name: string; items: typeof ruleDocs }[] = [];
+    ruleDocs.forEach((doc) => {
+      const gName = doc.group || "Lainnya";
+      let existing = groups.find((g) => g.name === gName);
+      if (!existing) {
+        existing = { name: gName, items: [] };
+        groups.push(existing);
+      }
+      existing.items.push(doc);
+    });
+    return groups;
+  }, [ruleDocs]);
 
   // ---------- Stage Identifiers ----------
   const isPemberkasan = currentStage.macro === "PEMBERKASAN";
@@ -1328,55 +1350,95 @@ export function DynamicActionPanel({
                   </div>
                 ) : (
                   /* Rule-based Checklist */
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs text-slate-600">
-                        Centang berkas yang telah diverifikasi fisik dan validitasnya.
-                      </p>
-                      <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 text-nowrap">
-                        {verifiedRequiredCount} dari {requiredDocs.length} <span className="md:block hidden">Wajib Terverifikasi</span>
-                      </span>
+                  <div className="space-y-4">
+                    <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-xs font-medium text-slate-800">
+                            Centang berkas yang telah diverifikasi fisik dan validitasnya.
+                          </p>
+                          {isKpr && (
+                            <p className="text-[11px] text-slate-500">
+                              Form FPPA berstatus <span className="font-semibold text-amber-700">Bisa menyusul</span> (tidak menghalangi pengajuan KPR awal).
+                            </p>
+                          )}
+                        </div>
+                        <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 text-nowrap self-start sm:self-auto">
+                          {verifiedRequiredCount} dari {requiredDocs.length} Dokumen Terverifikasi
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                      {ruleDocs.map((doc) => {
-                        const checked = isDokumenTerverifikasi(doc.key, verifiedDocs);
-                        const id = `doc-${doc.key}`;
+                    <div className="space-y-4">
+                      {groupedDocs.map((grp) => (
+                        <div key={grp.name} className="space-y-2">
+                          <div className="flex items-center gap-2 pt-1 pb-0.5">
+                            <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                              {grp.name}
+                            </h5>
+                            <div className="h-px flex-1 bg-slate-200" />
+                          </div>
 
-                        return (
-                          <label
-                            key={doc.key}
-                            htmlFor={id}
-                            className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${checked
-                              ? "border-teal-300 bg-teal-50/50"
-                              : "border-slate-200 bg-white hover:bg-slate-50"
-                              }`}
-                          >
-                            <input
-                              id={id}
-                              type="checkbox"
-                              checked={checked}
-                              disabled={!canEdit || isPending}
-                              onChange={() => handleToggleDoc(doc.key, checked)}
-                              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
-                            />
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <span className="font-semibold text-slate-900">{doc.label}</span>
-                                {doc.required ? (
-                                  <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-bold text-rose-700 border border-rose-200">
-                                    Wajib
-                                  </span>
-                                ) : (
-                                  <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">
-                                    Opsional
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </label>
-                        );
-                      })}
+                          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                            {grp.items.map((doc) => {
+                              const checked = isDokumenTerverifikasi(doc.key, verifiedDocs);
+                              const id = `doc-${doc.key}`;
+
+                              return (
+                                <label
+                                  key={doc.key}
+                                  htmlFor={id}
+                                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${checked
+                                    ? "border-teal-300 bg-teal-50/50"
+                                    : "border-slate-200 bg-white hover:bg-slate-50"
+                                    }`}
+                                >
+                                  <input
+                                    id={id}
+                                    type="checkbox"
+                                    checked={checked}
+                                    disabled={!canEdit || isPending}
+                                    onChange={() => handleToggleDoc(doc.key, checked)}
+                                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
+                                  />
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <span className="font-semibold text-slate-900">{doc.label}</span>
+                                      {doc.bisaMenyusul ? (
+                                        <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200">
+                                          Bisa menyusul
+                                        </span>
+                                      ) : doc.required ? (
+                                        <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-bold text-rose-700 border border-rose-200">
+                                          Wajib
+                                        </span>
+                                      ) : (
+                                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">
+                                          Opsional
+                                        </span>
+                                      )}
+                                      {checked ? (
+                                        <span className="rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800">
+                                          Terverifikasi
+                                        </span>
+                                      ) : (
+                                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+                                          Belum verifikasi
+                                        </span>
+                                      )}
+                                    </div>
+                                    {doc.description && (
+                                      <p className="mt-1 text-[11px] text-slate-500 line-clamp-2">
+                                        {doc.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
                     {/* CTA Area for Pemberkasan */}
@@ -1392,7 +1454,7 @@ export function DynamicActionPanel({
                           disabledNew={!allRequiredVerified}
                           disabledNewReason={
                             !allRequiredVerified
-                              ? `Lengkapi dan verifikasi seluruh ${requiredDocs.length} dokumen wajib di atas sebelum mengajukan berkas ke Bank.`
+                              ? `Lengkapi dan verifikasi seluruh ${blockingRequiredDocs.length} dokumen wajib di atas (selain FPPA) sebelum mengajukan berkas ke Bank.`
                               : undefined
                           }
                         />
