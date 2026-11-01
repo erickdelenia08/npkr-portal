@@ -350,7 +350,12 @@ export async function getTransactionHistory(
       select: {
         id: true,
         pic_id: true,
-        itj: { select: { lead_id: true, closer_id: true } },
+        itj: {
+          select: {
+            lead_id: true,
+            closer_id: true,
+          },
+        },
       },
     });
 
@@ -537,23 +542,23 @@ export async function getLeadHistory(
 export interface GlobalActivityItem {
   id: number;
   lead_id: number;
-  user_id: number;
-  jenis: JenisAktivitas;
-  hasil: HasilAktivitas;
-  catatan: string | null;
-  tgl_follow_up: Date | null;
-  created_at: Date;
-  user: {
-    id: number;
-    nama: string;
-    role: string;
-  };
-  lead: {
-    id: number;
-    nama: string;
-    no_hp: string | null;
-    marketing_id: number | null;
-  };
+user_id: number;
+jenis: JenisAktivitas;
+hasil: HasilAktivitas;
+catatan: string | null;
+tgl_follow_up: Date | null;
+created_at: Date;
+user: {
+  id: number;
+  nama: string;
+  role: string;
+};
+lead: {
+  id: number;
+  nama: string;
+  no_hp: string | null;
+  marketing_id: number | null;
+};
 }
 
 export interface SerializedAktivitas {
