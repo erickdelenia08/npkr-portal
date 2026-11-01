@@ -20,6 +20,8 @@ import { PembayaranModal } from "@/components/forms/pembayaran-modal";
 import { DynamicActionPanel } from "@/components/forms/dynamic-action-panel";
 import { QuickPrintActions } from "@/components/forms/quick-print-actions";
 import { HandoverDialog } from "@/components/forms/handover-dialog";
+import { getTransactionHistory } from "@/actions/activity";
+import { TransactionAuditTrail } from "@/components/shared/transaction-audit-trail";
 
 export interface TransactionDetailViewProps {
   trxId: number;
@@ -133,6 +135,9 @@ export async function TransactionDetailView({
       orderBy: { nama: "asc" },
     });
   }
+
+  const historyRes = await getTransactionHistory(transaksi.id);
+  const auditLogs = historyRes.success && historyRes.data ? historyRes.data : [];
 
   // Currency & Date formatters
   const formatCurrency = (val: number): string =>
@@ -583,6 +588,12 @@ export async function TransactionDetailView({
           sisaDp,
           lastPaymentDate,
         }}
+      />
+
+      {/* ─── 5. AUDIT TRAIL / RIWAYAT AKTIVITAS ─── */}
+      <TransactionAuditTrail
+        logs={auditLogs}
+        transaksiId={transaksi.id}
       />
     </div>
   );

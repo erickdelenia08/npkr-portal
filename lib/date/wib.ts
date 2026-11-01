@@ -262,3 +262,29 @@ export function formatTimestampWIB(
     minute: "2-digit",
   }).format(d);
 }
+
+/**
+ * Returns relative time badge text ("X jam lalu", "X mnt lalu", "Baru saja") ONLY if the date is today in WIB.
+ * Returns null if the date is from another day.
+ */
+export function relativeTimeTodayWIB(
+  date: Date | string | null | undefined
+): string | null {
+  if (!date) return null;
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return null;
+
+  const dateDay = toWibDay(d);
+  const today = todayWIB();
+  if (dateDay !== today) return null;
+
+  const diffMs = Date.now() - d.getTime();
+  if (diffMs < 0) return "Baru saja";
+
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  if (diffMins < 1) return "Baru saja";
+  if (diffMins < 60) return `${diffMins} mnt lalu`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  return `${diffHours} jam lalu`;
+}
