@@ -2,6 +2,7 @@ import React from "react";
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import {
   TransaksiTable,
   type SerializedTransaksi,
@@ -24,7 +25,7 @@ export default async function AdminTransaksiPage() {
           tipe: true,
         },
       },
-      marketing: {
+      pic: {
         select: {
           id: true,
           nama: true,
@@ -32,57 +33,74 @@ export default async function AdminTransaksiPage() {
         },
       },
       pembayaran: true,
+      pengajuan_kpr: {
+        select: {
+          status: true,
+          bank: {
+            select: {
+              nama: true,
+            },
+          },
+        },
+      },
     },
     orderBy: { created_at: "desc" },
   });
 
-  const serialized: SerializedTransaksi[] = transaksi.map((trx) => ({
-    id: trx.id,
-    customer_id: trx.customer_id,
-    unit_id: trx.unit_id,
-    marketing_id: trx.marketing_id,
-    metode_bayar: trx.metode_bayar,
-    harga_deal: Number(trx.harga_deal),
-    target_itj: Number(trx.target_itj),
-    target_dp: Number(trx.target_dp),
-    tenor_bulan: trx.tenor_bulan,
-    status_transaksi: trx.status_transaksi,
-    nama_bank: trx.nama_bank,
-    nama_notaris: trx.nama_notaris,
-    tgl_akad: trx.tgl_akad ? trx.tgl_akad.toISOString() : null,
-    tgl_bast: trx.tgl_bast ? trx.tgl_bast.toISOString() : null,
-    catatan_admin: trx.catatan_admin,
-    created_at: trx.created_at.toISOString(),
-    updated_at: trx.updated_at.toISOString(),
-    customer: {
-      id: trx.customer.id,
-      nama_ktp: trx.customer.nama_ktp,
-      no_hp: trx.customer.no_hp,
-      nik: trx.customer.nik,
-    },
-    unit: {
-      id: trx.unit.id,
-      blok: trx.unit.blok,
-      tipe: {
-        id: trx.unit.tipe.id,
-        nama_tipe: trx.unit.tipe.nama_tipe,
-        kategori: trx.unit.tipe.kategori,
+  const serialized: SerializedTransaksi[] = transaksi.map((trx) => {
+    const activeKpr = trx.pengajuan_kpr?.find(
+      (p) => p.status !== "DITOLAK" && p.status !== "DIBATALKAN"
+    );
+    const namaBank = activeKpr?.bank?.nama ?? null;
+
+    return {
+      id: trx.id,
+      customer_id: trx.customer_id,
+      unit_id: trx.unit_id,
+      marketing_id: trx.pic_id,
+      metode_bayar: trx.metode_bayar,
+      harga_deal: Number(trx.harga_deal),
+      target_itj: Number(trx.target_itj),
+      target_dp: Number(trx.target_dp),
+      tenor_bulan: trx.tenor_bulan,
+      status_transaksi: MAKRO_OF[trx.tahap_detail],
+      nama_bank: namaBank,
+      nama_notaris: trx.nama_notaris,
+      tgl_akad: trx.tgl_akad ? trx.tgl_akad.toISOString() : null,
+      tgl_bast: trx.tgl_bast ? trx.tgl_bast.toISOString() : null,
+      catatan_admin: trx.catatan_admin,
+      created_at: trx.created_at.toISOString(),
+      updated_at: trx.updated_at.toISOString(),
+      customer: {
+        id: trx.customer.id,
+        nama_ktp: trx.customer.nama_ktp,
+        no_hp: trx.customer.no_hp,
+        nik: trx.customer.nik,
       },
-    },
-    marketing: {
-      id: trx.marketing.id,
-      nama: trx.marketing.nama,
-      no_hp: trx.marketing.no_hp,
-    },
-    pembayaran: trx.pembayaran.map((p) => ({
-      id: p.id,
-      nominal: Number(p.nominal),
-      jenis_pembayaran: p.jenis_pembayaran as "ITJ" | "DP" | "CICILAN" | "PELUNASAN",
-      catatan: p.catatan,
-      is_void: p.is_void,
-      created_at: p.created_at.toISOString(),
-    })),
-  }));
+      unit: {
+        id: trx.unit.id,
+        blok: trx.unit.blok,
+        tipe: {
+          id: trx.unit.tipe.id,
+          nama_tipe: trx.unit.tipe.nama_tipe,
+          kategori: trx.unit.tipe.kategori,
+        },
+      },
+      marketing: {
+        id: trx.pic.id,
+        nama: trx.pic.nama,
+        no_hp: trx.pic.no_hp,
+      },
+      pembayaran: trx.pembayaran.map((p) => ({
+        id: p.id,
+        nominal: Number(p.nominal),
+        jenis_pembayaran: p.jenis_pembayaran as "ITJ" | "DP" | "CICILAN" | "PELUNASAN",
+        catatan: p.catatan,
+        is_void: p.is_void,
+        created_at: p.created_at.toISOString(),
+      })),
+    };
+  });
 
   const totalTransaksi = serialized.length;
   const countKpr = serialized.filter((t) => t.metode_bayar === "KPR").length;

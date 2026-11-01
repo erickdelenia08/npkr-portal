@@ -9,7 +9,6 @@ import {
   tolakPengajuanKPRSchema,
   ALLOWED_KPR_STATUS_TRANSITIONS,
 } from "@/schemas/kpr.schema";
-import type { StatusPengajuanKPR, TahapDetail } from "@/generated/prisma";
 import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
 
 export interface ServerActionResponse<T = unknown> {
@@ -48,12 +47,12 @@ async function requireCanEditKpr(transaksiId?: number) {
   if (transaksiId) {
     const trx = await prisma.transaksi.findUnique({
       where: { id: transaksiId },
-      select: { id: true, marketing_id: true },
+      select: { id: true, pic_id: true },
     });
     if (!trx) {
       throw new Error("Transaksi tidak ditemukan.");
     }
-    const canEdit = userId === trx.marketing_id || role === "ADMIN";
+    const canEdit = userId === trx.pic_id || role === "ADMIN";
     if (!canEdit) {
       throw new Error(
         "Hanya PIC Marketing atau Admin yang dapat memperbarui pengajuan KPR transaksi ini."
@@ -161,8 +160,17 @@ export async function ajukanKPR(
         throw new Error("Pengajuan KPR hanya berlaku untuk metode pembayaran KPR.");
       }
 
-      if (trx.status_transaksi === "BATAL" || trx.tahap_detail === "BAST") {
+      if (trx.tahap_detail === "BATAL" || trx.tahap_detail === "BAST") {
         throw new Error("Transaksi sudah selesai atau telah dibatalkan.");
+      }
+
+      if (
+        trx.tahap_detail !== "PENGUMPULAN_DOKUMEN" &&
+        trx.tahap_detail !== "PROSES_BANK"
+      ) {
+        throw new Error(
+          `Pengajuan KPR hanya dapat dilakukan pada tahap Pengumpulan Dokumen atau Proses Bank (tahap saat ini: ${trx.tahap_detail}).`
+        );
       }
 
       // Enforce document gate when advancing from PENGUMPULAN_DOKUMEN
@@ -180,7 +188,7 @@ export async function ajukanKPR(
 
         const verifiedDocKeys = new Set(
           trx.dokumen
-            .filter((d) => d.status === "TERVERIFIKASI")
+            .filter((d) => d.status === "LENGKAP")
             .map((d) => d.jenis)
         );
 
@@ -197,30 +205,12 @@ export async function ajukanKPR(
         if (missingRequiredDocs.length > 0) {
           const missingLabels = missingRequiredDocs.map((d) => d.label).join(", ");
           throw new Error(
-            `Pengajuan KPR belum dapat dilakukan: Dokumen pemberkasan wajib [${missingLabels}] belum lengkap/terverifikasi.`
+            `Pengajuan KPR belum dapat dilakukan: Dokumen pemberkasan wajib [${missingLabels}] belum lengkap.`
           );
         }
       }
 
-      // 2. Check invariant: Only ONE active PengajuanKPR allowed
-      const activePengajuan = await tx.pengajuanKPR.findFirst({
-        where: {
-          transaksi_id: transaksiId,
-          status: {
-            notIn: ["DITOLAK", "DIBATALKAN"],
-          },
-        },
-        include: { bank: true },
-      });
-
-      if (activePengajuan) {
-        throw new Error(
-          `Masih ada pengajuan KPR aktif di ${activePengajuan.bank.nama} (Status: ${activePengajuan.status}). ` +
-          `Tandai Ditolak atau Batalkan pengajuan tersebut sebelum mengajukan ke Bank lain.`
-        );
-      }
-
-      // 3. Verify bank
+      // 2. Verify bank
       const bank = await tx.bank.findUnique({
         where: { id: bankId },
       });
@@ -229,7 +219,7 @@ export async function ajukanKPR(
         throw new Error("Bank yang dipilih tidak aktif atau tidak ditemukan.");
       }
 
-      // 4. Calculate next nomor_pengajuan
+      // 3. Calculate next nomor_pengajuan
       const lastPengajuan = await tx.pengajuanKPR.findFirst({
         where: { transaksi_id: transaksiId },
         orderBy: { nomor_pengajuan: "desc" },
@@ -238,7 +228,7 @@ export async function ajukanKPR(
 
       const nextNomor = (lastPengajuan?.nomor_pengajuan ?? 0) + 1;
 
-      // 5. Create PengajuanKPR
+      // 4. Create PengajuanKPR
       const newPengajuan = await tx.pengajuanKPR.create({
         data: {
           transaksi_id: transaksiId,
@@ -251,42 +241,34 @@ export async function ajukanKPR(
         include: { bank: true },
       });
 
-      // 6. Create Log in PengajuanKPRLog
+      // 5. Create Log in PengajuanKPRLog
       await tx.pengajuanKPRLog.create({
         data: {
           pengajuan_id: newPengajuan.id,
           status_sebelum: null,
           status_sesudah: "DIAJUKAN",
-          admin_id: adminId,
+          actor_id: adminId,
           catatan: catatan?.trim() || `Pengajuan KPR #${nextNomor} diajukan ke ${bank.nama}`,
         },
       });
 
-      // 7. Update Transaksi deprecated nama_bank for backwards compatibility
-      // and advance tahap to WAWANCARA (PROSES_BANK) if it was in PENGUMPULAN_DOKUMEN
-      const nextDetail: TahapDetail =
-        trx.tahap_detail === "PENGUMPULAN_DOKUMEN" ? "WAWANCARA" : trx.tahap_detail;
-      const nextMacro =
-        trx.status_transaksi === "PEMBERKASAN" ? "PROSES_BANK" : trx.status_transaksi;
+      // 6. Advance transaction status to PROSES_BANK if still in PENGUMPULAN_DOKUMEN
+      if (trx.tahap_detail === "PENGUMPULAN_DOKUMEN") {
+        await tx.transaksi.update({
+          where: { id: transaksiId },
+          data: {
+            tahap_detail: "PROSES_BANK",
+            version: { increment: 1 },
+          },
+        });
 
-      await tx.transaksi.update({
-        where: { id: transaksiId },
-        data: {
-          status_transaksi: nextMacro,
-          tahap_detail: nextDetail,
-        },
-      });
-
-      if (trx.tahap_detail !== nextDetail) {
         await tx.transaksiTahapLog.create({
           data: {
             transaksi_id: transaksiId,
-            tahap_sebelum: trx.status_transaksi,
-            tahap_sesudah: nextMacro,
+            actor_id: adminId,
             detail_sebelum: trx.tahap_detail,
-            detail_sesudah: nextDetail,
-            admin_id: adminId,
-            catatan: `Tahap dimajukan ke ${nextDetail} seiring pengajuan KPR #${nextNomor} ke ${bank.nama}`,
+            detail_sesudah: "PROSES_BANK",
+            catatan: `Tahap transaksi beralih ke Proses Bank seiring pengajuan KPR #${nextNomor} ke ${bank.nama}`,
           },
         });
       }
@@ -371,7 +353,7 @@ export async function updateStatusPengajuanKPR(
           pengajuan_id: existing.id,
           status_sebelum: existing.status,
           status_sesudah: status,
-          admin_id: adminId,
+          actor_id: adminId,
           catatan:
             catatan?.trim() ||
             (status === "DITOLAK"
@@ -394,45 +376,15 @@ export async function updateStatusPengajuanKPR(
         include: { bank: true },
       });
 
-      // 4. Sync Transaksi TahapDetail
-      // NOTE: Bank rejection or cancellation does NOT automatically regress the main transaction stage.
-      // The rejection remains recorded in history, and the admin can either create a new bank application
-      // or explicitly choose to regress the transaction stage in DynamicActionPanel.
-      if (status !== "DITOLAK" && status !== "DIBATALKAN") {
-        const trx = existing.transaksi;
-        let mappedDetail: TahapDetail | null = null;
-        if (status === "WAWANCARA") mappedDetail = "WAWANCARA";
-        else if (status === "OTS") mappedDetail = "OTS";
-        else if (status === "VERIFIKASI") mappedDetail = "VERIFIKASI";
-        else if (status === "SP3K") mappedDetail = "SP3K";
-
-        if (
-          mappedDetail &&
-          mappedDetail !== trx.tahap_detail &&
-          trx.tahap_detail !== "AKAD_KREDIT" &&
-          trx.tahap_detail !== "BAST" &&
-          trx.status_transaksi !== "BATAL"
-        ) {
-          await tx.transaksi.update({
-            where: { id: trx.id },
-            data: {
-              status_transaksi: "PROSES_BANK",
-              tahap_detail: mappedDetail,
-            },
-          });
-
-          await tx.transaksiTahapLog.create({
-            data: {
-              transaksi_id: trx.id,
-              tahap_sebelum: trx.status_transaksi,
-              tahap_sesudah: "PROSES_BANK",
-              detail_sebelum: trx.tahap_detail,
-              detail_sesudah: mappedDetail,
-              admin_id: adminId,
-              catatan: `Tahap diselaraskan ke ${mappedDetail} mengikuti progres KPR di ${existing.bank.nama} (${status})`,
-            },
-          });
-        }
+      // 4. Ensure transaction is at least in PROSES_BANK if not cancelled/completed
+      if (existing.transaksi.tahap_detail === "PENGUMPULAN_DOKUMEN") {
+        await tx.transaksi.update({
+          where: { id: existing.transaksi.id },
+          data: {
+            tahap_detail: "PROSES_BANK",
+            version: { increment: 1 },
+          },
+        });
       }
 
       return updated;

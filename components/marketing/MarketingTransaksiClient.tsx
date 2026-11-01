@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { MarketingTransaksiItem } from "@/actions/transaksi.action";
-import type { TahapTransaksi, TahapDetail, MetodeBayar } from "@/generated/prisma";
+import type { TahapDetail, MetodeBayar } from "@/generated/prisma";
 
 interface MarketingTransaksiClientProps {
   initialData: MarketingTransaksiItem[];
@@ -38,7 +38,8 @@ function formatDate(dateStr: string | null | undefined): string {
   });
 }
 
-function getMacroLabel(status: TahapTransaksi): string {
+function getMacroLabel(status?: string | null): string {
+  if (!status) return "—";
   switch (status) {
     case "PEMBERKASAN":
       return "Pemberkasan";
@@ -48,8 +49,6 @@ function getMacroLabel(status: TahapTransaksi): string {
       return "Pembayaran";
     case "AKAD_AJB":
       return "Akad / AJB";
-    case "PEMBANGUNAN":
-      return "Pembangunan";
     case "SERAH_TERIMA":
       return "BAST Selesai";
     case "BATAL":
@@ -63,14 +62,6 @@ function formatTahapDetail(detail: TahapDetail): string {
   switch (detail) {
     case "PENGUMPULAN_DOKUMEN":
       return "Pengumpulan Dokumen";
-    case "WAWANCARA":
-      return "Wawancara Bank";
-    case "OTS":
-      return "On The Spot (OTS)";
-    case "VERIFIKASI":
-      return "Verifikasi Bank";
-    case "SP3K":
-      return "Penerbitan SP3K";
     case "AKAD_KREDIT":
       return "Akad Kredit";
     case "PEMBERKASAN_LEGALITAS":
@@ -122,8 +113,6 @@ export function MarketingTransaksiClient({
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const isFinished = (trx: MarketingTransaksiItem): boolean =>
-    trx.status_transaksi === "BATAL" ||
-    trx.status_transaksi === "SERAH_TERIMA" ||
     trx.tahap_detail === "BAST" ||
     trx.tahap_detail === "BATAL";
 
@@ -304,8 +293,8 @@ export function MarketingTransaksiClient({
           {filteredList.map((trx) => {
             const macroLabel = getMacroLabel(trx.status_transaksi);
             const microLabel = formatTahapDetail(trx.tahap_detail);
-            const isDone = trx.status_transaksi === "SERAH_TERIMA" || trx.tahap_detail === "BAST";
-            const isBatal = trx.status_transaksi === "BATAL" || trx.tahap_detail === "BATAL";
+            const isDone = trx.tahap_detail === "BAST";
+            const isBatal = trx.tahap_detail === "BATAL";
 
             return (
               <Link

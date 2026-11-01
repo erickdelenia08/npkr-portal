@@ -29,7 +29,8 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { TahapTransaksi, SumberLead, StatusUnit } from "@/generated/prisma";
+import { SumberLead, StatusUnit } from "@/generated/prisma";
+import { type TahapMakro, MAKRO_OF } from "@/lib/transaksi/stage-map";
 import {
   monthRangeWIB,
   monthRangeDateOnly,
@@ -47,8 +48,8 @@ export function closedDealWhere(start: Date, end: Date) {
       gte: start,
       lt: end,
     },
-    status_transaksi: {
-      not: TahapTransaksi.BATAL,
+    tahap_detail: {
+      not: "BATAL" as const,
     },
   };
 }
@@ -91,7 +92,7 @@ export interface MarketingPerformanceSummary {
 }
 
 export interface PipelineStageSummary {
-  stage: TahapTransaksi;
+  stage: TahapMakro;
   label: string;
   count: number;
   totalHargaDeal: number;
@@ -300,7 +301,7 @@ export async function getManagerDashboardData(
         created_at: { gte: currWib.start, lt: currWib.end },
         pengajuan: {
           transaksi: {
-            status_transaksi: { not: TahapTransaksi.BATAL },
+            tahap_detail: { not: "BATAL" },
           },
         },
       },
@@ -308,7 +309,7 @@ export async function getManagerDashboardData(
     prisma.transaksi.count({
       where: {
         tgl_akad: { gte: currDateOnly.start, lt: currDateOnly.end },
-        status_transaksi: { not: TahapTransaksi.BATAL },
+        tahap_detail: { not: "BATAL" },
       },
     }),
 
@@ -339,7 +340,7 @@ export async function getManagerDashboardData(
         created_at: { gte: prevWib.start, lt: prevWib.end },
         pengajuan: {
           transaksi: {
-            status_transaksi: { not: TahapTransaksi.BATAL },
+            tahap_detail: { not: "BATAL" },
           },
         },
       },
@@ -347,7 +348,7 @@ export async function getManagerDashboardData(
     prisma.transaksi.count({
       where: {
         tgl_akad: { gte: prevDateOnly.start, lt: prevDateOnly.end },
-        status_transaksi: { not: TahapTransaksi.BATAL },
+        tahap_detail: { not: "BATAL" },
       },
     }),
 
@@ -368,8 +369,7 @@ export async function getManagerDashboardData(
           some: {
             transaksi: {
               is: {
-                closing_at: { not: null },
-                status_transaksi: { not: TahapTransaksi.BATAL },
+                tahap_detail: { not: "BATAL" },
               },
             },
           },
@@ -438,9 +438,14 @@ export async function getManagerDashboardData(
       },
       _count: { _all: true },
     }),
-    prisma.transaksi.groupBy({
-      by: ["marketing_id"],
-      where: closedDealWhere(currDateOnly.start, currDateOnly.end),
+    prisma.itj.groupBy({
+      by: ["closer_id"],
+      where: {
+        closer_id: { not: null },
+        transaksi: {
+          is: closedDealWhere(currDateOnly.start, currDateOnly.end),
+        },
+      },
       _count: { _all: true },
     }),
 
@@ -458,8 +463,7 @@ export async function getManagerDashboardData(
           some: {
             transaksi: {
               is: {
-                closing_at: { not: null },
-                status_transaksi: { not: TahapTransaksi.BATAL },
+                tahap_detail: { not: "BATAL" },
               },
             },
           },
@@ -470,16 +474,10 @@ export async function getManagerDashboardData(
 
     // Pipeline (Snapshot)
     prisma.transaksi.groupBy({
-      by: ["status_transaksi"],
+      by: ["tahap_detail"],
       where: {
-        status_transaksi: {
-          in: [
-            TahapTransaksi.PEMBERKASAN,
-            TahapTransaksi.PROSES_BANK,
-            TahapTransaksi.PEMBAYARAN,
-            TahapTransaksi.AKAD_AJB,
-            TahapTransaksi.PEMBANGUNAN,
-          ],
+        tahap_detail: {
+          notIn: ["BATAL", "BAST"],
         },
       },
       _count: { _all: true },
@@ -564,7 +562,7 @@ export async function getManagerDashboardData(
 
   const closingMap = new Map<number, number>();
   for (const g of closingGroups) {
-    if (g.marketing_id) closingMap.set(g.marketing_id, g._count?._all ?? 0);
+    if (g.closer_id) closingMap.set(g.closer_id, g._count?._all ?? 0);
   }
 
   const marketingPerformanceRows: MarketingPerformanceSummary[] = [];
@@ -650,31 +648,43 @@ export async function getManagerDashboardData(
   leadSources.sort((a, b) => b.total - a.total);
 
   // ─── 5. ASSEMBLE ACTIVE PIPELINE (SNAPSHOT) ───
-  const pipelineOrder: TahapTransaksi[] = [
-    TahapTransaksi.PEMBERKASAN,
-    TahapTransaksi.PROSES_BANK,
-    TahapTransaksi.PEMBAYARAN,
-    TahapTransaksi.AKAD_AJB,
-    TahapTransaksi.PEMBANGUNAN,
+  const pipelineOrder: TahapMakro[] = [
+    "PEMBERKASAN",
+    "PROSES_BANK",
+    "PEMBAYARAN",
+    "AKAD_AJB",
   ];
 
-  const pipelineLabels: Record<TahapTransaksi, string> = {
-    [TahapTransaksi.PEMBERKASAN]: "Pemberkasan",
-    [TahapTransaksi.PROSES_BANK]: "Proses bank",
-    [TahapTransaksi.PEMBAYARAN]: "Pembayaran",
-    [TahapTransaksi.AKAD_AJB]: "Akad / AJB",
-    [TahapTransaksi.PEMBANGUNAN]: "Pembangunan",
-    [TahapTransaksi.SERAH_TERIMA]: "Serah terima",
-    [TahapTransaksi.BATAL]: "Batal",
+  const pipelineLabels: Record<TahapMakro, string> = {
+    PEMBERKASAN: "Pemberkasan",
+    PROSES_BANK: "Proses bank",
+    PEMBAYARAN: "Pembayaran",
+    AKAD_AJB: "Akad / AJB",
+    SERAH_TERIMA: "Serah terima",
+    BATAL: "Batal",
   };
 
+  const pipelineMap = new Map<TahapMakro, { count: number; totalHargaDeal: number }>();
+  for (const m of pipelineOrder) {
+    pipelineMap.set(m, { count: 0, totalHargaDeal: 0 });
+  }
+
+  for (const g of pipelineGroups) {
+    const makro = MAKRO_OF[g.tahap_detail];
+    if (pipelineMap.has(makro)) {
+      const entry = pipelineMap.get(makro)!;
+      entry.count += g._count._all;
+      entry.totalHargaDeal += Number(g._sum.harga_deal || 0);
+    }
+  }
+
   const pipeline: PipelineStageSummary[] = pipelineOrder.map((stage) => {
-    const found = pipelineGroups.find((g) => g.status_transaksi === stage);
+    const data = pipelineMap.get(stage) || { count: 0, totalHargaDeal: 0 };
     return {
       stage,
       label: pipelineLabels[stage] || stage,
-      count: found ? found._count._all : 0,
-      totalHargaDeal: Number(found?._sum.harga_deal || 0),
+      count: data.count,
+      totalHargaDeal: data.totalHargaDeal,
     };
   });
 

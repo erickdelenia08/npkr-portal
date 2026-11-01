@@ -38,25 +38,35 @@ export interface LeadTahapInput extends LeadMilestoneFields {
     transaksi?: {
       closing_at?: Date | string | null;
       status_transaksi?: string | null;
+      tahap_detail?: string | null;
     } | null;
   }>
   | {
     transaksi?: {
       closing_at?: Date | string | null;
       status_transaksi?: string | null;
+      tahap_detail?: string | null;
     } | null;
   }
   | null;
   transaksi?: {
     closing_at?: Date | string | null;
     status_transaksi?: string | null;
+    tahap_detail?: string | null;
   } | null;
   customer?: {
     transaksi?: Array<{
       closing_at?: Date | string | null;
       status_transaksi?: string | null;
+      tahap_detail?: string | null;
     }> | null;
   } | null;
+}
+
+function isTrxActiveClosing(trx?: { closing_at?: Date | string | null; status_transaksi?: string | null; tahap_detail?: string | null } | null): boolean {
+  if (!trx || trx.closing_at == null) return false;
+  if (trx.tahap_detail === "BATAL" || trx.status_transaksi === "BATAL") return false;
+  return true;
 }
 
 /**
@@ -78,20 +88,18 @@ export function getLeadTahap(lead?: LeadTahapInput | null): LeadTahap {
   }
 
   // 2. If transaksi?.closing_at is not null and not BATAL -> return 'CLOSING'
-  if (lead.transaksi?.closing_at != null && lead.transaksi?.status_transaksi !== "BATAL") {
+  if (isTrxActiveClosing(lead.transaksi)) {
     return "CLOSING";
   }
 
   if (Array.isArray(lead.itj)) {
-    const hasClosed = lead.itj.some(
-      (item) => item.transaksi?.closing_at != null && item.transaksi?.status_transaksi !== "BATAL"
-    );
+    const hasClosed = lead.itj.some((item) => isTrxActiveClosing(item.transaksi));
     if (hasClosed) return "CLOSING";
-  } else if (lead.itj?.transaksi?.closing_at != null && lead.itj?.transaksi?.status_transaksi !== "BATAL") {
+  } else if (isTrxActiveClosing(lead.itj?.transaksi)) {
     return "CLOSING";
   }
 
-  if (lead.customer?.transaksi?.some((t) => t.closing_at != null && t.status_transaksi !== "BATAL")) {
+  if (lead.customer?.transaksi?.some((t) => isTrxActiveClosing(t))) {
     return "CLOSING";
   }
 

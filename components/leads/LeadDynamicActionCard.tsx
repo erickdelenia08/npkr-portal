@@ -36,7 +36,7 @@ interface ItjLike {
   diajukan_at?: Date | string | null;
   unit?: { blok?: string | null } | null;
   transaksi_id?: number | string | null;
-  transaksi?: { id?: number | string | null; status_transaksi?: string | null } | null;
+  transaksi?: { id?: number | string | null; tahap_detail?: string | null; status_transaksi?: string | null } | null;
 }
 
 const pad = (n: number) => n.toString().padStart(2, "0");
@@ -117,7 +117,7 @@ export function LeadDynamicActionCard({
 
     // Temukan ITJ yang memiliki transaksi tidak BATAL
     const active = list.find(
-      (i) => i.transaksi && i.transaksi.status_transaksi !== "BATAL"
+      (i) => i.transaksi && i.transaksi.tahap_detail !== "BATAL" && i.transaksi.status_transaksi !== "BATAL"
     );
 
     return {

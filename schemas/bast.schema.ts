@@ -11,31 +11,25 @@ export const ItemBASTEnum = z.enum([
   "FASAD_KEBERSIHAN",
 ]);
 
-export const StatusInspeksiEnum = z.enum([
-  "BELUM_DICEK",
-  "SESUAI",
-  "PERLU_PERBAIKAN",
-  "SELESAI_DIPERBAIKI",
+export const StatusBASTEnum = z.enum([
+  "BELUM_LENGKAP",
+  "LENGKAP",
 ]);
 
-export const updateInspeksiBASTSchema = z
-  .object({
-    transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
-    itemId: z.union([ItemBASTEnum, z.number().int().positive()]),
-    newStatus: StatusInspeksiEnum,
-    note: z.string().trim().optional().nullable(),
-  })
-  .refine(
-    (data) => {
-      if (data.newStatus === "PERLU_PERBAIKAN") {
-        return typeof data.note === "string" && data.note.trim().length >= 3;
-      }
-      return true;
-    },
-    {
-      message: "Catatan perbaikan wajib diisi minimal 3 karakter.",
-      path: ["note"],
-    }
-  );
+export const updateChecklistBASTSchema = z.object({
+  transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
+  item: ItemBASTEnum,
+  status: StatusBASTEnum,
+});
 
+export type UpdateChecklistBASTInput = z.infer<typeof updateChecklistBASTSchema>;
+
+// Backwards compatibility aliases
+export const StatusInspeksiEnum = StatusBASTEnum;
+export const updateInspeksiBASTSchema = z.object({
+  transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
+  itemId: z.union([ItemBASTEnum, z.number().int().positive()]),
+  newStatus: z.union([StatusBASTEnum, z.string()]),
+  note: z.string().trim().optional().nullable(),
+});
 export type UpdateInspeksiBASTInput = z.infer<typeof updateInspeksiBASTSchema>;

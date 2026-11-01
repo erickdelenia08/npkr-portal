@@ -10,6 +10,7 @@ import {
   GlobalActivityFilterInput,
 } from "@/schemas/activity.schema";
 import { getLeadTahap, LeadTahap } from "@/lib/lead-utils";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import { JenisAktivitas, HasilAktivitas, Prisma } from "@/generated/prisma";
 
 export interface GlobalActivityItem {
@@ -120,7 +121,8 @@ export async function getLeadDetail(
             transaksi: {
               select: {
                 id: true,
-                status_transaksi: true,
+                tahap_detail: true,
+                target_dp: true,
                 closing_at: true,
               },
             },
@@ -143,7 +145,7 @@ export async function getLeadDetail(
       itjSummary = {
         id: latest.id,
         nominal: Number(latest.nominal),
-        target_dp: Number(latest.target_dp),
+        target_dp: Number(latest.transaksi?.target_dp ?? 0),
         metode_bayar: latest.metode_bayar,
         tenor: latest.tenor,
         diajukan_at: latest.diajukan_at,
@@ -151,7 +153,7 @@ export async function getLeadDetail(
         transaksi: latest.transaksi
           ? {
             id: latest.transaksi.id,
-            status_transaksi: latest.transaksi.status_transaksi,
+            status_transaksi: MAKRO_OF[latest.transaksi.tahap_detail],
             closing_at: latest.transaksi.closing_at,
           }
           : null,

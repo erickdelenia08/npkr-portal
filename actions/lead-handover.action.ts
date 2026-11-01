@@ -149,10 +149,10 @@ export async function handoverLead(
       const updatedTrx = await tx.transaksi.updateMany({
         where: {
           itj: { lead_id: lead.id },
-          status_transaksi: { not: "BATAL" },
+          tahap_detail: { not: "BATAL" },
         },
         data: {
-          marketing_id: newMarketingId,
+          pic_id: newMarketingId,
         },
       });
 

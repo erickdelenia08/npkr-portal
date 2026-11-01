@@ -139,7 +139,7 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
           transaksi: {
             select: {
               closing_at: true,
-              status_transaksi: true,
+              tahap_detail: true,
             },
           },
         },
@@ -151,7 +151,7 @@ export default async function MarketingLeadPage({ searchParams }: PageProps) {
           transaksi: {
             select: {
               closing_at: true,
-              status_transaksi: true,
+              tahap_detail: true,
             },
           },
         },

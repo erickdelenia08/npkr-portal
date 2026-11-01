@@ -107,15 +107,15 @@ export async function getAdminDashboardData(): Promise<
       where: {
         transaksi: {
           is: {
-            status_transaksi: { not: "BATAL" },
+            tahap_detail: { not: "BATAL" },
           },
         },
       },
     });
 
-    // 2. Metric 2: Count DokumenTransaksi where status = 'MENUNGGU_VERIFIKASI'
+    // 2. Metric 2: Count DokumenTransaksi where status = 'BELUM_LENGKAP'
     const pendingDocsCount = await prisma.dokumenTransaksi.count({
-      where: { status: "MENUNGGU_VERIFIKASI" },
+      where: { status: "BELUM_LENGKAP" },
     });
 
     // 3. Metric 3: Count PengajuanKPR where status in ['DIAJUKAN', 'WAWANCARA', 'OTS']
@@ -130,7 +130,7 @@ export async function getAdminDashboardData(): Promise<
       where: {
         transaksi: {
           is: {
-            status_transaksi: { not: "BATAL" },
+            tahap_detail: { not: "BATAL" },
           },
         },
       },
@@ -155,9 +155,9 @@ export async function getAdminDashboardData(): Promise<
       diajukanAt: formatTimestampWIB(item.diajukan_at),
     }));
 
-    // 5. Widget Data 2 (Pending Docs): Top 5 newest DokumenTransaksi where status = 'MENUNGGU_VERIFIKASI'
+    // 5. Widget Data 2 (Pending Docs): Top 5 newest DokumenTransaksi where status = 'BELUM_LENGKAP'
     const rawPendingDocs = await prisma.dokumenTransaksi.findMany({
-      where: { status: "MENUNGGU_VERIFIKASI" },
+      where: { status: "BELUM_LENGKAP" },
       orderBy: { updated_at: "desc" },
       take: 5,
       include: {

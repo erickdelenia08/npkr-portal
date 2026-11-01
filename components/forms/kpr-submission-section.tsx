@@ -39,6 +39,7 @@ export interface PengajuanKPRLogItem {
   id: number;
   status_sebelum: StatusPengajuanKPR | null;
   status_sesudah: StatusPengajuanKPR;
+  actor?: { nama: string } | null;
   admin?: { nama: string } | null;
   catatan?: string | null;
   created_at: string | Date;
@@ -155,6 +156,9 @@ export function KprSubmissionSection({
   // Toggle past submissions list
   const [showPastList, setShowPastList] = useState(false);
 
+  // Toggle new submission form when active submissions exist
+  const [showAddForm, setShowAddForm] = useState(false);
+
   // Form pengajuan baru
   const [selectedBankId, setSelectedBankId] = useState<number | "">("");
   const [catatanBaru, setCatatanBaru] = useState("");
@@ -248,6 +252,7 @@ export function KprSubmissionSection({
         }
         setSelectedBankId("");
         setCatatanBaru("");
+        setShowAddForm(false);
       }
     );
   };
@@ -364,23 +369,21 @@ export function KprSubmissionSection({
         </div>
       )}
 
-      {/* Warning jika ada multiple active submission */}
+      {/* Informasi jika ada multiple active submission */}
       {hasMultipleActive && (
         <div
-          role="alert"
-          className="flex items-start gap-2.5 rounded-lg border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900"
+          role="status"
+          className="flex items-center gap-2.5 rounded-lg border border-teal-200 bg-teal-50/70 p-3 text-xs text-teal-900"
         >
-          <AlertTriangle
-            className="mt-0.5 h-4 w-4 shrink-0 text-amber-700"
+          <Building2
+            className="h-4 w-4 shrink-0 text-teal-700"
             aria-hidden="true"
           />
           <div className="leading-5">
             <span className="font-semibold">
-              Terdeteksi {activeSubmissions.length} pengajuan bank aktif bersamaan.
+              {activeSubmissions.length} pengajuan bank aktif berjalan secara paralel.
             </span>{" "}
-            Sesuai kebijakan perbankan, hanya 1 bank pembiaya utama yang diproses
-            hingga akad. Tandai bank yang tidak dilanjutkan sebagai Ditolak atau
-            Dibatalkan.
+            Setiap pengajuan bank diproses secara independen hingga terbit persetujuan kredit (SP3K).
           </div>
         </div>
       )}
@@ -655,7 +658,7 @@ export function KprSubmissionSection({
                             </p>
                           )}
                           <p className="text-[10px] text-slate-500">
-                            Admin: {log.admin?.nama || "Admin"}
+                            Petugas: {log.actor?.nama || log.admin?.nama || "Admin"}
                           </p>
                         </li>
                       ))}
@@ -666,117 +669,185 @@ export function KprSubmissionSection({
             );
           })}
         </div>
-      ) : canEdit ? (
-        /* Form Pengajuan Baru jika BELUM ADA pengajuan aktif */
-        <form
-          onSubmit={handleAjukanBaru}
-          noValidate
-          className="space-y-3 rounded-lg border border-slate-200 bg-white p-4"
-        >
-          <div className="flex items-center justify-between">
-            <h4 className="flex items-center gap-1.5 text-sm font-bold text-slate-900">
-              <Send className="h-4 w-4 text-teal-700" aria-hidden="true" />
-              Ajukan KPR ke Bank
-            </h4>
-            <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 sm:block hidden">
-              Belum ada pengajuan aktif
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <label
-                htmlFor="kpr-bank-select"
-                className="mb-1 block text-xs font-semibold text-slate-700"
-              >
-                Bank Penyalur <span className="text-red-600">*</span>
-              </label>
-              <select
-                id="kpr-bank-select"
-                value={selectedBankId}
-                onChange={(event) => {
-                  setSelectedBankId(
-                    event.target.value ? Number(event.target.value) : ""
-                  );
-                  if (bankError) setBankError(null);
-                }}
-                aria-invalid={Boolean(bankError)}
-                aria-describedby={bankError ? "kpr-bank-error" : undefined}
-                className={`w-full rounded-md border bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 ${bankError
-                  ? "border-red-400 focus:ring-red-400/30"
-                  : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
-                  }`}
-              >
-                <option value="">Pilih bank</option>
-                {masterBanks.map((bank) => (
-                  <option key={bank.id} value={bank.id}>
-                    {bank.nama}
-                    {bank.kode ? ` (${bank.kode})` : ""}
-                  </option>
-                ))}
-              </select>
-              {bankError && (
-                <p
-                  id="kpr-bank-error"
-                  role="alert"
-                  className="mt-1 text-xs font-medium text-red-700"
-                >
-                  {bankError}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label
-                htmlFor="kpr-catatan-baru"
-                className="mb-1 block text-xs font-semibold text-slate-700"
-              >
-                Catatan Pengajuan (opsional)
-              </label>
-              <input
-                id="kpr-catatan-baru"
-                type="text"
-                value={catatanBaru}
-                onChange={(event) => setCatatanBaru(event.target.value)}
-                placeholder="Misal: berkas lengkap diserahkan ke AO Bank"
-                className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-1">
-            <div className="space-y-1">
-              <p className="text-xs text-slate-500">
-                Setelah diajukan, pengajuan bank akan diproses dan status transaksi
-                diselaraskan ke tahap Wawancara.
-              </p>
-              {disabledNew && disabledNewReason && (
-                <p className="text-xs font-medium text-amber-700">
-                  {disabledNewReason}
-                </p>
-              )}
-            </div>
-            <Button
-              type="submit"
-              size="sm"
-              disabled={isPending || disabledNew}
-              className="h-8.5 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                  Mengajukan...
-                </>
-              ) : (
-                <>
-                  <Send className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
-                  Ajukan ke Bank
-                </>
-              )}
-            </Button>
-          </div>
-        </form>
       ) : null}
+
+      {/* ─── 2b. TOMBOL / FORM PENGAJUAN BANK BARU ─── */}
+      {canEdit && (
+        <>
+          {activeSubmissions.length > 0 && !showAddForm ? (
+            <div className="flex justify-end pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isPending || disabledNew}
+                onClick={() => {
+                  setShowAddForm(true);
+                  setBankError(null);
+                }}
+                className="h-8 text-xs font-semibold border-teal-300 text-teal-800 hover:bg-teal-50"
+              >
+                <Send className="mr-1.5 h-3.5 w-3.5 text-teal-700" />
+                + Ajukan ke Bank Lain
+              </Button>
+            </div>
+          ) : activeSubmissions.length === 0 || showAddForm ? (
+            <form
+              onSubmit={handleAjukanBaru}
+              noValidate
+              className="space-y-3 rounded-lg border border-slate-200 bg-white p-4"
+            >
+              <div className="flex items-center justify-between">
+                <h4 className="flex items-center gap-1.5 text-sm font-bold text-slate-900">
+                  <Send className="h-4 w-4 text-teal-700" aria-hidden="true" />
+                  {activeSubmissions.length > 0
+                    ? "Ajukan KPR ke Bank Tambahan (Paralel)"
+                    : "Ajukan KPR ke Bank"}
+                </h4>
+                {activeSubmissions.length === 0 ? (
+                  <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 sm:block hidden">
+                    Belum ada pengajuan aktif
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setSelectedBankId("");
+                      setCatatanBaru("");
+                      setBankError(null);
+                    }}
+                    className="text-xs text-slate-500 hover:text-slate-800 underline"
+                  >
+                    Batal
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="kpr-bank-select"
+                    className="mb-1 block text-xs font-semibold text-slate-700"
+                  >
+                    Bank Penyalur <span className="text-red-600">*</span>
+                  </label>
+                  <select
+                    id="kpr-bank-select"
+                    value={selectedBankId}
+                    onChange={(event) => {
+                      setSelectedBankId(
+                        event.target.value ? Number(event.target.value) : ""
+                      );
+                      if (bankError) setBankError(null);
+                    }}
+                    aria-invalid={Boolean(bankError)}
+                    aria-describedby={bankError ? "kpr-bank-error" : undefined}
+                    className={`w-full rounded-md border bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 ${
+                      bankError
+                        ? "border-red-400 focus:ring-red-400/30"
+                        : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
+                    }`}
+                  >
+                    <option value="">Pilih bank</option>
+                    {masterBanks.map((bank) => {
+                      const isAlreadyActive = activeSubmissions.some(
+                        (s) => s.bank_id === bank.id
+                      );
+                      return (
+                        <option
+                          key={bank.id}
+                          value={bank.id}
+                          disabled={isAlreadyActive}
+                        >
+                          {bank.nama}
+                          {bank.kode ? ` (${bank.kode})` : ""}
+                          {isAlreadyActive ? " — (Sedang Aktif)" : ""}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  {bankError && (
+                    <p
+                      id="kpr-bank-error"
+                      role="alert"
+                      className="mt-1 text-xs font-medium text-red-700"
+                    >
+                      {bankError}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="kpr-catatan-baru"
+                    className="mb-1 block text-xs font-semibold text-slate-700"
+                  >
+                    Catatan Pengajuan (opsional)
+                  </label>
+                  <input
+                    id="kpr-catatan-baru"
+                    type="text"
+                    value={catatanBaru}
+                    onChange={(event) => setCatatanBaru(event.target.value)}
+                    placeholder="Misal: berkas lengkap diserahkan ke AO Bank"
+                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-1">
+                <div className="space-y-1">
+                  <p className="text-xs text-slate-500">
+                    Setelah diajukan, pengajuan bank akan diproses dalam tahap Proses Bank.
+                  </p>
+                  {disabledNew && disabledNewReason && (
+                    <p className="text-xs font-medium text-amber-700">
+                      {disabledNewReason}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 self-end sm:self-auto">
+                  {showAddForm && activeSubmissions.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setShowAddForm(false);
+                        setSelectedBankId("");
+                        setCatatanBaru("");
+                        setBankError(null);
+                      }}
+                      className="h-8.5 text-xs"
+                    >
+                      Batal
+                    </Button>
+                  )}
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={isPending || disabledNew}
+                    className="h-8.5 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                  >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                        Mengajukan...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                        Ajukan ke Bank
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          ) : null}
+        </>
+      )}
 
       {/* ─── 3. RIWAYAT PENGAJUAN SEBELUMNYA (DITOLAK / DIBATALKAN) ─── */}
       {showPastList && pastSubmissions.length > 0 && (

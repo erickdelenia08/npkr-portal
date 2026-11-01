@@ -525,3 +525,5 @@ export function isDokumenTerverifikasi(
   }
   return false;
 }
+
+export const isDokumenLengkap = isDokumenTerverifikasi;

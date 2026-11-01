@@ -102,9 +102,15 @@ function computeLeadTahap(lead: unknown): LeadTahap {
     return "LOST";
   }
 
+  const isTrxActive = (trx?: Record<string, unknown> | null): boolean => {
+    if (!trx || trx.closing_at == null) return false;
+    if (trx.tahap_detail === "BATAL" || trx.status_transaksi === "BATAL") return false;
+    return true;
+  };
+
   // 2. If transaksi?.closing_at is not null (excluding BATAL) -> return 'CLOSING'
   const directTrx = l.transaksi as Record<string, unknown> | undefined;
-  if (directTrx?.closing_at != null && directTrx?.status_transaksi !== "BATAL") {
+  if (isTrxActive(directTrx)) {
     return "CLOSING";
   }
 
@@ -114,7 +120,7 @@ function computeLeadTahap(lead: unknown): LeadTahap {
         const trx = (item as Record<string, unknown>).transaksi as
           | Record<string, unknown>
           | undefined;
-        return trx?.closing_at != null && trx?.status_transaksi !== "BATAL";
+        return isTrxActive(trx);
       }
       return false;
     });
@@ -122,7 +128,7 @@ function computeLeadTahap(lead: unknown): LeadTahap {
   } else if (l.itj && typeof l.itj === "object") {
     const singleItj = l.itj as Record<string, unknown>;
     const trx = singleItj.transaksi as Record<string, unknown> | undefined;
-    if (trx?.closing_at != null && trx?.status_transaksi !== "BATAL") return "CLOSING";
+    if (isTrxActive(trx)) return "CLOSING";
   }
 
   if (l.customer && typeof l.customer === "object") {
@@ -130,7 +136,7 @@ function computeLeadTahap(lead: unknown): LeadTahap {
     if (Array.isArray(cust.transaksi)) {
       const hasClosed = cust.transaksi.some((trx) => {
         const t = trx as Record<string, unknown>;
-        return t?.closing_at != null && t?.status_transaksi !== "BATAL";
+        return isTrxActive(t);
       });
       if (hasClosed) return "CLOSING";
     }
@@ -298,8 +304,8 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
       } else if (norm === "CLOSING" || norm === "ITJ") {
         where.lost_at = null;
         where.OR = [
-          { itj: { some: { transaksi: { closing_at: { not: null }, status_transaksi: { not: "BATAL" } } } } },
-          { customer: { transaksi: { some: { closing_at: { not: null }, status_transaksi: { not: "BATAL" } } } } },
+          { itj: { some: { transaksi: { tahap_detail: { not: "BATAL" } } } } },
+          { customer: { transaksi: { some: { tahap_detail: { not: "BATAL" } } } } },
         ];
       } else if (norm === "SUDAH SURVEI" || norm === "SUDAH_SURVEI") {
         where.survei_selesai_at = { not: null };
@@ -352,7 +358,7 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
                 select: {
                   id: true,
                   closing_at: true,
-                  status_transaksi: true,
+                  tahap_detail: true,
                 },
               },
             },
@@ -364,7 +370,7 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
                 select: {
                   id: true,
                   closing_at: true,
-                  status_transaksi: true,
+                  tahap_detail: true,
                 },
               },
             },
@@ -395,8 +401,8 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
       const itjTrx = l.itj?.[0]?.transaksi;
       const custTrx = l.customer?.transaksi?.[0];
       const activeTrx =
-        (itjTrx?.status_transaksi !== "BATAL" ? itjTrx : null) ||
-        (custTrx?.status_transaksi !== "BATAL" ? custTrx : null);
+        (itjTrx?.tahap_detail !== "BATAL" ? itjTrx : null) ||
+        (custTrx?.tahap_detail !== "BATAL" ? custTrx : null);
       const closingAtDate = activeTrx?.closing_at || null;
       const transaksiId = activeTrx?.id || null;
 

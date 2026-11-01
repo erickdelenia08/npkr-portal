@@ -102,14 +102,14 @@ describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () =
         })
       );
 
-      // Verify Transaksi.marketing_id was updated to newMarketingId
+      // Verify Transaksi.pic_id was updated to newMarketingId
       expect(mockTx.transaksi.updateMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             itj: { lead_id: 100 },
-            status_transaksi: { not: "BATAL" },
+            tahap_detail: { not: "BATAL" },
           },
-          data: { marketing_id: 11 },
+          data: { pic_id: 11 },
         })
       );
 

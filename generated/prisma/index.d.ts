@@ -84,15 +84,10 @@ export type TransaksiTahapLog = $Result.DefaultSelection<Prisma.$TransaksiTahapL
  */
 export type DokumenTransaksi = $Result.DefaultSelection<Prisma.$DokumenTransaksiPayload>
 /**
- * Model InspeksiBAST
+ * Model ChecklistBAST
  * 
  */
-export type InspeksiBAST = $Result.DefaultSelection<Prisma.$InspeksiBASTPayload>
-/**
- * Model InspeksiBASTLog
- * 
- */
-export type InspeksiBASTLog = $Result.DefaultSelection<Prisma.$InspeksiBASTLogPayload>
+export type ChecklistBAST = $Result.DefaultSelection<Prisma.$ChecklistBASTPayload>
 /**
  * Model Pembayaran
  * 
@@ -191,25 +186,9 @@ export const MetodeBayar: {
 export type MetodeBayar = (typeof MetodeBayar)[keyof typeof MetodeBayar]
 
 
-export const TahapTransaksi: {
-  PEMBERKASAN: 'PEMBERKASAN',
-  PROSES_BANK: 'PROSES_BANK',
-  PEMBAYARAN: 'PEMBAYARAN',
-  AKAD_AJB: 'AKAD_AJB',
-  PEMBANGUNAN: 'PEMBANGUNAN',
-  SERAH_TERIMA: 'SERAH_TERIMA',
-  BATAL: 'BATAL'
-};
-
-export type TahapTransaksi = (typeof TahapTransaksi)[keyof typeof TahapTransaksi]
-
-
 export const TahapDetail: {
   PENGUMPULAN_DOKUMEN: 'PENGUMPULAN_DOKUMEN',
-  WAWANCARA: 'WAWANCARA',
-  OTS: 'OTS',
-  VERIFIKASI: 'VERIFIKASI',
-  SP3K: 'SP3K',
+  PROSES_BANK: 'PROSES_BANK',
   AKAD_KREDIT: 'AKAD_KREDIT',
   PEMBERKASAN_LEGALITAS: 'PEMBERKASAN_LEGALITAS',
   MENUNGGU_PELUNASAN: 'MENUNGGU_PELUNASAN',
@@ -236,15 +215,6 @@ export const StatusPengajuanKPR: {
 };
 
 export type StatusPengajuanKPR = (typeof StatusPengajuanKPR)[keyof typeof StatusPengajuanKPR]
-
-
-export const KategoriDokumen: {
-  PEMBERKASAN: 'PEMBERKASAN',
-  BAST: 'BAST',
-  LEGALITAS_LAINNYA: 'LEGALITAS_LAINNYA'
-};
-
-export type KategoriDokumen = (typeof KategoriDokumen)[keyof typeof KategoriDokumen]
 
 
 export const JenisDokumen: {
@@ -283,10 +253,8 @@ export type JenisDokumen = (typeof JenisDokumen)[keyof typeof JenisDokumen]
 
 
 export const StatusDokumen: {
-  BELUM_DIUNGGAH: 'BELUM_DIUNGGAH',
-  MENUNGGU_VERIFIKASI: 'MENUNGGU_VERIFIKASI',
-  PERLU_REVISI: 'PERLU_REVISI',
-  TERVERIFIKASI: 'TERVERIFIKASI'
+  BELUM_LENGKAP: 'BELUM_LENGKAP',
+  LENGKAP: 'LENGKAP'
 };
 
 export type StatusDokumen = (typeof StatusDokumen)[keyof typeof StatusDokumen]
@@ -306,14 +274,12 @@ export const ItemBAST: {
 export type ItemBAST = (typeof ItemBAST)[keyof typeof ItemBAST]
 
 
-export const StatusInspeksi: {
-  BELUM_DICEK: 'BELUM_DICEK',
-  SESUAI: 'SESUAI',
-  PERLU_PERBAIKAN: 'PERLU_PERBAIKAN',
-  SELESAI_DIPERBAIKI: 'SELESAI_DIPERBAIKI'
+export const StatusBAST: {
+  BELUM_LENGKAP: 'BELUM_LENGKAP',
+  LENGKAP: 'LENGKAP'
 };
 
-export type StatusInspeksi = (typeof StatusInspeksi)[keyof typeof StatusInspeksi]
+export type StatusBAST = (typeof StatusBAST)[keyof typeof StatusBAST]
 
 
 export const JenisBayar: {
@@ -371,10 +337,6 @@ export type MetodeBayar = $Enums.MetodeBayar
 
 export const MetodeBayar: typeof $Enums.MetodeBayar
 
-export type TahapTransaksi = $Enums.TahapTransaksi
-
-export const TahapTransaksi: typeof $Enums.TahapTransaksi
-
 export type TahapDetail = $Enums.TahapDetail
 
 export const TahapDetail: typeof $Enums.TahapDetail
@@ -382,10 +344,6 @@ export const TahapDetail: typeof $Enums.TahapDetail
 export type StatusPengajuanKPR = $Enums.StatusPengajuanKPR
 
 export const StatusPengajuanKPR: typeof $Enums.StatusPengajuanKPR
-
-export type KategoriDokumen = $Enums.KategoriDokumen
-
-export const KategoriDokumen: typeof $Enums.KategoriDokumen
 
 export type JenisDokumen = $Enums.JenisDokumen
 
@@ -399,9 +357,9 @@ export type ItemBAST = $Enums.ItemBAST
 
 export const ItemBAST: typeof $Enums.ItemBAST
 
-export type StatusInspeksi = $Enums.StatusInspeksi
+export type StatusBAST = $Enums.StatusBAST
 
-export const StatusInspeksi: typeof $Enums.StatusInspeksi
+export const StatusBAST: typeof $Enums.StatusBAST
 
 export type JenisBayar = $Enums.JenisBayar
 
@@ -673,24 +631,14 @@ export class PrismaClient<
   get dokumenTransaksi(): Prisma.DokumenTransaksiDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.inspeksiBAST`: Exposes CRUD operations for the **InspeksiBAST** model.
+   * `prisma.checklistBAST`: Exposes CRUD operations for the **ChecklistBAST** model.
     * Example usage:
     * ```ts
-    * // Fetch zero or more InspeksiBASTS
-    * const inspeksiBASTS = await prisma.inspeksiBAST.findMany()
+    * // Fetch zero or more ChecklistBASTS
+    * const checklistBASTS = await prisma.checklistBAST.findMany()
     * ```
     */
-  get inspeksiBAST(): Prisma.InspeksiBASTDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.inspeksiBASTLog`: Exposes CRUD operations for the **InspeksiBASTLog** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more InspeksiBASTLogs
-    * const inspeksiBASTLogs = await prisma.inspeksiBASTLog.findMany()
-    * ```
-    */
-  get inspeksiBASTLog(): Prisma.InspeksiBASTLogDelegate<ExtArgs, ClientOptions>;
+  get checklistBAST(): Prisma.ChecklistBASTDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.pembayaran`: Exposes CRUD operations for the **Pembayaran** model.
@@ -1162,8 +1110,7 @@ export namespace Prisma {
     PengajuanKPRLog: 'PengajuanKPRLog',
     TransaksiTahapLog: 'TransaksiTahapLog',
     DokumenTransaksi: 'DokumenTransaksi',
-    InspeksiBAST: 'InspeksiBAST',
-    InspeksiBASTLog: 'InspeksiBASTLog',
+    ChecklistBAST: 'ChecklistBAST',
     Pembayaran: 'Pembayaran'
   };
 
@@ -1180,7 +1127,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "masterTipe" | "masterUnit" | "unitTipeLog" | "lead" | "aktivitas" | "itj" | "customer" | "transaksi" | "bank" | "pengajuanKPR" | "pengajuanKPRLog" | "transaksiTahapLog" | "dokumenTransaksi" | "inspeksiBAST" | "inspeksiBASTLog" | "pembayaran"
+      modelProps: "user" | "masterTipe" | "masterUnit" | "unitTipeLog" | "lead" | "aktivitas" | "itj" | "customer" | "transaksi" | "bank" | "pengajuanKPR" | "pengajuanKPRLog" | "transaksiTahapLog" | "dokumenTransaksi" | "checklistBAST" | "pembayaran"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2108,135 +2055,69 @@ export namespace Prisma {
           }
         }
       }
-      InspeksiBAST: {
-        payload: Prisma.$InspeksiBASTPayload<ExtArgs>
-        fields: Prisma.InspeksiBASTFieldRefs
+      ChecklistBAST: {
+        payload: Prisma.$ChecklistBASTPayload<ExtArgs>
+        fields: Prisma.ChecklistBASTFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.InspeksiBASTFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload> | null
+            args: Prisma.ChecklistBASTFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.InspeksiBASTFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+            args: Prisma.ChecklistBASTFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload>
           }
           findFirst: {
-            args: Prisma.InspeksiBASTFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload> | null
+            args: Prisma.ChecklistBASTFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.InspeksiBASTFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+            args: Prisma.ChecklistBASTFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload>
           }
           findMany: {
-            args: Prisma.InspeksiBASTFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>[]
+            args: Prisma.ChecklistBASTFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload>[]
           }
           create: {
-            args: Prisma.InspeksiBASTCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+            args: Prisma.ChecklistBASTCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload>
           }
           createMany: {
-            args: Prisma.InspeksiBASTCreateManyArgs<ExtArgs>
+            args: Prisma.ChecklistBASTCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           delete: {
-            args: Prisma.InspeksiBASTDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+            args: Prisma.ChecklistBASTDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload>
           }
           update: {
-            args: Prisma.InspeksiBASTUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+            args: Prisma.ChecklistBASTUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload>
           }
           deleteMany: {
-            args: Prisma.InspeksiBASTDeleteManyArgs<ExtArgs>
+            args: Prisma.ChecklistBASTDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.InspeksiBASTUpdateManyArgs<ExtArgs>
+            args: Prisma.ChecklistBASTUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           upsert: {
-            args: Prisma.InspeksiBASTUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTPayload>
+            args: Prisma.ChecklistBASTUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChecklistBASTPayload>
           }
           aggregate: {
-            args: Prisma.InspeksiBASTAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateInspeksiBAST>
+            args: Prisma.ChecklistBASTAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateChecklistBAST>
           }
           groupBy: {
-            args: Prisma.InspeksiBASTGroupByArgs<ExtArgs>
-            result: $Utils.Optional<InspeksiBASTGroupByOutputType>[]
+            args: Prisma.ChecklistBASTGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ChecklistBASTGroupByOutputType>[]
           }
           count: {
-            args: Prisma.InspeksiBASTCountArgs<ExtArgs>
-            result: $Utils.Optional<InspeksiBASTCountAggregateOutputType> | number
-          }
-        }
-      }
-      InspeksiBASTLog: {
-        payload: Prisma.$InspeksiBASTLogPayload<ExtArgs>
-        fields: Prisma.InspeksiBASTLogFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.InspeksiBASTLogFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.InspeksiBASTLogFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
-          }
-          findFirst: {
-            args: Prisma.InspeksiBASTLogFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.InspeksiBASTLogFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
-          }
-          findMany: {
-            args: Prisma.InspeksiBASTLogFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>[]
-          }
-          create: {
-            args: Prisma.InspeksiBASTLogCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
-          }
-          createMany: {
-            args: Prisma.InspeksiBASTLogCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          delete: {
-            args: Prisma.InspeksiBASTLogDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
-          }
-          update: {
-            args: Prisma.InspeksiBASTLogUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
-          }
-          deleteMany: {
-            args: Prisma.InspeksiBASTLogDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.InspeksiBASTLogUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.InspeksiBASTLogUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$InspeksiBASTLogPayload>
-          }
-          aggregate: {
-            args: Prisma.InspeksiBASTLogAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateInspeksiBASTLog>
-          }
-          groupBy: {
-            args: Prisma.InspeksiBASTLogGroupByArgs<ExtArgs>
-            result: $Utils.Optional<InspeksiBASTLogGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.InspeksiBASTLogCountArgs<ExtArgs>
-            result: $Utils.Optional<InspeksiBASTLogCountAggregateOutputType> | number
+            args: Prisma.ChecklistBASTCountArgs<ExtArgs>
+            result: $Utils.Optional<ChecklistBASTCountAggregateOutputType> | number
           }
         }
       }
@@ -2443,8 +2324,7 @@ export namespace Prisma {
     pengajuanKPRLog?: PengajuanKPRLogOmit
     transaksiTahapLog?: TransaksiTahapLogOmit
     dokumenTransaksi?: DokumenTransaksiOmit
-    inspeksiBAST?: InspeksiBASTOmit
-    inspeksiBASTLog?: InspeksiBASTLogOmit
+    checklistBAST?: ChecklistBASTOmit
     pembayaran?: PembayaranOmit
   }
 
@@ -2532,10 +2412,7 @@ export namespace Prisma {
     itj_diajukan: number
     transaksi_logs: number
     aktivitas_log: number
-    dokumen_diverifikasi: number
     pembayaran_divoid: number
-    inspeksi_bast: number
-    inspeksi_bast_logs: number
     pengajuan_kpr_logs: number
     unit_tipe_logs: number
   }
@@ -2547,10 +2424,7 @@ export namespace Prisma {
     itj_diajukan?: boolean | UserCountOutputTypeCountItj_diajukanArgs
     transaksi_logs?: boolean | UserCountOutputTypeCountTransaksi_logsArgs
     aktivitas_log?: boolean | UserCountOutputTypeCountAktivitas_logArgs
-    dokumen_diverifikasi?: boolean | UserCountOutputTypeCountDokumen_diverifikasiArgs
     pembayaran_divoid?: boolean | UserCountOutputTypeCountPembayaran_divoidArgs
-    inspeksi_bast?: boolean | UserCountOutputTypeCountInspeksi_bastArgs
-    inspeksi_bast_logs?: boolean | UserCountOutputTypeCountInspeksi_bast_logsArgs
     pengajuan_kpr_logs?: boolean | UserCountOutputTypeCountPengajuan_kpr_logsArgs
     unit_tipe_logs?: boolean | UserCountOutputTypeCountUnit_tipe_logsArgs
   }
@@ -2611,29 +2485,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountDokumen_diverifikasiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DokumenTransaksiWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
   export type UserCountOutputTypeCountPembayaran_divoidArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PembayaranWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountInspeksi_bastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: InspeksiBASTWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountInspeksi_bast_logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: InspeksiBASTLogWhereInput
   }
 
   /**
@@ -2837,7 +2690,7 @@ export namespace Prisma {
     pembayaran: number
     logs: number
     dokumen: number
-    inspeksi_bast: number
+    checklist_bast: number
     pengajuan_kpr: number
   }
 
@@ -2845,7 +2698,7 @@ export namespace Prisma {
     pembayaran?: boolean | TransaksiCountOutputTypeCountPembayaranArgs
     logs?: boolean | TransaksiCountOutputTypeCountLogsArgs
     dokumen?: boolean | TransaksiCountOutputTypeCountDokumenArgs
-    inspeksi_bast?: boolean | TransaksiCountOutputTypeCountInspeksi_bastArgs
+    checklist_bast?: boolean | TransaksiCountOutputTypeCountChecklist_bastArgs
     pengajuan_kpr?: boolean | TransaksiCountOutputTypeCountPengajuan_kprArgs
   }
 
@@ -2884,8 +2737,8 @@ export namespace Prisma {
   /**
    * TransaksiCountOutputType without action
    */
-  export type TransaksiCountOutputTypeCountInspeksi_bastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: InspeksiBASTWhereInput
+  export type TransaksiCountOutputTypeCountChecklist_bastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChecklistBASTWhereInput
   }
 
   /**
@@ -2955,37 +2808,6 @@ export namespace Prisma {
    */
   export type PengajuanKPRCountOutputTypeCountLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PengajuanKPRLogWhereInput
-  }
-
-
-  /**
-   * Count Type InspeksiBASTCountOutputType
-   */
-
-  export type InspeksiBASTCountOutputType = {
-    logs: number
-  }
-
-  export type InspeksiBASTCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    logs?: boolean | InspeksiBASTCountOutputTypeCountLogsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * InspeksiBASTCountOutputType without action
-   */
-  export type InspeksiBASTCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTCountOutputType
-     */
-    select?: InspeksiBASTCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * InspeksiBASTCountOutputType without action
-   */
-  export type InspeksiBASTCountOutputTypeCountLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: InspeksiBASTLogWhereInput
   }
 
 
@@ -3229,10 +3051,7 @@ export namespace Prisma {
     itj_diajukan?: boolean | User$itj_diajukanArgs<ExtArgs>
     transaksi_logs?: boolean | User$transaksi_logsArgs<ExtArgs>
     aktivitas_log?: boolean | User$aktivitas_logArgs<ExtArgs>
-    dokumen_diverifikasi?: boolean | User$dokumen_diverifikasiArgs<ExtArgs>
     pembayaran_divoid?: boolean | User$pembayaran_divoidArgs<ExtArgs>
-    inspeksi_bast?: boolean | User$inspeksi_bastArgs<ExtArgs>
-    inspeksi_bast_logs?: boolean | User$inspeksi_bast_logsArgs<ExtArgs>
     pengajuan_kpr_logs?: boolean | User$pengajuan_kpr_logsArgs<ExtArgs>
     unit_tipe_logs?: boolean | User$unit_tipe_logsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -3260,10 +3079,7 @@ export namespace Prisma {
     itj_diajukan?: boolean | User$itj_diajukanArgs<ExtArgs>
     transaksi_logs?: boolean | User$transaksi_logsArgs<ExtArgs>
     aktivitas_log?: boolean | User$aktivitas_logArgs<ExtArgs>
-    dokumen_diverifikasi?: boolean | User$dokumen_diverifikasiArgs<ExtArgs>
     pembayaran_divoid?: boolean | User$pembayaran_divoidArgs<ExtArgs>
-    inspeksi_bast?: boolean | User$inspeksi_bastArgs<ExtArgs>
-    inspeksi_bast_logs?: boolean | User$inspeksi_bast_logsArgs<ExtArgs>
     pengajuan_kpr_logs?: boolean | User$pengajuan_kpr_logsArgs<ExtArgs>
     unit_tipe_logs?: boolean | User$unit_tipe_logsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -3278,10 +3094,7 @@ export namespace Prisma {
       itj_diajukan: Prisma.$ItjPayload<ExtArgs>[]
       transaksi_logs: Prisma.$TransaksiTahapLogPayload<ExtArgs>[]
       aktivitas_log: Prisma.$AktivitasPayload<ExtArgs>[]
-      dokumen_diverifikasi: Prisma.$DokumenTransaksiPayload<ExtArgs>[]
       pembayaran_divoid: Prisma.$PembayaranPayload<ExtArgs>[]
-      inspeksi_bast: Prisma.$InspeksiBASTPayload<ExtArgs>[]
-      inspeksi_bast_logs: Prisma.$InspeksiBASTLogPayload<ExtArgs>[]
       pengajuan_kpr_logs: Prisma.$PengajuanKPRLogPayload<ExtArgs>[]
       unit_tipe_logs: Prisma.$UnitTipeLogPayload<ExtArgs>[]
     }
@@ -3641,10 +3454,7 @@ export namespace Prisma {
     itj_diajukan<T extends User$itj_diajukanArgs<ExtArgs> = {}>(args?: Subset<T, User$itj_diajukanArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transaksi_logs<T extends User$transaksi_logsArgs<ExtArgs> = {}>(args?: Subset<T, User$transaksi_logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransaksiTahapLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     aktivitas_log<T extends User$aktivitas_logArgs<ExtArgs> = {}>(args?: Subset<T, User$aktivitas_logArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AktivitasPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    dokumen_diverifikasi<T extends User$dokumen_diverifikasiArgs<ExtArgs> = {}>(args?: Subset<T, User$dokumen_diverifikasiArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DokumenTransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     pembayaran_divoid<T extends User$pembayaran_divoidArgs<ExtArgs> = {}>(args?: Subset<T, User$pembayaran_divoidArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PembayaranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    inspeksi_bast<T extends User$inspeksi_bastArgs<ExtArgs> = {}>(args?: Subset<T, User$inspeksi_bastArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    inspeksi_bast_logs<T extends User$inspeksi_bast_logsArgs<ExtArgs> = {}>(args?: Subset<T, User$inspeksi_bast_logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     pengajuan_kpr_logs<T extends User$pengajuan_kpr_logsArgs<ExtArgs> = {}>(args?: Subset<T, User$pengajuan_kpr_logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PengajuanKPRLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     unit_tipe_logs<T extends User$unit_tipe_logsArgs<ExtArgs> = {}>(args?: Subset<T, User$unit_tipe_logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UnitTipeLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -4177,30 +3987,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.dokumen_diverifikasi
-   */
-  export type User$dokumen_diverifikasiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DokumenTransaksi
-     */
-    select?: DokumenTransaksiSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the DokumenTransaksi
-     */
-    omit?: DokumenTransaksiOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DokumenTransaksiInclude<ExtArgs> | null
-    where?: DokumenTransaksiWhereInput
-    orderBy?: DokumenTransaksiOrderByWithRelationInput | DokumenTransaksiOrderByWithRelationInput[]
-    cursor?: DokumenTransaksiWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: DokumenTransaksiScalarFieldEnum | DokumenTransaksiScalarFieldEnum[]
-  }
-
-  /**
    * User.pembayaran_divoid
    */
   export type User$pembayaran_divoidArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4222,54 +4008,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PembayaranScalarFieldEnum | PembayaranScalarFieldEnum[]
-  }
-
-  /**
-   * User.inspeksi_bast
-   */
-  export type User$inspeksi_bastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBAST
-     */
-    select?: InspeksiBASTSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBAST
-     */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTInclude<ExtArgs> | null
-    where?: InspeksiBASTWhereInput
-    orderBy?: InspeksiBASTOrderByWithRelationInput | InspeksiBASTOrderByWithRelationInput[]
-    cursor?: InspeksiBASTWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: InspeksiBASTScalarFieldEnum | InspeksiBASTScalarFieldEnum[]
-  }
-
-  /**
-   * User.inspeksi_bast_logs
-   */
-  export type User$inspeksi_bast_logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    where?: InspeksiBASTLogWhereInput
-    orderBy?: InspeksiBASTLogOrderByWithRelationInput | InspeksiBASTLogOrderByWithRelationInput[]
-    cursor?: InspeksiBASTLogWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: InspeksiBASTLogScalarFieldEnum | InspeksiBASTLogScalarFieldEnum[]
   }
 
   /**
@@ -4526,7 +4264,7 @@ export namespace Prisma {
     id: number
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan: number
+    luas_bangunan: number | null
     luas_tanah: number
     harga_dasar: Decimal
     _count: MasterTipeCountAggregateOutputType | null
@@ -4593,7 +4331,7 @@ export namespace Prisma {
       id: number
       nama_tipe: string
       kategori: $Enums.KategoriUnit
-      luas_bangunan: number
+      luas_bangunan: number | null
       luas_tanah: number
       harga_dasar: Prisma.Decimal
     }, ExtArgs["result"]["masterTipe"]>
@@ -5640,6 +5378,7 @@ export namespace Prisma {
     harga_khusus?: boolean
     tipe?: boolean | MasterTipeDefaultArgs<ExtArgs>
     transaksi?: boolean | MasterUnit$transaksiArgs<ExtArgs>
+    active_transaksi?: boolean | MasterUnit$active_transaksiArgs<ExtArgs>
     itj?: boolean | MasterUnit$itjArgs<ExtArgs>
     tipe_logs?: boolean | MasterUnit$tipe_logsArgs<ExtArgs>
     _count?: boolean | MasterUnitCountOutputTypeDefaultArgs<ExtArgs>
@@ -5661,6 +5400,7 @@ export namespace Prisma {
   export type MasterUnitInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tipe?: boolean | MasterTipeDefaultArgs<ExtArgs>
     transaksi?: boolean | MasterUnit$transaksiArgs<ExtArgs>
+    active_transaksi?: boolean | MasterUnit$active_transaksiArgs<ExtArgs>
     itj?: boolean | MasterUnit$itjArgs<ExtArgs>
     tipe_logs?: boolean | MasterUnit$tipe_logsArgs<ExtArgs>
     _count?: boolean | MasterUnitCountOutputTypeDefaultArgs<ExtArgs>
@@ -5671,6 +5411,7 @@ export namespace Prisma {
     objects: {
       tipe: Prisma.$MasterTipePayload<ExtArgs>
       transaksi: Prisma.$TransaksiPayload<ExtArgs>[]
+      active_transaksi: Prisma.$TransaksiPayload<ExtArgs> | null
       itj: Prisma.$ItjPayload<ExtArgs>[]
       tipe_logs: Prisma.$UnitTipeLogPayload<ExtArgs>[]
     }
@@ -6024,6 +5765,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tipe<T extends MasterTipeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MasterTipeDefaultArgs<ExtArgs>>): Prisma__MasterTipeClient<$Result.GetResult<Prisma.$MasterTipePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     transaksi<T extends MasterUnit$transaksiArgs<ExtArgs> = {}>(args?: Subset<T, MasterUnit$transaksiArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    active_transaksi<T extends MasterUnit$active_transaksiArgs<ExtArgs> = {}>(args?: Subset<T, MasterUnit$active_transaksiArgs<ExtArgs>>): Prisma__TransaksiClient<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     itj<T extends MasterUnit$itjArgs<ExtArgs> = {}>(args?: Subset<T, MasterUnit$itjArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tipe_logs<T extends MasterUnit$tipe_logsArgs<ExtArgs> = {}>(args?: Subset<T, MasterUnit$tipe_logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UnitTipeLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -6434,6 +6176,25 @@ export namespace Prisma {
   }
 
   /**
+   * MasterUnit.active_transaksi
+   */
+  export type MasterUnit$active_transaksiArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaksi
+     */
+    select?: TransaksiSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaksi
+     */
+    omit?: TransaksiOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransaksiInclude<ExtArgs> | null
+    where?: TransaksiWhereInput
+  }
+
+  /**
    * MasterUnit.itj
    */
   export type MasterUnit$itjArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6518,7 +6279,7 @@ export namespace Prisma {
     tipe_lama_id: number | null
     tipe_baru_id: number | null
     harga_khusus_lama: Decimal | null
-    changed_by: number | null
+    actor_id: number | null
   }
 
   export type UnitTipeLogSumAggregateOutputType = {
@@ -6527,7 +6288,7 @@ export namespace Prisma {
     tipe_lama_id: number | null
     tipe_baru_id: number | null
     harga_khusus_lama: Decimal | null
-    changed_by: number | null
+    actor_id: number | null
   }
 
   export type UnitTipeLogMinAggregateOutputType = {
@@ -6539,7 +6300,7 @@ export namespace Prisma {
     harga_khusus_lama: Decimal | null
     harga_khusus_direset: boolean | null
     alasan: string | null
-    changed_by: number | null
+    actor_id: number | null
     created_at: Date | null
   }
 
@@ -6552,7 +6313,7 @@ export namespace Prisma {
     harga_khusus_lama: Decimal | null
     harga_khusus_direset: boolean | null
     alasan: string | null
-    changed_by: number | null
+    actor_id: number | null
     created_at: Date | null
   }
 
@@ -6565,7 +6326,7 @@ export namespace Prisma {
     harga_khusus_lama: number
     harga_khusus_direset: number
     alasan: number
-    changed_by: number
+    actor_id: number
     created_at: number
     _all: number
   }
@@ -6577,7 +6338,7 @@ export namespace Prisma {
     tipe_lama_id?: true
     tipe_baru_id?: true
     harga_khusus_lama?: true
-    changed_by?: true
+    actor_id?: true
   }
 
   export type UnitTipeLogSumAggregateInputType = {
@@ -6586,7 +6347,7 @@ export namespace Prisma {
     tipe_lama_id?: true
     tipe_baru_id?: true
     harga_khusus_lama?: true
-    changed_by?: true
+    actor_id?: true
   }
 
   export type UnitTipeLogMinAggregateInputType = {
@@ -6598,7 +6359,7 @@ export namespace Prisma {
     harga_khusus_lama?: true
     harga_khusus_direset?: true
     alasan?: true
-    changed_by?: true
+    actor_id?: true
     created_at?: true
   }
 
@@ -6611,7 +6372,7 @@ export namespace Prisma {
     harga_khusus_lama?: true
     harga_khusus_direset?: true
     alasan?: true
-    changed_by?: true
+    actor_id?: true
     created_at?: true
   }
 
@@ -6624,7 +6385,7 @@ export namespace Prisma {
     harga_khusus_lama?: true
     harga_khusus_direset?: true
     alasan?: true
-    changed_by?: true
+    actor_id?: true
     created_at?: true
     _all?: true
   }
@@ -6724,7 +6485,7 @@ export namespace Prisma {
     harga_khusus_lama: Decimal | null
     harga_khusus_direset: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at: Date
     _count: UnitTipeLogCountAggregateOutputType | null
     _avg: UnitTipeLogAvgAggregateOutputType | null
@@ -6756,12 +6517,12 @@ export namespace Prisma {
     harga_khusus_lama?: boolean
     harga_khusus_direset?: boolean
     alasan?: boolean
-    changed_by?: boolean
+    actor_id?: boolean
     created_at?: boolean
     unit?: boolean | UnitTipeLog$unitArgs<ExtArgs>
     tipe_lama?: boolean | MasterTipeDefaultArgs<ExtArgs>
     tipe_baru?: boolean | MasterTipeDefaultArgs<ExtArgs>
-    admin?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["unitTipeLog"]>
 
 
@@ -6775,16 +6536,16 @@ export namespace Prisma {
     harga_khusus_lama?: boolean
     harga_khusus_direset?: boolean
     alasan?: boolean
-    changed_by?: boolean
+    actor_id?: boolean
     created_at?: boolean
   }
 
-  export type UnitTipeLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "unit_id" | "blok" | "tipe_lama_id" | "tipe_baru_id" | "harga_khusus_lama" | "harga_khusus_direset" | "alasan" | "changed_by" | "created_at", ExtArgs["result"]["unitTipeLog"]>
+  export type UnitTipeLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "unit_id" | "blok" | "tipe_lama_id" | "tipe_baru_id" | "harga_khusus_lama" | "harga_khusus_direset" | "alasan" | "actor_id" | "created_at", ExtArgs["result"]["unitTipeLog"]>
   export type UnitTipeLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     unit?: boolean | UnitTipeLog$unitArgs<ExtArgs>
     tipe_lama?: boolean | MasterTipeDefaultArgs<ExtArgs>
     tipe_baru?: boolean | MasterTipeDefaultArgs<ExtArgs>
-    admin?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $UnitTipeLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6793,7 +6554,7 @@ export namespace Prisma {
       unit: Prisma.$MasterUnitPayload<ExtArgs> | null
       tipe_lama: Prisma.$MasterTipePayload<ExtArgs>
       tipe_baru: Prisma.$MasterTipePayload<ExtArgs>
-      admin: Prisma.$UserPayload<ExtArgs>
+      actor: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -6804,7 +6565,7 @@ export namespace Prisma {
       harga_khusus_lama: Prisma.Decimal | null
       harga_khusus_direset: boolean
       alasan: string
-      changed_by: number
+      actor_id: number
       created_at: Date
     }, ExtArgs["result"]["unitTipeLog"]>
     composites: {}
@@ -7149,7 +6910,7 @@ export namespace Prisma {
     unit<T extends UnitTipeLog$unitArgs<ExtArgs> = {}>(args?: Subset<T, UnitTipeLog$unitArgs<ExtArgs>>): Prisma__MasterUnitClient<$Result.GetResult<Prisma.$MasterUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     tipe_lama<T extends MasterTipeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MasterTipeDefaultArgs<ExtArgs>>): Prisma__MasterTipeClient<$Result.GetResult<Prisma.$MasterTipePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     tipe_baru<T extends MasterTipeDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MasterTipeDefaultArgs<ExtArgs>>): Prisma__MasterTipeClient<$Result.GetResult<Prisma.$MasterTipePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    admin<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actor<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7187,7 +6948,7 @@ export namespace Prisma {
     readonly harga_khusus_lama: FieldRef<"UnitTipeLog", 'Decimal'>
     readonly harga_khusus_direset: FieldRef<"UnitTipeLog", 'Boolean'>
     readonly alasan: FieldRef<"UnitTipeLog", 'String'>
-    readonly changed_by: FieldRef<"UnitTipeLog", 'Int'>
+    readonly actor_id: FieldRef<"UnitTipeLog", 'Int'>
     readonly created_at: FieldRef<"UnitTipeLog", 'DateTime'>
   }
     
@@ -9789,12 +9550,8 @@ export namespace Prisma {
     id: number | null
     lead_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    closer_id: number | null
     nominal: Decimal | null
-    harga_deal: Decimal | null
-    target_itj: Decimal | null
-    target_dp: Decimal | null
-    nominal_dibayar: Decimal | null
     tenor: number | null
   }
 
@@ -9802,12 +9559,8 @@ export namespace Prisma {
     id: number | null
     lead_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    closer_id: number | null
     nominal: Decimal | null
-    harga_deal: Decimal | null
-    target_itj: Decimal | null
-    target_dp: Decimal | null
-    nominal_dibayar: Decimal | null
     tenor: number | null
   }
 
@@ -9815,14 +9568,10 @@ export namespace Prisma {
     id: number | null
     lead_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    closer_id: number | null
     nik: string | null
     nama_ktp: string | null
     nominal: Decimal | null
-    harga_deal: Decimal | null
-    target_itj: Decimal | null
-    target_dp: Decimal | null
-    nominal_dibayar: Decimal | null
     metode_bayar: $Enums.MetodeBayar | null
     tenor: number | null
     diajukan_at: Date | null
@@ -9834,14 +9583,10 @@ export namespace Prisma {
     id: number | null
     lead_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    closer_id: number | null
     nik: string | null
     nama_ktp: string | null
     nominal: Decimal | null
-    harga_deal: Decimal | null
-    target_itj: Decimal | null
-    target_dp: Decimal | null
-    nominal_dibayar: Decimal | null
     metode_bayar: $Enums.MetodeBayar | null
     tenor: number | null
     diajukan_at: Date | null
@@ -9853,14 +9598,10 @@ export namespace Prisma {
     id: number
     lead_id: number
     unit_id: number
-    marketing_id: number
+    closer_id: number
     nik: number
     nama_ktp: number
     nominal: number
-    harga_deal: number
-    target_itj: number
-    target_dp: number
-    nominal_dibayar: number
     metode_bayar: number
     tenor: number
     diajukan_at: number
@@ -9874,12 +9615,8 @@ export namespace Prisma {
     id?: true
     lead_id?: true
     unit_id?: true
-    marketing_id?: true
+    closer_id?: true
     nominal?: true
-    harga_deal?: true
-    target_itj?: true
-    target_dp?: true
-    nominal_dibayar?: true
     tenor?: true
   }
 
@@ -9887,12 +9624,8 @@ export namespace Prisma {
     id?: true
     lead_id?: true
     unit_id?: true
-    marketing_id?: true
+    closer_id?: true
     nominal?: true
-    harga_deal?: true
-    target_itj?: true
-    target_dp?: true
-    nominal_dibayar?: true
     tenor?: true
   }
 
@@ -9900,14 +9633,10 @@ export namespace Prisma {
     id?: true
     lead_id?: true
     unit_id?: true
-    marketing_id?: true
+    closer_id?: true
     nik?: true
     nama_ktp?: true
     nominal?: true
-    harga_deal?: true
-    target_itj?: true
-    target_dp?: true
-    nominal_dibayar?: true
     metode_bayar?: true
     tenor?: true
     diajukan_at?: true
@@ -9919,14 +9648,10 @@ export namespace Prisma {
     id?: true
     lead_id?: true
     unit_id?: true
-    marketing_id?: true
+    closer_id?: true
     nik?: true
     nama_ktp?: true
     nominal?: true
-    harga_deal?: true
-    target_itj?: true
-    target_dp?: true
-    nominal_dibayar?: true
     metode_bayar?: true
     tenor?: true
     diajukan_at?: true
@@ -9938,14 +9663,10 @@ export namespace Prisma {
     id?: true
     lead_id?: true
     unit_id?: true
-    marketing_id?: true
+    closer_id?: true
     nik?: true
     nama_ktp?: true
     nominal?: true
-    harga_deal?: true
-    target_itj?: true
-    target_dp?: true
-    nominal_dibayar?: true
     metode_bayar?: true
     tenor?: true
     diajukan_at?: true
@@ -10044,14 +9765,10 @@ export namespace Prisma {
     id: number
     lead_id: number
     unit_id: number
-    marketing_id: number | null
+    closer_id: number | null
     nik: string
     nama_ktp: string
     nominal: Decimal
-    harga_deal: Decimal
-    target_itj: Decimal
-    target_dp: Decimal
-    nominal_dibayar: Decimal
     metode_bayar: $Enums.MetodeBayar
     tenor: number | null
     diajukan_at: Date
@@ -10082,14 +9799,10 @@ export namespace Prisma {
     id?: boolean
     lead_id?: boolean
     unit_id?: boolean
-    marketing_id?: boolean
+    closer_id?: boolean
     nik?: boolean
     nama_ktp?: boolean
     nominal?: boolean
-    harga_deal?: boolean
-    target_itj?: boolean
-    target_dp?: boolean
-    nominal_dibayar?: boolean
     metode_bayar?: boolean
     tenor?: boolean
     diajukan_at?: boolean
@@ -10097,7 +9810,7 @@ export namespace Prisma {
     updated_at?: boolean
     lead?: boolean | LeadDefaultArgs<ExtArgs>
     unit?: boolean | MasterUnitDefaultArgs<ExtArgs>
-    marketing?: boolean | Itj$marketingArgs<ExtArgs>
+    closer?: boolean | Itj$closerArgs<ExtArgs>
     transaksi?: boolean | Itj$transaksiArgs<ExtArgs>
   }, ExtArgs["result"]["itj"]>
 
@@ -10107,14 +9820,10 @@ export namespace Prisma {
     id?: boolean
     lead_id?: boolean
     unit_id?: boolean
-    marketing_id?: boolean
+    closer_id?: boolean
     nik?: boolean
     nama_ktp?: boolean
     nominal?: boolean
-    harga_deal?: boolean
-    target_itj?: boolean
-    target_dp?: boolean
-    nominal_dibayar?: boolean
     metode_bayar?: boolean
     tenor?: boolean
     diajukan_at?: boolean
@@ -10122,11 +9831,11 @@ export namespace Prisma {
     updated_at?: boolean
   }
 
-  export type ItjOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "lead_id" | "unit_id" | "marketing_id" | "nik" | "nama_ktp" | "nominal" | "harga_deal" | "target_itj" | "target_dp" | "nominal_dibayar" | "metode_bayar" | "tenor" | "diajukan_at" | "created_at" | "updated_at", ExtArgs["result"]["itj"]>
+  export type ItjOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "lead_id" | "unit_id" | "closer_id" | "nik" | "nama_ktp" | "nominal" | "metode_bayar" | "tenor" | "diajukan_at" | "created_at" | "updated_at", ExtArgs["result"]["itj"]>
   export type ItjInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     lead?: boolean | LeadDefaultArgs<ExtArgs>
     unit?: boolean | MasterUnitDefaultArgs<ExtArgs>
-    marketing?: boolean | Itj$marketingArgs<ExtArgs>
+    closer?: boolean | Itj$closerArgs<ExtArgs>
     transaksi?: boolean | Itj$transaksiArgs<ExtArgs>
   }
 
@@ -10135,21 +9844,17 @@ export namespace Prisma {
     objects: {
       lead: Prisma.$LeadPayload<ExtArgs>
       unit: Prisma.$MasterUnitPayload<ExtArgs>
-      marketing: Prisma.$UserPayload<ExtArgs> | null
+      closer: Prisma.$UserPayload<ExtArgs> | null
       transaksi: Prisma.$TransaksiPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       lead_id: number
       unit_id: number
-      marketing_id: number | null
+      closer_id: number | null
       nik: string
       nama_ktp: string
       nominal: Prisma.Decimal
-      harga_deal: Prisma.Decimal
-      target_itj: Prisma.Decimal
-      target_dp: Prisma.Decimal
-      nominal_dibayar: Prisma.Decimal
       metode_bayar: $Enums.MetodeBayar
       tenor: number | null
       diajukan_at: Date
@@ -10497,7 +10202,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     lead<T extends LeadDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LeadDefaultArgs<ExtArgs>>): Prisma__LeadClient<$Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     unit<T extends MasterUnitDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MasterUnitDefaultArgs<ExtArgs>>): Prisma__MasterUnitClient<$Result.GetResult<Prisma.$MasterUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    marketing<T extends Itj$marketingArgs<ExtArgs> = {}>(args?: Subset<T, Itj$marketingArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    closer<T extends Itj$closerArgs<ExtArgs> = {}>(args?: Subset<T, Itj$closerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     transaksi<T extends Itj$transaksiArgs<ExtArgs> = {}>(args?: Subset<T, Itj$transaksiArgs<ExtArgs>>): Prisma__TransaksiClient<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -10531,14 +10236,10 @@ export namespace Prisma {
     readonly id: FieldRef<"Itj", 'Int'>
     readonly lead_id: FieldRef<"Itj", 'Int'>
     readonly unit_id: FieldRef<"Itj", 'Int'>
-    readonly marketing_id: FieldRef<"Itj", 'Int'>
+    readonly closer_id: FieldRef<"Itj", 'Int'>
     readonly nik: FieldRef<"Itj", 'String'>
     readonly nama_ktp: FieldRef<"Itj", 'String'>
     readonly nominal: FieldRef<"Itj", 'Decimal'>
-    readonly harga_deal: FieldRef<"Itj", 'Decimal'>
-    readonly target_itj: FieldRef<"Itj", 'Decimal'>
-    readonly target_dp: FieldRef<"Itj", 'Decimal'>
-    readonly nominal_dibayar: FieldRef<"Itj", 'Decimal'>
     readonly metode_bayar: FieldRef<"Itj", 'MetodeBayar'>
     readonly tenor: FieldRef<"Itj", 'Int'>
     readonly diajukan_at: FieldRef<"Itj", 'DateTime'>
@@ -10892,9 +10593,9 @@ export namespace Prisma {
   }
 
   /**
-   * Itj.marketing
+   * Itj.closer
    */
-  export type Itj$marketingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Itj$closerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the User
      */
@@ -12052,49 +11753,57 @@ export namespace Prisma {
     id: number | null
     customer_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    pic_id: number | null
     itj_id: number | null
     harga_deal: Decimal | null
     target_itj: Decimal | null
     target_dp: Decimal | null
     tenor_bulan: number | null
+    version: number | null
+    active_unit_id: number | null
+    pengajuan_kpr_terpilih_id: number | null
   }
 
   export type TransaksiSumAggregateOutputType = {
     id: number | null
     customer_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    pic_id: number | null
     itj_id: number | null
     harga_deal: Decimal | null
     target_itj: Decimal | null
     target_dp: Decimal | null
     tenor_bulan: number | null
+    version: number | null
+    active_unit_id: number | null
+    pengajuan_kpr_terpilih_id: number | null
   }
 
   export type TransaksiMinAggregateOutputType = {
     id: number | null
     customer_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    pic_id: number | null
     itj_id: number | null
     metode_bayar: $Enums.MetodeBayar | null
     harga_deal: Decimal | null
     target_itj: Decimal | null
     target_dp: Decimal | null
     tenor_bulan: number | null
-    status_transaksi: $Enums.TahapTransaksi | null
     tahap_detail: $Enums.TahapDetail | null
-    nama_bank: string | null
     nama_notaris: string | null
+    rencana_akad_at: Date | null
+    rencana_bast_at: Date | null
     tgl_akad: Date | null
     lunas_at: Date | null
     tgl_bast: Date | null
     closing_at: Date | null
-    closed_at: Date | null
     cancelled_at: Date | null
     alasan_batal: string | null
     catatan_admin: string | null
+    version: number | null
+    active_unit_id: number | null
+    pengajuan_kpr_terpilih_id: number | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12103,25 +11812,27 @@ export namespace Prisma {
     id: number | null
     customer_id: number | null
     unit_id: number | null
-    marketing_id: number | null
+    pic_id: number | null
     itj_id: number | null
     metode_bayar: $Enums.MetodeBayar | null
     harga_deal: Decimal | null
     target_itj: Decimal | null
     target_dp: Decimal | null
     tenor_bulan: number | null
-    status_transaksi: $Enums.TahapTransaksi | null
     tahap_detail: $Enums.TahapDetail | null
-    nama_bank: string | null
     nama_notaris: string | null
+    rencana_akad_at: Date | null
+    rencana_bast_at: Date | null
     tgl_akad: Date | null
     lunas_at: Date | null
     tgl_bast: Date | null
     closing_at: Date | null
-    closed_at: Date | null
     cancelled_at: Date | null
     alasan_batal: string | null
     catatan_admin: string | null
+    version: number | null
+    active_unit_id: number | null
+    pengajuan_kpr_terpilih_id: number | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -12130,25 +11841,27 @@ export namespace Prisma {
     id: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: number
     harga_deal: number
     target_itj: number
     target_dp: number
     tenor_bulan: number
-    status_transaksi: number
     tahap_detail: number
-    nama_bank: number
     nama_notaris: number
+    rencana_akad_at: number
+    rencana_bast_at: number
     tgl_akad: number
     lunas_at: number
     tgl_bast: number
     closing_at: number
-    closed_at: number
     cancelled_at: number
     alasan_batal: number
     catatan_admin: number
+    version: number
+    active_unit_id: number
+    pengajuan_kpr_terpilih_id: number
     created_at: number
     updated_at: number
     _all: number
@@ -12159,49 +11872,57 @@ export namespace Prisma {
     id?: true
     customer_id?: true
     unit_id?: true
-    marketing_id?: true
+    pic_id?: true
     itj_id?: true
     harga_deal?: true
     target_itj?: true
     target_dp?: true
     tenor_bulan?: true
+    version?: true
+    active_unit_id?: true
+    pengajuan_kpr_terpilih_id?: true
   }
 
   export type TransaksiSumAggregateInputType = {
     id?: true
     customer_id?: true
     unit_id?: true
-    marketing_id?: true
+    pic_id?: true
     itj_id?: true
     harga_deal?: true
     target_itj?: true
     target_dp?: true
     tenor_bulan?: true
+    version?: true
+    active_unit_id?: true
+    pengajuan_kpr_terpilih_id?: true
   }
 
   export type TransaksiMinAggregateInputType = {
     id?: true
     customer_id?: true
     unit_id?: true
-    marketing_id?: true
+    pic_id?: true
     itj_id?: true
     metode_bayar?: true
     harga_deal?: true
     target_itj?: true
     target_dp?: true
     tenor_bulan?: true
-    status_transaksi?: true
     tahap_detail?: true
-    nama_bank?: true
     nama_notaris?: true
+    rencana_akad_at?: true
+    rencana_bast_at?: true
     tgl_akad?: true
     lunas_at?: true
     tgl_bast?: true
     closing_at?: true
-    closed_at?: true
     cancelled_at?: true
     alasan_batal?: true
     catatan_admin?: true
+    version?: true
+    active_unit_id?: true
+    pengajuan_kpr_terpilih_id?: true
     created_at?: true
     updated_at?: true
   }
@@ -12210,25 +11931,27 @@ export namespace Prisma {
     id?: true
     customer_id?: true
     unit_id?: true
-    marketing_id?: true
+    pic_id?: true
     itj_id?: true
     metode_bayar?: true
     harga_deal?: true
     target_itj?: true
     target_dp?: true
     tenor_bulan?: true
-    status_transaksi?: true
     tahap_detail?: true
-    nama_bank?: true
     nama_notaris?: true
+    rencana_akad_at?: true
+    rencana_bast_at?: true
     tgl_akad?: true
     lunas_at?: true
     tgl_bast?: true
     closing_at?: true
-    closed_at?: true
     cancelled_at?: true
     alasan_batal?: true
     catatan_admin?: true
+    version?: true
+    active_unit_id?: true
+    pengajuan_kpr_terpilih_id?: true
     created_at?: true
     updated_at?: true
   }
@@ -12237,25 +11960,27 @@ export namespace Prisma {
     id?: true
     customer_id?: true
     unit_id?: true
-    marketing_id?: true
+    pic_id?: true
     itj_id?: true
     metode_bayar?: true
     harga_deal?: true
     target_itj?: true
     target_dp?: true
     tenor_bulan?: true
-    status_transaksi?: true
     tahap_detail?: true
-    nama_bank?: true
     nama_notaris?: true
+    rencana_akad_at?: true
+    rencana_bast_at?: true
     tgl_akad?: true
     lunas_at?: true
     tgl_bast?: true
     closing_at?: true
-    closed_at?: true
     cancelled_at?: true
     alasan_batal?: true
     catatan_admin?: true
+    version?: true
+    active_unit_id?: true
+    pengajuan_kpr_terpilih_id?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -12351,25 +12076,27 @@ export namespace Prisma {
     id: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal
     target_itj: Decimal
     target_dp: Decimal
     tenor_bulan: number | null
-    status_transaksi: $Enums.TahapTransaksi
     tahap_detail: $Enums.TahapDetail
-    nama_bank: string | null
     nama_notaris: string | null
+    rencana_akad_at: Date | null
+    rencana_bast_at: Date | null
     tgl_akad: Date | null
     lunas_at: Date | null
     tgl_bast: Date | null
-    closing_at: Date | null
-    closed_at: Date | null
+    closing_at: Date
     cancelled_at: Date | null
     alasan_batal: string | null
     catatan_admin: string | null
+    version: number
+    active_unit_id: number | null
+    pengajuan_kpr_terpilih_id: number | null
     created_at: Date
     updated_at: Date
     _count: TransaksiCountAggregateOutputType | null
@@ -12397,36 +12124,40 @@ export namespace Prisma {
     id?: boolean
     customer_id?: boolean
     unit_id?: boolean
-    marketing_id?: boolean
+    pic_id?: boolean
     itj_id?: boolean
     metode_bayar?: boolean
     harga_deal?: boolean
     target_itj?: boolean
     target_dp?: boolean
     tenor_bulan?: boolean
-    status_transaksi?: boolean
     tahap_detail?: boolean
-    nama_bank?: boolean
     nama_notaris?: boolean
+    rencana_akad_at?: boolean
+    rencana_bast_at?: boolean
     tgl_akad?: boolean
     lunas_at?: boolean
     tgl_bast?: boolean
     closing_at?: boolean
-    closed_at?: boolean
     cancelled_at?: boolean
     alasan_batal?: boolean
     catatan_admin?: boolean
+    version?: boolean
+    active_unit_id?: boolean
+    pengajuan_kpr_terpilih_id?: boolean
     created_at?: boolean
     updated_at?: boolean
     customer?: boolean | CustomerDefaultArgs<ExtArgs>
     unit?: boolean | MasterUnitDefaultArgs<ExtArgs>
-    marketing?: boolean | UserDefaultArgs<ExtArgs>
+    active_unit?: boolean | Transaksi$active_unitArgs<ExtArgs>
+    pic?: boolean | UserDefaultArgs<ExtArgs>
     itj?: boolean | ItjDefaultArgs<ExtArgs>
     pembayaran?: boolean | Transaksi$pembayaranArgs<ExtArgs>
     logs?: boolean | Transaksi$logsArgs<ExtArgs>
     dokumen?: boolean | Transaksi$dokumenArgs<ExtArgs>
-    inspeksi_bast?: boolean | Transaksi$inspeksi_bastArgs<ExtArgs>
+    checklist_bast?: boolean | Transaksi$checklist_bastArgs<ExtArgs>
     pengajuan_kpr?: boolean | Transaksi$pengajuan_kprArgs<ExtArgs>
+    pengajuan_kpr_terpilih?: boolean | Transaksi$pengajuan_kpr_terpilihArgs<ExtArgs>
     _count?: boolean | TransaksiCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaksi"]>
 
@@ -12436,40 +12167,44 @@ export namespace Prisma {
     id?: boolean
     customer_id?: boolean
     unit_id?: boolean
-    marketing_id?: boolean
+    pic_id?: boolean
     itj_id?: boolean
     metode_bayar?: boolean
     harga_deal?: boolean
     target_itj?: boolean
     target_dp?: boolean
     tenor_bulan?: boolean
-    status_transaksi?: boolean
     tahap_detail?: boolean
-    nama_bank?: boolean
     nama_notaris?: boolean
+    rencana_akad_at?: boolean
+    rencana_bast_at?: boolean
     tgl_akad?: boolean
     lunas_at?: boolean
     tgl_bast?: boolean
     closing_at?: boolean
-    closed_at?: boolean
     cancelled_at?: boolean
     alasan_batal?: boolean
     catatan_admin?: boolean
+    version?: boolean
+    active_unit_id?: boolean
+    pengajuan_kpr_terpilih_id?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type TransaksiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customer_id" | "unit_id" | "marketing_id" | "itj_id" | "metode_bayar" | "harga_deal" | "target_itj" | "target_dp" | "tenor_bulan" | "status_transaksi" | "tahap_detail" | "nama_bank" | "nama_notaris" | "tgl_akad" | "lunas_at" | "tgl_bast" | "closing_at" | "closed_at" | "cancelled_at" | "alasan_batal" | "catatan_admin" | "created_at" | "updated_at", ExtArgs["result"]["transaksi"]>
+  export type TransaksiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "customer_id" | "unit_id" | "pic_id" | "itj_id" | "metode_bayar" | "harga_deal" | "target_itj" | "target_dp" | "tenor_bulan" | "tahap_detail" | "nama_notaris" | "rencana_akad_at" | "rencana_bast_at" | "tgl_akad" | "lunas_at" | "tgl_bast" | "closing_at" | "cancelled_at" | "alasan_batal" | "catatan_admin" | "version" | "active_unit_id" | "pengajuan_kpr_terpilih_id" | "created_at" | "updated_at", ExtArgs["result"]["transaksi"]>
   export type TransaksiInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     customer?: boolean | CustomerDefaultArgs<ExtArgs>
     unit?: boolean | MasterUnitDefaultArgs<ExtArgs>
-    marketing?: boolean | UserDefaultArgs<ExtArgs>
+    active_unit?: boolean | Transaksi$active_unitArgs<ExtArgs>
+    pic?: boolean | UserDefaultArgs<ExtArgs>
     itj?: boolean | ItjDefaultArgs<ExtArgs>
     pembayaran?: boolean | Transaksi$pembayaranArgs<ExtArgs>
     logs?: boolean | Transaksi$logsArgs<ExtArgs>
     dokumen?: boolean | Transaksi$dokumenArgs<ExtArgs>
-    inspeksi_bast?: boolean | Transaksi$inspeksi_bastArgs<ExtArgs>
+    checklist_bast?: boolean | Transaksi$checklist_bastArgs<ExtArgs>
     pengajuan_kpr?: boolean | Transaksi$pengajuan_kprArgs<ExtArgs>
+    pengajuan_kpr_terpilih?: boolean | Transaksi$pengajuan_kpr_terpilihArgs<ExtArgs>
     _count?: boolean | TransaksiCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -12478,37 +12213,41 @@ export namespace Prisma {
     objects: {
       customer: Prisma.$CustomerPayload<ExtArgs>
       unit: Prisma.$MasterUnitPayload<ExtArgs>
-      marketing: Prisma.$UserPayload<ExtArgs>
+      active_unit: Prisma.$MasterUnitPayload<ExtArgs> | null
+      pic: Prisma.$UserPayload<ExtArgs>
       itj: Prisma.$ItjPayload<ExtArgs>
       pembayaran: Prisma.$PembayaranPayload<ExtArgs>[]
       logs: Prisma.$TransaksiTahapLogPayload<ExtArgs>[]
       dokumen: Prisma.$DokumenTransaksiPayload<ExtArgs>[]
-      inspeksi_bast: Prisma.$InspeksiBASTPayload<ExtArgs>[]
+      checklist_bast: Prisma.$ChecklistBASTPayload<ExtArgs>[]
       pengajuan_kpr: Prisma.$PengajuanKPRPayload<ExtArgs>[]
+      pengajuan_kpr_terpilih: Prisma.$PengajuanKPRPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       customer_id: number
       unit_id: number
-      marketing_id: number
+      pic_id: number
       itj_id: number
       metode_bayar: $Enums.MetodeBayar
       harga_deal: Prisma.Decimal
       target_itj: Prisma.Decimal
       target_dp: Prisma.Decimal
       tenor_bulan: number | null
-      status_transaksi: $Enums.TahapTransaksi
       tahap_detail: $Enums.TahapDetail
-      nama_bank: string | null
       nama_notaris: string | null
+      rencana_akad_at: Date | null
+      rencana_bast_at: Date | null
       tgl_akad: Date | null
       lunas_at: Date | null
       tgl_bast: Date | null
-      closing_at: Date | null
-      closed_at: Date | null
+      closing_at: Date
       cancelled_at: Date | null
       alasan_batal: string | null
       catatan_admin: string | null
+      version: number
+      active_unit_id: number | null
+      pengajuan_kpr_terpilih_id: number | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["transaksi"]>
@@ -12853,13 +12592,15 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     customer<T extends CustomerDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CustomerDefaultArgs<ExtArgs>>): Prisma__CustomerClient<$Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     unit<T extends MasterUnitDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MasterUnitDefaultArgs<ExtArgs>>): Prisma__MasterUnitClient<$Result.GetResult<Prisma.$MasterUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    marketing<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    active_unit<T extends Transaksi$active_unitArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$active_unitArgs<ExtArgs>>): Prisma__MasterUnitClient<$Result.GetResult<Prisma.$MasterUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    pic<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     itj<T extends ItjDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ItjDefaultArgs<ExtArgs>>): Prisma__ItjClient<$Result.GetResult<Prisma.$ItjPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     pembayaran<T extends Transaksi$pembayaranArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$pembayaranArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PembayaranPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     logs<T extends Transaksi$logsArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransaksiTahapLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     dokumen<T extends Transaksi$dokumenArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$dokumenArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DokumenTransaksiPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    inspeksi_bast<T extends Transaksi$inspeksi_bastArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$inspeksi_bastArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    checklist_bast<T extends Transaksi$checklist_bastArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$checklist_bastArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     pengajuan_kpr<T extends Transaksi$pengajuan_kprArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$pengajuan_kprArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PengajuanKPRPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    pengajuan_kpr_terpilih<T extends Transaksi$pengajuan_kpr_terpilihArgs<ExtArgs> = {}>(args?: Subset<T, Transaksi$pengajuan_kpr_terpilihArgs<ExtArgs>>): Prisma__PengajuanKPRClient<$Result.GetResult<Prisma.$PengajuanKPRPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12892,25 +12633,27 @@ export namespace Prisma {
     readonly id: FieldRef<"Transaksi", 'Int'>
     readonly customer_id: FieldRef<"Transaksi", 'Int'>
     readonly unit_id: FieldRef<"Transaksi", 'Int'>
-    readonly marketing_id: FieldRef<"Transaksi", 'Int'>
+    readonly pic_id: FieldRef<"Transaksi", 'Int'>
     readonly itj_id: FieldRef<"Transaksi", 'Int'>
     readonly metode_bayar: FieldRef<"Transaksi", 'MetodeBayar'>
     readonly harga_deal: FieldRef<"Transaksi", 'Decimal'>
     readonly target_itj: FieldRef<"Transaksi", 'Decimal'>
     readonly target_dp: FieldRef<"Transaksi", 'Decimal'>
     readonly tenor_bulan: FieldRef<"Transaksi", 'Int'>
-    readonly status_transaksi: FieldRef<"Transaksi", 'TahapTransaksi'>
     readonly tahap_detail: FieldRef<"Transaksi", 'TahapDetail'>
-    readonly nama_bank: FieldRef<"Transaksi", 'String'>
     readonly nama_notaris: FieldRef<"Transaksi", 'String'>
+    readonly rencana_akad_at: FieldRef<"Transaksi", 'DateTime'>
+    readonly rencana_bast_at: FieldRef<"Transaksi", 'DateTime'>
     readonly tgl_akad: FieldRef<"Transaksi", 'DateTime'>
     readonly lunas_at: FieldRef<"Transaksi", 'DateTime'>
     readonly tgl_bast: FieldRef<"Transaksi", 'DateTime'>
     readonly closing_at: FieldRef<"Transaksi", 'DateTime'>
-    readonly closed_at: FieldRef<"Transaksi", 'DateTime'>
     readonly cancelled_at: FieldRef<"Transaksi", 'DateTime'>
     readonly alasan_batal: FieldRef<"Transaksi", 'String'>
     readonly catatan_admin: FieldRef<"Transaksi", 'String'>
+    readonly version: FieldRef<"Transaksi", 'Int'>
+    readonly active_unit_id: FieldRef<"Transaksi", 'Int'>
+    readonly pengajuan_kpr_terpilih_id: FieldRef<"Transaksi", 'Int'>
     readonly created_at: FieldRef<"Transaksi", 'DateTime'>
     readonly updated_at: FieldRef<"Transaksi", 'DateTime'>
   }
@@ -13261,6 +13004,25 @@ export namespace Prisma {
   }
 
   /**
+   * Transaksi.active_unit
+   */
+  export type Transaksi$active_unitArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MasterUnit
+     */
+    select?: MasterUnitSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MasterUnit
+     */
+    omit?: MasterUnitOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MasterUnitInclude<ExtArgs> | null
+    where?: MasterUnitWhereInput
+  }
+
+  /**
    * Transaksi.pembayaran
    */
   export type Transaksi$pembayaranArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -13333,27 +13095,27 @@ export namespace Prisma {
   }
 
   /**
-   * Transaksi.inspeksi_bast
+   * Transaksi.checklist_bast
    */
-  export type Transaksi$inspeksi_bastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Transaksi$checklist_bastArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
-    where?: InspeksiBASTWhereInput
-    orderBy?: InspeksiBASTOrderByWithRelationInput | InspeksiBASTOrderByWithRelationInput[]
-    cursor?: InspeksiBASTWhereUniqueInput
+    include?: ChecklistBASTInclude<ExtArgs> | null
+    where?: ChecklistBASTWhereInput
+    orderBy?: ChecklistBASTOrderByWithRelationInput | ChecklistBASTOrderByWithRelationInput[]
+    cursor?: ChecklistBASTWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: InspeksiBASTScalarFieldEnum | InspeksiBASTScalarFieldEnum[]
+    distinct?: ChecklistBASTScalarFieldEnum | ChecklistBASTScalarFieldEnum[]
   }
 
   /**
@@ -13378,6 +13140,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PengajuanKPRScalarFieldEnum | PengajuanKPRScalarFieldEnum[]
+  }
+
+  /**
+   * Transaksi.pengajuan_kpr_terpilih
+   */
+  export type Transaksi$pengajuan_kpr_terpilihArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PengajuanKPR
+     */
+    select?: PengajuanKPRSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PengajuanKPR
+     */
+    omit?: PengajuanKPROmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PengajuanKPRInclude<ExtArgs> | null
+    where?: PengajuanKPRWhereInput
   }
 
   /**
@@ -14674,6 +14455,7 @@ export namespace Prisma {
     created_at?: boolean
     updated_at?: boolean
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
+    transaksi_terpilih?: boolean | PengajuanKPR$transaksi_terpilihArgs<ExtArgs>
     bank?: boolean | BankDefaultArgs<ExtArgs>
     logs?: boolean | PengajuanKPR$logsArgs<ExtArgs>
     _count?: boolean | PengajuanKPRCountOutputTypeDefaultArgs<ExtArgs>
@@ -14698,6 +14480,7 @@ export namespace Prisma {
   export type PengajuanKPROmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "bank_id" | "nomor_pengajuan" | "status" | "tanggal_ajukan" | "tanggal_keputusan" | "alasan_penolakan" | "catatan" | "created_at" | "updated_at", ExtArgs["result"]["pengajuanKPR"]>
   export type PengajuanKPRInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
+    transaksi_terpilih?: boolean | PengajuanKPR$transaksi_terpilihArgs<ExtArgs>
     bank?: boolean | BankDefaultArgs<ExtArgs>
     logs?: boolean | PengajuanKPR$logsArgs<ExtArgs>
     _count?: boolean | PengajuanKPRCountOutputTypeDefaultArgs<ExtArgs>
@@ -14707,6 +14490,7 @@ export namespace Prisma {
     name: "PengajuanKPR"
     objects: {
       transaksi: Prisma.$TransaksiPayload<ExtArgs>
+      transaksi_terpilih: Prisma.$TransaksiPayload<ExtArgs> | null
       bank: Prisma.$BankPayload<ExtArgs>
       logs: Prisma.$PengajuanKPRLogPayload<ExtArgs>[]
     }
@@ -15063,6 +14847,7 @@ export namespace Prisma {
   export interface Prisma__PengajuanKPRClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     transaksi<T extends TransaksiDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransaksiDefaultArgs<ExtArgs>>): Prisma__TransaksiClient<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    transaksi_terpilih<T extends PengajuanKPR$transaksi_terpilihArgs<ExtArgs> = {}>(args?: Subset<T, PengajuanKPR$transaksi_terpilihArgs<ExtArgs>>): Prisma__TransaksiClient<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bank<T extends BankDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BankDefaultArgs<ExtArgs>>): Prisma__BankClient<$Result.GetResult<Prisma.$BankPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     logs<T extends PengajuanKPR$logsArgs<ExtArgs> = {}>(args?: Subset<T, PengajuanKPR$logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PengajuanKPRLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -15453,6 +15238,25 @@ export namespace Prisma {
   }
 
   /**
+   * PengajuanKPR.transaksi_terpilih
+   */
+  export type PengajuanKPR$transaksi_terpilihArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaksi
+     */
+    select?: TransaksiSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaksi
+     */
+    omit?: TransaksiOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransaksiInclude<ExtArgs> | null
+    where?: TransaksiWhereInput
+  }
+
+  /**
    * PengajuanKPR.logs
    */
   export type PengajuanKPR$logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15510,13 +15314,13 @@ export namespace Prisma {
   export type PengajuanKPRLogAvgAggregateOutputType = {
     id: number | null
     pengajuan_id: number | null
-    admin_id: number | null
+    actor_id: number | null
   }
 
   export type PengajuanKPRLogSumAggregateOutputType = {
     id: number | null
     pengajuan_id: number | null
-    admin_id: number | null
+    actor_id: number | null
   }
 
   export type PengajuanKPRLogMinAggregateOutputType = {
@@ -15524,7 +15328,7 @@ export namespace Prisma {
     pengajuan_id: number | null
     status_sebelum: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR | null
-    admin_id: number | null
+    actor_id: number | null
     catatan: string | null
     created_at: Date | null
   }
@@ -15534,7 +15338,7 @@ export namespace Prisma {
     pengajuan_id: number | null
     status_sebelum: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR | null
-    admin_id: number | null
+    actor_id: number | null
     catatan: string | null
     created_at: Date | null
   }
@@ -15544,7 +15348,7 @@ export namespace Prisma {
     pengajuan_id: number
     status_sebelum: number
     status_sesudah: number
-    admin_id: number
+    actor_id: number
     catatan: number
     created_at: number
     _all: number
@@ -15554,13 +15358,13 @@ export namespace Prisma {
   export type PengajuanKPRLogAvgAggregateInputType = {
     id?: true
     pengajuan_id?: true
-    admin_id?: true
+    actor_id?: true
   }
 
   export type PengajuanKPRLogSumAggregateInputType = {
     id?: true
     pengajuan_id?: true
-    admin_id?: true
+    actor_id?: true
   }
 
   export type PengajuanKPRLogMinAggregateInputType = {
@@ -15568,7 +15372,7 @@ export namespace Prisma {
     pengajuan_id?: true
     status_sebelum?: true
     status_sesudah?: true
-    admin_id?: true
+    actor_id?: true
     catatan?: true
     created_at?: true
   }
@@ -15578,7 +15382,7 @@ export namespace Prisma {
     pengajuan_id?: true
     status_sebelum?: true
     status_sesudah?: true
-    admin_id?: true
+    actor_id?: true
     catatan?: true
     created_at?: true
   }
@@ -15588,7 +15392,7 @@ export namespace Prisma {
     pengajuan_id?: true
     status_sebelum?: true
     status_sesudah?: true
-    admin_id?: true
+    actor_id?: true
     catatan?: true
     created_at?: true
     _all?: true
@@ -15685,7 +15489,7 @@ export namespace Prisma {
     pengajuan_id: number
     status_sebelum: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR
-    admin_id: number
+    actor_id: number
     catatan: string | null
     created_at: Date
     _count: PengajuanKPRLogCountAggregateOutputType | null
@@ -15714,11 +15518,11 @@ export namespace Prisma {
     pengajuan_id?: boolean
     status_sebelum?: boolean
     status_sesudah?: boolean
-    admin_id?: boolean
+    actor_id?: boolean
     catatan?: boolean
     created_at?: boolean
     pengajuan?: boolean | PengajuanKPRDefaultArgs<ExtArgs>
-    admin?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["pengajuanKPRLog"]>
 
 
@@ -15728,29 +15532,29 @@ export namespace Prisma {
     pengajuan_id?: boolean
     status_sebelum?: boolean
     status_sesudah?: boolean
-    admin_id?: boolean
+    actor_id?: boolean
     catatan?: boolean
     created_at?: boolean
   }
 
-  export type PengajuanKPRLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pengajuan_id" | "status_sebelum" | "status_sesudah" | "admin_id" | "catatan" | "created_at", ExtArgs["result"]["pengajuanKPRLog"]>
+  export type PengajuanKPRLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pengajuan_id" | "status_sebelum" | "status_sesudah" | "actor_id" | "catatan" | "created_at", ExtArgs["result"]["pengajuanKPRLog"]>
   export type PengajuanKPRLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pengajuan?: boolean | PengajuanKPRDefaultArgs<ExtArgs>
-    admin?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $PengajuanKPRLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "PengajuanKPRLog"
     objects: {
       pengajuan: Prisma.$PengajuanKPRPayload<ExtArgs>
-      admin: Prisma.$UserPayload<ExtArgs>
+      actor: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       pengajuan_id: number
       status_sebelum: $Enums.StatusPengajuanKPR | null
       status_sesudah: $Enums.StatusPengajuanKPR
-      admin_id: number
+      actor_id: number
       catatan: string | null
       created_at: Date
     }, ExtArgs["result"]["pengajuanKPRLog"]>
@@ -16094,7 +15898,7 @@ export namespace Prisma {
   export interface Prisma__PengajuanKPRLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     pengajuan<T extends PengajuanKPRDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PengajuanKPRDefaultArgs<ExtArgs>>): Prisma__PengajuanKPRClient<$Result.GetResult<Prisma.$PengajuanKPRPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    admin<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actor<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -16128,7 +15932,7 @@ export namespace Prisma {
     readonly pengajuan_id: FieldRef<"PengajuanKPRLog", 'Int'>
     readonly status_sebelum: FieldRef<"PengajuanKPRLog", 'StatusPengajuanKPR'>
     readonly status_sesudah: FieldRef<"PengajuanKPRLog", 'StatusPengajuanKPR'>
-    readonly admin_id: FieldRef<"PengajuanKPRLog", 'Int'>
+    readonly actor_id: FieldRef<"PengajuanKPRLog", 'Int'>
     readonly catatan: FieldRef<"PengajuanKPRLog", 'String'>
     readonly created_at: FieldRef<"PengajuanKPRLog", 'DateTime'>
   }
@@ -16512,23 +16316,21 @@ export namespace Prisma {
   export type TransaksiTahapLogAvgAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    admin_id: number | null
+    actor_id: number | null
   }
 
   export type TransaksiTahapLogSumAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    admin_id: number | null
+    actor_id: number | null
   }
 
   export type TransaksiTahapLogMinAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    tahap_sebelum: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi | null
     detail_sebelum: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail | null
-    admin_id: number | null
+    actor_id: number | null
     catatan: string | null
     created_at: Date | null
   }
@@ -16536,11 +16338,9 @@ export namespace Prisma {
   export type TransaksiTahapLogMaxAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    tahap_sebelum: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi | null
     detail_sebelum: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail | null
-    admin_id: number | null
+    actor_id: number | null
     catatan: string | null
     created_at: Date | null
   }
@@ -16548,11 +16348,9 @@ export namespace Prisma {
   export type TransaksiTahapLogCountAggregateOutputType = {
     id: number
     transaksi_id: number
-    tahap_sebelum: number
-    tahap_sesudah: number
     detail_sebelum: number
     detail_sesudah: number
-    admin_id: number
+    actor_id: number
     catatan: number
     created_at: number
     _all: number
@@ -16562,23 +16360,21 @@ export namespace Prisma {
   export type TransaksiTahapLogAvgAggregateInputType = {
     id?: true
     transaksi_id?: true
-    admin_id?: true
+    actor_id?: true
   }
 
   export type TransaksiTahapLogSumAggregateInputType = {
     id?: true
     transaksi_id?: true
-    admin_id?: true
+    actor_id?: true
   }
 
   export type TransaksiTahapLogMinAggregateInputType = {
     id?: true
     transaksi_id?: true
-    tahap_sebelum?: true
-    tahap_sesudah?: true
     detail_sebelum?: true
     detail_sesudah?: true
-    admin_id?: true
+    actor_id?: true
     catatan?: true
     created_at?: true
   }
@@ -16586,11 +16382,9 @@ export namespace Prisma {
   export type TransaksiTahapLogMaxAggregateInputType = {
     id?: true
     transaksi_id?: true
-    tahap_sebelum?: true
-    tahap_sesudah?: true
     detail_sebelum?: true
     detail_sesudah?: true
-    admin_id?: true
+    actor_id?: true
     catatan?: true
     created_at?: true
   }
@@ -16598,11 +16392,9 @@ export namespace Prisma {
   export type TransaksiTahapLogCountAggregateInputType = {
     id?: true
     transaksi_id?: true
-    tahap_sebelum?: true
-    tahap_sesudah?: true
     detail_sebelum?: true
     detail_sesudah?: true
-    admin_id?: true
+    actor_id?: true
     catatan?: true
     created_at?: true
     _all?: true
@@ -16697,11 +16489,9 @@ export namespace Prisma {
   export type TransaksiTahapLogGroupByOutputType = {
     id: number
     transaksi_id: number
-    tahap_sebelum: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
-    admin_id: number
+    actor_id: number
     catatan: string | null
     created_at: Date
     _count: TransaksiTahapLogCountAggregateOutputType | null
@@ -16728,15 +16518,13 @@ export namespace Prisma {
   export type TransaksiTahapLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     transaksi_id?: boolean
-    tahap_sebelum?: boolean
-    tahap_sesudah?: boolean
     detail_sebelum?: boolean
     detail_sesudah?: boolean
-    admin_id?: boolean
+    actor_id?: boolean
     catatan?: boolean
     created_at?: boolean
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
-    admin?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaksiTahapLog"]>
 
 
@@ -16744,35 +16532,31 @@ export namespace Prisma {
   export type TransaksiTahapLogSelectScalar = {
     id?: boolean
     transaksi_id?: boolean
-    tahap_sebelum?: boolean
-    tahap_sesudah?: boolean
     detail_sebelum?: boolean
     detail_sesudah?: boolean
-    admin_id?: boolean
+    actor_id?: boolean
     catatan?: boolean
     created_at?: boolean
   }
 
-  export type TransaksiTahapLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "tahap_sebelum" | "tahap_sesudah" | "detail_sebelum" | "detail_sesudah" | "admin_id" | "catatan" | "created_at", ExtArgs["result"]["transaksiTahapLog"]>
+  export type TransaksiTahapLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "detail_sebelum" | "detail_sesudah" | "actor_id" | "catatan" | "created_at", ExtArgs["result"]["transaksiTahapLog"]>
   export type TransaksiTahapLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
-    admin?: boolean | UserDefaultArgs<ExtArgs>
+    actor?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $TransaksiTahapLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TransaksiTahapLog"
     objects: {
       transaksi: Prisma.$TransaksiPayload<ExtArgs>
-      admin: Prisma.$UserPayload<ExtArgs>
+      actor: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       transaksi_id: number
-      tahap_sebelum: $Enums.TahapTransaksi | null
-      tahap_sesudah: $Enums.TahapTransaksi
       detail_sebelum: $Enums.TahapDetail | null
       detail_sesudah: $Enums.TahapDetail
-      admin_id: number
+      actor_id: number
       catatan: string | null
       created_at: Date
     }, ExtArgs["result"]["transaksiTahapLog"]>
@@ -17116,7 +16900,7 @@ export namespace Prisma {
   export interface Prisma__TransaksiTahapLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     transaksi<T extends TransaksiDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransaksiDefaultArgs<ExtArgs>>): Prisma__TransaksiClient<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    admin<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    actor<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -17148,11 +16932,9 @@ export namespace Prisma {
   interface TransaksiTahapLogFieldRefs {
     readonly id: FieldRef<"TransaksiTahapLog", 'Int'>
     readonly transaksi_id: FieldRef<"TransaksiTahapLog", 'Int'>
-    readonly tahap_sebelum: FieldRef<"TransaksiTahapLog", 'TahapTransaksi'>
-    readonly tahap_sesudah: FieldRef<"TransaksiTahapLog", 'TahapTransaksi'>
     readonly detail_sebelum: FieldRef<"TransaksiTahapLog", 'TahapDetail'>
     readonly detail_sesudah: FieldRef<"TransaksiTahapLog", 'TahapDetail'>
-    readonly admin_id: FieldRef<"TransaksiTahapLog", 'Int'>
+    readonly actor_id: FieldRef<"TransaksiTahapLog", 'Int'>
     readonly catatan: FieldRef<"TransaksiTahapLog", 'String'>
     readonly created_at: FieldRef<"TransaksiTahapLog", 'DateTime'>
   }
@@ -17536,25 +17318,18 @@ export namespace Prisma {
   export type DokumenTransaksiAvgAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    verified_by: number | null
   }
 
   export type DokumenTransaksiSumAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    verified_by: number | null
   }
 
   export type DokumenTransaksiMinAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
     jenis: $Enums.JenisDokumen | null
-    kategori: $Enums.KategoriDokumen | null
     status: $Enums.StatusDokumen | null
-    file_url: string | null
-    catatan_verifikasi: string | null
-    verified_by: number | null
-    verified_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -17563,12 +17338,7 @@ export namespace Prisma {
     id: number | null
     transaksi_id: number | null
     jenis: $Enums.JenisDokumen | null
-    kategori: $Enums.KategoriDokumen | null
     status: $Enums.StatusDokumen | null
-    file_url: string | null
-    catatan_verifikasi: string | null
-    verified_by: number | null
-    verified_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -17577,12 +17347,7 @@ export namespace Prisma {
     id: number
     transaksi_id: number
     jenis: number
-    kategori: number
     status: number
-    file_url: number
-    catatan_verifikasi: number
-    verified_by: number
-    verified_at: number
     created_at: number
     updated_at: number
     _all: number
@@ -17592,25 +17357,18 @@ export namespace Prisma {
   export type DokumenTransaksiAvgAggregateInputType = {
     id?: true
     transaksi_id?: true
-    verified_by?: true
   }
 
   export type DokumenTransaksiSumAggregateInputType = {
     id?: true
     transaksi_id?: true
-    verified_by?: true
   }
 
   export type DokumenTransaksiMinAggregateInputType = {
     id?: true
     transaksi_id?: true
     jenis?: true
-    kategori?: true
     status?: true
-    file_url?: true
-    catatan_verifikasi?: true
-    verified_by?: true
-    verified_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -17619,12 +17377,7 @@ export namespace Prisma {
     id?: true
     transaksi_id?: true
     jenis?: true
-    kategori?: true
     status?: true
-    file_url?: true
-    catatan_verifikasi?: true
-    verified_by?: true
-    verified_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -17633,12 +17386,7 @@ export namespace Prisma {
     id?: true
     transaksi_id?: true
     jenis?: true
-    kategori?: true
     status?: true
-    file_url?: true
-    catatan_verifikasi?: true
-    verified_by?: true
-    verified_at?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -17734,12 +17482,7 @@ export namespace Prisma {
     id: number
     transaksi_id: number
     jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
     status: $Enums.StatusDokumen
-    file_url: string | null
-    catatan_verifikasi: string | null
-    verified_by: number | null
-    verified_at: Date | null
     created_at: Date
     updated_at: Date
     _count: DokumenTransaksiCountAggregateOutputType | null
@@ -17767,16 +17510,10 @@ export namespace Prisma {
     id?: boolean
     transaksi_id?: boolean
     jenis?: boolean
-    kategori?: boolean
     status?: boolean
-    file_url?: boolean
-    catatan_verifikasi?: boolean
-    verified_by?: boolean
-    verified_at?: boolean
     created_at?: boolean
     updated_at?: boolean
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
-    verifier?: boolean | DokumenTransaksi$verifierArgs<ExtArgs>
   }, ExtArgs["result"]["dokumenTransaksi"]>
 
 
@@ -17785,38 +17522,26 @@ export namespace Prisma {
     id?: boolean
     transaksi_id?: boolean
     jenis?: boolean
-    kategori?: boolean
     status?: boolean
-    file_url?: boolean
-    catatan_verifikasi?: boolean
-    verified_by?: boolean
-    verified_at?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type DokumenTransaksiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "jenis" | "kategori" | "status" | "file_url" | "catatan_verifikasi" | "verified_by" | "verified_at" | "created_at" | "updated_at", ExtArgs["result"]["dokumenTransaksi"]>
+  export type DokumenTransaksiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "jenis" | "status" | "created_at" | "updated_at", ExtArgs["result"]["dokumenTransaksi"]>
   export type DokumenTransaksiInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
-    verifier?: boolean | DokumenTransaksi$verifierArgs<ExtArgs>
   }
 
   export type $DokumenTransaksiPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "DokumenTransaksi"
     objects: {
       transaksi: Prisma.$TransaksiPayload<ExtArgs>
-      verifier: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       transaksi_id: number
       jenis: $Enums.JenisDokumen
-      kategori: $Enums.KategoriDokumen
       status: $Enums.StatusDokumen
-      file_url: string | null
-      catatan_verifikasi: string | null
-      verified_by: number | null
-      verified_at: Date | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["dokumenTransaksi"]>
@@ -18160,7 +17885,6 @@ export namespace Prisma {
   export interface Prisma__DokumenTransaksiClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     transaksi<T extends TransaksiDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransaksiDefaultArgs<ExtArgs>>): Prisma__TransaksiClient<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    verifier<T extends DokumenTransaksi$verifierArgs<ExtArgs> = {}>(args?: Subset<T, DokumenTransaksi$verifierArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18193,12 +17917,7 @@ export namespace Prisma {
     readonly id: FieldRef<"DokumenTransaksi", 'Int'>
     readonly transaksi_id: FieldRef<"DokumenTransaksi", 'Int'>
     readonly jenis: FieldRef<"DokumenTransaksi", 'JenisDokumen'>
-    readonly kategori: FieldRef<"DokumenTransaksi", 'KategoriDokumen'>
     readonly status: FieldRef<"DokumenTransaksi", 'StatusDokumen'>
-    readonly file_url: FieldRef<"DokumenTransaksi", 'String'>
-    readonly catatan_verifikasi: FieldRef<"DokumenTransaksi", 'String'>
-    readonly verified_by: FieldRef<"DokumenTransaksi", 'Int'>
-    readonly verified_at: FieldRef<"DokumenTransaksi", 'DateTime'>
     readonly created_at: FieldRef<"DokumenTransaksi", 'DateTime'>
     readonly updated_at: FieldRef<"DokumenTransaksi", 'DateTime'>
   }
@@ -18549,25 +18268,6 @@ export namespace Prisma {
   }
 
   /**
-   * DokumenTransaksi.verifier
-   */
-  export type DokumenTransaksi$verifierArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the User
-     */
-    select?: UserSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the User
-     */
-    omit?: UserOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
-  }
-
-  /**
    * DokumenTransaksi without action
    */
   export type DokumenTransaksiDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18587,405 +18287,383 @@ export namespace Prisma {
 
 
   /**
-   * Model InspeksiBAST
+   * Model ChecklistBAST
    */
 
-  export type AggregateInspeksiBAST = {
-    _count: InspeksiBASTCountAggregateOutputType | null
-    _avg: InspeksiBASTAvgAggregateOutputType | null
-    _sum: InspeksiBASTSumAggregateOutputType | null
-    _min: InspeksiBASTMinAggregateOutputType | null
-    _max: InspeksiBASTMaxAggregateOutputType | null
+  export type AggregateChecklistBAST = {
+    _count: ChecklistBASTCountAggregateOutputType | null
+    _avg: ChecklistBASTAvgAggregateOutputType | null
+    _sum: ChecklistBASTSumAggregateOutputType | null
+    _min: ChecklistBASTMinAggregateOutputType | null
+    _max: ChecklistBASTMaxAggregateOutputType | null
   }
 
-  export type InspeksiBASTAvgAggregateOutputType = {
+  export type ChecklistBASTAvgAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    inspektur_id: number | null
   }
 
-  export type InspeksiBASTSumAggregateOutputType = {
+  export type ChecklistBASTSumAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
-    inspektur_id: number | null
   }
 
-  export type InspeksiBASTMinAggregateOutputType = {
-    id: number | null
-    transaksi_id: number | null
-    item: $Enums.ItemBAST | null
-    status: $Enums.StatusInspeksi | null
-    catatan: string | null
-    inspektur_id: number | null
-    diperiksa_at: Date | null
-  }
-
-  export type InspeksiBASTMaxAggregateOutputType = {
+  export type ChecklistBASTMinAggregateOutputType = {
     id: number | null
     transaksi_id: number | null
     item: $Enums.ItemBAST | null
-    status: $Enums.StatusInspeksi | null
-    catatan: string | null
-    inspektur_id: number | null
-    diperiksa_at: Date | null
+    status: $Enums.StatusBAST | null
+    created_at: Date | null
+    updated_at: Date | null
   }
 
-  export type InspeksiBASTCountAggregateOutputType = {
+  export type ChecklistBASTMaxAggregateOutputType = {
+    id: number | null
+    transaksi_id: number | null
+    item: $Enums.ItemBAST | null
+    status: $Enums.StatusBAST | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type ChecklistBASTCountAggregateOutputType = {
     id: number
     transaksi_id: number
     item: number
     status: number
-    catatan: number
-    inspektur_id: number
-    diperiksa_at: number
+    created_at: number
+    updated_at: number
     _all: number
   }
 
 
-  export type InspeksiBASTAvgAggregateInputType = {
+  export type ChecklistBASTAvgAggregateInputType = {
     id?: true
     transaksi_id?: true
-    inspektur_id?: true
   }
 
-  export type InspeksiBASTSumAggregateInputType = {
+  export type ChecklistBASTSumAggregateInputType = {
     id?: true
     transaksi_id?: true
-    inspektur_id?: true
   }
 
-  export type InspeksiBASTMinAggregateInputType = {
+  export type ChecklistBASTMinAggregateInputType = {
     id?: true
     transaksi_id?: true
     item?: true
     status?: true
-    catatan?: true
-    inspektur_id?: true
-    diperiksa_at?: true
+    created_at?: true
+    updated_at?: true
   }
 
-  export type InspeksiBASTMaxAggregateInputType = {
+  export type ChecklistBASTMaxAggregateInputType = {
     id?: true
     transaksi_id?: true
     item?: true
     status?: true
-    catatan?: true
-    inspektur_id?: true
-    diperiksa_at?: true
+    created_at?: true
+    updated_at?: true
   }
 
-  export type InspeksiBASTCountAggregateInputType = {
+  export type ChecklistBASTCountAggregateInputType = {
     id?: true
     transaksi_id?: true
     item?: true
     status?: true
-    catatan?: true
-    inspektur_id?: true
-    diperiksa_at?: true
+    created_at?: true
+    updated_at?: true
     _all?: true
   }
 
-  export type InspeksiBASTAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which InspeksiBAST to aggregate.
+     * Filter which ChecklistBAST to aggregate.
      */
-    where?: InspeksiBASTWhereInput
+    where?: ChecklistBASTWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of InspeksiBASTS to fetch.
+     * Determine the order of ChecklistBASTS to fetch.
      */
-    orderBy?: InspeksiBASTOrderByWithRelationInput | InspeksiBASTOrderByWithRelationInput[]
+    orderBy?: ChecklistBASTOrderByWithRelationInput | ChecklistBASTOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: InspeksiBASTWhereUniqueInput
+    cursor?: ChecklistBASTWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` InspeksiBASTS from the position of the cursor.
+     * Take `±n` ChecklistBASTS from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` InspeksiBASTS.
+     * Skip the first `n` ChecklistBASTS.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Count returned InspeksiBASTS
+     * Count returned ChecklistBASTS
     **/
-    _count?: true | InspeksiBASTCountAggregateInputType
+    _count?: true | ChecklistBASTCountAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to average
     **/
-    _avg?: InspeksiBASTAvgAggregateInputType
+    _avg?: ChecklistBASTAvgAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to sum
     **/
-    _sum?: InspeksiBASTSumAggregateInputType
+    _sum?: ChecklistBASTSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: InspeksiBASTMinAggregateInputType
+    _min?: ChecklistBASTMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: InspeksiBASTMaxAggregateInputType
+    _max?: ChecklistBASTMaxAggregateInputType
   }
 
-  export type GetInspeksiBASTAggregateType<T extends InspeksiBASTAggregateArgs> = {
-        [P in keyof T & keyof AggregateInspeksiBAST]: P extends '_count' | 'count'
+  export type GetChecklistBASTAggregateType<T extends ChecklistBASTAggregateArgs> = {
+        [P in keyof T & keyof AggregateChecklistBAST]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateInspeksiBAST[P]>
-      : GetScalarType<T[P], AggregateInspeksiBAST[P]>
+        : GetScalarType<T[P], AggregateChecklistBAST[P]>
+      : GetScalarType<T[P], AggregateChecklistBAST[P]>
   }
 
 
 
 
-  export type InspeksiBASTGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: InspeksiBASTWhereInput
-    orderBy?: InspeksiBASTOrderByWithAggregationInput | InspeksiBASTOrderByWithAggregationInput[]
-    by: InspeksiBASTScalarFieldEnum[] | InspeksiBASTScalarFieldEnum
-    having?: InspeksiBASTScalarWhereWithAggregatesInput
+  export type ChecklistBASTGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChecklistBASTWhereInput
+    orderBy?: ChecklistBASTOrderByWithAggregationInput | ChecklistBASTOrderByWithAggregationInput[]
+    by: ChecklistBASTScalarFieldEnum[] | ChecklistBASTScalarFieldEnum
+    having?: ChecklistBASTScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: InspeksiBASTCountAggregateInputType | true
-    _avg?: InspeksiBASTAvgAggregateInputType
-    _sum?: InspeksiBASTSumAggregateInputType
-    _min?: InspeksiBASTMinAggregateInputType
-    _max?: InspeksiBASTMaxAggregateInputType
+    _count?: ChecklistBASTCountAggregateInputType | true
+    _avg?: ChecklistBASTAvgAggregateInputType
+    _sum?: ChecklistBASTSumAggregateInputType
+    _min?: ChecklistBASTMinAggregateInputType
+    _max?: ChecklistBASTMaxAggregateInputType
   }
 
-  export type InspeksiBASTGroupByOutputType = {
+  export type ChecklistBASTGroupByOutputType = {
     id: number
     transaksi_id: number
     item: $Enums.ItemBAST
-    status: $Enums.StatusInspeksi
-    catatan: string | null
-    inspektur_id: number | null
-    diperiksa_at: Date | null
-    _count: InspeksiBASTCountAggregateOutputType | null
-    _avg: InspeksiBASTAvgAggregateOutputType | null
-    _sum: InspeksiBASTSumAggregateOutputType | null
-    _min: InspeksiBASTMinAggregateOutputType | null
-    _max: InspeksiBASTMaxAggregateOutputType | null
+    status: $Enums.StatusBAST
+    created_at: Date
+    updated_at: Date
+    _count: ChecklistBASTCountAggregateOutputType | null
+    _avg: ChecklistBASTAvgAggregateOutputType | null
+    _sum: ChecklistBASTSumAggregateOutputType | null
+    _min: ChecklistBASTMinAggregateOutputType | null
+    _max: ChecklistBASTMaxAggregateOutputType | null
   }
 
-  type GetInspeksiBASTGroupByPayload<T extends InspeksiBASTGroupByArgs> = Prisma.PrismaPromise<
+  type GetChecklistBASTGroupByPayload<T extends ChecklistBASTGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<InspeksiBASTGroupByOutputType, T['by']> &
+      PickEnumerable<ChecklistBASTGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof InspeksiBASTGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof ChecklistBASTGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], InspeksiBASTGroupByOutputType[P]>
-            : GetScalarType<T[P], InspeksiBASTGroupByOutputType[P]>
+              : GetScalarType<T[P], ChecklistBASTGroupByOutputType[P]>
+            : GetScalarType<T[P], ChecklistBASTGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type InspeksiBASTSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ChecklistBASTSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     transaksi_id?: boolean
     item?: boolean
     status?: boolean
-    catatan?: boolean
-    inspektur_id?: boolean
-    diperiksa_at?: boolean
+    created_at?: boolean
+    updated_at?: boolean
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
-    inspektur?: boolean | InspeksiBAST$inspekturArgs<ExtArgs>
-    logs?: boolean | InspeksiBAST$logsArgs<ExtArgs>
-    _count?: boolean | InspeksiBASTCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["inspeksiBAST"]>
+  }, ExtArgs["result"]["checklistBAST"]>
 
 
 
-  export type InspeksiBASTSelectScalar = {
+  export type ChecklistBASTSelectScalar = {
     id?: boolean
     transaksi_id?: boolean
     item?: boolean
     status?: boolean
-    catatan?: boolean
-    inspektur_id?: boolean
-    diperiksa_at?: boolean
+    created_at?: boolean
+    updated_at?: boolean
   }
 
-  export type InspeksiBASTOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "item" | "status" | "catatan" | "inspektur_id" | "diperiksa_at", ExtArgs["result"]["inspeksiBAST"]>
-  export type InspeksiBASTInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "item" | "status" | "created_at" | "updated_at", ExtArgs["result"]["checklistBAST"]>
+  export type ChecklistBASTInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
-    inspektur?: boolean | InspeksiBAST$inspekturArgs<ExtArgs>
-    logs?: boolean | InspeksiBAST$logsArgs<ExtArgs>
-    _count?: boolean | InspeksiBASTCountOutputTypeDefaultArgs<ExtArgs>
   }
 
-  export type $InspeksiBASTPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "InspeksiBAST"
+  export type $ChecklistBASTPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ChecklistBAST"
     objects: {
       transaksi: Prisma.$TransaksiPayload<ExtArgs>
-      inspektur: Prisma.$UserPayload<ExtArgs> | null
-      logs: Prisma.$InspeksiBASTLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       transaksi_id: number
       item: $Enums.ItemBAST
-      status: $Enums.StatusInspeksi
-      catatan: string | null
-      inspektur_id: number | null
-      diperiksa_at: Date | null
-    }, ExtArgs["result"]["inspeksiBAST"]>
+      status: $Enums.StatusBAST
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["checklistBAST"]>
     composites: {}
   }
 
-  type InspeksiBASTGetPayload<S extends boolean | null | undefined | InspeksiBASTDefaultArgs> = $Result.GetResult<Prisma.$InspeksiBASTPayload, S>
+  type ChecklistBASTGetPayload<S extends boolean | null | undefined | ChecklistBASTDefaultArgs> = $Result.GetResult<Prisma.$ChecklistBASTPayload, S>
 
-  type InspeksiBASTCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<InspeksiBASTFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: InspeksiBASTCountAggregateInputType | true
+  type ChecklistBASTCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ChecklistBASTFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ChecklistBASTCountAggregateInputType | true
     }
 
-  export interface InspeksiBASTDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['InspeksiBAST'], meta: { name: 'InspeksiBAST' } }
+  export interface ChecklistBASTDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ChecklistBAST'], meta: { name: 'ChecklistBAST' } }
     /**
-     * Find zero or one InspeksiBAST that matches the filter.
-     * @param {InspeksiBASTFindUniqueArgs} args - Arguments to find a InspeksiBAST
+     * Find zero or one ChecklistBAST that matches the filter.
+     * @param {ChecklistBASTFindUniqueArgs} args - Arguments to find a ChecklistBAST
      * @example
-     * // Get one InspeksiBAST
-     * const inspeksiBAST = await prisma.inspeksiBAST.findUnique({
+     * // Get one ChecklistBAST
+     * const checklistBAST = await prisma.checklistBAST.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends InspeksiBASTFindUniqueArgs>(args: SelectSubset<T, InspeksiBASTFindUniqueArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends ChecklistBASTFindUniqueArgs>(args: SelectSubset<T, ChecklistBASTFindUniqueArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one InspeksiBAST that matches the filter or throw an error with `error.code='P2025'`
+     * Find one ChecklistBAST that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {InspeksiBASTFindUniqueOrThrowArgs} args - Arguments to find a InspeksiBAST
+     * @param {ChecklistBASTFindUniqueOrThrowArgs} args - Arguments to find a ChecklistBAST
      * @example
-     * // Get one InspeksiBAST
-     * const inspeksiBAST = await prisma.inspeksiBAST.findUniqueOrThrow({
+     * // Get one ChecklistBAST
+     * const checklistBAST = await prisma.checklistBAST.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends InspeksiBASTFindUniqueOrThrowArgs>(args: SelectSubset<T, InspeksiBASTFindUniqueOrThrowArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends ChecklistBASTFindUniqueOrThrowArgs>(args: SelectSubset<T, ChecklistBASTFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first InspeksiBAST that matches the filter.
+     * Find the first ChecklistBAST that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTFindFirstArgs} args - Arguments to find a InspeksiBAST
+     * @param {ChecklistBASTFindFirstArgs} args - Arguments to find a ChecklistBAST
      * @example
-     * // Get one InspeksiBAST
-     * const inspeksiBAST = await prisma.inspeksiBAST.findFirst({
+     * // Get one ChecklistBAST
+     * const checklistBAST = await prisma.checklistBAST.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends InspeksiBASTFindFirstArgs>(args?: SelectSubset<T, InspeksiBASTFindFirstArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends ChecklistBASTFindFirstArgs>(args?: SelectSubset<T, ChecklistBASTFindFirstArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first InspeksiBAST that matches the filter or
+     * Find the first ChecklistBAST that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTFindFirstOrThrowArgs} args - Arguments to find a InspeksiBAST
+     * @param {ChecklistBASTFindFirstOrThrowArgs} args - Arguments to find a ChecklistBAST
      * @example
-     * // Get one InspeksiBAST
-     * const inspeksiBAST = await prisma.inspeksiBAST.findFirstOrThrow({
+     * // Get one ChecklistBAST
+     * const checklistBAST = await prisma.checklistBAST.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends InspeksiBASTFindFirstOrThrowArgs>(args?: SelectSubset<T, InspeksiBASTFindFirstOrThrowArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends ChecklistBASTFindFirstOrThrowArgs>(args?: SelectSubset<T, ChecklistBASTFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find zero or more InspeksiBASTS that matches the filter.
+     * Find zero or more ChecklistBASTS that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {ChecklistBASTFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
-     * // Get all InspeksiBASTS
-     * const inspeksiBASTS = await prisma.inspeksiBAST.findMany()
+     * // Get all ChecklistBASTS
+     * const checklistBASTS = await prisma.checklistBAST.findMany()
      * 
-     * // Get first 10 InspeksiBASTS
-     * const inspeksiBASTS = await prisma.inspeksiBAST.findMany({ take: 10 })
+     * // Get first 10 ChecklistBASTS
+     * const checklistBASTS = await prisma.checklistBAST.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const inspeksiBASTWithIdOnly = await prisma.inspeksiBAST.findMany({ select: { id: true } })
+     * const checklistBASTWithIdOnly = await prisma.checklistBAST.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends InspeksiBASTFindManyArgs>(args?: SelectSubset<T, InspeksiBASTFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends ChecklistBASTFindManyArgs>(args?: SelectSubset<T, ChecklistBASTFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a InspeksiBAST.
-     * @param {InspeksiBASTCreateArgs} args - Arguments to create a InspeksiBAST.
+     * Create a ChecklistBAST.
+     * @param {ChecklistBASTCreateArgs} args - Arguments to create a ChecklistBAST.
      * @example
-     * // Create one InspeksiBAST
-     * const InspeksiBAST = await prisma.inspeksiBAST.create({
+     * // Create one ChecklistBAST
+     * const ChecklistBAST = await prisma.checklistBAST.create({
      *   data: {
-     *     // ... data to create a InspeksiBAST
+     *     // ... data to create a ChecklistBAST
      *   }
      * })
      * 
      */
-    create<T extends InspeksiBASTCreateArgs>(args: SelectSubset<T, InspeksiBASTCreateArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends ChecklistBASTCreateArgs>(args: SelectSubset<T, ChecklistBASTCreateArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Create many InspeksiBASTS.
-     * @param {InspeksiBASTCreateManyArgs} args - Arguments to create many InspeksiBASTS.
+     * Create many ChecklistBASTS.
+     * @param {ChecklistBASTCreateManyArgs} args - Arguments to create many ChecklistBASTS.
      * @example
-     * // Create many InspeksiBASTS
-     * const inspeksiBAST = await prisma.inspeksiBAST.createMany({
+     * // Create many ChecklistBASTS
+     * const checklistBAST = await prisma.checklistBAST.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends InspeksiBASTCreateManyArgs>(args?: SelectSubset<T, InspeksiBASTCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends ChecklistBASTCreateManyArgs>(args?: SelectSubset<T, ChecklistBASTCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Delete a InspeksiBAST.
-     * @param {InspeksiBASTDeleteArgs} args - Arguments to delete one InspeksiBAST.
+     * Delete a ChecklistBAST.
+     * @param {ChecklistBASTDeleteArgs} args - Arguments to delete one ChecklistBAST.
      * @example
-     * // Delete one InspeksiBAST
-     * const InspeksiBAST = await prisma.inspeksiBAST.delete({
+     * // Delete one ChecklistBAST
+     * const ChecklistBAST = await prisma.checklistBAST.delete({
      *   where: {
-     *     // ... filter to delete one InspeksiBAST
+     *     // ... filter to delete one ChecklistBAST
      *   }
      * })
      * 
      */
-    delete<T extends InspeksiBASTDeleteArgs>(args: SelectSubset<T, InspeksiBASTDeleteArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends ChecklistBASTDeleteArgs>(args: SelectSubset<T, ChecklistBASTDeleteArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one InspeksiBAST.
-     * @param {InspeksiBASTUpdateArgs} args - Arguments to update one InspeksiBAST.
+     * Update one ChecklistBAST.
+     * @param {ChecklistBASTUpdateArgs} args - Arguments to update one ChecklistBAST.
      * @example
-     * // Update one InspeksiBAST
-     * const inspeksiBAST = await prisma.inspeksiBAST.update({
+     * // Update one ChecklistBAST
+     * const checklistBAST = await prisma.checklistBAST.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -18995,30 +18673,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends InspeksiBASTUpdateArgs>(args: SelectSubset<T, InspeksiBASTUpdateArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends ChecklistBASTUpdateArgs>(args: SelectSubset<T, ChecklistBASTUpdateArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Delete zero or more InspeksiBASTS.
-     * @param {InspeksiBASTDeleteManyArgs} args - Arguments to filter InspeksiBASTS to delete.
+     * Delete zero or more ChecklistBASTS.
+     * @param {ChecklistBASTDeleteManyArgs} args - Arguments to filter ChecklistBASTS to delete.
      * @example
-     * // Delete a few InspeksiBASTS
-     * const { count } = await prisma.inspeksiBAST.deleteMany({
+     * // Delete a few ChecklistBASTS
+     * const { count } = await prisma.checklistBAST.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends InspeksiBASTDeleteManyArgs>(args?: SelectSubset<T, InspeksiBASTDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends ChecklistBASTDeleteManyArgs>(args?: SelectSubset<T, ChecklistBASTDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Update zero or more InspeksiBASTS.
+     * Update zero or more ChecklistBASTS.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {ChecklistBASTUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
-     * // Update many InspeksiBASTS
-     * const inspeksiBAST = await prisma.inspeksiBAST.updateMany({
+     * // Update many ChecklistBASTS
+     * const checklistBAST = await prisma.checklistBAST.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -19028,56 +18706,56 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends InspeksiBASTUpdateManyArgs>(args: SelectSubset<T, InspeksiBASTUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends ChecklistBASTUpdateManyArgs>(args: SelectSubset<T, ChecklistBASTUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
-     * Create or update one InspeksiBAST.
-     * @param {InspeksiBASTUpsertArgs} args - Arguments to update or create a InspeksiBAST.
+     * Create or update one ChecklistBAST.
+     * @param {ChecklistBASTUpsertArgs} args - Arguments to update or create a ChecklistBAST.
      * @example
-     * // Update or create a InspeksiBAST
-     * const inspeksiBAST = await prisma.inspeksiBAST.upsert({
+     * // Update or create a ChecklistBAST
+     * const checklistBAST = await prisma.checklistBAST.upsert({
      *   create: {
-     *     // ... data to create a InspeksiBAST
+     *     // ... data to create a ChecklistBAST
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the InspeksiBAST we want to update
+     *     // ... the filter for the ChecklistBAST we want to update
      *   }
      * })
      */
-    upsert<T extends InspeksiBASTUpsertArgs>(args: SelectSubset<T, InspeksiBASTUpsertArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends ChecklistBASTUpsertArgs>(args: SelectSubset<T, ChecklistBASTUpsertArgs<ExtArgs>>): Prisma__ChecklistBASTClient<$Result.GetResult<Prisma.$ChecklistBASTPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
-     * Count the number of InspeksiBASTS.
+     * Count the number of ChecklistBASTS.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTCountArgs} args - Arguments to filter InspeksiBASTS to count.
+     * @param {ChecklistBASTCountArgs} args - Arguments to filter ChecklistBASTS to count.
      * @example
-     * // Count the number of InspeksiBASTS
-     * const count = await prisma.inspeksiBAST.count({
+     * // Count the number of ChecklistBASTS
+     * const count = await prisma.checklistBAST.count({
      *   where: {
-     *     // ... the filter for the InspeksiBASTS we want to count
+     *     // ... the filter for the ChecklistBASTS we want to count
      *   }
      * })
     **/
-    count<T extends InspeksiBASTCountArgs>(
-      args?: Subset<T, InspeksiBASTCountArgs>,
+    count<T extends ChecklistBASTCountArgs>(
+      args?: Subset<T, ChecklistBASTCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], InspeksiBASTCountAggregateOutputType>
+          : GetScalarType<T['select'], ChecklistBASTCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a InspeksiBAST.
+     * Allows you to perform aggregations operations on a ChecklistBAST.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {ChecklistBASTAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -19097,13 +18775,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends InspeksiBASTAggregateArgs>(args: Subset<T, InspeksiBASTAggregateArgs>): Prisma.PrismaPromise<GetInspeksiBASTAggregateType<T>>
+    aggregate<T extends ChecklistBASTAggregateArgs>(args: Subset<T, ChecklistBASTAggregateArgs>): Prisma.PrismaPromise<GetChecklistBASTAggregateType<T>>
 
     /**
-     * Group by InspeksiBAST.
+     * Group by ChecklistBAST.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTGroupByArgs} args - Group by arguments.
+     * @param {ChecklistBASTGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -19118,14 +18796,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends InspeksiBASTGroupByArgs,
+      T extends ChecklistBASTGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: InspeksiBASTGroupByArgs['orderBy'] }
-        : { orderBy?: InspeksiBASTGroupByArgs['orderBy'] },
+        ? { orderBy: ChecklistBASTGroupByArgs['orderBy'] }
+        : { orderBy?: ChecklistBASTGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -19174,24 +18852,22 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, InspeksiBASTGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetInspeksiBASTGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, ChecklistBASTGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetChecklistBASTGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the InspeksiBAST model
+   * Fields of the ChecklistBAST model
    */
-  readonly fields: InspeksiBASTFieldRefs;
+  readonly fields: ChecklistBASTFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for InspeksiBAST.
+   * The delegate class that acts as a "Promise-like" for ChecklistBAST.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__InspeksiBASTClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ChecklistBASTClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     transaksi<T extends TransaksiDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransaksiDefaultArgs<ExtArgs>>): Prisma__TransaksiClient<$Result.GetResult<Prisma.$TransaksiPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    inspektur<T extends InspeksiBAST$inspekturArgs<ExtArgs> = {}>(args?: Subset<T, InspeksiBAST$inspekturArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    logs<T extends InspeksiBAST$logsArgs<ExtArgs> = {}>(args?: Subset<T, InspeksiBAST$logsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -19218,1424 +18894,378 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the InspeksiBAST model
+   * Fields of the ChecklistBAST model
    */
-  interface InspeksiBASTFieldRefs {
-    readonly id: FieldRef<"InspeksiBAST", 'Int'>
-    readonly transaksi_id: FieldRef<"InspeksiBAST", 'Int'>
-    readonly item: FieldRef<"InspeksiBAST", 'ItemBAST'>
-    readonly status: FieldRef<"InspeksiBAST", 'StatusInspeksi'>
-    readonly catatan: FieldRef<"InspeksiBAST", 'String'>
-    readonly inspektur_id: FieldRef<"InspeksiBAST", 'Int'>
-    readonly diperiksa_at: FieldRef<"InspeksiBAST", 'DateTime'>
+  interface ChecklistBASTFieldRefs {
+    readonly id: FieldRef<"ChecklistBAST", 'Int'>
+    readonly transaksi_id: FieldRef<"ChecklistBAST", 'Int'>
+    readonly item: FieldRef<"ChecklistBAST", 'ItemBAST'>
+    readonly status: FieldRef<"ChecklistBAST", 'StatusBAST'>
+    readonly created_at: FieldRef<"ChecklistBAST", 'DateTime'>
+    readonly updated_at: FieldRef<"ChecklistBAST", 'DateTime'>
   }
     
 
   // Custom InputTypes
   /**
-   * InspeksiBAST findUnique
+   * ChecklistBAST findUnique
    */
-  export type InspeksiBASTFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * Filter, which InspeksiBAST to fetch.
+     * Filter, which ChecklistBAST to fetch.
      */
-    where: InspeksiBASTWhereUniqueInput
+    where: ChecklistBASTWhereUniqueInput
   }
 
   /**
-   * InspeksiBAST findUniqueOrThrow
+   * ChecklistBAST findUniqueOrThrow
    */
-  export type InspeksiBASTFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * Filter, which InspeksiBAST to fetch.
+     * Filter, which ChecklistBAST to fetch.
      */
-    where: InspeksiBASTWhereUniqueInput
+    where: ChecklistBASTWhereUniqueInput
   }
 
   /**
-   * InspeksiBAST findFirst
+   * ChecklistBAST findFirst
    */
-  export type InspeksiBASTFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * Filter, which InspeksiBAST to fetch.
+     * Filter, which ChecklistBAST to fetch.
      */
-    where?: InspeksiBASTWhereInput
+    where?: ChecklistBASTWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of InspeksiBASTS to fetch.
+     * Determine the order of ChecklistBASTS to fetch.
      */
-    orderBy?: InspeksiBASTOrderByWithRelationInput | InspeksiBASTOrderByWithRelationInput[]
+    orderBy?: ChecklistBASTOrderByWithRelationInput | ChecklistBASTOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for InspeksiBASTS.
+     * Sets the position for searching for ChecklistBASTS.
      */
-    cursor?: InspeksiBASTWhereUniqueInput
+    cursor?: ChecklistBASTWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` InspeksiBASTS from the position of the cursor.
+     * Take `±n` ChecklistBASTS from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` InspeksiBASTS.
+     * Skip the first `n` ChecklistBASTS.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of InspeksiBASTS.
+     * Filter by unique combinations of ChecklistBASTS.
      */
-    distinct?: InspeksiBASTScalarFieldEnum | InspeksiBASTScalarFieldEnum[]
+    distinct?: ChecklistBASTScalarFieldEnum | ChecklistBASTScalarFieldEnum[]
   }
 
   /**
-   * InspeksiBAST findFirstOrThrow
+   * ChecklistBAST findFirstOrThrow
    */
-  export type InspeksiBASTFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * Filter, which InspeksiBAST to fetch.
+     * Filter, which ChecklistBAST to fetch.
      */
-    where?: InspeksiBASTWhereInput
+    where?: ChecklistBASTWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of InspeksiBASTS to fetch.
+     * Determine the order of ChecklistBASTS to fetch.
      */
-    orderBy?: InspeksiBASTOrderByWithRelationInput | InspeksiBASTOrderByWithRelationInput[]
+    orderBy?: ChecklistBASTOrderByWithRelationInput | ChecklistBASTOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for searching for InspeksiBASTS.
+     * Sets the position for searching for ChecklistBASTS.
      */
-    cursor?: InspeksiBASTWhereUniqueInput
+    cursor?: ChecklistBASTWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` InspeksiBASTS from the position of the cursor.
+     * Take `±n` ChecklistBASTS from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` InspeksiBASTS.
+     * Skip the first `n` ChecklistBASTS.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of InspeksiBASTS.
+     * Filter by unique combinations of ChecklistBASTS.
      */
-    distinct?: InspeksiBASTScalarFieldEnum | InspeksiBASTScalarFieldEnum[]
+    distinct?: ChecklistBASTScalarFieldEnum | ChecklistBASTScalarFieldEnum[]
   }
 
   /**
-   * InspeksiBAST findMany
+   * ChecklistBAST findMany
    */
-  export type InspeksiBASTFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * Filter, which InspeksiBASTS to fetch.
+     * Filter, which ChecklistBASTS to fetch.
      */
-    where?: InspeksiBASTWhereInput
+    where?: ChecklistBASTWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
-     * Determine the order of InspeksiBASTS to fetch.
+     * Determine the order of ChecklistBASTS to fetch.
      */
-    orderBy?: InspeksiBASTOrderByWithRelationInput | InspeksiBASTOrderByWithRelationInput[]
+    orderBy?: ChecklistBASTOrderByWithRelationInput | ChecklistBASTOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
-     * Sets the position for listing InspeksiBASTS.
+     * Sets the position for listing ChecklistBASTS.
      */
-    cursor?: InspeksiBASTWhereUniqueInput
+    cursor?: ChecklistBASTWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Take `±n` InspeksiBASTS from the position of the cursor.
+     * Take `±n` ChecklistBASTS from the position of the cursor.
      */
     take?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
-     * Skip the first `n` InspeksiBASTS.
+     * Skip the first `n` ChecklistBASTS.
      */
     skip?: number
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
      * 
-     * Filter by unique combinations of InspeksiBASTS.
+     * Filter by unique combinations of ChecklistBASTS.
      */
-    distinct?: InspeksiBASTScalarFieldEnum | InspeksiBASTScalarFieldEnum[]
+    distinct?: ChecklistBASTScalarFieldEnum | ChecklistBASTScalarFieldEnum[]
   }
 
   /**
-   * InspeksiBAST create
+   * ChecklistBAST create
    */
-  export type InspeksiBASTCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * The data needed to create a InspeksiBAST.
+     * The data needed to create a ChecklistBAST.
      */
-    data: XOR<InspeksiBASTCreateInput, InspeksiBASTUncheckedCreateInput>
+    data: XOR<ChecklistBASTCreateInput, ChecklistBASTUncheckedCreateInput>
   }
 
   /**
-   * InspeksiBAST createMany
+   * ChecklistBAST createMany
    */
-  export type InspeksiBASTCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to create many InspeksiBASTS.
+     * The data used to create many ChecklistBASTS.
      */
-    data: InspeksiBASTCreateManyInput | InspeksiBASTCreateManyInput[]
+    data: ChecklistBASTCreateManyInput | ChecklistBASTCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * InspeksiBAST update
+   * ChecklistBAST update
    */
-  export type InspeksiBASTUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * The data needed to update a InspeksiBAST.
+     * The data needed to update a ChecklistBAST.
      */
-    data: XOR<InspeksiBASTUpdateInput, InspeksiBASTUncheckedUpdateInput>
+    data: XOR<ChecklistBASTUpdateInput, ChecklistBASTUncheckedUpdateInput>
     /**
-     * Choose, which InspeksiBAST to update.
+     * Choose, which ChecklistBAST to update.
      */
-    where: InspeksiBASTWhereUniqueInput
+    where: ChecklistBASTWhereUniqueInput
   }
 
   /**
-   * InspeksiBAST updateMany
+   * ChecklistBAST updateMany
    */
-  export type InspeksiBASTUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * The data used to update InspeksiBASTS.
+     * The data used to update ChecklistBASTS.
      */
-    data: XOR<InspeksiBASTUpdateManyMutationInput, InspeksiBASTUncheckedUpdateManyInput>
+    data: XOR<ChecklistBASTUpdateManyMutationInput, ChecklistBASTUncheckedUpdateManyInput>
     /**
-     * Filter which InspeksiBASTS to update
+     * Filter which ChecklistBASTS to update
      */
-    where?: InspeksiBASTWhereInput
+    where?: ChecklistBASTWhereInput
     /**
-     * Limit how many InspeksiBASTS to update.
+     * Limit how many ChecklistBASTS to update.
      */
     limit?: number
   }
 
   /**
-   * InspeksiBAST upsert
+   * ChecklistBAST upsert
    */
-  export type InspeksiBASTUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * The filter to search for the InspeksiBAST to update in case it exists.
+     * The filter to search for the ChecklistBAST to update in case it exists.
      */
-    where: InspeksiBASTWhereUniqueInput
+    where: ChecklistBASTWhereUniqueInput
     /**
-     * In case the InspeksiBAST found by the `where` argument doesn't exist, create a new InspeksiBAST with this data.
+     * In case the ChecklistBAST found by the `where` argument doesn't exist, create a new ChecklistBAST with this data.
      */
-    create: XOR<InspeksiBASTCreateInput, InspeksiBASTUncheckedCreateInput>
+    create: XOR<ChecklistBASTCreateInput, ChecklistBASTUncheckedCreateInput>
     /**
-     * In case the InspeksiBAST was found with the provided `where` argument, update it with this data.
+     * In case the ChecklistBAST was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<InspeksiBASTUpdateInput, InspeksiBASTUncheckedUpdateInput>
+    update: XOR<ChecklistBASTUpdateInput, ChecklistBASTUncheckedUpdateInput>
   }
 
   /**
-   * InspeksiBAST delete
+   * ChecklistBAST delete
    */
-  export type InspeksiBASTDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the InspeksiBAST
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: InspeksiBASTSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the InspeksiBAST
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: InspeksiBASTInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
     /**
-     * Filter which InspeksiBAST to delete.
+     * Filter which ChecklistBAST to delete.
      */
-    where: InspeksiBASTWhereUniqueInput
+    where: ChecklistBASTWhereUniqueInput
   }
 
   /**
-   * InspeksiBAST deleteMany
+   * ChecklistBAST deleteMany
    */
-  export type InspeksiBASTDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which InspeksiBASTS to delete
+     * Filter which ChecklistBASTS to delete
      */
-    where?: InspeksiBASTWhereInput
+    where?: ChecklistBASTWhereInput
     /**
-     * Limit how many InspeksiBASTS to delete.
+     * Limit how many ChecklistBASTS to delete.
      */
     limit?: number
   }
 
   /**
-   * InspeksiBAST.inspektur
+   * ChecklistBAST without action
    */
-  export type InspeksiBAST$inspekturArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ChecklistBASTDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the ChecklistBAST
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: ChecklistBASTSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the ChecklistBAST
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: ChecklistBASTOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
-  }
-
-  /**
-   * InspeksiBAST.logs
-   */
-  export type InspeksiBAST$logsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    where?: InspeksiBASTLogWhereInput
-    orderBy?: InspeksiBASTLogOrderByWithRelationInput | InspeksiBASTLogOrderByWithRelationInput[]
-    cursor?: InspeksiBASTLogWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: InspeksiBASTLogScalarFieldEnum | InspeksiBASTLogScalarFieldEnum[]
-  }
-
-  /**
-   * InspeksiBAST without action
-   */
-  export type InspeksiBASTDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBAST
-     */
-    select?: InspeksiBASTSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBAST
-     */
-    omit?: InspeksiBASTOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model InspeksiBASTLog
-   */
-
-  export type AggregateInspeksiBASTLog = {
-    _count: InspeksiBASTLogCountAggregateOutputType | null
-    _avg: InspeksiBASTLogAvgAggregateOutputType | null
-    _sum: InspeksiBASTLogSumAggregateOutputType | null
-    _min: InspeksiBASTLogMinAggregateOutputType | null
-    _max: InspeksiBASTLogMaxAggregateOutputType | null
-  }
-
-  export type InspeksiBASTLogAvgAggregateOutputType = {
-    id: number | null
-    inspeksi_bast_id: number | null
-    inspektur_id: number | null
-  }
-
-  export type InspeksiBASTLogSumAggregateOutputType = {
-    id: number | null
-    inspeksi_bast_id: number | null
-    inspektur_id: number | null
-  }
-
-  export type InspeksiBASTLogMinAggregateOutputType = {
-    id: number | null
-    inspeksi_bast_id: number | null
-    status_sebelum: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi | null
-    catatan: string | null
-    inspektur_id: number | null
-    created_at: Date | null
-  }
-
-  export type InspeksiBASTLogMaxAggregateOutputType = {
-    id: number | null
-    inspeksi_bast_id: number | null
-    status_sebelum: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi | null
-    catatan: string | null
-    inspektur_id: number | null
-    created_at: Date | null
-  }
-
-  export type InspeksiBASTLogCountAggregateOutputType = {
-    id: number
-    inspeksi_bast_id: number
-    status_sebelum: number
-    status_sesudah: number
-    catatan: number
-    inspektur_id: number
-    created_at: number
-    _all: number
-  }
-
-
-  export type InspeksiBASTLogAvgAggregateInputType = {
-    id?: true
-    inspeksi_bast_id?: true
-    inspektur_id?: true
-  }
-
-  export type InspeksiBASTLogSumAggregateInputType = {
-    id?: true
-    inspeksi_bast_id?: true
-    inspektur_id?: true
-  }
-
-  export type InspeksiBASTLogMinAggregateInputType = {
-    id?: true
-    inspeksi_bast_id?: true
-    status_sebelum?: true
-    status_sesudah?: true
-    catatan?: true
-    inspektur_id?: true
-    created_at?: true
-  }
-
-  export type InspeksiBASTLogMaxAggregateInputType = {
-    id?: true
-    inspeksi_bast_id?: true
-    status_sebelum?: true
-    status_sesudah?: true
-    catatan?: true
-    inspektur_id?: true
-    created_at?: true
-  }
-
-  export type InspeksiBASTLogCountAggregateInputType = {
-    id?: true
-    inspeksi_bast_id?: true
-    status_sebelum?: true
-    status_sesudah?: true
-    catatan?: true
-    inspektur_id?: true
-    created_at?: true
-    _all?: true
-  }
-
-  export type InspeksiBASTLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which InspeksiBASTLog to aggregate.
-     */
-    where?: InspeksiBASTLogWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of InspeksiBASTLogs to fetch.
-     */
-    orderBy?: InspeksiBASTLogOrderByWithRelationInput | InspeksiBASTLogOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: InspeksiBASTLogWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` InspeksiBASTLogs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` InspeksiBASTLogs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned InspeksiBASTLogs
-    **/
-    _count?: true | InspeksiBASTLogCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: InspeksiBASTLogAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: InspeksiBASTLogSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: InspeksiBASTLogMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: InspeksiBASTLogMaxAggregateInputType
-  }
-
-  export type GetInspeksiBASTLogAggregateType<T extends InspeksiBASTLogAggregateArgs> = {
-        [P in keyof T & keyof AggregateInspeksiBASTLog]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateInspeksiBASTLog[P]>
-      : GetScalarType<T[P], AggregateInspeksiBASTLog[P]>
-  }
-
-
-
-
-  export type InspeksiBASTLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: InspeksiBASTLogWhereInput
-    orderBy?: InspeksiBASTLogOrderByWithAggregationInput | InspeksiBASTLogOrderByWithAggregationInput[]
-    by: InspeksiBASTLogScalarFieldEnum[] | InspeksiBASTLogScalarFieldEnum
-    having?: InspeksiBASTLogScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: InspeksiBASTLogCountAggregateInputType | true
-    _avg?: InspeksiBASTLogAvgAggregateInputType
-    _sum?: InspeksiBASTLogSumAggregateInputType
-    _min?: InspeksiBASTLogMinAggregateInputType
-    _max?: InspeksiBASTLogMaxAggregateInputType
-  }
-
-  export type InspeksiBASTLogGroupByOutputType = {
-    id: number
-    inspeksi_bast_id: number
-    status_sebelum: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan: string | null
-    inspektur_id: number
-    created_at: Date
-    _count: InspeksiBASTLogCountAggregateOutputType | null
-    _avg: InspeksiBASTLogAvgAggregateOutputType | null
-    _sum: InspeksiBASTLogSumAggregateOutputType | null
-    _min: InspeksiBASTLogMinAggregateOutputType | null
-    _max: InspeksiBASTLogMaxAggregateOutputType | null
-  }
-
-  type GetInspeksiBASTLogGroupByPayload<T extends InspeksiBASTLogGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<InspeksiBASTLogGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof InspeksiBASTLogGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], InspeksiBASTLogGroupByOutputType[P]>
-            : GetScalarType<T[P], InspeksiBASTLogGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type InspeksiBASTLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    inspeksi_bast_id?: boolean
-    status_sebelum?: boolean
-    status_sesudah?: boolean
-    catatan?: boolean
-    inspektur_id?: boolean
-    created_at?: boolean
-    inspeksi_bast?: boolean | InspeksiBASTDefaultArgs<ExtArgs>
-    inspektur?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["inspeksiBASTLog"]>
-
-
-
-  export type InspeksiBASTLogSelectScalar = {
-    id?: boolean
-    inspeksi_bast_id?: boolean
-    status_sebelum?: boolean
-    status_sesudah?: boolean
-    catatan?: boolean
-    inspektur_id?: boolean
-    created_at?: boolean
-  }
-
-  export type InspeksiBASTLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "inspeksi_bast_id" | "status_sebelum" | "status_sesudah" | "catatan" | "inspektur_id" | "created_at", ExtArgs["result"]["inspeksiBASTLog"]>
-  export type InspeksiBASTLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    inspeksi_bast?: boolean | InspeksiBASTDefaultArgs<ExtArgs>
-    inspektur?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $InspeksiBASTLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "InspeksiBASTLog"
-    objects: {
-      inspeksi_bast: Prisma.$InspeksiBASTPayload<ExtArgs>
-      inspektur: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: number
-      inspeksi_bast_id: number
-      status_sebelum: $Enums.StatusInspeksi | null
-      status_sesudah: $Enums.StatusInspeksi
-      catatan: string | null
-      inspektur_id: number
-      created_at: Date
-    }, ExtArgs["result"]["inspeksiBASTLog"]>
-    composites: {}
-  }
-
-  type InspeksiBASTLogGetPayload<S extends boolean | null | undefined | InspeksiBASTLogDefaultArgs> = $Result.GetResult<Prisma.$InspeksiBASTLogPayload, S>
-
-  type InspeksiBASTLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<InspeksiBASTLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: InspeksiBASTLogCountAggregateInputType | true
-    }
-
-  export interface InspeksiBASTLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['InspeksiBASTLog'], meta: { name: 'InspeksiBASTLog' } }
-    /**
-     * Find zero or one InspeksiBASTLog that matches the filter.
-     * @param {InspeksiBASTLogFindUniqueArgs} args - Arguments to find a InspeksiBASTLog
-     * @example
-     * // Get one InspeksiBASTLog
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends InspeksiBASTLogFindUniqueArgs>(args: SelectSubset<T, InspeksiBASTLogFindUniqueArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one InspeksiBASTLog that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {InspeksiBASTLogFindUniqueOrThrowArgs} args - Arguments to find a InspeksiBASTLog
-     * @example
-     * // Get one InspeksiBASTLog
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends InspeksiBASTLogFindUniqueOrThrowArgs>(args: SelectSubset<T, InspeksiBASTLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first InspeksiBASTLog that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTLogFindFirstArgs} args - Arguments to find a InspeksiBASTLog
-     * @example
-     * // Get one InspeksiBASTLog
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends InspeksiBASTLogFindFirstArgs>(args?: SelectSubset<T, InspeksiBASTLogFindFirstArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first InspeksiBASTLog that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTLogFindFirstOrThrowArgs} args - Arguments to find a InspeksiBASTLog
-     * @example
-     * // Get one InspeksiBASTLog
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends InspeksiBASTLogFindFirstOrThrowArgs>(args?: SelectSubset<T, InspeksiBASTLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more InspeksiBASTLogs that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTLogFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all InspeksiBASTLogs
-     * const inspeksiBASTLogs = await prisma.inspeksiBASTLog.findMany()
-     * 
-     * // Get first 10 InspeksiBASTLogs
-     * const inspeksiBASTLogs = await prisma.inspeksiBASTLog.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const inspeksiBASTLogWithIdOnly = await prisma.inspeksiBASTLog.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends InspeksiBASTLogFindManyArgs>(args?: SelectSubset<T, InspeksiBASTLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a InspeksiBASTLog.
-     * @param {InspeksiBASTLogCreateArgs} args - Arguments to create a InspeksiBASTLog.
-     * @example
-     * // Create one InspeksiBASTLog
-     * const InspeksiBASTLog = await prisma.inspeksiBASTLog.create({
-     *   data: {
-     *     // ... data to create a InspeksiBASTLog
-     *   }
-     * })
-     * 
-     */
-    create<T extends InspeksiBASTLogCreateArgs>(args: SelectSubset<T, InspeksiBASTLogCreateArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many InspeksiBASTLogs.
-     * @param {InspeksiBASTLogCreateManyArgs} args - Arguments to create many InspeksiBASTLogs.
-     * @example
-     * // Create many InspeksiBASTLogs
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends InspeksiBASTLogCreateManyArgs>(args?: SelectSubset<T, InspeksiBASTLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a InspeksiBASTLog.
-     * @param {InspeksiBASTLogDeleteArgs} args - Arguments to delete one InspeksiBASTLog.
-     * @example
-     * // Delete one InspeksiBASTLog
-     * const InspeksiBASTLog = await prisma.inspeksiBASTLog.delete({
-     *   where: {
-     *     // ... filter to delete one InspeksiBASTLog
-     *   }
-     * })
-     * 
-     */
-    delete<T extends InspeksiBASTLogDeleteArgs>(args: SelectSubset<T, InspeksiBASTLogDeleteArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one InspeksiBASTLog.
-     * @param {InspeksiBASTLogUpdateArgs} args - Arguments to update one InspeksiBASTLog.
-     * @example
-     * // Update one InspeksiBASTLog
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends InspeksiBASTLogUpdateArgs>(args: SelectSubset<T, InspeksiBASTLogUpdateArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more InspeksiBASTLogs.
-     * @param {InspeksiBASTLogDeleteManyArgs} args - Arguments to filter InspeksiBASTLogs to delete.
-     * @example
-     * // Delete a few InspeksiBASTLogs
-     * const { count } = await prisma.inspeksiBASTLog.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends InspeksiBASTLogDeleteManyArgs>(args?: SelectSubset<T, InspeksiBASTLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more InspeksiBASTLogs.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTLogUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many InspeksiBASTLogs
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends InspeksiBASTLogUpdateManyArgs>(args: SelectSubset<T, InspeksiBASTLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one InspeksiBASTLog.
-     * @param {InspeksiBASTLogUpsertArgs} args - Arguments to update or create a InspeksiBASTLog.
-     * @example
-     * // Update or create a InspeksiBASTLog
-     * const inspeksiBASTLog = await prisma.inspeksiBASTLog.upsert({
-     *   create: {
-     *     // ... data to create a InspeksiBASTLog
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the InspeksiBASTLog we want to update
-     *   }
-     * })
-     */
-    upsert<T extends InspeksiBASTLogUpsertArgs>(args: SelectSubset<T, InspeksiBASTLogUpsertArgs<ExtArgs>>): Prisma__InspeksiBASTLogClient<$Result.GetResult<Prisma.$InspeksiBASTLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of InspeksiBASTLogs.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTLogCountArgs} args - Arguments to filter InspeksiBASTLogs to count.
-     * @example
-     * // Count the number of InspeksiBASTLogs
-     * const count = await prisma.inspeksiBASTLog.count({
-     *   where: {
-     *     // ... the filter for the InspeksiBASTLogs we want to count
-     *   }
-     * })
-    **/
-    count<T extends InspeksiBASTLogCountArgs>(
-      args?: Subset<T, InspeksiBASTLogCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], InspeksiBASTLogCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a InspeksiBASTLog.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends InspeksiBASTLogAggregateArgs>(args: Subset<T, InspeksiBASTLogAggregateArgs>): Prisma.PrismaPromise<GetInspeksiBASTLogAggregateType<T>>
-
-    /**
-     * Group by InspeksiBASTLog.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {InspeksiBASTLogGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends InspeksiBASTLogGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: InspeksiBASTLogGroupByArgs['orderBy'] }
-        : { orderBy?: InspeksiBASTLogGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, InspeksiBASTLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetInspeksiBASTLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the InspeksiBASTLog model
-   */
-  readonly fields: InspeksiBASTLogFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for InspeksiBASTLog.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__InspeksiBASTLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    inspeksi_bast<T extends InspeksiBASTDefaultArgs<ExtArgs> = {}>(args?: Subset<T, InspeksiBASTDefaultArgs<ExtArgs>>): Prisma__InspeksiBASTClient<$Result.GetResult<Prisma.$InspeksiBASTPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    inspektur<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the InspeksiBASTLog model
-   */
-  interface InspeksiBASTLogFieldRefs {
-    readonly id: FieldRef<"InspeksiBASTLog", 'Int'>
-    readonly inspeksi_bast_id: FieldRef<"InspeksiBASTLog", 'Int'>
-    readonly status_sebelum: FieldRef<"InspeksiBASTLog", 'StatusInspeksi'>
-    readonly status_sesudah: FieldRef<"InspeksiBASTLog", 'StatusInspeksi'>
-    readonly catatan: FieldRef<"InspeksiBASTLog", 'String'>
-    readonly inspektur_id: FieldRef<"InspeksiBASTLog", 'Int'>
-    readonly created_at: FieldRef<"InspeksiBASTLog", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * InspeksiBASTLog findUnique
-   */
-  export type InspeksiBASTLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * Filter, which InspeksiBASTLog to fetch.
-     */
-    where: InspeksiBASTLogWhereUniqueInput
-  }
-
-  /**
-   * InspeksiBASTLog findUniqueOrThrow
-   */
-  export type InspeksiBASTLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * Filter, which InspeksiBASTLog to fetch.
-     */
-    where: InspeksiBASTLogWhereUniqueInput
-  }
-
-  /**
-   * InspeksiBASTLog findFirst
-   */
-  export type InspeksiBASTLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * Filter, which InspeksiBASTLog to fetch.
-     */
-    where?: InspeksiBASTLogWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of InspeksiBASTLogs to fetch.
-     */
-    orderBy?: InspeksiBASTLogOrderByWithRelationInput | InspeksiBASTLogOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for InspeksiBASTLogs.
-     */
-    cursor?: InspeksiBASTLogWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` InspeksiBASTLogs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` InspeksiBASTLogs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of InspeksiBASTLogs.
-     */
-    distinct?: InspeksiBASTLogScalarFieldEnum | InspeksiBASTLogScalarFieldEnum[]
-  }
-
-  /**
-   * InspeksiBASTLog findFirstOrThrow
-   */
-  export type InspeksiBASTLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * Filter, which InspeksiBASTLog to fetch.
-     */
-    where?: InspeksiBASTLogWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of InspeksiBASTLogs to fetch.
-     */
-    orderBy?: InspeksiBASTLogOrderByWithRelationInput | InspeksiBASTLogOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for InspeksiBASTLogs.
-     */
-    cursor?: InspeksiBASTLogWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` InspeksiBASTLogs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` InspeksiBASTLogs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of InspeksiBASTLogs.
-     */
-    distinct?: InspeksiBASTLogScalarFieldEnum | InspeksiBASTLogScalarFieldEnum[]
-  }
-
-  /**
-   * InspeksiBASTLog findMany
-   */
-  export type InspeksiBASTLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * Filter, which InspeksiBASTLogs to fetch.
-     */
-    where?: InspeksiBASTLogWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of InspeksiBASTLogs to fetch.
-     */
-    orderBy?: InspeksiBASTLogOrderByWithRelationInput | InspeksiBASTLogOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing InspeksiBASTLogs.
-     */
-    cursor?: InspeksiBASTLogWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` InspeksiBASTLogs from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` InspeksiBASTLogs.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of InspeksiBASTLogs.
-     */
-    distinct?: InspeksiBASTLogScalarFieldEnum | InspeksiBASTLogScalarFieldEnum[]
-  }
-
-  /**
-   * InspeksiBASTLog create
-   */
-  export type InspeksiBASTLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * The data needed to create a InspeksiBASTLog.
-     */
-    data: XOR<InspeksiBASTLogCreateInput, InspeksiBASTLogUncheckedCreateInput>
-  }
-
-  /**
-   * InspeksiBASTLog createMany
-   */
-  export type InspeksiBASTLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many InspeksiBASTLogs.
-     */
-    data: InspeksiBASTLogCreateManyInput | InspeksiBASTLogCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * InspeksiBASTLog update
-   */
-  export type InspeksiBASTLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * The data needed to update a InspeksiBASTLog.
-     */
-    data: XOR<InspeksiBASTLogUpdateInput, InspeksiBASTLogUncheckedUpdateInput>
-    /**
-     * Choose, which InspeksiBASTLog to update.
-     */
-    where: InspeksiBASTLogWhereUniqueInput
-  }
-
-  /**
-   * InspeksiBASTLog updateMany
-   */
-  export type InspeksiBASTLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update InspeksiBASTLogs.
-     */
-    data: XOR<InspeksiBASTLogUpdateManyMutationInput, InspeksiBASTLogUncheckedUpdateManyInput>
-    /**
-     * Filter which InspeksiBASTLogs to update
-     */
-    where?: InspeksiBASTLogWhereInput
-    /**
-     * Limit how many InspeksiBASTLogs to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * InspeksiBASTLog upsert
-   */
-  export type InspeksiBASTLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * The filter to search for the InspeksiBASTLog to update in case it exists.
-     */
-    where: InspeksiBASTLogWhereUniqueInput
-    /**
-     * In case the InspeksiBASTLog found by the `where` argument doesn't exist, create a new InspeksiBASTLog with this data.
-     */
-    create: XOR<InspeksiBASTLogCreateInput, InspeksiBASTLogUncheckedCreateInput>
-    /**
-     * In case the InspeksiBASTLog was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<InspeksiBASTLogUpdateInput, InspeksiBASTLogUncheckedUpdateInput>
-  }
-
-  /**
-   * InspeksiBASTLog delete
-   */
-  export type InspeksiBASTLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
-    /**
-     * Filter which InspeksiBASTLog to delete.
-     */
-    where: InspeksiBASTLogWhereUniqueInput
-  }
-
-  /**
-   * InspeksiBASTLog deleteMany
-   */
-  export type InspeksiBASTLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which InspeksiBASTLogs to delete
-     */
-    where?: InspeksiBASTLogWhereInput
-    /**
-     * Limit how many InspeksiBASTLogs to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * InspeksiBASTLog without action
-   */
-  export type InspeksiBASTLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the InspeksiBASTLog
-     */
-    select?: InspeksiBASTLogSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the InspeksiBASTLog
-     */
-    omit?: InspeksiBASTLogOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: InspeksiBASTLogInclude<ExtArgs> | null
+    include?: ChecklistBASTInclude<ExtArgs> | null
   }
 
 
@@ -21823,7 +20453,7 @@ export namespace Prisma {
     harga_khusus_lama: 'harga_khusus_lama',
     harga_khusus_direset: 'harga_khusus_direset',
     alasan: 'alasan',
-    changed_by: 'changed_by',
+    actor_id: 'actor_id',
     created_at: 'created_at'
   };
 
@@ -21869,14 +20499,10 @@ export namespace Prisma {
     id: 'id',
     lead_id: 'lead_id',
     unit_id: 'unit_id',
-    marketing_id: 'marketing_id',
+    closer_id: 'closer_id',
     nik: 'nik',
     nama_ktp: 'nama_ktp',
     nominal: 'nominal',
-    harga_deal: 'harga_deal',
-    target_itj: 'target_itj',
-    target_dp: 'target_dp',
-    nominal_dibayar: 'nominal_dibayar',
     metode_bayar: 'metode_bayar',
     tenor: 'tenor',
     diajukan_at: 'diajukan_at',
@@ -21908,25 +20534,27 @@ export namespace Prisma {
     id: 'id',
     customer_id: 'customer_id',
     unit_id: 'unit_id',
-    marketing_id: 'marketing_id',
+    pic_id: 'pic_id',
     itj_id: 'itj_id',
     metode_bayar: 'metode_bayar',
     harga_deal: 'harga_deal',
     target_itj: 'target_itj',
     target_dp: 'target_dp',
     tenor_bulan: 'tenor_bulan',
-    status_transaksi: 'status_transaksi',
     tahap_detail: 'tahap_detail',
-    nama_bank: 'nama_bank',
     nama_notaris: 'nama_notaris',
+    rencana_akad_at: 'rencana_akad_at',
+    rencana_bast_at: 'rencana_bast_at',
     tgl_akad: 'tgl_akad',
     lunas_at: 'lunas_at',
     tgl_bast: 'tgl_bast',
     closing_at: 'closing_at',
-    closed_at: 'closed_at',
     cancelled_at: 'cancelled_at',
     alasan_batal: 'alasan_batal',
     catatan_admin: 'catatan_admin',
+    version: 'version',
+    active_unit_id: 'active_unit_id',
+    pengajuan_kpr_terpilih_id: 'pengajuan_kpr_terpilih_id',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -21969,7 +20597,7 @@ export namespace Prisma {
     pengajuan_id: 'pengajuan_id',
     status_sebelum: 'status_sebelum',
     status_sesudah: 'status_sesudah',
-    admin_id: 'admin_id',
+    actor_id: 'actor_id',
     catatan: 'catatan',
     created_at: 'created_at'
   };
@@ -21980,11 +20608,9 @@ export namespace Prisma {
   export const TransaksiTahapLogScalarFieldEnum: {
     id: 'id',
     transaksi_id: 'transaksi_id',
-    tahap_sebelum: 'tahap_sebelum',
-    tahap_sesudah: 'tahap_sesudah',
     detail_sebelum: 'detail_sebelum',
     detail_sesudah: 'detail_sesudah',
-    admin_id: 'admin_id',
+    actor_id: 'actor_id',
     catatan: 'catatan',
     created_at: 'created_at'
   };
@@ -21996,12 +20622,7 @@ export namespace Prisma {
     id: 'id',
     transaksi_id: 'transaksi_id',
     jenis: 'jenis',
-    kategori: 'kategori',
     status: 'status',
-    file_url: 'file_url',
-    catatan_verifikasi: 'catatan_verifikasi',
-    verified_by: 'verified_by',
-    verified_at: 'verified_at',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -22009,30 +20630,16 @@ export namespace Prisma {
   export type DokumenTransaksiScalarFieldEnum = (typeof DokumenTransaksiScalarFieldEnum)[keyof typeof DokumenTransaksiScalarFieldEnum]
 
 
-  export const InspeksiBASTScalarFieldEnum: {
+  export const ChecklistBASTScalarFieldEnum: {
     id: 'id',
     transaksi_id: 'transaksi_id',
     item: 'item',
     status: 'status',
-    catatan: 'catatan',
-    inspektur_id: 'inspektur_id',
-    diperiksa_at: 'diperiksa_at'
+    created_at: 'created_at',
+    updated_at: 'updated_at'
   };
 
-  export type InspeksiBASTScalarFieldEnum = (typeof InspeksiBASTScalarFieldEnum)[keyof typeof InspeksiBASTScalarFieldEnum]
-
-
-  export const InspeksiBASTLogScalarFieldEnum: {
-    id: 'id',
-    inspeksi_bast_id: 'inspeksi_bast_id',
-    status_sebelum: 'status_sebelum',
-    status_sesudah: 'status_sesudah',
-    catatan: 'catatan',
-    inspektur_id: 'inspektur_id',
-    created_at: 'created_at'
-  };
-
-  export type InspeksiBASTLogScalarFieldEnum = (typeof InspeksiBASTLogScalarFieldEnum)[keyof typeof InspeksiBASTLogScalarFieldEnum]
+  export type ChecklistBASTScalarFieldEnum = (typeof ChecklistBASTScalarFieldEnum)[keyof typeof ChecklistBASTScalarFieldEnum]
 
 
   export const PembayaranScalarFieldEnum: {
@@ -22074,19 +20681,19 @@ export namespace Prisma {
   export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
 
 
-  export const MasterTipeOrderByRelevanceFieldEnum: {
-    nama_tipe: 'nama_tipe'
-  };
-
-  export type MasterTipeOrderByRelevanceFieldEnum = (typeof MasterTipeOrderByRelevanceFieldEnum)[keyof typeof MasterTipeOrderByRelevanceFieldEnum]
-
-
   export const NullsOrder: {
     first: 'first',
     last: 'last'
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const MasterTipeOrderByRelevanceFieldEnum: {
+    nama_tipe: 'nama_tipe'
+  };
+
+  export type MasterTipeOrderByRelevanceFieldEnum = (typeof MasterTipeOrderByRelevanceFieldEnum)[keyof typeof MasterTipeOrderByRelevanceFieldEnum]
 
 
   export const MasterUnitOrderByRelevanceFieldEnum: {
@@ -22142,7 +20749,6 @@ export namespace Prisma {
 
 
   export const TransaksiOrderByRelevanceFieldEnum: {
-    nama_bank: 'nama_bank',
     nama_notaris: 'nama_notaris',
     alasan_batal: 'alasan_batal',
     catatan_admin: 'catatan_admin'
@@ -22180,28 +20786,6 @@ export namespace Prisma {
   };
 
   export type TransaksiTahapLogOrderByRelevanceFieldEnum = (typeof TransaksiTahapLogOrderByRelevanceFieldEnum)[keyof typeof TransaksiTahapLogOrderByRelevanceFieldEnum]
-
-
-  export const DokumenTransaksiOrderByRelevanceFieldEnum: {
-    file_url: 'file_url',
-    catatan_verifikasi: 'catatan_verifikasi'
-  };
-
-  export type DokumenTransaksiOrderByRelevanceFieldEnum = (typeof DokumenTransaksiOrderByRelevanceFieldEnum)[keyof typeof DokumenTransaksiOrderByRelevanceFieldEnum]
-
-
-  export const InspeksiBASTOrderByRelevanceFieldEnum: {
-    catatan: 'catatan'
-  };
-
-  export type InspeksiBASTOrderByRelevanceFieldEnum = (typeof InspeksiBASTOrderByRelevanceFieldEnum)[keyof typeof InspeksiBASTOrderByRelevanceFieldEnum]
-
-
-  export const InspeksiBASTLogOrderByRelevanceFieldEnum: {
-    catatan: 'catatan'
-  };
-
-  export type InspeksiBASTLogOrderByRelevanceFieldEnum = (typeof InspeksiBASTLogOrderByRelevanceFieldEnum)[keyof typeof InspeksiBASTLogOrderByRelevanceFieldEnum]
 
 
   export const PembayaranOrderByRelevanceFieldEnum: {
@@ -22317,13 +20901,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'TahapTransaksi'
-   */
-  export type EnumTahapTransaksiFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TahapTransaksi'>
-    
-
-
-  /**
    * Reference to a field of type 'TahapDetail'
    */
   export type EnumTahapDetailFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TahapDetail'>
@@ -22345,13 +20922,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'KategoriDokumen'
-   */
-  export type EnumKategoriDokumenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KategoriDokumen'>
-    
-
-
-  /**
    * Reference to a field of type 'StatusDokumen'
    */
   export type EnumStatusDokumenFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusDokumen'>
@@ -22366,9 +20936,9 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'StatusInspeksi'
+   * Reference to a field of type 'StatusBAST'
    */
-  export type EnumStatusInspeksiFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusInspeksi'>
+  export type EnumStatusBASTFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StatusBAST'>
     
 
 
@@ -22415,10 +20985,7 @@ export namespace Prisma {
     itj_diajukan?: ItjListRelationFilter
     transaksi_logs?: TransaksiTahapLogListRelationFilter
     aktivitas_log?: AktivitasListRelationFilter
-    dokumen_diverifikasi?: DokumenTransaksiListRelationFilter
     pembayaran_divoid?: PembayaranListRelationFilter
-    inspeksi_bast?: InspeksiBASTListRelationFilter
-    inspeksi_bast_logs?: InspeksiBASTLogListRelationFilter
     pengajuan_kpr_logs?: PengajuanKPRLogListRelationFilter
     unit_tipe_logs?: UnitTipeLogListRelationFilter
   }
@@ -22439,10 +21006,7 @@ export namespace Prisma {
     itj_diajukan?: ItjOrderByRelationAggregateInput
     transaksi_logs?: TransaksiTahapLogOrderByRelationAggregateInput
     aktivitas_log?: AktivitasOrderByRelationAggregateInput
-    dokumen_diverifikasi?: DokumenTransaksiOrderByRelationAggregateInput
     pembayaran_divoid?: PembayaranOrderByRelationAggregateInput
-    inspeksi_bast?: InspeksiBASTOrderByRelationAggregateInput
-    inspeksi_bast_logs?: InspeksiBASTLogOrderByRelationAggregateInput
     pengajuan_kpr_logs?: PengajuanKPRLogOrderByRelationAggregateInput
     unit_tipe_logs?: UnitTipeLogOrderByRelationAggregateInput
     _relevance?: UserOrderByRelevanceInput
@@ -22467,10 +21031,7 @@ export namespace Prisma {
     itj_diajukan?: ItjListRelationFilter
     transaksi_logs?: TransaksiTahapLogListRelationFilter
     aktivitas_log?: AktivitasListRelationFilter
-    dokumen_diverifikasi?: DokumenTransaksiListRelationFilter
     pembayaran_divoid?: PembayaranListRelationFilter
-    inspeksi_bast?: InspeksiBASTListRelationFilter
-    inspeksi_bast_logs?: InspeksiBASTLogListRelationFilter
     pengajuan_kpr_logs?: PengajuanKPRLogListRelationFilter
     unit_tipe_logs?: UnitTipeLogListRelationFilter
   }, "id" | "username" | "no_hp">
@@ -22514,7 +21075,7 @@ export namespace Prisma {
     id?: IntFilter<"MasterTipe"> | number
     nama_tipe?: StringFilter<"MasterTipe"> | string
     kategori?: EnumKategoriUnitFilter<"MasterTipe"> | $Enums.KategoriUnit
-    luas_bangunan?: IntFilter<"MasterTipe"> | number
+    luas_bangunan?: IntNullableFilter<"MasterTipe"> | number | null
     luas_tanah?: IntFilter<"MasterTipe"> | number
     harga_dasar?: DecimalFilter<"MasterTipe"> | Decimal | DecimalJsLike | number | string
     units?: MasterUnitListRelationFilter
@@ -22526,7 +21087,7 @@ export namespace Prisma {
     id?: SortOrder
     nama_tipe?: SortOrder
     kategori?: SortOrder
-    luas_bangunan?: SortOrder
+    luas_bangunan?: SortOrderInput | SortOrder
     luas_tanah?: SortOrder
     harga_dasar?: SortOrder
     units?: MasterUnitOrderByRelationAggregateInput
@@ -22543,7 +21104,7 @@ export namespace Prisma {
     NOT?: MasterTipeWhereInput | MasterTipeWhereInput[]
     nama_tipe?: StringFilter<"MasterTipe"> | string
     kategori?: EnumKategoriUnitFilter<"MasterTipe"> | $Enums.KategoriUnit
-    luas_bangunan?: IntFilter<"MasterTipe"> | number
+    luas_bangunan?: IntNullableFilter<"MasterTipe"> | number | null
     luas_tanah?: IntFilter<"MasterTipe"> | number
     harga_dasar?: DecimalFilter<"MasterTipe"> | Decimal | DecimalJsLike | number | string
     units?: MasterUnitListRelationFilter
@@ -22555,7 +21116,7 @@ export namespace Prisma {
     id?: SortOrder
     nama_tipe?: SortOrder
     kategori?: SortOrder
-    luas_bangunan?: SortOrder
+    luas_bangunan?: SortOrderInput | SortOrder
     luas_tanah?: SortOrder
     harga_dasar?: SortOrder
     _count?: MasterTipeCountOrderByAggregateInput
@@ -22572,7 +21133,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"MasterTipe"> | number
     nama_tipe?: StringWithAggregatesFilter<"MasterTipe"> | string
     kategori?: EnumKategoriUnitWithAggregatesFilter<"MasterTipe"> | $Enums.KategoriUnit
-    luas_bangunan?: IntWithAggregatesFilter<"MasterTipe"> | number
+    luas_bangunan?: IntNullableWithAggregatesFilter<"MasterTipe"> | number | null
     luas_tanah?: IntWithAggregatesFilter<"MasterTipe"> | number
     harga_dasar?: DecimalWithAggregatesFilter<"MasterTipe"> | Decimal | DecimalJsLike | number | string
   }
@@ -22590,6 +21151,7 @@ export namespace Prisma {
     harga_khusus?: DecimalNullableFilter<"MasterUnit"> | Decimal | DecimalJsLike | number | string | null
     tipe?: XOR<MasterTipeScalarRelationFilter, MasterTipeWhereInput>
     transaksi?: TransaksiListRelationFilter
+    active_transaksi?: XOR<TransaksiNullableScalarRelationFilter, TransaksiWhereInput> | null
     itj?: ItjListRelationFilter
     tipe_logs?: UnitTipeLogListRelationFilter
   }
@@ -22604,6 +21166,7 @@ export namespace Prisma {
     harga_khusus?: SortOrderInput | SortOrder
     tipe?: MasterTipeOrderByWithRelationInput
     transaksi?: TransaksiOrderByRelationAggregateInput
+    active_transaksi?: TransaksiOrderByWithRelationInput
     itj?: ItjOrderByRelationAggregateInput
     tipe_logs?: UnitTipeLogOrderByRelationAggregateInput
     _relevance?: MasterUnitOrderByRelevanceInput
@@ -22622,6 +21185,7 @@ export namespace Prisma {
     harga_khusus?: DecimalNullableFilter<"MasterUnit"> | Decimal | DecimalJsLike | number | string | null
     tipe?: XOR<MasterTipeScalarRelationFilter, MasterTipeWhereInput>
     transaksi?: TransaksiListRelationFilter
+    active_transaksi?: XOR<TransaksiNullableScalarRelationFilter, TransaksiWhereInput> | null
     itj?: ItjListRelationFilter
     tipe_logs?: UnitTipeLogListRelationFilter
   }, "id" | "blok">
@@ -22666,12 +21230,12 @@ export namespace Prisma {
     harga_khusus_lama?: DecimalNullableFilter<"UnitTipeLog"> | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFilter<"UnitTipeLog"> | boolean
     alasan?: StringFilter<"UnitTipeLog"> | string
-    changed_by?: IntFilter<"UnitTipeLog"> | number
+    actor_id?: IntFilter<"UnitTipeLog"> | number
     created_at?: DateTimeFilter<"UnitTipeLog"> | Date | string
     unit?: XOR<MasterUnitNullableScalarRelationFilter, MasterUnitWhereInput> | null
     tipe_lama?: XOR<MasterTipeScalarRelationFilter, MasterTipeWhereInput>
     tipe_baru?: XOR<MasterTipeScalarRelationFilter, MasterTipeWhereInput>
-    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type UnitTipeLogOrderByWithRelationInput = {
@@ -22683,12 +21247,12 @@ export namespace Prisma {
     harga_khusus_lama?: SortOrderInput | SortOrder
     harga_khusus_direset?: SortOrder
     alasan?: SortOrder
-    changed_by?: SortOrder
+    actor_id?: SortOrder
     created_at?: SortOrder
     unit?: MasterUnitOrderByWithRelationInput
     tipe_lama?: MasterTipeOrderByWithRelationInput
     tipe_baru?: MasterTipeOrderByWithRelationInput
-    admin?: UserOrderByWithRelationInput
+    actor?: UserOrderByWithRelationInput
     _relevance?: UnitTipeLogOrderByRelevanceInput
   }
 
@@ -22704,12 +21268,12 @@ export namespace Prisma {
     harga_khusus_lama?: DecimalNullableFilter<"UnitTipeLog"> | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFilter<"UnitTipeLog"> | boolean
     alasan?: StringFilter<"UnitTipeLog"> | string
-    changed_by?: IntFilter<"UnitTipeLog"> | number
+    actor_id?: IntFilter<"UnitTipeLog"> | number
     created_at?: DateTimeFilter<"UnitTipeLog"> | Date | string
     unit?: XOR<MasterUnitNullableScalarRelationFilter, MasterUnitWhereInput> | null
     tipe_lama?: XOR<MasterTipeScalarRelationFilter, MasterTipeWhereInput>
     tipe_baru?: XOR<MasterTipeScalarRelationFilter, MasterTipeWhereInput>
-    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type UnitTipeLogOrderByWithAggregationInput = {
@@ -22721,7 +21285,7 @@ export namespace Prisma {
     harga_khusus_lama?: SortOrderInput | SortOrder
     harga_khusus_direset?: SortOrder
     alasan?: SortOrder
-    changed_by?: SortOrder
+    actor_id?: SortOrder
     created_at?: SortOrder
     _count?: UnitTipeLogCountOrderByAggregateInput
     _avg?: UnitTipeLogAvgOrderByAggregateInput
@@ -22742,7 +21306,7 @@ export namespace Prisma {
     harga_khusus_lama?: DecimalNullableWithAggregatesFilter<"UnitTipeLog"> | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolWithAggregatesFilter<"UnitTipeLog"> | boolean
     alasan?: StringWithAggregatesFilter<"UnitTipeLog"> | string
-    changed_by?: IntWithAggregatesFilter<"UnitTipeLog"> | number
+    actor_id?: IntWithAggregatesFilter<"UnitTipeLog"> | number
     created_at?: DateTimeWithAggregatesFilter<"UnitTipeLog"> | Date | string
   }
 
@@ -22946,14 +21510,10 @@ export namespace Prisma {
     id?: IntFilter<"Itj"> | number
     lead_id?: IntFilter<"Itj"> | number
     unit_id?: IntFilter<"Itj"> | number
-    marketing_id?: IntNullableFilter<"Itj"> | number | null
+    closer_id?: IntNullableFilter<"Itj"> | number | null
     nik?: StringFilter<"Itj"> | string
     nama_ktp?: StringFilter<"Itj"> | string
     nominal?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFilter<"Itj"> | $Enums.MetodeBayar
     tenor?: IntNullableFilter<"Itj"> | number | null
     diajukan_at?: DateTimeFilter<"Itj"> | Date | string
@@ -22961,7 +21521,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Itj"> | Date | string
     lead?: XOR<LeadScalarRelationFilter, LeadWhereInput>
     unit?: XOR<MasterUnitScalarRelationFilter, MasterUnitWhereInput>
-    marketing?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    closer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     transaksi?: XOR<TransaksiNullableScalarRelationFilter, TransaksiWhereInput> | null
   }
 
@@ -22969,14 +21529,10 @@ export namespace Prisma {
     id?: SortOrder
     lead_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrderInput | SortOrder
+    closer_id?: SortOrderInput | SortOrder
     nik?: SortOrder
     nama_ktp?: SortOrder
     nominal?: SortOrder
-    harga_deal?: SortOrder
-    target_itj?: SortOrder
-    target_dp?: SortOrder
-    nominal_dibayar?: SortOrder
     metode_bayar?: SortOrder
     tenor?: SortOrderInput | SortOrder
     diajukan_at?: SortOrder
@@ -22984,7 +21540,7 @@ export namespace Prisma {
     updated_at?: SortOrder
     lead?: LeadOrderByWithRelationInput
     unit?: MasterUnitOrderByWithRelationInput
-    marketing?: UserOrderByWithRelationInput
+    closer?: UserOrderByWithRelationInput
     transaksi?: TransaksiOrderByWithRelationInput
     _relevance?: ItjOrderByRelevanceInput
   }
@@ -22996,14 +21552,10 @@ export namespace Prisma {
     NOT?: ItjWhereInput | ItjWhereInput[]
     lead_id?: IntFilter<"Itj"> | number
     unit_id?: IntFilter<"Itj"> | number
-    marketing_id?: IntNullableFilter<"Itj"> | number | null
+    closer_id?: IntNullableFilter<"Itj"> | number | null
     nik?: StringFilter<"Itj"> | string
     nama_ktp?: StringFilter<"Itj"> | string
     nominal?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFilter<"Itj"> | $Enums.MetodeBayar
     tenor?: IntNullableFilter<"Itj"> | number | null
     diajukan_at?: DateTimeFilter<"Itj"> | Date | string
@@ -23011,7 +21563,7 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Itj"> | Date | string
     lead?: XOR<LeadScalarRelationFilter, LeadWhereInput>
     unit?: XOR<MasterUnitScalarRelationFilter, MasterUnitWhereInput>
-    marketing?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    closer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     transaksi?: XOR<TransaksiNullableScalarRelationFilter, TransaksiWhereInput> | null
   }, "id">
 
@@ -23019,14 +21571,10 @@ export namespace Prisma {
     id?: SortOrder
     lead_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrderInput | SortOrder
+    closer_id?: SortOrderInput | SortOrder
     nik?: SortOrder
     nama_ktp?: SortOrder
     nominal?: SortOrder
-    harga_deal?: SortOrder
-    target_itj?: SortOrder
-    target_dp?: SortOrder
-    nominal_dibayar?: SortOrder
     metode_bayar?: SortOrder
     tenor?: SortOrderInput | SortOrder
     diajukan_at?: SortOrder
@@ -23046,14 +21594,10 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Itj"> | number
     lead_id?: IntWithAggregatesFilter<"Itj"> | number
     unit_id?: IntWithAggregatesFilter<"Itj"> | number
-    marketing_id?: IntNullableWithAggregatesFilter<"Itj"> | number | null
+    closer_id?: IntNullableWithAggregatesFilter<"Itj"> | number | null
     nik?: StringWithAggregatesFilter<"Itj"> | string
     nama_ktp?: StringWithAggregatesFilter<"Itj"> | string
     nominal?: DecimalWithAggregatesFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalWithAggregatesFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalWithAggregatesFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalWithAggregatesFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalWithAggregatesFilter<"Itj"> | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarWithAggregatesFilter<"Itj"> | $Enums.MetodeBayar
     tenor?: IntNullableWithAggregatesFilter<"Itj"> | number | null
     diajukan_at?: DateTimeWithAggregatesFilter<"Itj"> | Date | string
@@ -23159,137 +21703,151 @@ export namespace Prisma {
     id?: IntFilter<"Transaksi"> | number
     customer_id?: IntFilter<"Transaksi"> | number
     unit_id?: IntFilter<"Transaksi"> | number
-    marketing_id?: IntFilter<"Transaksi"> | number
+    pic_id?: IntFilter<"Transaksi"> | number
     itj_id?: IntFilter<"Transaksi"> | number
     metode_bayar?: EnumMetodeBayarFilter<"Transaksi"> | $Enums.MetodeBayar
     harga_deal?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     tenor_bulan?: IntNullableFilter<"Transaksi"> | number | null
-    status_transaksi?: EnumTahapTransaksiFilter<"Transaksi"> | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFilter<"Transaksi"> | $Enums.TahapDetail
-    nama_bank?: StringNullableFilter<"Transaksi"> | string | null
     nama_notaris?: StringNullableFilter<"Transaksi"> | string | null
+    rencana_akad_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
+    rencana_bast_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     tgl_akad?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     lunas_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     tgl_bast?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
-    closing_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
-    closed_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
+    closing_at?: DateTimeFilter<"Transaksi"> | Date | string
     cancelled_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     alasan_batal?: StringNullableFilter<"Transaksi"> | string | null
     catatan_admin?: StringNullableFilter<"Transaksi"> | string | null
+    version?: IntFilter<"Transaksi"> | number
+    active_unit_id?: IntNullableFilter<"Transaksi"> | number | null
+    pengajuan_kpr_terpilih_id?: IntNullableFilter<"Transaksi"> | number | null
     created_at?: DateTimeFilter<"Transaksi"> | Date | string
     updated_at?: DateTimeFilter<"Transaksi"> | Date | string
     customer?: XOR<CustomerScalarRelationFilter, CustomerWhereInput>
     unit?: XOR<MasterUnitScalarRelationFilter, MasterUnitWhereInput>
-    marketing?: XOR<UserScalarRelationFilter, UserWhereInput>
+    active_unit?: XOR<MasterUnitNullableScalarRelationFilter, MasterUnitWhereInput> | null
+    pic?: XOR<UserScalarRelationFilter, UserWhereInput>
     itj?: XOR<ItjScalarRelationFilter, ItjWhereInput>
     pembayaran?: PembayaranListRelationFilter
     logs?: TransaksiTahapLogListRelationFilter
     dokumen?: DokumenTransaksiListRelationFilter
-    inspeksi_bast?: InspeksiBASTListRelationFilter
+    checklist_bast?: ChecklistBASTListRelationFilter
     pengajuan_kpr?: PengajuanKPRListRelationFilter
+    pengajuan_kpr_terpilih?: XOR<PengajuanKPRNullableScalarRelationFilter, PengajuanKPRWhereInput> | null
   }
 
   export type TransaksiOrderByWithRelationInput = {
     id?: SortOrder
     customer_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    pic_id?: SortOrder
     itj_id?: SortOrder
     metode_bayar?: SortOrder
     harga_deal?: SortOrder
     target_itj?: SortOrder
     target_dp?: SortOrder
     tenor_bulan?: SortOrderInput | SortOrder
-    status_transaksi?: SortOrder
     tahap_detail?: SortOrder
-    nama_bank?: SortOrderInput | SortOrder
     nama_notaris?: SortOrderInput | SortOrder
+    rencana_akad_at?: SortOrderInput | SortOrder
+    rencana_bast_at?: SortOrderInput | SortOrder
     tgl_akad?: SortOrderInput | SortOrder
     lunas_at?: SortOrderInput | SortOrder
     tgl_bast?: SortOrderInput | SortOrder
-    closing_at?: SortOrderInput | SortOrder
-    closed_at?: SortOrderInput | SortOrder
+    closing_at?: SortOrder
     cancelled_at?: SortOrderInput | SortOrder
     alasan_batal?: SortOrderInput | SortOrder
     catatan_admin?: SortOrderInput | SortOrder
+    version?: SortOrder
+    active_unit_id?: SortOrderInput | SortOrder
+    pengajuan_kpr_terpilih_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     customer?: CustomerOrderByWithRelationInput
     unit?: MasterUnitOrderByWithRelationInput
-    marketing?: UserOrderByWithRelationInput
+    active_unit?: MasterUnitOrderByWithRelationInput
+    pic?: UserOrderByWithRelationInput
     itj?: ItjOrderByWithRelationInput
     pembayaran?: PembayaranOrderByRelationAggregateInput
     logs?: TransaksiTahapLogOrderByRelationAggregateInput
     dokumen?: DokumenTransaksiOrderByRelationAggregateInput
-    inspeksi_bast?: InspeksiBASTOrderByRelationAggregateInput
+    checklist_bast?: ChecklistBASTOrderByRelationAggregateInput
     pengajuan_kpr?: PengajuanKPROrderByRelationAggregateInput
+    pengajuan_kpr_terpilih?: PengajuanKPROrderByWithRelationInput
     _relevance?: TransaksiOrderByRelevanceInput
   }
 
   export type TransaksiWhereUniqueInput = Prisma.AtLeast<{
     id?: number
     itj_id?: number
+    active_unit_id?: number
+    pengajuan_kpr_terpilih_id?: number
     AND?: TransaksiWhereInput | TransaksiWhereInput[]
     OR?: TransaksiWhereInput[]
     NOT?: TransaksiWhereInput | TransaksiWhereInput[]
     customer_id?: IntFilter<"Transaksi"> | number
     unit_id?: IntFilter<"Transaksi"> | number
-    marketing_id?: IntFilter<"Transaksi"> | number
+    pic_id?: IntFilter<"Transaksi"> | number
     metode_bayar?: EnumMetodeBayarFilter<"Transaksi"> | $Enums.MetodeBayar
     harga_deal?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     tenor_bulan?: IntNullableFilter<"Transaksi"> | number | null
-    status_transaksi?: EnumTahapTransaksiFilter<"Transaksi"> | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFilter<"Transaksi"> | $Enums.TahapDetail
-    nama_bank?: StringNullableFilter<"Transaksi"> | string | null
     nama_notaris?: StringNullableFilter<"Transaksi"> | string | null
+    rencana_akad_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
+    rencana_bast_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     tgl_akad?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     lunas_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     tgl_bast?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
-    closing_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
-    closed_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
+    closing_at?: DateTimeFilter<"Transaksi"> | Date | string
     cancelled_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     alasan_batal?: StringNullableFilter<"Transaksi"> | string | null
     catatan_admin?: StringNullableFilter<"Transaksi"> | string | null
+    version?: IntFilter<"Transaksi"> | number
     created_at?: DateTimeFilter<"Transaksi"> | Date | string
     updated_at?: DateTimeFilter<"Transaksi"> | Date | string
     customer?: XOR<CustomerScalarRelationFilter, CustomerWhereInput>
     unit?: XOR<MasterUnitScalarRelationFilter, MasterUnitWhereInput>
-    marketing?: XOR<UserScalarRelationFilter, UserWhereInput>
+    active_unit?: XOR<MasterUnitNullableScalarRelationFilter, MasterUnitWhereInput> | null
+    pic?: XOR<UserScalarRelationFilter, UserWhereInput>
     itj?: XOR<ItjScalarRelationFilter, ItjWhereInput>
     pembayaran?: PembayaranListRelationFilter
     logs?: TransaksiTahapLogListRelationFilter
     dokumen?: DokumenTransaksiListRelationFilter
-    inspeksi_bast?: InspeksiBASTListRelationFilter
+    checklist_bast?: ChecklistBASTListRelationFilter
     pengajuan_kpr?: PengajuanKPRListRelationFilter
-  }, "id" | "itj_id">
+    pengajuan_kpr_terpilih?: XOR<PengajuanKPRNullableScalarRelationFilter, PengajuanKPRWhereInput> | null
+  }, "id" | "itj_id" | "active_unit_id" | "pengajuan_kpr_terpilih_id">
 
   export type TransaksiOrderByWithAggregationInput = {
     id?: SortOrder
     customer_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    pic_id?: SortOrder
     itj_id?: SortOrder
     metode_bayar?: SortOrder
     harga_deal?: SortOrder
     target_itj?: SortOrder
     target_dp?: SortOrder
     tenor_bulan?: SortOrderInput | SortOrder
-    status_transaksi?: SortOrder
     tahap_detail?: SortOrder
-    nama_bank?: SortOrderInput | SortOrder
     nama_notaris?: SortOrderInput | SortOrder
+    rencana_akad_at?: SortOrderInput | SortOrder
+    rencana_bast_at?: SortOrderInput | SortOrder
     tgl_akad?: SortOrderInput | SortOrder
     lunas_at?: SortOrderInput | SortOrder
     tgl_bast?: SortOrderInput | SortOrder
-    closing_at?: SortOrderInput | SortOrder
-    closed_at?: SortOrderInput | SortOrder
+    closing_at?: SortOrder
     cancelled_at?: SortOrderInput | SortOrder
     alasan_batal?: SortOrderInput | SortOrder
     catatan_admin?: SortOrderInput | SortOrder
+    version?: SortOrder
+    active_unit_id?: SortOrderInput | SortOrder
+    pengajuan_kpr_terpilih_id?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: TransaksiCountOrderByAggregateInput
@@ -23306,25 +21864,27 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Transaksi"> | number
     customer_id?: IntWithAggregatesFilter<"Transaksi"> | number
     unit_id?: IntWithAggregatesFilter<"Transaksi"> | number
-    marketing_id?: IntWithAggregatesFilter<"Transaksi"> | number
+    pic_id?: IntWithAggregatesFilter<"Transaksi"> | number
     itj_id?: IntWithAggregatesFilter<"Transaksi"> | number
     metode_bayar?: EnumMetodeBayarWithAggregatesFilter<"Transaksi"> | $Enums.MetodeBayar
     harga_deal?: DecimalWithAggregatesFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalWithAggregatesFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalWithAggregatesFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     tenor_bulan?: IntNullableWithAggregatesFilter<"Transaksi"> | number | null
-    status_transaksi?: EnumTahapTransaksiWithAggregatesFilter<"Transaksi"> | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailWithAggregatesFilter<"Transaksi"> | $Enums.TahapDetail
-    nama_bank?: StringNullableWithAggregatesFilter<"Transaksi"> | string | null
     nama_notaris?: StringNullableWithAggregatesFilter<"Transaksi"> | string | null
+    rencana_akad_at?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+    rencana_bast_at?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
     tgl_akad?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
     lunas_at?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
     tgl_bast?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
-    closing_at?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
-    closed_at?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
+    closing_at?: DateTimeWithAggregatesFilter<"Transaksi"> | Date | string
     cancelled_at?: DateTimeNullableWithAggregatesFilter<"Transaksi"> | Date | string | null
     alasan_batal?: StringNullableWithAggregatesFilter<"Transaksi"> | string | null
     catatan_admin?: StringNullableWithAggregatesFilter<"Transaksi"> | string | null
+    version?: IntWithAggregatesFilter<"Transaksi"> | number
+    active_unit_id?: IntNullableWithAggregatesFilter<"Transaksi"> | number | null
+    pengajuan_kpr_terpilih_id?: IntNullableWithAggregatesFilter<"Transaksi"> | number | null
     created_at?: DateTimeWithAggregatesFilter<"Transaksi"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"Transaksi"> | Date | string
   }
@@ -23413,6 +21973,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"PengajuanKPR"> | Date | string
     updated_at?: DateTimeFilter<"PengajuanKPR"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
+    transaksi_terpilih?: XOR<TransaksiNullableScalarRelationFilter, TransaksiWhereInput> | null
     bank?: XOR<BankScalarRelationFilter, BankWhereInput>
     logs?: PengajuanKPRLogListRelationFilter
   }
@@ -23430,6 +21991,7 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     transaksi?: TransaksiOrderByWithRelationInput
+    transaksi_terpilih?: TransaksiOrderByWithRelationInput
     bank?: BankOrderByWithRelationInput
     logs?: PengajuanKPRLogOrderByRelationAggregateInput
     _relevance?: PengajuanKPROrderByRelevanceInput
@@ -23452,6 +22014,7 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"PengajuanKPR"> | Date | string
     updated_at?: DateTimeFilter<"PengajuanKPR"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
+    transaksi_terpilih?: XOR<TransaksiNullableScalarRelationFilter, TransaksiWhereInput> | null
     bank?: XOR<BankScalarRelationFilter, BankWhereInput>
     logs?: PengajuanKPRLogListRelationFilter
   }, "id" | "transaksi_id_nomor_pengajuan">
@@ -23500,11 +22063,11 @@ export namespace Prisma {
     pengajuan_id?: IntFilter<"PengajuanKPRLog"> | number
     status_sebelum?: EnumStatusPengajuanKPRNullableFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR
-    admin_id?: IntFilter<"PengajuanKPRLog"> | number
+    actor_id?: IntFilter<"PengajuanKPRLog"> | number
     catatan?: StringNullableFilter<"PengajuanKPRLog"> | string | null
     created_at?: DateTimeFilter<"PengajuanKPRLog"> | Date | string
     pengajuan?: XOR<PengajuanKPRScalarRelationFilter, PengajuanKPRWhereInput>
-    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type PengajuanKPRLogOrderByWithRelationInput = {
@@ -23512,11 +22075,11 @@ export namespace Prisma {
     pengajuan_id?: SortOrder
     status_sebelum?: SortOrderInput | SortOrder
     status_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrderInput | SortOrder
     created_at?: SortOrder
     pengajuan?: PengajuanKPROrderByWithRelationInput
-    admin?: UserOrderByWithRelationInput
+    actor?: UserOrderByWithRelationInput
     _relevance?: PengajuanKPRLogOrderByRelevanceInput
   }
 
@@ -23528,11 +22091,11 @@ export namespace Prisma {
     pengajuan_id?: IntFilter<"PengajuanKPRLog"> | number
     status_sebelum?: EnumStatusPengajuanKPRNullableFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR
-    admin_id?: IntFilter<"PengajuanKPRLog"> | number
+    actor_id?: IntFilter<"PengajuanKPRLog"> | number
     catatan?: StringNullableFilter<"PengajuanKPRLog"> | string | null
     created_at?: DateTimeFilter<"PengajuanKPRLog"> | Date | string
     pengajuan?: XOR<PengajuanKPRScalarRelationFilter, PengajuanKPRWhereInput>
-    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type PengajuanKPRLogOrderByWithAggregationInput = {
@@ -23540,7 +22103,7 @@ export namespace Prisma {
     pengajuan_id?: SortOrder
     status_sebelum?: SortOrderInput | SortOrder
     status_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrderInput | SortOrder
     created_at?: SortOrder
     _count?: PengajuanKPRLogCountOrderByAggregateInput
@@ -23558,7 +22121,7 @@ export namespace Prisma {
     pengajuan_id?: IntWithAggregatesFilter<"PengajuanKPRLog"> | number
     status_sebelum?: EnumStatusPengajuanKPRNullableWithAggregatesFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRWithAggregatesFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR
-    admin_id?: IntWithAggregatesFilter<"PengajuanKPRLog"> | number
+    actor_id?: IntWithAggregatesFilter<"PengajuanKPRLog"> | number
     catatan?: StringNullableWithAggregatesFilter<"PengajuanKPRLog"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"PengajuanKPRLog"> | Date | string
   }
@@ -23569,29 +22132,25 @@ export namespace Prisma {
     NOT?: TransaksiTahapLogWhereInput | TransaksiTahapLogWhereInput[]
     id?: IntFilter<"TransaksiTahapLog"> | number
     transaksi_id?: IntFilter<"TransaksiTahapLog"> | number
-    tahap_sebelum?: EnumTahapTransaksiNullableFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi
     detail_sebelum?: EnumTahapDetailNullableFilter<"TransaksiTahapLog"> | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFilter<"TransaksiTahapLog"> | $Enums.TahapDetail
-    admin_id?: IntFilter<"TransaksiTahapLog"> | number
+    actor_id?: IntFilter<"TransaksiTahapLog"> | number
     catatan?: StringNullableFilter<"TransaksiTahapLog"> | string | null
     created_at?: DateTimeFilter<"TransaksiTahapLog"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
-    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type TransaksiTahapLogOrderByWithRelationInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    tahap_sebelum?: SortOrderInput | SortOrder
-    tahap_sesudah?: SortOrder
     detail_sebelum?: SortOrderInput | SortOrder
     detail_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrderInput | SortOrder
     created_at?: SortOrder
     transaksi?: TransaksiOrderByWithRelationInput
-    admin?: UserOrderByWithRelationInput
+    actor?: UserOrderByWithRelationInput
     _relevance?: TransaksiTahapLogOrderByRelevanceInput
   }
 
@@ -23601,25 +22160,21 @@ export namespace Prisma {
     OR?: TransaksiTahapLogWhereInput[]
     NOT?: TransaksiTahapLogWhereInput | TransaksiTahapLogWhereInput[]
     transaksi_id?: IntFilter<"TransaksiTahapLog"> | number
-    tahap_sebelum?: EnumTahapTransaksiNullableFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi
     detail_sebelum?: EnumTahapDetailNullableFilter<"TransaksiTahapLog"> | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFilter<"TransaksiTahapLog"> | $Enums.TahapDetail
-    admin_id?: IntFilter<"TransaksiTahapLog"> | number
+    actor_id?: IntFilter<"TransaksiTahapLog"> | number
     catatan?: StringNullableFilter<"TransaksiTahapLog"> | string | null
     created_at?: DateTimeFilter<"TransaksiTahapLog"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
-    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    actor?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type TransaksiTahapLogOrderByWithAggregationInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    tahap_sebelum?: SortOrderInput | SortOrder
-    tahap_sesudah?: SortOrder
     detail_sebelum?: SortOrderInput | SortOrder
     detail_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrderInput | SortOrder
     created_at?: SortOrder
     _count?: TransaksiTahapLogCountOrderByAggregateInput
@@ -23635,11 +22190,9 @@ export namespace Prisma {
     NOT?: TransaksiTahapLogScalarWhereWithAggregatesInput | TransaksiTahapLogScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"TransaksiTahapLog"> | number
     transaksi_id?: IntWithAggregatesFilter<"TransaksiTahapLog"> | number
-    tahap_sebelum?: EnumTahapTransaksiNullableWithAggregatesFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiWithAggregatesFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi
     detail_sebelum?: EnumTahapDetailNullableWithAggregatesFilter<"TransaksiTahapLog"> | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailWithAggregatesFilter<"TransaksiTahapLog"> | $Enums.TahapDetail
-    admin_id?: IntWithAggregatesFilter<"TransaksiTahapLog"> | number
+    actor_id?: IntWithAggregatesFilter<"TransaksiTahapLog"> | number
     catatan?: StringNullableWithAggregatesFilter<"TransaksiTahapLog"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"TransaksiTahapLog"> | Date | string
   }
@@ -23651,33 +22204,20 @@ export namespace Prisma {
     id?: IntFilter<"DokumenTransaksi"> | number
     transaksi_id?: IntFilter<"DokumenTransaksi"> | number
     jenis?: EnumJenisDokumenFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFilter<"DokumenTransaksi"> | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
-    file_url?: StringNullableFilter<"DokumenTransaksi"> | string | null
-    catatan_verifikasi?: StringNullableFilter<"DokumenTransaksi"> | string | null
-    verified_by?: IntNullableFilter<"DokumenTransaksi"> | number | null
-    verified_at?: DateTimeNullableFilter<"DokumenTransaksi"> | Date | string | null
     created_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     updated_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
-    verifier?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type DokumenTransaksiOrderByWithRelationInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
     jenis?: SortOrder
-    kategori?: SortOrder
     status?: SortOrder
-    file_url?: SortOrderInput | SortOrder
-    catatan_verifikasi?: SortOrderInput | SortOrder
-    verified_by?: SortOrderInput | SortOrder
-    verified_at?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     transaksi?: TransaksiOrderByWithRelationInput
-    verifier?: UserOrderByWithRelationInput
-    _relevance?: DokumenTransaksiOrderByRelevanceInput
   }
 
   export type DokumenTransaksiWhereUniqueInput = Prisma.AtLeast<{
@@ -23688,28 +22228,17 @@ export namespace Prisma {
     NOT?: DokumenTransaksiWhereInput | DokumenTransaksiWhereInput[]
     transaksi_id?: IntFilter<"DokumenTransaksi"> | number
     jenis?: EnumJenisDokumenFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFilter<"DokumenTransaksi"> | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
-    file_url?: StringNullableFilter<"DokumenTransaksi"> | string | null
-    catatan_verifikasi?: StringNullableFilter<"DokumenTransaksi"> | string | null
-    verified_by?: IntNullableFilter<"DokumenTransaksi"> | number | null
-    verified_at?: DateTimeNullableFilter<"DokumenTransaksi"> | Date | string | null
     created_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     updated_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
-    verifier?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id" | "transaksi_id_jenis">
 
   export type DokumenTransaksiOrderByWithAggregationInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
     jenis?: SortOrder
-    kategori?: SortOrder
     status?: SortOrder
-    file_url?: SortOrderInput | SortOrder
-    catatan_verifikasi?: SortOrderInput | SortOrder
-    verified_by?: SortOrderInput | SortOrder
-    verified_at?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: DokumenTransaksiCountOrderByAggregateInput
@@ -23726,160 +22255,72 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"DokumenTransaksi"> | number
     transaksi_id?: IntWithAggregatesFilter<"DokumenTransaksi"> | number
     jenis?: EnumJenisDokumenWithAggregatesFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenWithAggregatesFilter<"DokumenTransaksi"> | $Enums.KategoriDokumen
     status?: EnumStatusDokumenWithAggregatesFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
-    file_url?: StringNullableWithAggregatesFilter<"DokumenTransaksi"> | string | null
-    catatan_verifikasi?: StringNullableWithAggregatesFilter<"DokumenTransaksi"> | string | null
-    verified_by?: IntNullableWithAggregatesFilter<"DokumenTransaksi"> | number | null
-    verified_at?: DateTimeNullableWithAggregatesFilter<"DokumenTransaksi"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"DokumenTransaksi"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"DokumenTransaksi"> | Date | string
   }
 
-  export type InspeksiBASTWhereInput = {
-    AND?: InspeksiBASTWhereInput | InspeksiBASTWhereInput[]
-    OR?: InspeksiBASTWhereInput[]
-    NOT?: InspeksiBASTWhereInput | InspeksiBASTWhereInput[]
-    id?: IntFilter<"InspeksiBAST"> | number
-    transaksi_id?: IntFilter<"InspeksiBAST"> | number
-    item?: EnumItemBASTFilter<"InspeksiBAST"> | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFilter<"InspeksiBAST"> | $Enums.StatusInspeksi
-    catatan?: StringNullableFilter<"InspeksiBAST"> | string | null
-    inspektur_id?: IntNullableFilter<"InspeksiBAST"> | number | null
-    diperiksa_at?: DateTimeNullableFilter<"InspeksiBAST"> | Date | string | null
+  export type ChecklistBASTWhereInput = {
+    AND?: ChecklistBASTWhereInput | ChecklistBASTWhereInput[]
+    OR?: ChecklistBASTWhereInput[]
+    NOT?: ChecklistBASTWhereInput | ChecklistBASTWhereInput[]
+    id?: IntFilter<"ChecklistBAST"> | number
+    transaksi_id?: IntFilter<"ChecklistBAST"> | number
+    item?: EnumItemBASTFilter<"ChecklistBAST"> | $Enums.ItemBAST
+    status?: EnumStatusBASTFilter<"ChecklistBAST"> | $Enums.StatusBAST
+    created_at?: DateTimeFilter<"ChecklistBAST"> | Date | string
+    updated_at?: DateTimeFilter<"ChecklistBAST"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
-    inspektur?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    logs?: InspeksiBASTLogListRelationFilter
   }
 
-  export type InspeksiBASTOrderByWithRelationInput = {
+  export type ChecklistBASTOrderByWithRelationInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
     item?: SortOrder
     status?: SortOrder
-    catatan?: SortOrderInput | SortOrder
-    inspektur_id?: SortOrderInput | SortOrder
-    diperiksa_at?: SortOrderInput | SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
     transaksi?: TransaksiOrderByWithRelationInput
-    inspektur?: UserOrderByWithRelationInput
-    logs?: InspeksiBASTLogOrderByRelationAggregateInput
-    _relevance?: InspeksiBASTOrderByRelevanceInput
   }
 
-  export type InspeksiBASTWhereUniqueInput = Prisma.AtLeast<{
+  export type ChecklistBASTWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    transaksi_id_item?: InspeksiBASTTransaksi_idItemCompoundUniqueInput
-    AND?: InspeksiBASTWhereInput | InspeksiBASTWhereInput[]
-    OR?: InspeksiBASTWhereInput[]
-    NOT?: InspeksiBASTWhereInput | InspeksiBASTWhereInput[]
-    transaksi_id?: IntFilter<"InspeksiBAST"> | number
-    item?: EnumItemBASTFilter<"InspeksiBAST"> | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFilter<"InspeksiBAST"> | $Enums.StatusInspeksi
-    catatan?: StringNullableFilter<"InspeksiBAST"> | string | null
-    inspektur_id?: IntNullableFilter<"InspeksiBAST"> | number | null
-    diperiksa_at?: DateTimeNullableFilter<"InspeksiBAST"> | Date | string | null
+    transaksi_id_item?: ChecklistBASTTransaksi_idItemCompoundUniqueInput
+    AND?: ChecklistBASTWhereInput | ChecklistBASTWhereInput[]
+    OR?: ChecklistBASTWhereInput[]
+    NOT?: ChecklistBASTWhereInput | ChecklistBASTWhereInput[]
+    transaksi_id?: IntFilter<"ChecklistBAST"> | number
+    item?: EnumItemBASTFilter<"ChecklistBAST"> | $Enums.ItemBAST
+    status?: EnumStatusBASTFilter<"ChecklistBAST"> | $Enums.StatusBAST
+    created_at?: DateTimeFilter<"ChecklistBAST"> | Date | string
+    updated_at?: DateTimeFilter<"ChecklistBAST"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
-    inspektur?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
-    logs?: InspeksiBASTLogListRelationFilter
   }, "id" | "transaksi_id_item">
 
-  export type InspeksiBASTOrderByWithAggregationInput = {
+  export type ChecklistBASTOrderByWithAggregationInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
     item?: SortOrder
     status?: SortOrder
-    catatan?: SortOrderInput | SortOrder
-    inspektur_id?: SortOrderInput | SortOrder
-    diperiksa_at?: SortOrderInput | SortOrder
-    _count?: InspeksiBASTCountOrderByAggregateInput
-    _avg?: InspeksiBASTAvgOrderByAggregateInput
-    _max?: InspeksiBASTMaxOrderByAggregateInput
-    _min?: InspeksiBASTMinOrderByAggregateInput
-    _sum?: InspeksiBASTSumOrderByAggregateInput
-  }
-
-  export type InspeksiBASTScalarWhereWithAggregatesInput = {
-    AND?: InspeksiBASTScalarWhereWithAggregatesInput | InspeksiBASTScalarWhereWithAggregatesInput[]
-    OR?: InspeksiBASTScalarWhereWithAggregatesInput[]
-    NOT?: InspeksiBASTScalarWhereWithAggregatesInput | InspeksiBASTScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"InspeksiBAST"> | number
-    transaksi_id?: IntWithAggregatesFilter<"InspeksiBAST"> | number
-    item?: EnumItemBASTWithAggregatesFilter<"InspeksiBAST"> | $Enums.ItemBAST
-    status?: EnumStatusInspeksiWithAggregatesFilter<"InspeksiBAST"> | $Enums.StatusInspeksi
-    catatan?: StringNullableWithAggregatesFilter<"InspeksiBAST"> | string | null
-    inspektur_id?: IntNullableWithAggregatesFilter<"InspeksiBAST"> | number | null
-    diperiksa_at?: DateTimeNullableWithAggregatesFilter<"InspeksiBAST"> | Date | string | null
-  }
-
-  export type InspeksiBASTLogWhereInput = {
-    AND?: InspeksiBASTLogWhereInput | InspeksiBASTLogWhereInput[]
-    OR?: InspeksiBASTLogWhereInput[]
-    NOT?: InspeksiBASTLogWhereInput | InspeksiBASTLogWhereInput[]
-    id?: IntFilter<"InspeksiBASTLog"> | number
-    inspeksi_bast_id?: IntFilter<"InspeksiBASTLog"> | number
-    status_sebelum?: EnumStatusInspeksiNullableFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi
-    catatan?: StringNullableFilter<"InspeksiBASTLog"> | string | null
-    inspektur_id?: IntFilter<"InspeksiBASTLog"> | number
-    created_at?: DateTimeFilter<"InspeksiBASTLog"> | Date | string
-    inspeksi_bast?: XOR<InspeksiBASTScalarRelationFilter, InspeksiBASTWhereInput>
-    inspektur?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }
-
-  export type InspeksiBASTLogOrderByWithRelationInput = {
-    id?: SortOrder
-    inspeksi_bast_id?: SortOrder
-    status_sebelum?: SortOrderInput | SortOrder
-    status_sesudah?: SortOrder
-    catatan?: SortOrderInput | SortOrder
-    inspektur_id?: SortOrder
     created_at?: SortOrder
-    inspeksi_bast?: InspeksiBASTOrderByWithRelationInput
-    inspektur?: UserOrderByWithRelationInput
-    _relevance?: InspeksiBASTLogOrderByRelevanceInput
+    updated_at?: SortOrder
+    _count?: ChecklistBASTCountOrderByAggregateInput
+    _avg?: ChecklistBASTAvgOrderByAggregateInput
+    _max?: ChecklistBASTMaxOrderByAggregateInput
+    _min?: ChecklistBASTMinOrderByAggregateInput
+    _sum?: ChecklistBASTSumOrderByAggregateInput
   }
 
-  export type InspeksiBASTLogWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
-    AND?: InspeksiBASTLogWhereInput | InspeksiBASTLogWhereInput[]
-    OR?: InspeksiBASTLogWhereInput[]
-    NOT?: InspeksiBASTLogWhereInput | InspeksiBASTLogWhereInput[]
-    inspeksi_bast_id?: IntFilter<"InspeksiBASTLog"> | number
-    status_sebelum?: EnumStatusInspeksiNullableFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi
-    catatan?: StringNullableFilter<"InspeksiBASTLog"> | string | null
-    inspektur_id?: IntFilter<"InspeksiBASTLog"> | number
-    created_at?: DateTimeFilter<"InspeksiBASTLog"> | Date | string
-    inspeksi_bast?: XOR<InspeksiBASTScalarRelationFilter, InspeksiBASTWhereInput>
-    inspektur?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
-
-  export type InspeksiBASTLogOrderByWithAggregationInput = {
-    id?: SortOrder
-    inspeksi_bast_id?: SortOrder
-    status_sebelum?: SortOrderInput | SortOrder
-    status_sesudah?: SortOrder
-    catatan?: SortOrderInput | SortOrder
-    inspektur_id?: SortOrder
-    created_at?: SortOrder
-    _count?: InspeksiBASTLogCountOrderByAggregateInput
-    _avg?: InspeksiBASTLogAvgOrderByAggregateInput
-    _max?: InspeksiBASTLogMaxOrderByAggregateInput
-    _min?: InspeksiBASTLogMinOrderByAggregateInput
-    _sum?: InspeksiBASTLogSumOrderByAggregateInput
-  }
-
-  export type InspeksiBASTLogScalarWhereWithAggregatesInput = {
-    AND?: InspeksiBASTLogScalarWhereWithAggregatesInput | InspeksiBASTLogScalarWhereWithAggregatesInput[]
-    OR?: InspeksiBASTLogScalarWhereWithAggregatesInput[]
-    NOT?: InspeksiBASTLogScalarWhereWithAggregatesInput | InspeksiBASTLogScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"InspeksiBASTLog"> | number
-    inspeksi_bast_id?: IntWithAggregatesFilter<"InspeksiBASTLog"> | number
-    status_sebelum?: EnumStatusInspeksiNullableWithAggregatesFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiWithAggregatesFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi
-    catatan?: StringNullableWithAggregatesFilter<"InspeksiBASTLog"> | string | null
-    inspektur_id?: IntWithAggregatesFilter<"InspeksiBASTLog"> | number
-    created_at?: DateTimeWithAggregatesFilter<"InspeksiBASTLog"> | Date | string
+  export type ChecklistBASTScalarWhereWithAggregatesInput = {
+    AND?: ChecklistBASTScalarWhereWithAggregatesInput | ChecklistBASTScalarWhereWithAggregatesInput[]
+    OR?: ChecklistBASTScalarWhereWithAggregatesInput[]
+    NOT?: ChecklistBASTScalarWhereWithAggregatesInput | ChecklistBASTScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"ChecklistBAST"> | number
+    transaksi_id?: IntWithAggregatesFilter<"ChecklistBAST"> | number
+    item?: EnumItemBASTWithAggregatesFilter<"ChecklistBAST"> | $Enums.ItemBAST
+    status?: EnumStatusBASTWithAggregatesFilter<"ChecklistBAST"> | $Enums.StatusBAST
+    created_at?: DateTimeWithAggregatesFilter<"ChecklistBAST"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"ChecklistBAST"> | Date | string
   }
 
   export type PembayaranWhereInput = {
@@ -24006,17 +22447,14 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -24030,17 +22468,14 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserUpdateInput = {
@@ -24053,17 +22488,14 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -24077,17 +22509,14 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -24128,7 +22557,7 @@ export namespace Prisma {
   export type MasterTipeCreateInput = {
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     units?: MasterUnitCreateNestedManyWithoutTipeInput
@@ -24140,7 +22569,7 @@ export namespace Prisma {
     id?: number
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     units?: MasterUnitUncheckedCreateNestedManyWithoutTipeInput
@@ -24151,7 +22580,7 @@ export namespace Prisma {
   export type MasterTipeUpdateInput = {
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     units?: MasterUnitUpdateManyWithoutTipeNestedInput
@@ -24163,7 +22592,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     units?: MasterUnitUncheckedUpdateManyWithoutTipeNestedInput
@@ -24175,7 +22604,7 @@ export namespace Prisma {
     id?: number
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
   }
@@ -24183,7 +22612,7 @@ export namespace Prisma {
   export type MasterTipeUpdateManyMutationInput = {
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
@@ -24192,7 +22621,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
@@ -24205,6 +22634,7 @@ export namespace Prisma {
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     tipe: MasterTipeCreateNestedOneWithoutUnitsInput
     transaksi?: TransaksiCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiCreateNestedOneWithoutActive_unitInput
     itj?: ItjCreateNestedManyWithoutUnitInput
     tipe_logs?: UnitTipeLogCreateNestedManyWithoutUnitInput
   }
@@ -24218,6 +22648,7 @@ export namespace Prisma {
     status_unit?: $Enums.StatusUnit
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiUncheckedCreateNestedOneWithoutActive_unitInput
     itj?: ItjUncheckedCreateNestedManyWithoutUnitInput
     tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
   }
@@ -24230,6 +22661,7 @@ export namespace Prisma {
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     tipe?: MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
     transaksi?: TransaksiUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUpdateOneWithoutActive_unitNestedInput
     itj?: ItjUpdateManyWithoutUnitNestedInput
     tipe_logs?: UnitTipeLogUpdateManyWithoutUnitNestedInput
   }
@@ -24243,6 +22675,7 @@ export namespace Prisma {
     status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUncheckedUpdateOneWithoutActive_unitNestedInput
     itj?: ItjUncheckedUpdateManyWithoutUnitNestedInput
     tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
   }
@@ -24284,7 +22717,7 @@ export namespace Prisma {
     unit?: MasterUnitCreateNestedOneWithoutTipe_logsInput
     tipe_lama: MasterTipeCreateNestedOneWithoutUnit_tipe_lamaInput
     tipe_baru: MasterTipeCreateNestedOneWithoutUnit_tipe_baruInput
-    admin: UserCreateNestedOneWithoutUnit_tipe_logsInput
+    actor: UserCreateNestedOneWithoutUnit_tipe_logsInput
   }
 
   export type UnitTipeLogUncheckedCreateInput = {
@@ -24296,7 +22729,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -24309,7 +22742,7 @@ export namespace Prisma {
     unit?: MasterUnitUpdateOneWithoutTipe_logsNestedInput
     tipe_lama?: MasterTipeUpdateOneRequiredWithoutUnit_tipe_lamaNestedInput
     tipe_baru?: MasterTipeUpdateOneRequiredWithoutUnit_tipe_baruNestedInput
-    admin?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
   }
 
   export type UnitTipeLogUncheckedUpdateInput = {
@@ -24321,7 +22754,7 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -24334,7 +22767,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -24355,7 +22788,7 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -24564,10 +22997,6 @@ export namespace Prisma {
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -24575,7 +23004,7 @@ export namespace Prisma {
     updated_at?: Date | string
     lead: LeadCreateNestedOneWithoutItjInput
     unit: MasterUnitCreateNestedOneWithoutItjInput
-    marketing?: UserCreateNestedOneWithoutItj_diajukanInput
+    closer?: UserCreateNestedOneWithoutItj_diajukanInput
     transaksi?: TransaksiCreateNestedOneWithoutItjInput
   }
 
@@ -24583,14 +23012,10 @@ export namespace Prisma {
     id?: number
     lead_id: number
     unit_id: number
-    marketing_id?: number | null
+    closer_id?: number | null
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -24603,10 +23028,6 @@ export namespace Prisma {
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24614,7 +23035,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     lead?: LeadUpdateOneRequiredWithoutItjNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutItjNestedInput
-    marketing?: UserUpdateOneWithoutItj_diajukanNestedInput
+    closer?: UserUpdateOneWithoutItj_diajukanNestedInput
     transaksi?: TransaksiUpdateOneWithoutItjNestedInput
   }
 
@@ -24622,14 +23043,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     lead_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
+    closer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24642,14 +23059,10 @@ export namespace Prisma {
     id?: number
     lead_id: number
     unit_id: number
-    marketing_id?: number | null
+    closer_id?: number | null
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -24661,10 +23074,6 @@ export namespace Prisma {
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24676,14 +23085,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     lead_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
+    closer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24800,60 +23205,64 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateInput = {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
@@ -24863,60 +23272,64 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
@@ -24924,25 +23337,27 @@ export namespace Prisma {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -24953,18 +23368,18 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24973,25 +23388,27 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25077,6 +23494,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     transaksi: TransaksiCreateNestedOneWithoutPengajuan_kprInput
+    transaksi_terpilih?: TransaksiCreateNestedOneWithoutPengajuan_kpr_terpilihInput
     bank: BankCreateNestedOneWithoutPengajuan_kprInput
     logs?: PengajuanKPRLogCreateNestedManyWithoutPengajuanInput
   }
@@ -25093,6 +23511,7 @@ export namespace Prisma {
     catatan?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    transaksi_terpilih?: TransaksiUncheckedCreateNestedOneWithoutPengajuan_kpr_terpilihInput
     logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutPengajuanInput
   }
 
@@ -25106,6 +23525,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     transaksi?: TransaksiUpdateOneRequiredWithoutPengajuan_kprNestedInput
+    transaksi_terpilih?: TransaksiUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
     bank?: BankUpdateOneRequiredWithoutPengajuan_kprNestedInput
     logs?: PengajuanKPRLogUpdateManyWithoutPengajuanNestedInput
   }
@@ -25122,6 +23542,7 @@ export namespace Prisma {
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi_terpilih?: TransaksiUncheckedUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
     logs?: PengajuanKPRLogUncheckedUpdateManyWithoutPengajuanNestedInput
   }
 
@@ -25170,7 +23591,7 @@ export namespace Prisma {
     catatan?: string | null
     created_at?: Date | string
     pengajuan: PengajuanKPRCreateNestedOneWithoutLogsInput
-    admin: UserCreateNestedOneWithoutPengajuan_kpr_logsInput
+    actor: UserCreateNestedOneWithoutPengajuan_kpr_logsInput
   }
 
   export type PengajuanKPRLogUncheckedCreateInput = {
@@ -25178,7 +23599,7 @@ export namespace Prisma {
     pengajuan_id: number
     status_sebelum?: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
@@ -25189,7 +23610,7 @@ export namespace Prisma {
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pengajuan?: PengajuanKPRUpdateOneRequiredWithoutLogsNestedInput
-    admin?: UserUpdateOneRequiredWithoutPengajuan_kpr_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutPengajuan_kpr_logsNestedInput
   }
 
   export type PengajuanKPRLogUncheckedUpdateInput = {
@@ -25197,7 +23618,7 @@ export namespace Prisma {
     pengajuan_id?: IntFieldUpdateOperationsInput | number
     status_sebelum?: NullableEnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25207,7 +23628,7 @@ export namespace Prisma {
     pengajuan_id: number
     status_sebelum?: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
@@ -25224,53 +23645,45 @@ export namespace Prisma {
     pengajuan_id?: IntFieldUpdateOperationsInput | number
     status_sebelum?: NullableEnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransaksiTahapLogCreateInput = {
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
     catatan?: string | null
     created_at?: Date | string
     transaksi: TransaksiCreateNestedOneWithoutLogsInput
-    admin: UserCreateNestedOneWithoutTransaksi_logsInput
+    actor: UserCreateNestedOneWithoutTransaksi_logsInput
   }
 
   export type TransaksiTahapLogUncheckedCreateInput = {
     id?: number
     transaksi_id: number
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
 
   export type TransaksiTahapLogUpdateInput = {
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     transaksi?: TransaksiUpdateOneRequiredWithoutLogsNestedInput
-    admin?: UserUpdateOneRequiredWithoutTransaksi_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutTransaksi_logsNestedInput
   }
 
   export type TransaksiTahapLogUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25278,18 +23691,14 @@ export namespace Prisma {
   export type TransaksiTahapLogCreateManyInput = {
     id?: number
     transaksi_id: number
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
 
   export type TransaksiTahapLogUpdateManyMutationInput = {
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25299,65 +23708,43 @@ export namespace Prisma {
   export type TransaksiTahapLogUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DokumenTransaksiCreateInput = {
     jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
     status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     transaksi: TransaksiCreateNestedOneWithoutDokumenInput
-    verifier?: UserCreateNestedOneWithoutDokumen_diverifikasiInput
   }
 
   export type DokumenTransaksiUncheckedCreateInput = {
     id?: number
     transaksi_id: number
     jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
     status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_by?: number | null
-    verified_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
 
   export type DokumenTransaksiUpdateInput = {
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     transaksi?: TransaksiUpdateOneRequiredWithoutDokumenNestedInput
-    verifier?: UserUpdateOneWithoutDokumen_diverifikasiNestedInput
   }
 
   export type DokumenTransaksiUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_by?: NullableIntFieldUpdateOperationsInput | number | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25366,23 +23753,14 @@ export namespace Prisma {
     id?: number
     transaksi_id: number
     jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
     status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_by?: number | null
-    verified_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
 
   export type DokumenTransaksiUpdateManyMutationInput = {
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25391,148 +23769,68 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_by?: NullableIntFieldUpdateOperationsInput | number | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type InspeksiBASTCreateInput = {
+  export type ChecklistBASTCreateInput = {
     item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    diperiksa_at?: Date | string | null
-    transaksi: TransaksiCreateNestedOneWithoutInspeksi_bastInput
-    inspektur?: UserCreateNestedOneWithoutInspeksi_bastInput
-    logs?: InspeksiBASTLogCreateNestedManyWithoutInspeksi_bastInput
+    status?: $Enums.StatusBAST
+    created_at?: Date | string
+    updated_at?: Date | string
+    transaksi: TransaksiCreateNestedOneWithoutChecklist_bastInput
   }
 
-  export type InspeksiBASTUncheckedCreateInput = {
+  export type ChecklistBASTUncheckedCreateInput = {
     id?: number
     transaksi_id: number
     item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id?: number | null
-    diperiksa_at?: Date | string | null
-    logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspeksi_bastInput
+    status?: $Enums.StatusBAST
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
-  export type InspeksiBASTUpdateInput = {
+  export type ChecklistBASTUpdateInput = {
     item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    transaksi?: TransaksiUpdateOneRequiredWithoutInspeksi_bastNestedInput
-    inspektur?: UserUpdateOneWithoutInspeksi_bastNestedInput
-    logs?: InspeksiBASTLogUpdateManyWithoutInspeksi_bastNestedInput
+    status?: EnumStatusBASTFieldUpdateOperationsInput | $Enums.StatusBAST
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi?: TransaksiUpdateOneRequiredWithoutChecklist_bastNestedInput
   }
 
-  export type InspeksiBASTUncheckedUpdateInput = {
+  export type ChecklistBASTUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: NullableIntFieldUpdateOperationsInput | number | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspeksi_bastNestedInput
+    status?: EnumStatusBASTFieldUpdateOperationsInput | $Enums.StatusBAST
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type InspeksiBASTCreateManyInput = {
+  export type ChecklistBASTCreateManyInput = {
     id?: number
     transaksi_id: number
     item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id?: number | null
-    diperiksa_at?: Date | string | null
+    status?: $Enums.StatusBAST
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
-  export type InspeksiBASTUpdateManyMutationInput = {
+  export type ChecklistBASTUpdateManyMutationInput = {
     item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumStatusBASTFieldUpdateOperationsInput | $Enums.StatusBAST
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type InspeksiBASTUncheckedUpdateManyInput = {
+  export type ChecklistBASTUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
     item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: NullableIntFieldUpdateOperationsInput | number | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type InspeksiBASTLogCreateInput = {
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    created_at?: Date | string
-    inspeksi_bast: InspeksiBASTCreateNestedOneWithoutLogsInput
-    inspektur: UserCreateNestedOneWithoutInspeksi_bast_logsInput
-  }
-
-  export type InspeksiBASTLogUncheckedCreateInput = {
-    id?: number
-    inspeksi_bast_id: number
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id: number
-    created_at?: Date | string
-  }
-
-  export type InspeksiBASTLogUpdateInput = {
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStatusBASTFieldUpdateOperationsInput | $Enums.StatusBAST
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    inspeksi_bast?: InspeksiBASTUpdateOneRequiredWithoutLogsNestedInput
-    inspektur?: UserUpdateOneRequiredWithoutInspeksi_bast_logsNestedInput
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    inspeksi_bast_id?: IntFieldUpdateOperationsInput | number
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: IntFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type InspeksiBASTLogCreateManyInput = {
-    id?: number
-    inspeksi_bast_id: number
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id: number
-    created_at?: Date | string
-  }
-
-  export type InspeksiBASTLogUpdateManyMutationInput = {
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    inspeksi_bast_id?: IntFieldUpdateOperationsInput | number
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: IntFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PembayaranCreateInput = {
@@ -25740,24 +24038,6 @@ export namespace Prisma {
     none?: AktivitasWhereInput
   }
 
-  export type DokumenTransaksiListRelationFilter = {
-    every?: DokumenTransaksiWhereInput
-    some?: DokumenTransaksiWhereInput
-    none?: DokumenTransaksiWhereInput
-  }
-
-  export type InspeksiBASTListRelationFilter = {
-    every?: InspeksiBASTWhereInput
-    some?: InspeksiBASTWhereInput
-    none?: InspeksiBASTWhereInput
-  }
-
-  export type InspeksiBASTLogListRelationFilter = {
-    every?: InspeksiBASTLogWhereInput
-    some?: InspeksiBASTLogWhereInput
-    none?: InspeksiBASTLogWhereInput
-  }
-
   export type PengajuanKPRLogListRelationFilter = {
     every?: PengajuanKPRLogWhereInput
     some?: PengajuanKPRLogWhereInput
@@ -25791,18 +24071,6 @@ export namespace Prisma {
   }
 
   export type AktivitasOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type DokumenTransaksiOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type InspeksiBASTOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type InspeksiBASTLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -25937,6 +24205,17 @@ export namespace Prisma {
     not?: NestedEnumKategoriUnitFilter<$PrismaModel> | $Enums.KategoriUnit
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type DecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[]
@@ -25952,6 +24231,11 @@ export namespace Prisma {
     every?: MasterUnitWhereInput
     some?: MasterUnitWhereInput
     none?: MasterUnitWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type MasterUnitOrderByRelationAggregateInput = {
@@ -26021,6 +24305,22 @@ export namespace Prisma {
     _max?: NestedEnumKategoriUnitFilter<$PrismaModel>
   }
 
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
   export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[]
@@ -26060,9 +24360,9 @@ export namespace Prisma {
     isNot?: MasterTipeWhereInput
   }
 
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
+  export type TransaksiNullableScalarRelationFilter = {
+    is?: TransaksiWhereInput | null
+    isNot?: TransaksiWhereInput | null
   }
 
   export type MasterUnitOrderByRelevanceInput = {
@@ -26141,17 +24441,6 @@ export namespace Prisma {
     _max?: NestedDecimalNullableFilter<$PrismaModel>
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type MasterUnitNullableScalarRelationFilter = {
     is?: MasterUnitWhereInput | null
     isNot?: MasterUnitWhereInput | null
@@ -26177,7 +24466,7 @@ export namespace Prisma {
     harga_khusus_lama?: SortOrder
     harga_khusus_direset?: SortOrder
     alasan?: SortOrder
-    changed_by?: SortOrder
+    actor_id?: SortOrder
     created_at?: SortOrder
   }
 
@@ -26187,7 +24476,7 @@ export namespace Prisma {
     tipe_lama_id?: SortOrder
     tipe_baru_id?: SortOrder
     harga_khusus_lama?: SortOrder
-    changed_by?: SortOrder
+    actor_id?: SortOrder
   }
 
   export type UnitTipeLogMaxOrderByAggregateInput = {
@@ -26199,7 +24488,7 @@ export namespace Prisma {
     harga_khusus_lama?: SortOrder
     harga_khusus_direset?: SortOrder
     alasan?: SortOrder
-    changed_by?: SortOrder
+    actor_id?: SortOrder
     created_at?: SortOrder
   }
 
@@ -26212,7 +24501,7 @@ export namespace Prisma {
     harga_khusus_lama?: SortOrder
     harga_khusus_direset?: SortOrder
     alasan?: SortOrder
-    changed_by?: SortOrder
+    actor_id?: SortOrder
     created_at?: SortOrder
   }
 
@@ -26222,23 +24511,7 @@ export namespace Prisma {
     tipe_lama_id?: SortOrder
     tipe_baru_id?: SortOrder
     harga_khusus_lama?: SortOrder
-    changed_by?: SortOrder
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
+    actor_id?: SortOrder
   }
 
   export type StringNullableFilter<$PrismaModel = never> = {
@@ -26500,11 +24773,6 @@ export namespace Prisma {
     isNot?: MasterUnitWhereInput
   }
 
-  export type TransaksiNullableScalarRelationFilter = {
-    is?: TransaksiWhereInput | null
-    isNot?: TransaksiWhereInput | null
-  }
-
   export type ItjOrderByRelevanceInput = {
     fields: ItjOrderByRelevanceFieldEnum | ItjOrderByRelevanceFieldEnum[]
     sort: SortOrder
@@ -26515,14 +24783,10 @@ export namespace Prisma {
     id?: SortOrder
     lead_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    closer_id?: SortOrder
     nik?: SortOrder
     nama_ktp?: SortOrder
     nominal?: SortOrder
-    harga_deal?: SortOrder
-    target_itj?: SortOrder
-    target_dp?: SortOrder
-    nominal_dibayar?: SortOrder
     metode_bayar?: SortOrder
     tenor?: SortOrder
     diajukan_at?: SortOrder
@@ -26534,12 +24798,8 @@ export namespace Prisma {
     id?: SortOrder
     lead_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    closer_id?: SortOrder
     nominal?: SortOrder
-    harga_deal?: SortOrder
-    target_itj?: SortOrder
-    target_dp?: SortOrder
-    nominal_dibayar?: SortOrder
     tenor?: SortOrder
   }
 
@@ -26547,14 +24807,10 @@ export namespace Prisma {
     id?: SortOrder
     lead_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    closer_id?: SortOrder
     nik?: SortOrder
     nama_ktp?: SortOrder
     nominal?: SortOrder
-    harga_deal?: SortOrder
-    target_itj?: SortOrder
-    target_dp?: SortOrder
-    nominal_dibayar?: SortOrder
     metode_bayar?: SortOrder
     tenor?: SortOrder
     diajukan_at?: SortOrder
@@ -26566,14 +24822,10 @@ export namespace Prisma {
     id?: SortOrder
     lead_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    closer_id?: SortOrder
     nik?: SortOrder
     nama_ktp?: SortOrder
     nominal?: SortOrder
-    harga_deal?: SortOrder
-    target_itj?: SortOrder
-    target_dp?: SortOrder
-    nominal_dibayar?: SortOrder
     metode_bayar?: SortOrder
     tenor?: SortOrder
     diajukan_at?: SortOrder
@@ -26585,12 +24837,8 @@ export namespace Prisma {
     id?: SortOrder
     lead_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    closer_id?: SortOrder
     nominal?: SortOrder
-    harga_deal?: SortOrder
-    target_itj?: SortOrder
-    target_dp?: SortOrder
-    nominal_dibayar?: SortOrder
     tenor?: SortOrder
   }
 
@@ -26694,13 +24942,6 @@ export namespace Prisma {
     _max?: NestedEnumStatusPekerjaanNullableFilter<$PrismaModel>
   }
 
-  export type EnumTahapTransaksiFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel>
-    in?: $Enums.TahapTransaksi[]
-    notIn?: $Enums.TahapTransaksi[]
-    not?: NestedEnumTahapTransaksiFilter<$PrismaModel> | $Enums.TahapTransaksi
-  }
-
   export type EnumTahapDetailFilter<$PrismaModel = never> = {
     equals?: $Enums.TahapDetail | EnumTahapDetailFieldRefInput<$PrismaModel>
     in?: $Enums.TahapDetail[]
@@ -26718,10 +24959,35 @@ export namespace Prisma {
     isNot?: ItjWhereInput
   }
 
+  export type DokumenTransaksiListRelationFilter = {
+    every?: DokumenTransaksiWhereInput
+    some?: DokumenTransaksiWhereInput
+    none?: DokumenTransaksiWhereInput
+  }
+
+  export type ChecklistBASTListRelationFilter = {
+    every?: ChecklistBASTWhereInput
+    some?: ChecklistBASTWhereInput
+    none?: ChecklistBASTWhereInput
+  }
+
   export type PengajuanKPRListRelationFilter = {
     every?: PengajuanKPRWhereInput
     some?: PengajuanKPRWhereInput
     none?: PengajuanKPRWhereInput
+  }
+
+  export type PengajuanKPRNullableScalarRelationFilter = {
+    is?: PengajuanKPRWhereInput | null
+    isNot?: PengajuanKPRWhereInput | null
+  }
+
+  export type DokumenTransaksiOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ChecklistBASTOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type PengajuanKPROrderByRelationAggregateInput = {
@@ -26738,25 +25004,27 @@ export namespace Prisma {
     id?: SortOrder
     customer_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    pic_id?: SortOrder
     itj_id?: SortOrder
     metode_bayar?: SortOrder
     harga_deal?: SortOrder
     target_itj?: SortOrder
     target_dp?: SortOrder
     tenor_bulan?: SortOrder
-    status_transaksi?: SortOrder
     tahap_detail?: SortOrder
-    nama_bank?: SortOrder
     nama_notaris?: SortOrder
+    rencana_akad_at?: SortOrder
+    rencana_bast_at?: SortOrder
     tgl_akad?: SortOrder
     lunas_at?: SortOrder
     tgl_bast?: SortOrder
     closing_at?: SortOrder
-    closed_at?: SortOrder
     cancelled_at?: SortOrder
     alasan_batal?: SortOrder
     catatan_admin?: SortOrder
+    version?: SortOrder
+    active_unit_id?: SortOrder
+    pengajuan_kpr_terpilih_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -26765,37 +25033,42 @@ export namespace Prisma {
     id?: SortOrder
     customer_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    pic_id?: SortOrder
     itj_id?: SortOrder
     harga_deal?: SortOrder
     target_itj?: SortOrder
     target_dp?: SortOrder
     tenor_bulan?: SortOrder
+    version?: SortOrder
+    active_unit_id?: SortOrder
+    pengajuan_kpr_terpilih_id?: SortOrder
   }
 
   export type TransaksiMaxOrderByAggregateInput = {
     id?: SortOrder
     customer_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    pic_id?: SortOrder
     itj_id?: SortOrder
     metode_bayar?: SortOrder
     harga_deal?: SortOrder
     target_itj?: SortOrder
     target_dp?: SortOrder
     tenor_bulan?: SortOrder
-    status_transaksi?: SortOrder
     tahap_detail?: SortOrder
-    nama_bank?: SortOrder
     nama_notaris?: SortOrder
+    rencana_akad_at?: SortOrder
+    rencana_bast_at?: SortOrder
     tgl_akad?: SortOrder
     lunas_at?: SortOrder
     tgl_bast?: SortOrder
     closing_at?: SortOrder
-    closed_at?: SortOrder
     cancelled_at?: SortOrder
     alasan_batal?: SortOrder
     catatan_admin?: SortOrder
+    version?: SortOrder
+    active_unit_id?: SortOrder
+    pengajuan_kpr_terpilih_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -26804,25 +25077,27 @@ export namespace Prisma {
     id?: SortOrder
     customer_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    pic_id?: SortOrder
     itj_id?: SortOrder
     metode_bayar?: SortOrder
     harga_deal?: SortOrder
     target_itj?: SortOrder
     target_dp?: SortOrder
     tenor_bulan?: SortOrder
-    status_transaksi?: SortOrder
     tahap_detail?: SortOrder
-    nama_bank?: SortOrder
     nama_notaris?: SortOrder
+    rencana_akad_at?: SortOrder
+    rencana_bast_at?: SortOrder
     tgl_akad?: SortOrder
     lunas_at?: SortOrder
     tgl_bast?: SortOrder
     closing_at?: SortOrder
-    closed_at?: SortOrder
     cancelled_at?: SortOrder
     alasan_batal?: SortOrder
     catatan_admin?: SortOrder
+    version?: SortOrder
+    active_unit_id?: SortOrder
+    pengajuan_kpr_terpilih_id?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -26831,22 +25106,15 @@ export namespace Prisma {
     id?: SortOrder
     customer_id?: SortOrder
     unit_id?: SortOrder
-    marketing_id?: SortOrder
+    pic_id?: SortOrder
     itj_id?: SortOrder
     harga_deal?: SortOrder
     target_itj?: SortOrder
     target_dp?: SortOrder
     tenor_bulan?: SortOrder
-  }
-
-  export type EnumTahapTransaksiWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel>
-    in?: $Enums.TahapTransaksi[]
-    notIn?: $Enums.TahapTransaksi[]
-    not?: NestedEnumTahapTransaksiWithAggregatesFilter<$PrismaModel> | $Enums.TahapTransaksi
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTahapTransaksiFilter<$PrismaModel>
-    _max?: NestedEnumTahapTransaksiFilter<$PrismaModel>
+    version?: SortOrder
+    active_unit_id?: SortOrder
+    pengajuan_kpr_terpilih_id?: SortOrder
   }
 
   export type EnumTahapDetailWithAggregatesFilter<$PrismaModel = never> = {
@@ -27020,7 +25288,7 @@ export namespace Prisma {
     pengajuan_id?: SortOrder
     status_sebelum?: SortOrder
     status_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrder
     created_at?: SortOrder
   }
@@ -27028,7 +25296,7 @@ export namespace Prisma {
   export type PengajuanKPRLogAvgOrderByAggregateInput = {
     id?: SortOrder
     pengajuan_id?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
   }
 
   export type PengajuanKPRLogMaxOrderByAggregateInput = {
@@ -27036,7 +25304,7 @@ export namespace Prisma {
     pengajuan_id?: SortOrder
     status_sebelum?: SortOrder
     status_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrder
     created_at?: SortOrder
   }
@@ -27046,7 +25314,7 @@ export namespace Prisma {
     pengajuan_id?: SortOrder
     status_sebelum?: SortOrder
     status_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrder
     created_at?: SortOrder
   }
@@ -27054,7 +25322,7 @@ export namespace Prisma {
   export type PengajuanKPRLogSumOrderByAggregateInput = {
     id?: SortOrder
     pengajuan_id?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
   }
 
   export type EnumStatusPengajuanKPRNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -27065,13 +25333,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedEnumStatusPengajuanKPRNullableFilter<$PrismaModel>
     _max?: NestedEnumStatusPengajuanKPRNullableFilter<$PrismaModel>
-  }
-
-  export type EnumTahapTransaksiNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.TahapTransaksi[] | null
-    notIn?: $Enums.TahapTransaksi[] | null
-    not?: NestedEnumTahapTransaksiNullableFilter<$PrismaModel> | $Enums.TahapTransaksi | null
   }
 
   export type EnumTahapDetailNullableFilter<$PrismaModel = never> = {
@@ -27090,11 +25351,9 @@ export namespace Prisma {
   export type TransaksiTahapLogCountOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    tahap_sebelum?: SortOrder
-    tahap_sesudah?: SortOrder
     detail_sebelum?: SortOrder
     detail_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrder
     created_at?: SortOrder
   }
@@ -27102,17 +25361,15 @@ export namespace Prisma {
   export type TransaksiTahapLogAvgOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
   }
 
   export type TransaksiTahapLogMaxOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    tahap_sebelum?: SortOrder
-    tahap_sesudah?: SortOrder
     detail_sebelum?: SortOrder
     detail_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrder
     created_at?: SortOrder
   }
@@ -27120,11 +25377,9 @@ export namespace Prisma {
   export type TransaksiTahapLogMinOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    tahap_sebelum?: SortOrder
-    tahap_sesudah?: SortOrder
     detail_sebelum?: SortOrder
     detail_sesudah?: SortOrder
-    admin_id?: SortOrder
+    actor_id?: SortOrder
     catatan?: SortOrder
     created_at?: SortOrder
   }
@@ -27132,17 +25387,7 @@ export namespace Prisma {
   export type TransaksiTahapLogSumOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    admin_id?: SortOrder
-  }
-
-  export type EnumTahapTransaksiNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.TahapTransaksi[] | null
-    notIn?: $Enums.TahapTransaksi[] | null
-    not?: NestedEnumTahapTransaksiNullableWithAggregatesFilter<$PrismaModel> | $Enums.TahapTransaksi | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumTahapTransaksiNullableFilter<$PrismaModel>
-    _max?: NestedEnumTahapTransaksiNullableFilter<$PrismaModel>
+    actor_id?: SortOrder
   }
 
   export type EnumTahapDetailNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -27162,24 +25407,11 @@ export namespace Prisma {
     not?: NestedEnumJenisDokumenFilter<$PrismaModel> | $Enums.JenisDokumen
   }
 
-  export type EnumKategoriDokumenFilter<$PrismaModel = never> = {
-    equals?: $Enums.KategoriDokumen | EnumKategoriDokumenFieldRefInput<$PrismaModel>
-    in?: $Enums.KategoriDokumen[]
-    notIn?: $Enums.KategoriDokumen[]
-    not?: NestedEnumKategoriDokumenFilter<$PrismaModel> | $Enums.KategoriDokumen
-  }
-
   export type EnumStatusDokumenFilter<$PrismaModel = never> = {
     equals?: $Enums.StatusDokumen | EnumStatusDokumenFieldRefInput<$PrismaModel>
     in?: $Enums.StatusDokumen[]
     notIn?: $Enums.StatusDokumen[]
     not?: NestedEnumStatusDokumenFilter<$PrismaModel> | $Enums.StatusDokumen
-  }
-
-  export type DokumenTransaksiOrderByRelevanceInput = {
-    fields: DokumenTransaksiOrderByRelevanceFieldEnum | DokumenTransaksiOrderByRelevanceFieldEnum[]
-    sort: SortOrder
-    search: string
   }
 
   export type DokumenTransaksiTransaksi_idJenisCompoundUniqueInput = {
@@ -27191,12 +25423,7 @@ export namespace Prisma {
     id?: SortOrder
     transaksi_id?: SortOrder
     jenis?: SortOrder
-    kategori?: SortOrder
     status?: SortOrder
-    file_url?: SortOrder
-    catatan_verifikasi?: SortOrder
-    verified_by?: SortOrder
-    verified_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -27204,19 +25431,13 @@ export namespace Prisma {
   export type DokumenTransaksiAvgOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    verified_by?: SortOrder
   }
 
   export type DokumenTransaksiMaxOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
     jenis?: SortOrder
-    kategori?: SortOrder
     status?: SortOrder
-    file_url?: SortOrder
-    catatan_verifikasi?: SortOrder
-    verified_by?: SortOrder
-    verified_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -27225,12 +25446,7 @@ export namespace Prisma {
     id?: SortOrder
     transaksi_id?: SortOrder
     jenis?: SortOrder
-    kategori?: SortOrder
     status?: SortOrder
-    file_url?: SortOrder
-    catatan_verifikasi?: SortOrder
-    verified_by?: SortOrder
-    verified_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -27238,7 +25454,6 @@ export namespace Prisma {
   export type DokumenTransaksiSumOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    verified_by?: SortOrder
   }
 
   export type EnumJenisDokumenWithAggregatesFilter<$PrismaModel = never> = {
@@ -27249,16 +25464,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumJenisDokumenFilter<$PrismaModel>
     _max?: NestedEnumJenisDokumenFilter<$PrismaModel>
-  }
-
-  export type EnumKategoriDokumenWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.KategoriDokumen | EnumKategoriDokumenFieldRefInput<$PrismaModel>
-    in?: $Enums.KategoriDokumen[]
-    notIn?: $Enums.KategoriDokumen[]
-    not?: NestedEnumKategoriDokumenWithAggregatesFilter<$PrismaModel> | $Enums.KategoriDokumen
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumKategoriDokumenFilter<$PrismaModel>
-    _max?: NestedEnumKategoriDokumenFilter<$PrismaModel>
   }
 
   export type EnumStatusDokumenWithAggregatesFilter<$PrismaModel = never> = {
@@ -27278,64 +25483,53 @@ export namespace Prisma {
     not?: NestedEnumItemBASTFilter<$PrismaModel> | $Enums.ItemBAST
   }
 
-  export type EnumStatusInspeksiFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel>
-    in?: $Enums.StatusInspeksi[]
-    notIn?: $Enums.StatusInspeksi[]
-    not?: NestedEnumStatusInspeksiFilter<$PrismaModel> | $Enums.StatusInspeksi
+  export type EnumStatusBASTFilter<$PrismaModel = never> = {
+    equals?: $Enums.StatusBAST | EnumStatusBASTFieldRefInput<$PrismaModel>
+    in?: $Enums.StatusBAST[]
+    notIn?: $Enums.StatusBAST[]
+    not?: NestedEnumStatusBASTFilter<$PrismaModel> | $Enums.StatusBAST
   }
 
-  export type InspeksiBASTOrderByRelevanceInput = {
-    fields: InspeksiBASTOrderByRelevanceFieldEnum | InspeksiBASTOrderByRelevanceFieldEnum[]
-    sort: SortOrder
-    search: string
-  }
-
-  export type InspeksiBASTTransaksi_idItemCompoundUniqueInput = {
+  export type ChecklistBASTTransaksi_idItemCompoundUniqueInput = {
     transaksi_id: number
     item: $Enums.ItemBAST
   }
 
-  export type InspeksiBASTCountOrderByAggregateInput = {
+  export type ChecklistBASTCountOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
     item?: SortOrder
     status?: SortOrder
-    catatan?: SortOrder
-    inspektur_id?: SortOrder
-    diperiksa_at?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
-  export type InspeksiBASTAvgOrderByAggregateInput = {
+  export type ChecklistBASTAvgOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    inspektur_id?: SortOrder
   }
 
-  export type InspeksiBASTMaxOrderByAggregateInput = {
-    id?: SortOrder
-    transaksi_id?: SortOrder
-    item?: SortOrder
-    status?: SortOrder
-    catatan?: SortOrder
-    inspektur_id?: SortOrder
-    diperiksa_at?: SortOrder
-  }
-
-  export type InspeksiBASTMinOrderByAggregateInput = {
+  export type ChecklistBASTMaxOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
     item?: SortOrder
     status?: SortOrder
-    catatan?: SortOrder
-    inspektur_id?: SortOrder
-    diperiksa_at?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
-  export type InspeksiBASTSumOrderByAggregateInput = {
+  export type ChecklistBASTMinOrderByAggregateInput = {
     id?: SortOrder
     transaksi_id?: SortOrder
-    inspektur_id?: SortOrder
+    item?: SortOrder
+    status?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type ChecklistBASTSumOrderByAggregateInput = {
+    id?: SortOrder
+    transaksi_id?: SortOrder
   }
 
   export type EnumItemBASTWithAggregatesFilter<$PrismaModel = never> = {
@@ -27348,84 +25542,14 @@ export namespace Prisma {
     _max?: NestedEnumItemBASTFilter<$PrismaModel>
   }
 
-  export type EnumStatusInspeksiWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel>
-    in?: $Enums.StatusInspeksi[]
-    notIn?: $Enums.StatusInspeksi[]
-    not?: NestedEnumStatusInspeksiWithAggregatesFilter<$PrismaModel> | $Enums.StatusInspeksi
+  export type EnumStatusBASTWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StatusBAST | EnumStatusBASTFieldRefInput<$PrismaModel>
+    in?: $Enums.StatusBAST[]
+    notIn?: $Enums.StatusBAST[]
+    not?: NestedEnumStatusBASTWithAggregatesFilter<$PrismaModel> | $Enums.StatusBAST
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumStatusInspeksiFilter<$PrismaModel>
-    _max?: NestedEnumStatusInspeksiFilter<$PrismaModel>
-  }
-
-  export type EnumStatusInspeksiNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.StatusInspeksi[] | null
-    notIn?: $Enums.StatusInspeksi[] | null
-    not?: NestedEnumStatusInspeksiNullableFilter<$PrismaModel> | $Enums.StatusInspeksi | null
-  }
-
-  export type InspeksiBASTScalarRelationFilter = {
-    is?: InspeksiBASTWhereInput
-    isNot?: InspeksiBASTWhereInput
-  }
-
-  export type InspeksiBASTLogOrderByRelevanceInput = {
-    fields: InspeksiBASTLogOrderByRelevanceFieldEnum | InspeksiBASTLogOrderByRelevanceFieldEnum[]
-    sort: SortOrder
-    search: string
-  }
-
-  export type InspeksiBASTLogCountOrderByAggregateInput = {
-    id?: SortOrder
-    inspeksi_bast_id?: SortOrder
-    status_sebelum?: SortOrder
-    status_sesudah?: SortOrder
-    catatan?: SortOrder
-    inspektur_id?: SortOrder
-    created_at?: SortOrder
-  }
-
-  export type InspeksiBASTLogAvgOrderByAggregateInput = {
-    id?: SortOrder
-    inspeksi_bast_id?: SortOrder
-    inspektur_id?: SortOrder
-  }
-
-  export type InspeksiBASTLogMaxOrderByAggregateInput = {
-    id?: SortOrder
-    inspeksi_bast_id?: SortOrder
-    status_sebelum?: SortOrder
-    status_sesudah?: SortOrder
-    catatan?: SortOrder
-    inspektur_id?: SortOrder
-    created_at?: SortOrder
-  }
-
-  export type InspeksiBASTLogMinOrderByAggregateInput = {
-    id?: SortOrder
-    inspeksi_bast_id?: SortOrder
-    status_sebelum?: SortOrder
-    status_sesudah?: SortOrder
-    catatan?: SortOrder
-    inspektur_id?: SortOrder
-    created_at?: SortOrder
-  }
-
-  export type InspeksiBASTLogSumOrderByAggregateInput = {
-    id?: SortOrder
-    inspeksi_bast_id?: SortOrder
-    inspektur_id?: SortOrder
-  }
-
-  export type EnumStatusInspeksiNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.StatusInspeksi[] | null
-    notIn?: $Enums.StatusInspeksi[] | null
-    not?: NestedEnumStatusInspeksiNullableWithAggregatesFilter<$PrismaModel> | $Enums.StatusInspeksi | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumStatusInspeksiNullableFilter<$PrismaModel>
-    _max?: NestedEnumStatusInspeksiNullableFilter<$PrismaModel>
+    _min?: NestedEnumStatusBASTFilter<$PrismaModel>
+    _max?: NestedEnumStatusBASTFilter<$PrismaModel>
   }
 
   export type EnumJenisBayarFilter<$PrismaModel = never> = {
@@ -27545,10 +25669,10 @@ export namespace Prisma {
     connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
   }
 
-  export type TransaksiCreateNestedManyWithoutMarketingInput = {
-    create?: XOR<TransaksiCreateWithoutMarketingInput, TransaksiUncheckedCreateWithoutMarketingInput> | TransaksiCreateWithoutMarketingInput[] | TransaksiUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: TransaksiCreateOrConnectWithoutMarketingInput | TransaksiCreateOrConnectWithoutMarketingInput[]
-    createMany?: TransaksiCreateManyMarketingInputEnvelope
+  export type TransaksiCreateNestedManyWithoutPicInput = {
+    create?: XOR<TransaksiCreateWithoutPicInput, TransaksiUncheckedCreateWithoutPicInput> | TransaksiCreateWithoutPicInput[] | TransaksiUncheckedCreateWithoutPicInput[]
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPicInput | TransaksiCreateOrConnectWithoutPicInput[]
+    createMany?: TransaksiCreateManyPicInputEnvelope
     connect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
   }
 
@@ -27559,17 +25683,17 @@ export namespace Prisma {
     connect?: PembayaranWhereUniqueInput | PembayaranWhereUniqueInput[]
   }
 
-  export type ItjCreateNestedManyWithoutMarketingInput = {
-    create?: XOR<ItjCreateWithoutMarketingInput, ItjUncheckedCreateWithoutMarketingInput> | ItjCreateWithoutMarketingInput[] | ItjUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: ItjCreateOrConnectWithoutMarketingInput | ItjCreateOrConnectWithoutMarketingInput[]
-    createMany?: ItjCreateManyMarketingInputEnvelope
+  export type ItjCreateNestedManyWithoutCloserInput = {
+    create?: XOR<ItjCreateWithoutCloserInput, ItjUncheckedCreateWithoutCloserInput> | ItjCreateWithoutCloserInput[] | ItjUncheckedCreateWithoutCloserInput[]
+    connectOrCreate?: ItjCreateOrConnectWithoutCloserInput | ItjCreateOrConnectWithoutCloserInput[]
+    createMany?: ItjCreateManyCloserInputEnvelope
     connect?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
   }
 
-  export type TransaksiTahapLogCreateNestedManyWithoutAdminInput = {
-    create?: XOR<TransaksiTahapLogCreateWithoutAdminInput, TransaksiTahapLogUncheckedCreateWithoutAdminInput> | TransaksiTahapLogCreateWithoutAdminInput[] | TransaksiTahapLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutAdminInput | TransaksiTahapLogCreateOrConnectWithoutAdminInput[]
-    createMany?: TransaksiTahapLogCreateManyAdminInputEnvelope
+  export type TransaksiTahapLogCreateNestedManyWithoutActorInput = {
+    create?: XOR<TransaksiTahapLogCreateWithoutActorInput, TransaksiTahapLogUncheckedCreateWithoutActorInput> | TransaksiTahapLogCreateWithoutActorInput[] | TransaksiTahapLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutActorInput | TransaksiTahapLogCreateOrConnectWithoutActorInput[]
+    createMany?: TransaksiTahapLogCreateManyActorInputEnvelope
     connect?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
   }
 
@@ -27580,13 +25704,6 @@ export namespace Prisma {
     connect?: AktivitasWhereUniqueInput | AktivitasWhereUniqueInput[]
   }
 
-  export type DokumenTransaksiCreateNestedManyWithoutVerifierInput = {
-    create?: XOR<DokumenTransaksiCreateWithoutVerifierInput, DokumenTransaksiUncheckedCreateWithoutVerifierInput> | DokumenTransaksiCreateWithoutVerifierInput[] | DokumenTransaksiUncheckedCreateWithoutVerifierInput[]
-    connectOrCreate?: DokumenTransaksiCreateOrConnectWithoutVerifierInput | DokumenTransaksiCreateOrConnectWithoutVerifierInput[]
-    createMany?: DokumenTransaksiCreateManyVerifierInputEnvelope
-    connect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-  }
-
   export type PembayaranCreateNestedManyWithoutVoiderInput = {
     create?: XOR<PembayaranCreateWithoutVoiderInput, PembayaranUncheckedCreateWithoutVoiderInput> | PembayaranCreateWithoutVoiderInput[] | PembayaranUncheckedCreateWithoutVoiderInput[]
     connectOrCreate?: PembayaranCreateOrConnectWithoutVoiderInput | PembayaranCreateOrConnectWithoutVoiderInput[]
@@ -27594,31 +25711,17 @@ export namespace Prisma {
     connect?: PembayaranWhereUniqueInput | PembayaranWhereUniqueInput[]
   }
 
-  export type InspeksiBASTCreateNestedManyWithoutInspekturInput = {
-    create?: XOR<InspeksiBASTCreateWithoutInspekturInput, InspeksiBASTUncheckedCreateWithoutInspekturInput> | InspeksiBASTCreateWithoutInspekturInput[] | InspeksiBASTUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutInspekturInput | InspeksiBASTCreateOrConnectWithoutInspekturInput[]
-    createMany?: InspeksiBASTCreateManyInspekturInputEnvelope
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-  }
-
-  export type InspeksiBASTLogCreateNestedManyWithoutInspekturInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspekturInput, InspeksiBASTLogUncheckedCreateWithoutInspekturInput> | InspeksiBASTLogCreateWithoutInspekturInput[] | InspeksiBASTLogUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspekturInput | InspeksiBASTLogCreateOrConnectWithoutInspekturInput[]
-    createMany?: InspeksiBASTLogCreateManyInspekturInputEnvelope
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-  }
-
-  export type PengajuanKPRLogCreateNestedManyWithoutAdminInput = {
-    create?: XOR<PengajuanKPRLogCreateWithoutAdminInput, PengajuanKPRLogUncheckedCreateWithoutAdminInput> | PengajuanKPRLogCreateWithoutAdminInput[] | PengajuanKPRLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutAdminInput | PengajuanKPRLogCreateOrConnectWithoutAdminInput[]
-    createMany?: PengajuanKPRLogCreateManyAdminInputEnvelope
+  export type PengajuanKPRLogCreateNestedManyWithoutActorInput = {
+    create?: XOR<PengajuanKPRLogCreateWithoutActorInput, PengajuanKPRLogUncheckedCreateWithoutActorInput> | PengajuanKPRLogCreateWithoutActorInput[] | PengajuanKPRLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutActorInput | PengajuanKPRLogCreateOrConnectWithoutActorInput[]
+    createMany?: PengajuanKPRLogCreateManyActorInputEnvelope
     connect?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
   }
 
-  export type UnitTipeLogCreateNestedManyWithoutAdminInput = {
-    create?: XOR<UnitTipeLogCreateWithoutAdminInput, UnitTipeLogUncheckedCreateWithoutAdminInput> | UnitTipeLogCreateWithoutAdminInput[] | UnitTipeLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutAdminInput | UnitTipeLogCreateOrConnectWithoutAdminInput[]
-    createMany?: UnitTipeLogCreateManyAdminInputEnvelope
+  export type UnitTipeLogCreateNestedManyWithoutActorInput = {
+    create?: XOR<UnitTipeLogCreateWithoutActorInput, UnitTipeLogUncheckedCreateWithoutActorInput> | UnitTipeLogCreateWithoutActorInput[] | UnitTipeLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutActorInput | UnitTipeLogCreateOrConnectWithoutActorInput[]
+    createMany?: UnitTipeLogCreateManyActorInputEnvelope
     connect?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
   }
 
@@ -27629,10 +25732,10 @@ export namespace Prisma {
     connect?: LeadWhereUniqueInput | LeadWhereUniqueInput[]
   }
 
-  export type TransaksiUncheckedCreateNestedManyWithoutMarketingInput = {
-    create?: XOR<TransaksiCreateWithoutMarketingInput, TransaksiUncheckedCreateWithoutMarketingInput> | TransaksiCreateWithoutMarketingInput[] | TransaksiUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: TransaksiCreateOrConnectWithoutMarketingInput | TransaksiCreateOrConnectWithoutMarketingInput[]
-    createMany?: TransaksiCreateManyMarketingInputEnvelope
+  export type TransaksiUncheckedCreateNestedManyWithoutPicInput = {
+    create?: XOR<TransaksiCreateWithoutPicInput, TransaksiUncheckedCreateWithoutPicInput> | TransaksiCreateWithoutPicInput[] | TransaksiUncheckedCreateWithoutPicInput[]
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPicInput | TransaksiCreateOrConnectWithoutPicInput[]
+    createMany?: TransaksiCreateManyPicInputEnvelope
     connect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
   }
 
@@ -27643,17 +25746,17 @@ export namespace Prisma {
     connect?: PembayaranWhereUniqueInput | PembayaranWhereUniqueInput[]
   }
 
-  export type ItjUncheckedCreateNestedManyWithoutMarketingInput = {
-    create?: XOR<ItjCreateWithoutMarketingInput, ItjUncheckedCreateWithoutMarketingInput> | ItjCreateWithoutMarketingInput[] | ItjUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: ItjCreateOrConnectWithoutMarketingInput | ItjCreateOrConnectWithoutMarketingInput[]
-    createMany?: ItjCreateManyMarketingInputEnvelope
+  export type ItjUncheckedCreateNestedManyWithoutCloserInput = {
+    create?: XOR<ItjCreateWithoutCloserInput, ItjUncheckedCreateWithoutCloserInput> | ItjCreateWithoutCloserInput[] | ItjUncheckedCreateWithoutCloserInput[]
+    connectOrCreate?: ItjCreateOrConnectWithoutCloserInput | ItjCreateOrConnectWithoutCloserInput[]
+    createMany?: ItjCreateManyCloserInputEnvelope
     connect?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
   }
 
-  export type TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput = {
-    create?: XOR<TransaksiTahapLogCreateWithoutAdminInput, TransaksiTahapLogUncheckedCreateWithoutAdminInput> | TransaksiTahapLogCreateWithoutAdminInput[] | TransaksiTahapLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutAdminInput | TransaksiTahapLogCreateOrConnectWithoutAdminInput[]
-    createMany?: TransaksiTahapLogCreateManyAdminInputEnvelope
+  export type TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput = {
+    create?: XOR<TransaksiTahapLogCreateWithoutActorInput, TransaksiTahapLogUncheckedCreateWithoutActorInput> | TransaksiTahapLogCreateWithoutActorInput[] | TransaksiTahapLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutActorInput | TransaksiTahapLogCreateOrConnectWithoutActorInput[]
+    createMany?: TransaksiTahapLogCreateManyActorInputEnvelope
     connect?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
   }
 
@@ -27664,13 +25767,6 @@ export namespace Prisma {
     connect?: AktivitasWhereUniqueInput | AktivitasWhereUniqueInput[]
   }
 
-  export type DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput = {
-    create?: XOR<DokumenTransaksiCreateWithoutVerifierInput, DokumenTransaksiUncheckedCreateWithoutVerifierInput> | DokumenTransaksiCreateWithoutVerifierInput[] | DokumenTransaksiUncheckedCreateWithoutVerifierInput[]
-    connectOrCreate?: DokumenTransaksiCreateOrConnectWithoutVerifierInput | DokumenTransaksiCreateOrConnectWithoutVerifierInput[]
-    createMany?: DokumenTransaksiCreateManyVerifierInputEnvelope
-    connect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-  }
-
   export type PembayaranUncheckedCreateNestedManyWithoutVoiderInput = {
     create?: XOR<PembayaranCreateWithoutVoiderInput, PembayaranUncheckedCreateWithoutVoiderInput> | PembayaranCreateWithoutVoiderInput[] | PembayaranUncheckedCreateWithoutVoiderInput[]
     connectOrCreate?: PembayaranCreateOrConnectWithoutVoiderInput | PembayaranCreateOrConnectWithoutVoiderInput[]
@@ -27678,31 +25774,17 @@ export namespace Prisma {
     connect?: PembayaranWhereUniqueInput | PembayaranWhereUniqueInput[]
   }
 
-  export type InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput = {
-    create?: XOR<InspeksiBASTCreateWithoutInspekturInput, InspeksiBASTUncheckedCreateWithoutInspekturInput> | InspeksiBASTCreateWithoutInspekturInput[] | InspeksiBASTUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutInspekturInput | InspeksiBASTCreateOrConnectWithoutInspekturInput[]
-    createMany?: InspeksiBASTCreateManyInspekturInputEnvelope
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-  }
-
-  export type InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspekturInput, InspeksiBASTLogUncheckedCreateWithoutInspekturInput> | InspeksiBASTLogCreateWithoutInspekturInput[] | InspeksiBASTLogUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspekturInput | InspeksiBASTLogCreateOrConnectWithoutInspekturInput[]
-    createMany?: InspeksiBASTLogCreateManyInspekturInputEnvelope
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-  }
-
-  export type PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput = {
-    create?: XOR<PengajuanKPRLogCreateWithoutAdminInput, PengajuanKPRLogUncheckedCreateWithoutAdminInput> | PengajuanKPRLogCreateWithoutAdminInput[] | PengajuanKPRLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutAdminInput | PengajuanKPRLogCreateOrConnectWithoutAdminInput[]
-    createMany?: PengajuanKPRLogCreateManyAdminInputEnvelope
+  export type PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput = {
+    create?: XOR<PengajuanKPRLogCreateWithoutActorInput, PengajuanKPRLogUncheckedCreateWithoutActorInput> | PengajuanKPRLogCreateWithoutActorInput[] | PengajuanKPRLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutActorInput | PengajuanKPRLogCreateOrConnectWithoutActorInput[]
+    createMany?: PengajuanKPRLogCreateManyActorInputEnvelope
     connect?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
   }
 
-  export type UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput = {
-    create?: XOR<UnitTipeLogCreateWithoutAdminInput, UnitTipeLogUncheckedCreateWithoutAdminInput> | UnitTipeLogCreateWithoutAdminInput[] | UnitTipeLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutAdminInput | UnitTipeLogCreateOrConnectWithoutAdminInput[]
-    createMany?: UnitTipeLogCreateManyAdminInputEnvelope
+  export type UnitTipeLogUncheckedCreateNestedManyWithoutActorInput = {
+    create?: XOR<UnitTipeLogCreateWithoutActorInput, UnitTipeLogUncheckedCreateWithoutActorInput> | UnitTipeLogCreateWithoutActorInput[] | UnitTipeLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutActorInput | UnitTipeLogCreateOrConnectWithoutActorInput[]
+    createMany?: UnitTipeLogCreateManyActorInputEnvelope
     connect?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
   }
 
@@ -27736,17 +25818,17 @@ export namespace Prisma {
     deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
   }
 
-  export type TransaksiUpdateManyWithoutMarketingNestedInput = {
-    create?: XOR<TransaksiCreateWithoutMarketingInput, TransaksiUncheckedCreateWithoutMarketingInput> | TransaksiCreateWithoutMarketingInput[] | TransaksiUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: TransaksiCreateOrConnectWithoutMarketingInput | TransaksiCreateOrConnectWithoutMarketingInput[]
-    upsert?: TransaksiUpsertWithWhereUniqueWithoutMarketingInput | TransaksiUpsertWithWhereUniqueWithoutMarketingInput[]
-    createMany?: TransaksiCreateManyMarketingInputEnvelope
+  export type TransaksiUpdateManyWithoutPicNestedInput = {
+    create?: XOR<TransaksiCreateWithoutPicInput, TransaksiUncheckedCreateWithoutPicInput> | TransaksiCreateWithoutPicInput[] | TransaksiUncheckedCreateWithoutPicInput[]
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPicInput | TransaksiCreateOrConnectWithoutPicInput[]
+    upsert?: TransaksiUpsertWithWhereUniqueWithoutPicInput | TransaksiUpsertWithWhereUniqueWithoutPicInput[]
+    createMany?: TransaksiCreateManyPicInputEnvelope
     set?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
     disconnect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
     delete?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
     connect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
-    update?: TransaksiUpdateWithWhereUniqueWithoutMarketingInput | TransaksiUpdateWithWhereUniqueWithoutMarketingInput[]
-    updateMany?: TransaksiUpdateManyWithWhereWithoutMarketingInput | TransaksiUpdateManyWithWhereWithoutMarketingInput[]
+    update?: TransaksiUpdateWithWhereUniqueWithoutPicInput | TransaksiUpdateWithWhereUniqueWithoutPicInput[]
+    updateMany?: TransaksiUpdateManyWithWhereWithoutPicInput | TransaksiUpdateManyWithWhereWithoutPicInput[]
     deleteMany?: TransaksiScalarWhereInput | TransaksiScalarWhereInput[]
   }
 
@@ -27764,31 +25846,31 @@ export namespace Prisma {
     deleteMany?: PembayaranScalarWhereInput | PembayaranScalarWhereInput[]
   }
 
-  export type ItjUpdateManyWithoutMarketingNestedInput = {
-    create?: XOR<ItjCreateWithoutMarketingInput, ItjUncheckedCreateWithoutMarketingInput> | ItjCreateWithoutMarketingInput[] | ItjUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: ItjCreateOrConnectWithoutMarketingInput | ItjCreateOrConnectWithoutMarketingInput[]
-    upsert?: ItjUpsertWithWhereUniqueWithoutMarketingInput | ItjUpsertWithWhereUniqueWithoutMarketingInput[]
-    createMany?: ItjCreateManyMarketingInputEnvelope
+  export type ItjUpdateManyWithoutCloserNestedInput = {
+    create?: XOR<ItjCreateWithoutCloserInput, ItjUncheckedCreateWithoutCloserInput> | ItjCreateWithoutCloserInput[] | ItjUncheckedCreateWithoutCloserInput[]
+    connectOrCreate?: ItjCreateOrConnectWithoutCloserInput | ItjCreateOrConnectWithoutCloserInput[]
+    upsert?: ItjUpsertWithWhereUniqueWithoutCloserInput | ItjUpsertWithWhereUniqueWithoutCloserInput[]
+    createMany?: ItjCreateManyCloserInputEnvelope
     set?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
     disconnect?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
     delete?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
     connect?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
-    update?: ItjUpdateWithWhereUniqueWithoutMarketingInput | ItjUpdateWithWhereUniqueWithoutMarketingInput[]
-    updateMany?: ItjUpdateManyWithWhereWithoutMarketingInput | ItjUpdateManyWithWhereWithoutMarketingInput[]
+    update?: ItjUpdateWithWhereUniqueWithoutCloserInput | ItjUpdateWithWhereUniqueWithoutCloserInput[]
+    updateMany?: ItjUpdateManyWithWhereWithoutCloserInput | ItjUpdateManyWithWhereWithoutCloserInput[]
     deleteMany?: ItjScalarWhereInput | ItjScalarWhereInput[]
   }
 
-  export type TransaksiTahapLogUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<TransaksiTahapLogCreateWithoutAdminInput, TransaksiTahapLogUncheckedCreateWithoutAdminInput> | TransaksiTahapLogCreateWithoutAdminInput[] | TransaksiTahapLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutAdminInput | TransaksiTahapLogCreateOrConnectWithoutAdminInput[]
-    upsert?: TransaksiTahapLogUpsertWithWhereUniqueWithoutAdminInput | TransaksiTahapLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: TransaksiTahapLogCreateManyAdminInputEnvelope
+  export type TransaksiTahapLogUpdateManyWithoutActorNestedInput = {
+    create?: XOR<TransaksiTahapLogCreateWithoutActorInput, TransaksiTahapLogUncheckedCreateWithoutActorInput> | TransaksiTahapLogCreateWithoutActorInput[] | TransaksiTahapLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutActorInput | TransaksiTahapLogCreateOrConnectWithoutActorInput[]
+    upsert?: TransaksiTahapLogUpsertWithWhereUniqueWithoutActorInput | TransaksiTahapLogUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: TransaksiTahapLogCreateManyActorInputEnvelope
     set?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
     disconnect?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
     delete?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
     connect?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
-    update?: TransaksiTahapLogUpdateWithWhereUniqueWithoutAdminInput | TransaksiTahapLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: TransaksiTahapLogUpdateManyWithWhereWithoutAdminInput | TransaksiTahapLogUpdateManyWithWhereWithoutAdminInput[]
+    update?: TransaksiTahapLogUpdateWithWhereUniqueWithoutActorInput | TransaksiTahapLogUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: TransaksiTahapLogUpdateManyWithWhereWithoutActorInput | TransaksiTahapLogUpdateManyWithWhereWithoutActorInput[]
     deleteMany?: TransaksiTahapLogScalarWhereInput | TransaksiTahapLogScalarWhereInput[]
   }
 
@@ -27806,20 +25888,6 @@ export namespace Prisma {
     deleteMany?: AktivitasScalarWhereInput | AktivitasScalarWhereInput[]
   }
 
-  export type DokumenTransaksiUpdateManyWithoutVerifierNestedInput = {
-    create?: XOR<DokumenTransaksiCreateWithoutVerifierInput, DokumenTransaksiUncheckedCreateWithoutVerifierInput> | DokumenTransaksiCreateWithoutVerifierInput[] | DokumenTransaksiUncheckedCreateWithoutVerifierInput[]
-    connectOrCreate?: DokumenTransaksiCreateOrConnectWithoutVerifierInput | DokumenTransaksiCreateOrConnectWithoutVerifierInput[]
-    upsert?: DokumenTransaksiUpsertWithWhereUniqueWithoutVerifierInput | DokumenTransaksiUpsertWithWhereUniqueWithoutVerifierInput[]
-    createMany?: DokumenTransaksiCreateManyVerifierInputEnvelope
-    set?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    disconnect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    delete?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    connect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    update?: DokumenTransaksiUpdateWithWhereUniqueWithoutVerifierInput | DokumenTransaksiUpdateWithWhereUniqueWithoutVerifierInput[]
-    updateMany?: DokumenTransaksiUpdateManyWithWhereWithoutVerifierInput | DokumenTransaksiUpdateManyWithWhereWithoutVerifierInput[]
-    deleteMany?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
-  }
-
   export type PembayaranUpdateManyWithoutVoiderNestedInput = {
     create?: XOR<PembayaranCreateWithoutVoiderInput, PembayaranUncheckedCreateWithoutVoiderInput> | PembayaranCreateWithoutVoiderInput[] | PembayaranUncheckedCreateWithoutVoiderInput[]
     connectOrCreate?: PembayaranCreateOrConnectWithoutVoiderInput | PembayaranCreateOrConnectWithoutVoiderInput[]
@@ -27834,59 +25902,31 @@ export namespace Prisma {
     deleteMany?: PembayaranScalarWhereInput | PembayaranScalarWhereInput[]
   }
 
-  export type InspeksiBASTUpdateManyWithoutInspekturNestedInput = {
-    create?: XOR<InspeksiBASTCreateWithoutInspekturInput, InspeksiBASTUncheckedCreateWithoutInspekturInput> | InspeksiBASTCreateWithoutInspekturInput[] | InspeksiBASTUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutInspekturInput | InspeksiBASTCreateOrConnectWithoutInspekturInput[]
-    upsert?: InspeksiBASTUpsertWithWhereUniqueWithoutInspekturInput | InspeksiBASTUpsertWithWhereUniqueWithoutInspekturInput[]
-    createMany?: InspeksiBASTCreateManyInspekturInputEnvelope
-    set?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    disconnect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    delete?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    update?: InspeksiBASTUpdateWithWhereUniqueWithoutInspekturInput | InspeksiBASTUpdateWithWhereUniqueWithoutInspekturInput[]
-    updateMany?: InspeksiBASTUpdateManyWithWhereWithoutInspekturInput | InspeksiBASTUpdateManyWithWhereWithoutInspekturInput[]
-    deleteMany?: InspeksiBASTScalarWhereInput | InspeksiBASTScalarWhereInput[]
-  }
-
-  export type InspeksiBASTLogUpdateManyWithoutInspekturNestedInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspekturInput, InspeksiBASTLogUncheckedCreateWithoutInspekturInput> | InspeksiBASTLogCreateWithoutInspekturInput[] | InspeksiBASTLogUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspekturInput | InspeksiBASTLogCreateOrConnectWithoutInspekturInput[]
-    upsert?: InspeksiBASTLogUpsertWithWhereUniqueWithoutInspekturInput | InspeksiBASTLogUpsertWithWhereUniqueWithoutInspekturInput[]
-    createMany?: InspeksiBASTLogCreateManyInspekturInputEnvelope
-    set?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    disconnect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    delete?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    update?: InspeksiBASTLogUpdateWithWhereUniqueWithoutInspekturInput | InspeksiBASTLogUpdateWithWhereUniqueWithoutInspekturInput[]
-    updateMany?: InspeksiBASTLogUpdateManyWithWhereWithoutInspekturInput | InspeksiBASTLogUpdateManyWithWhereWithoutInspekturInput[]
-    deleteMany?: InspeksiBASTLogScalarWhereInput | InspeksiBASTLogScalarWhereInput[]
-  }
-
-  export type PengajuanKPRLogUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<PengajuanKPRLogCreateWithoutAdminInput, PengajuanKPRLogUncheckedCreateWithoutAdminInput> | PengajuanKPRLogCreateWithoutAdminInput[] | PengajuanKPRLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutAdminInput | PengajuanKPRLogCreateOrConnectWithoutAdminInput[]
-    upsert?: PengajuanKPRLogUpsertWithWhereUniqueWithoutAdminInput | PengajuanKPRLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: PengajuanKPRLogCreateManyAdminInputEnvelope
+  export type PengajuanKPRLogUpdateManyWithoutActorNestedInput = {
+    create?: XOR<PengajuanKPRLogCreateWithoutActorInput, PengajuanKPRLogUncheckedCreateWithoutActorInput> | PengajuanKPRLogCreateWithoutActorInput[] | PengajuanKPRLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutActorInput | PengajuanKPRLogCreateOrConnectWithoutActorInput[]
+    upsert?: PengajuanKPRLogUpsertWithWhereUniqueWithoutActorInput | PengajuanKPRLogUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: PengajuanKPRLogCreateManyActorInputEnvelope
     set?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
     disconnect?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
     delete?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
     connect?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
-    update?: PengajuanKPRLogUpdateWithWhereUniqueWithoutAdminInput | PengajuanKPRLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: PengajuanKPRLogUpdateManyWithWhereWithoutAdminInput | PengajuanKPRLogUpdateManyWithWhereWithoutAdminInput[]
+    update?: PengajuanKPRLogUpdateWithWhereUniqueWithoutActorInput | PengajuanKPRLogUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: PengajuanKPRLogUpdateManyWithWhereWithoutActorInput | PengajuanKPRLogUpdateManyWithWhereWithoutActorInput[]
     deleteMany?: PengajuanKPRLogScalarWhereInput | PengajuanKPRLogScalarWhereInput[]
   }
 
-  export type UnitTipeLogUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<UnitTipeLogCreateWithoutAdminInput, UnitTipeLogUncheckedCreateWithoutAdminInput> | UnitTipeLogCreateWithoutAdminInput[] | UnitTipeLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutAdminInput | UnitTipeLogCreateOrConnectWithoutAdminInput[]
-    upsert?: UnitTipeLogUpsertWithWhereUniqueWithoutAdminInput | UnitTipeLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: UnitTipeLogCreateManyAdminInputEnvelope
+  export type UnitTipeLogUpdateManyWithoutActorNestedInput = {
+    create?: XOR<UnitTipeLogCreateWithoutActorInput, UnitTipeLogUncheckedCreateWithoutActorInput> | UnitTipeLogCreateWithoutActorInput[] | UnitTipeLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutActorInput | UnitTipeLogCreateOrConnectWithoutActorInput[]
+    upsert?: UnitTipeLogUpsertWithWhereUniqueWithoutActorInput | UnitTipeLogUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: UnitTipeLogCreateManyActorInputEnvelope
     set?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
     disconnect?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
     delete?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
     connect?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
-    update?: UnitTipeLogUpdateWithWhereUniqueWithoutAdminInput | UnitTipeLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: UnitTipeLogUpdateManyWithWhereWithoutAdminInput | UnitTipeLogUpdateManyWithWhereWithoutAdminInput[]
+    update?: UnitTipeLogUpdateWithWhereUniqueWithoutActorInput | UnitTipeLogUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: UnitTipeLogUpdateManyWithWhereWithoutActorInput | UnitTipeLogUpdateManyWithWhereWithoutActorInput[]
     deleteMany?: UnitTipeLogScalarWhereInput | UnitTipeLogScalarWhereInput[]
   }
 
@@ -27912,17 +25952,17 @@ export namespace Prisma {
     deleteMany?: LeadScalarWhereInput | LeadScalarWhereInput[]
   }
 
-  export type TransaksiUncheckedUpdateManyWithoutMarketingNestedInput = {
-    create?: XOR<TransaksiCreateWithoutMarketingInput, TransaksiUncheckedCreateWithoutMarketingInput> | TransaksiCreateWithoutMarketingInput[] | TransaksiUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: TransaksiCreateOrConnectWithoutMarketingInput | TransaksiCreateOrConnectWithoutMarketingInput[]
-    upsert?: TransaksiUpsertWithWhereUniqueWithoutMarketingInput | TransaksiUpsertWithWhereUniqueWithoutMarketingInput[]
-    createMany?: TransaksiCreateManyMarketingInputEnvelope
+  export type TransaksiUncheckedUpdateManyWithoutPicNestedInput = {
+    create?: XOR<TransaksiCreateWithoutPicInput, TransaksiUncheckedCreateWithoutPicInput> | TransaksiCreateWithoutPicInput[] | TransaksiUncheckedCreateWithoutPicInput[]
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPicInput | TransaksiCreateOrConnectWithoutPicInput[]
+    upsert?: TransaksiUpsertWithWhereUniqueWithoutPicInput | TransaksiUpsertWithWhereUniqueWithoutPicInput[]
+    createMany?: TransaksiCreateManyPicInputEnvelope
     set?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
     disconnect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
     delete?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
     connect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
-    update?: TransaksiUpdateWithWhereUniqueWithoutMarketingInput | TransaksiUpdateWithWhereUniqueWithoutMarketingInput[]
-    updateMany?: TransaksiUpdateManyWithWhereWithoutMarketingInput | TransaksiUpdateManyWithWhereWithoutMarketingInput[]
+    update?: TransaksiUpdateWithWhereUniqueWithoutPicInput | TransaksiUpdateWithWhereUniqueWithoutPicInput[]
+    updateMany?: TransaksiUpdateManyWithWhereWithoutPicInput | TransaksiUpdateManyWithWhereWithoutPicInput[]
     deleteMany?: TransaksiScalarWhereInput | TransaksiScalarWhereInput[]
   }
 
@@ -27940,31 +25980,31 @@ export namespace Prisma {
     deleteMany?: PembayaranScalarWhereInput | PembayaranScalarWhereInput[]
   }
 
-  export type ItjUncheckedUpdateManyWithoutMarketingNestedInput = {
-    create?: XOR<ItjCreateWithoutMarketingInput, ItjUncheckedCreateWithoutMarketingInput> | ItjCreateWithoutMarketingInput[] | ItjUncheckedCreateWithoutMarketingInput[]
-    connectOrCreate?: ItjCreateOrConnectWithoutMarketingInput | ItjCreateOrConnectWithoutMarketingInput[]
-    upsert?: ItjUpsertWithWhereUniqueWithoutMarketingInput | ItjUpsertWithWhereUniqueWithoutMarketingInput[]
-    createMany?: ItjCreateManyMarketingInputEnvelope
+  export type ItjUncheckedUpdateManyWithoutCloserNestedInput = {
+    create?: XOR<ItjCreateWithoutCloserInput, ItjUncheckedCreateWithoutCloserInput> | ItjCreateWithoutCloserInput[] | ItjUncheckedCreateWithoutCloserInput[]
+    connectOrCreate?: ItjCreateOrConnectWithoutCloserInput | ItjCreateOrConnectWithoutCloserInput[]
+    upsert?: ItjUpsertWithWhereUniqueWithoutCloserInput | ItjUpsertWithWhereUniqueWithoutCloserInput[]
+    createMany?: ItjCreateManyCloserInputEnvelope
     set?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
     disconnect?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
     delete?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
     connect?: ItjWhereUniqueInput | ItjWhereUniqueInput[]
-    update?: ItjUpdateWithWhereUniqueWithoutMarketingInput | ItjUpdateWithWhereUniqueWithoutMarketingInput[]
-    updateMany?: ItjUpdateManyWithWhereWithoutMarketingInput | ItjUpdateManyWithWhereWithoutMarketingInput[]
+    update?: ItjUpdateWithWhereUniqueWithoutCloserInput | ItjUpdateWithWhereUniqueWithoutCloserInput[]
+    updateMany?: ItjUpdateManyWithWhereWithoutCloserInput | ItjUpdateManyWithWhereWithoutCloserInput[]
     deleteMany?: ItjScalarWhereInput | ItjScalarWhereInput[]
   }
 
-  export type TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<TransaksiTahapLogCreateWithoutAdminInput, TransaksiTahapLogUncheckedCreateWithoutAdminInput> | TransaksiTahapLogCreateWithoutAdminInput[] | TransaksiTahapLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutAdminInput | TransaksiTahapLogCreateOrConnectWithoutAdminInput[]
-    upsert?: TransaksiTahapLogUpsertWithWhereUniqueWithoutAdminInput | TransaksiTahapLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: TransaksiTahapLogCreateManyAdminInputEnvelope
+  export type TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput = {
+    create?: XOR<TransaksiTahapLogCreateWithoutActorInput, TransaksiTahapLogUncheckedCreateWithoutActorInput> | TransaksiTahapLogCreateWithoutActorInput[] | TransaksiTahapLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: TransaksiTahapLogCreateOrConnectWithoutActorInput | TransaksiTahapLogCreateOrConnectWithoutActorInput[]
+    upsert?: TransaksiTahapLogUpsertWithWhereUniqueWithoutActorInput | TransaksiTahapLogUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: TransaksiTahapLogCreateManyActorInputEnvelope
     set?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
     disconnect?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
     delete?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
     connect?: TransaksiTahapLogWhereUniqueInput | TransaksiTahapLogWhereUniqueInput[]
-    update?: TransaksiTahapLogUpdateWithWhereUniqueWithoutAdminInput | TransaksiTahapLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: TransaksiTahapLogUpdateManyWithWhereWithoutAdminInput | TransaksiTahapLogUpdateManyWithWhereWithoutAdminInput[]
+    update?: TransaksiTahapLogUpdateWithWhereUniqueWithoutActorInput | TransaksiTahapLogUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: TransaksiTahapLogUpdateManyWithWhereWithoutActorInput | TransaksiTahapLogUpdateManyWithWhereWithoutActorInput[]
     deleteMany?: TransaksiTahapLogScalarWhereInput | TransaksiTahapLogScalarWhereInput[]
   }
 
@@ -27982,20 +26022,6 @@ export namespace Prisma {
     deleteMany?: AktivitasScalarWhereInput | AktivitasScalarWhereInput[]
   }
 
-  export type DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput = {
-    create?: XOR<DokumenTransaksiCreateWithoutVerifierInput, DokumenTransaksiUncheckedCreateWithoutVerifierInput> | DokumenTransaksiCreateWithoutVerifierInput[] | DokumenTransaksiUncheckedCreateWithoutVerifierInput[]
-    connectOrCreate?: DokumenTransaksiCreateOrConnectWithoutVerifierInput | DokumenTransaksiCreateOrConnectWithoutVerifierInput[]
-    upsert?: DokumenTransaksiUpsertWithWhereUniqueWithoutVerifierInput | DokumenTransaksiUpsertWithWhereUniqueWithoutVerifierInput[]
-    createMany?: DokumenTransaksiCreateManyVerifierInputEnvelope
-    set?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    disconnect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    delete?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    connect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
-    update?: DokumenTransaksiUpdateWithWhereUniqueWithoutVerifierInput | DokumenTransaksiUpdateWithWhereUniqueWithoutVerifierInput[]
-    updateMany?: DokumenTransaksiUpdateManyWithWhereWithoutVerifierInput | DokumenTransaksiUpdateManyWithWhereWithoutVerifierInput[]
-    deleteMany?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
-  }
-
   export type PembayaranUncheckedUpdateManyWithoutVoiderNestedInput = {
     create?: XOR<PembayaranCreateWithoutVoiderInput, PembayaranUncheckedCreateWithoutVoiderInput> | PembayaranCreateWithoutVoiderInput[] | PembayaranUncheckedCreateWithoutVoiderInput[]
     connectOrCreate?: PembayaranCreateOrConnectWithoutVoiderInput | PembayaranCreateOrConnectWithoutVoiderInput[]
@@ -28010,59 +26036,31 @@ export namespace Prisma {
     deleteMany?: PembayaranScalarWhereInput | PembayaranScalarWhereInput[]
   }
 
-  export type InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput = {
-    create?: XOR<InspeksiBASTCreateWithoutInspekturInput, InspeksiBASTUncheckedCreateWithoutInspekturInput> | InspeksiBASTCreateWithoutInspekturInput[] | InspeksiBASTUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutInspekturInput | InspeksiBASTCreateOrConnectWithoutInspekturInput[]
-    upsert?: InspeksiBASTUpsertWithWhereUniqueWithoutInspekturInput | InspeksiBASTUpsertWithWhereUniqueWithoutInspekturInput[]
-    createMany?: InspeksiBASTCreateManyInspekturInputEnvelope
-    set?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    disconnect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    delete?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    update?: InspeksiBASTUpdateWithWhereUniqueWithoutInspekturInput | InspeksiBASTUpdateWithWhereUniqueWithoutInspekturInput[]
-    updateMany?: InspeksiBASTUpdateManyWithWhereWithoutInspekturInput | InspeksiBASTUpdateManyWithWhereWithoutInspekturInput[]
-    deleteMany?: InspeksiBASTScalarWhereInput | InspeksiBASTScalarWhereInput[]
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspekturInput, InspeksiBASTLogUncheckedCreateWithoutInspekturInput> | InspeksiBASTLogCreateWithoutInspekturInput[] | InspeksiBASTLogUncheckedCreateWithoutInspekturInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspekturInput | InspeksiBASTLogCreateOrConnectWithoutInspekturInput[]
-    upsert?: InspeksiBASTLogUpsertWithWhereUniqueWithoutInspekturInput | InspeksiBASTLogUpsertWithWhereUniqueWithoutInspekturInput[]
-    createMany?: InspeksiBASTLogCreateManyInspekturInputEnvelope
-    set?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    disconnect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    delete?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    update?: InspeksiBASTLogUpdateWithWhereUniqueWithoutInspekturInput | InspeksiBASTLogUpdateWithWhereUniqueWithoutInspekturInput[]
-    updateMany?: InspeksiBASTLogUpdateManyWithWhereWithoutInspekturInput | InspeksiBASTLogUpdateManyWithWhereWithoutInspekturInput[]
-    deleteMany?: InspeksiBASTLogScalarWhereInput | InspeksiBASTLogScalarWhereInput[]
-  }
-
-  export type PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<PengajuanKPRLogCreateWithoutAdminInput, PengajuanKPRLogUncheckedCreateWithoutAdminInput> | PengajuanKPRLogCreateWithoutAdminInput[] | PengajuanKPRLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutAdminInput | PengajuanKPRLogCreateOrConnectWithoutAdminInput[]
-    upsert?: PengajuanKPRLogUpsertWithWhereUniqueWithoutAdminInput | PengajuanKPRLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: PengajuanKPRLogCreateManyAdminInputEnvelope
+  export type PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput = {
+    create?: XOR<PengajuanKPRLogCreateWithoutActorInput, PengajuanKPRLogUncheckedCreateWithoutActorInput> | PengajuanKPRLogCreateWithoutActorInput[] | PengajuanKPRLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutActorInput | PengajuanKPRLogCreateOrConnectWithoutActorInput[]
+    upsert?: PengajuanKPRLogUpsertWithWhereUniqueWithoutActorInput | PengajuanKPRLogUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: PengajuanKPRLogCreateManyActorInputEnvelope
     set?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
     disconnect?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
     delete?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
     connect?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
-    update?: PengajuanKPRLogUpdateWithWhereUniqueWithoutAdminInput | PengajuanKPRLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: PengajuanKPRLogUpdateManyWithWhereWithoutAdminInput | PengajuanKPRLogUpdateManyWithWhereWithoutAdminInput[]
+    update?: PengajuanKPRLogUpdateWithWhereUniqueWithoutActorInput | PengajuanKPRLogUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: PengajuanKPRLogUpdateManyWithWhereWithoutActorInput | PengajuanKPRLogUpdateManyWithWhereWithoutActorInput[]
     deleteMany?: PengajuanKPRLogScalarWhereInput | PengajuanKPRLogScalarWhereInput[]
   }
 
-  export type UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput = {
-    create?: XOR<UnitTipeLogCreateWithoutAdminInput, UnitTipeLogUncheckedCreateWithoutAdminInput> | UnitTipeLogCreateWithoutAdminInput[] | UnitTipeLogUncheckedCreateWithoutAdminInput[]
-    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutAdminInput | UnitTipeLogCreateOrConnectWithoutAdminInput[]
-    upsert?: UnitTipeLogUpsertWithWhereUniqueWithoutAdminInput | UnitTipeLogUpsertWithWhereUniqueWithoutAdminInput[]
-    createMany?: UnitTipeLogCreateManyAdminInputEnvelope
+  export type UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput = {
+    create?: XOR<UnitTipeLogCreateWithoutActorInput, UnitTipeLogUncheckedCreateWithoutActorInput> | UnitTipeLogCreateWithoutActorInput[] | UnitTipeLogUncheckedCreateWithoutActorInput[]
+    connectOrCreate?: UnitTipeLogCreateOrConnectWithoutActorInput | UnitTipeLogCreateOrConnectWithoutActorInput[]
+    upsert?: UnitTipeLogUpsertWithWhereUniqueWithoutActorInput | UnitTipeLogUpsertWithWhereUniqueWithoutActorInput[]
+    createMany?: UnitTipeLogCreateManyActorInputEnvelope
     set?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
     disconnect?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
     delete?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
     connect?: UnitTipeLogWhereUniqueInput | UnitTipeLogWhereUniqueInput[]
-    update?: UnitTipeLogUpdateWithWhereUniqueWithoutAdminInput | UnitTipeLogUpdateWithWhereUniqueWithoutAdminInput[]
-    updateMany?: UnitTipeLogUpdateManyWithWhereWithoutAdminInput | UnitTipeLogUpdateManyWithWhereWithoutAdminInput[]
+    update?: UnitTipeLogUpdateWithWhereUniqueWithoutActorInput | UnitTipeLogUpdateWithWhereUniqueWithoutActorInput[]
+    updateMany?: UnitTipeLogUpdateManyWithWhereWithoutActorInput | UnitTipeLogUpdateManyWithWhereWithoutActorInput[]
     deleteMany?: UnitTipeLogScalarWhereInput | UnitTipeLogScalarWhereInput[]
   }
 
@@ -28110,6 +26108,14 @@ export namespace Prisma {
 
   export type EnumKategoriUnitFieldUpdateOperationsInput = {
     set?: $Enums.KategoriUnit
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type DecimalFieldUpdateOperationsInput = {
@@ -28217,6 +26223,12 @@ export namespace Prisma {
     connect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
   }
 
+  export type TransaksiCreateNestedOneWithoutActive_unitInput = {
+    create?: XOR<TransaksiCreateWithoutActive_unitInput, TransaksiUncheckedCreateWithoutActive_unitInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutActive_unitInput
+    connect?: TransaksiWhereUniqueInput
+  }
+
   export type ItjCreateNestedManyWithoutUnitInput = {
     create?: XOR<ItjCreateWithoutUnitInput, ItjUncheckedCreateWithoutUnitInput> | ItjCreateWithoutUnitInput[] | ItjUncheckedCreateWithoutUnitInput[]
     connectOrCreate?: ItjCreateOrConnectWithoutUnitInput | ItjCreateOrConnectWithoutUnitInput[]
@@ -28236,6 +26248,12 @@ export namespace Prisma {
     connectOrCreate?: TransaksiCreateOrConnectWithoutUnitInput | TransaksiCreateOrConnectWithoutUnitInput[]
     createMany?: TransaksiCreateManyUnitInputEnvelope
     connect?: TransaksiWhereUniqueInput | TransaksiWhereUniqueInput[]
+  }
+
+  export type TransaksiUncheckedCreateNestedOneWithoutActive_unitInput = {
+    create?: XOR<TransaksiCreateWithoutActive_unitInput, TransaksiUncheckedCreateWithoutActive_unitInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutActive_unitInput
+    connect?: TransaksiWhereUniqueInput
   }
 
   export type ItjUncheckedCreateNestedManyWithoutUnitInput = {
@@ -28286,6 +26304,16 @@ export namespace Prisma {
     deleteMany?: TransaksiScalarWhereInput | TransaksiScalarWhereInput[]
   }
 
+  export type TransaksiUpdateOneWithoutActive_unitNestedInput = {
+    create?: XOR<TransaksiCreateWithoutActive_unitInput, TransaksiUncheckedCreateWithoutActive_unitInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutActive_unitInput
+    upsert?: TransaksiUpsertWithoutActive_unitInput
+    disconnect?: TransaksiWhereInput | boolean
+    delete?: TransaksiWhereInput | boolean
+    connect?: TransaksiWhereUniqueInput
+    update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutActive_unitInput, TransaksiUpdateWithoutActive_unitInput>, TransaksiUncheckedUpdateWithoutActive_unitInput>
+  }
+
   export type ItjUpdateManyWithoutUnitNestedInput = {
     create?: XOR<ItjCreateWithoutUnitInput, ItjUncheckedCreateWithoutUnitInput> | ItjCreateWithoutUnitInput[] | ItjUncheckedCreateWithoutUnitInput[]
     connectOrCreate?: ItjCreateOrConnectWithoutUnitInput | ItjCreateOrConnectWithoutUnitInput[]
@@ -28326,6 +26354,16 @@ export namespace Prisma {
     update?: TransaksiUpdateWithWhereUniqueWithoutUnitInput | TransaksiUpdateWithWhereUniqueWithoutUnitInput[]
     updateMany?: TransaksiUpdateManyWithWhereWithoutUnitInput | TransaksiUpdateManyWithWhereWithoutUnitInput[]
     deleteMany?: TransaksiScalarWhereInput | TransaksiScalarWhereInput[]
+  }
+
+  export type TransaksiUncheckedUpdateOneWithoutActive_unitNestedInput = {
+    create?: XOR<TransaksiCreateWithoutActive_unitInput, TransaksiUncheckedCreateWithoutActive_unitInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutActive_unitInput
+    upsert?: TransaksiUpsertWithoutActive_unitInput
+    disconnect?: TransaksiWhereInput | boolean
+    delete?: TransaksiWhereInput | boolean
+    connect?: TransaksiWhereUniqueInput
+    update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutActive_unitInput, TransaksiUpdateWithoutActive_unitInput>, TransaksiUncheckedUpdateWithoutActive_unitInput>
   }
 
   export type ItjUncheckedUpdateManyWithoutUnitNestedInput = {
@@ -28412,14 +26450,6 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutUnit_tipe_logsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUnit_tipe_logsInput, UserUpdateWithoutUnit_tipe_logsInput>, UserUncheckedUpdateWithoutUnit_tipe_logsInput>
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type UserCreateNestedOneWithoutLeadsInput = {
@@ -28770,6 +26800,12 @@ export namespace Prisma {
     connect?: MasterUnitWhereUniqueInput
   }
 
+  export type MasterUnitCreateNestedOneWithoutActive_transaksiInput = {
+    create?: XOR<MasterUnitCreateWithoutActive_transaksiInput, MasterUnitUncheckedCreateWithoutActive_transaksiInput>
+    connectOrCreate?: MasterUnitCreateOrConnectWithoutActive_transaksiInput
+    connect?: MasterUnitWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutTransaksiInput = {
     create?: XOR<UserCreateWithoutTransaksiInput, UserUncheckedCreateWithoutTransaksiInput>
     connectOrCreate?: UserCreateOrConnectWithoutTransaksiInput
@@ -28803,11 +26839,11 @@ export namespace Prisma {
     connect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
   }
 
-  export type InspeksiBASTCreateNestedManyWithoutTransaksiInput = {
-    create?: XOR<InspeksiBASTCreateWithoutTransaksiInput, InspeksiBASTUncheckedCreateWithoutTransaksiInput> | InspeksiBASTCreateWithoutTransaksiInput[] | InspeksiBASTUncheckedCreateWithoutTransaksiInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutTransaksiInput | InspeksiBASTCreateOrConnectWithoutTransaksiInput[]
-    createMany?: InspeksiBASTCreateManyTransaksiInputEnvelope
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
+  export type ChecklistBASTCreateNestedManyWithoutTransaksiInput = {
+    create?: XOR<ChecklistBASTCreateWithoutTransaksiInput, ChecklistBASTUncheckedCreateWithoutTransaksiInput> | ChecklistBASTCreateWithoutTransaksiInput[] | ChecklistBASTUncheckedCreateWithoutTransaksiInput[]
+    connectOrCreate?: ChecklistBASTCreateOrConnectWithoutTransaksiInput | ChecklistBASTCreateOrConnectWithoutTransaksiInput[]
+    createMany?: ChecklistBASTCreateManyTransaksiInputEnvelope
+    connect?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
   }
 
   export type PengajuanKPRCreateNestedManyWithoutTransaksiInput = {
@@ -28815,6 +26851,12 @@ export namespace Prisma {
     connectOrCreate?: PengajuanKPRCreateOrConnectWithoutTransaksiInput | PengajuanKPRCreateOrConnectWithoutTransaksiInput[]
     createMany?: PengajuanKPRCreateManyTransaksiInputEnvelope
     connect?: PengajuanKPRWhereUniqueInput | PengajuanKPRWhereUniqueInput[]
+  }
+
+  export type PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput = {
+    create?: XOR<PengajuanKPRCreateWithoutTransaksi_terpilihInput, PengajuanKPRUncheckedCreateWithoutTransaksi_terpilihInput>
+    connectOrCreate?: PengajuanKPRCreateOrConnectWithoutTransaksi_terpilihInput
+    connect?: PengajuanKPRWhereUniqueInput
   }
 
   export type PembayaranUncheckedCreateNestedManyWithoutTransaksiInput = {
@@ -28838,11 +26880,11 @@ export namespace Prisma {
     connect?: DokumenTransaksiWhereUniqueInput | DokumenTransaksiWhereUniqueInput[]
   }
 
-  export type InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput = {
-    create?: XOR<InspeksiBASTCreateWithoutTransaksiInput, InspeksiBASTUncheckedCreateWithoutTransaksiInput> | InspeksiBASTCreateWithoutTransaksiInput[] | InspeksiBASTUncheckedCreateWithoutTransaksiInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutTransaksiInput | InspeksiBASTCreateOrConnectWithoutTransaksiInput[]
-    createMany?: InspeksiBASTCreateManyTransaksiInputEnvelope
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
+  export type ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput = {
+    create?: XOR<ChecklistBASTCreateWithoutTransaksiInput, ChecklistBASTUncheckedCreateWithoutTransaksiInput> | ChecklistBASTCreateWithoutTransaksiInput[] | ChecklistBASTUncheckedCreateWithoutTransaksiInput[]
+    connectOrCreate?: ChecklistBASTCreateOrConnectWithoutTransaksiInput | ChecklistBASTCreateOrConnectWithoutTransaksiInput[]
+    createMany?: ChecklistBASTCreateManyTransaksiInputEnvelope
+    connect?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
   }
 
   export type PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput = {
@@ -28850,10 +26892,6 @@ export namespace Prisma {
     connectOrCreate?: PengajuanKPRCreateOrConnectWithoutTransaksiInput | PengajuanKPRCreateOrConnectWithoutTransaksiInput[]
     createMany?: PengajuanKPRCreateManyTransaksiInputEnvelope
     connect?: PengajuanKPRWhereUniqueInput | PengajuanKPRWhereUniqueInput[]
-  }
-
-  export type EnumTahapTransaksiFieldUpdateOperationsInput = {
-    set?: $Enums.TahapTransaksi
   }
 
   export type EnumTahapDetailFieldUpdateOperationsInput = {
@@ -28874,6 +26912,16 @@ export namespace Prisma {
     upsert?: MasterUnitUpsertWithoutTransaksiInput
     connect?: MasterUnitWhereUniqueInput
     update?: XOR<XOR<MasterUnitUpdateToOneWithWhereWithoutTransaksiInput, MasterUnitUpdateWithoutTransaksiInput>, MasterUnitUncheckedUpdateWithoutTransaksiInput>
+  }
+
+  export type MasterUnitUpdateOneWithoutActive_transaksiNestedInput = {
+    create?: XOR<MasterUnitCreateWithoutActive_transaksiInput, MasterUnitUncheckedCreateWithoutActive_transaksiInput>
+    connectOrCreate?: MasterUnitCreateOrConnectWithoutActive_transaksiInput
+    upsert?: MasterUnitUpsertWithoutActive_transaksiInput
+    disconnect?: MasterUnitWhereInput | boolean
+    delete?: MasterUnitWhereInput | boolean
+    connect?: MasterUnitWhereUniqueInput
+    update?: XOR<XOR<MasterUnitUpdateToOneWithWhereWithoutActive_transaksiInput, MasterUnitUpdateWithoutActive_transaksiInput>, MasterUnitUncheckedUpdateWithoutActive_transaksiInput>
   }
 
   export type UserUpdateOneRequiredWithoutTransaksiNestedInput = {
@@ -28934,18 +26982,18 @@ export namespace Prisma {
     deleteMany?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
   }
 
-  export type InspeksiBASTUpdateManyWithoutTransaksiNestedInput = {
-    create?: XOR<InspeksiBASTCreateWithoutTransaksiInput, InspeksiBASTUncheckedCreateWithoutTransaksiInput> | InspeksiBASTCreateWithoutTransaksiInput[] | InspeksiBASTUncheckedCreateWithoutTransaksiInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutTransaksiInput | InspeksiBASTCreateOrConnectWithoutTransaksiInput[]
-    upsert?: InspeksiBASTUpsertWithWhereUniqueWithoutTransaksiInput | InspeksiBASTUpsertWithWhereUniqueWithoutTransaksiInput[]
-    createMany?: InspeksiBASTCreateManyTransaksiInputEnvelope
-    set?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    disconnect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    delete?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    update?: InspeksiBASTUpdateWithWhereUniqueWithoutTransaksiInput | InspeksiBASTUpdateWithWhereUniqueWithoutTransaksiInput[]
-    updateMany?: InspeksiBASTUpdateManyWithWhereWithoutTransaksiInput | InspeksiBASTUpdateManyWithWhereWithoutTransaksiInput[]
-    deleteMany?: InspeksiBASTScalarWhereInput | InspeksiBASTScalarWhereInput[]
+  export type ChecklistBASTUpdateManyWithoutTransaksiNestedInput = {
+    create?: XOR<ChecklistBASTCreateWithoutTransaksiInput, ChecklistBASTUncheckedCreateWithoutTransaksiInput> | ChecklistBASTCreateWithoutTransaksiInput[] | ChecklistBASTUncheckedCreateWithoutTransaksiInput[]
+    connectOrCreate?: ChecklistBASTCreateOrConnectWithoutTransaksiInput | ChecklistBASTCreateOrConnectWithoutTransaksiInput[]
+    upsert?: ChecklistBASTUpsertWithWhereUniqueWithoutTransaksiInput | ChecklistBASTUpsertWithWhereUniqueWithoutTransaksiInput[]
+    createMany?: ChecklistBASTCreateManyTransaksiInputEnvelope
+    set?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    disconnect?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    delete?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    connect?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    update?: ChecklistBASTUpdateWithWhereUniqueWithoutTransaksiInput | ChecklistBASTUpdateWithWhereUniqueWithoutTransaksiInput[]
+    updateMany?: ChecklistBASTUpdateManyWithWhereWithoutTransaksiInput | ChecklistBASTUpdateManyWithWhereWithoutTransaksiInput[]
+    deleteMany?: ChecklistBASTScalarWhereInput | ChecklistBASTScalarWhereInput[]
   }
 
   export type PengajuanKPRUpdateManyWithoutTransaksiNestedInput = {
@@ -28960,6 +27008,16 @@ export namespace Prisma {
     update?: PengajuanKPRUpdateWithWhereUniqueWithoutTransaksiInput | PengajuanKPRUpdateWithWhereUniqueWithoutTransaksiInput[]
     updateMany?: PengajuanKPRUpdateManyWithWhereWithoutTransaksiInput | PengajuanKPRUpdateManyWithWhereWithoutTransaksiInput[]
     deleteMany?: PengajuanKPRScalarWhereInput | PengajuanKPRScalarWhereInput[]
+  }
+
+  export type PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput = {
+    create?: XOR<PengajuanKPRCreateWithoutTransaksi_terpilihInput, PengajuanKPRUncheckedCreateWithoutTransaksi_terpilihInput>
+    connectOrCreate?: PengajuanKPRCreateOrConnectWithoutTransaksi_terpilihInput
+    upsert?: PengajuanKPRUpsertWithoutTransaksi_terpilihInput
+    disconnect?: PengajuanKPRWhereInput | boolean
+    delete?: PengajuanKPRWhereInput | boolean
+    connect?: PengajuanKPRWhereUniqueInput
+    update?: XOR<XOR<PengajuanKPRUpdateToOneWithWhereWithoutTransaksi_terpilihInput, PengajuanKPRUpdateWithoutTransaksi_terpilihInput>, PengajuanKPRUncheckedUpdateWithoutTransaksi_terpilihInput>
   }
 
   export type PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput = {
@@ -29004,18 +27062,18 @@ export namespace Prisma {
     deleteMany?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
   }
 
-  export type InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput = {
-    create?: XOR<InspeksiBASTCreateWithoutTransaksiInput, InspeksiBASTUncheckedCreateWithoutTransaksiInput> | InspeksiBASTCreateWithoutTransaksiInput[] | InspeksiBASTUncheckedCreateWithoutTransaksiInput[]
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutTransaksiInput | InspeksiBASTCreateOrConnectWithoutTransaksiInput[]
-    upsert?: InspeksiBASTUpsertWithWhereUniqueWithoutTransaksiInput | InspeksiBASTUpsertWithWhereUniqueWithoutTransaksiInput[]
-    createMany?: InspeksiBASTCreateManyTransaksiInputEnvelope
-    set?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    disconnect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    delete?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    connect?: InspeksiBASTWhereUniqueInput | InspeksiBASTWhereUniqueInput[]
-    update?: InspeksiBASTUpdateWithWhereUniqueWithoutTransaksiInput | InspeksiBASTUpdateWithWhereUniqueWithoutTransaksiInput[]
-    updateMany?: InspeksiBASTUpdateManyWithWhereWithoutTransaksiInput | InspeksiBASTUpdateManyWithWhereWithoutTransaksiInput[]
-    deleteMany?: InspeksiBASTScalarWhereInput | InspeksiBASTScalarWhereInput[]
+  export type ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput = {
+    create?: XOR<ChecklistBASTCreateWithoutTransaksiInput, ChecklistBASTUncheckedCreateWithoutTransaksiInput> | ChecklistBASTCreateWithoutTransaksiInput[] | ChecklistBASTUncheckedCreateWithoutTransaksiInput[]
+    connectOrCreate?: ChecklistBASTCreateOrConnectWithoutTransaksiInput | ChecklistBASTCreateOrConnectWithoutTransaksiInput[]
+    upsert?: ChecklistBASTUpsertWithWhereUniqueWithoutTransaksiInput | ChecklistBASTUpsertWithWhereUniqueWithoutTransaksiInput[]
+    createMany?: ChecklistBASTCreateManyTransaksiInputEnvelope
+    set?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    disconnect?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    delete?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    connect?: ChecklistBASTWhereUniqueInput | ChecklistBASTWhereUniqueInput[]
+    update?: ChecklistBASTUpdateWithWhereUniqueWithoutTransaksiInput | ChecklistBASTUpdateWithWhereUniqueWithoutTransaksiInput[]
+    updateMany?: ChecklistBASTUpdateManyWithWhereWithoutTransaksiInput | ChecklistBASTUpdateManyWithWhereWithoutTransaksiInput[]
+    deleteMany?: ChecklistBASTScalarWhereInput | ChecklistBASTScalarWhereInput[]
   }
 
   export type PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput = {
@@ -29080,6 +27138,12 @@ export namespace Prisma {
     connect?: TransaksiWhereUniqueInput
   }
 
+  export type TransaksiCreateNestedOneWithoutPengajuan_kpr_terpilihInput = {
+    create?: XOR<TransaksiCreateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedCreateWithoutPengajuan_kpr_terpilihInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPengajuan_kpr_terpilihInput
+    connect?: TransaksiWhereUniqueInput
+  }
+
   export type BankCreateNestedOneWithoutPengajuan_kprInput = {
     create?: XOR<BankCreateWithoutPengajuan_kprInput, BankUncheckedCreateWithoutPengajuan_kprInput>
     connectOrCreate?: BankCreateOrConnectWithoutPengajuan_kprInput
@@ -29091,6 +27155,12 @@ export namespace Prisma {
     connectOrCreate?: PengajuanKPRLogCreateOrConnectWithoutPengajuanInput | PengajuanKPRLogCreateOrConnectWithoutPengajuanInput[]
     createMany?: PengajuanKPRLogCreateManyPengajuanInputEnvelope
     connect?: PengajuanKPRLogWhereUniqueInput | PengajuanKPRLogWhereUniqueInput[]
+  }
+
+  export type TransaksiUncheckedCreateNestedOneWithoutPengajuan_kpr_terpilihInput = {
+    create?: XOR<TransaksiCreateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedCreateWithoutPengajuan_kpr_terpilihInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPengajuan_kpr_terpilihInput
+    connect?: TransaksiWhereUniqueInput
   }
 
   export type PengajuanKPRLogUncheckedCreateNestedManyWithoutPengajuanInput = {
@@ -29110,6 +27180,16 @@ export namespace Prisma {
     upsert?: TransaksiUpsertWithoutPengajuan_kprInput
     connect?: TransaksiWhereUniqueInput
     update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutPengajuan_kprInput, TransaksiUpdateWithoutPengajuan_kprInput>, TransaksiUncheckedUpdateWithoutPengajuan_kprInput>
+  }
+
+  export type TransaksiUpdateOneWithoutPengajuan_kpr_terpilihNestedInput = {
+    create?: XOR<TransaksiCreateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedCreateWithoutPengajuan_kpr_terpilihInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPengajuan_kpr_terpilihInput
+    upsert?: TransaksiUpsertWithoutPengajuan_kpr_terpilihInput
+    disconnect?: TransaksiWhereInput | boolean
+    delete?: TransaksiWhereInput | boolean
+    connect?: TransaksiWhereUniqueInput
+    update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutPengajuan_kpr_terpilihInput, TransaksiUpdateWithoutPengajuan_kpr_terpilihInput>, TransaksiUncheckedUpdateWithoutPengajuan_kpr_terpilihInput>
   }
 
   export type BankUpdateOneRequiredWithoutPengajuan_kprNestedInput = {
@@ -29132,6 +27212,16 @@ export namespace Prisma {
     update?: PengajuanKPRLogUpdateWithWhereUniqueWithoutPengajuanInput | PengajuanKPRLogUpdateWithWhereUniqueWithoutPengajuanInput[]
     updateMany?: PengajuanKPRLogUpdateManyWithWhereWithoutPengajuanInput | PengajuanKPRLogUpdateManyWithWhereWithoutPengajuanInput[]
     deleteMany?: PengajuanKPRLogScalarWhereInput | PengajuanKPRLogScalarWhereInput[]
+  }
+
+  export type TransaksiUncheckedUpdateOneWithoutPengajuan_kpr_terpilihNestedInput = {
+    create?: XOR<TransaksiCreateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedCreateWithoutPengajuan_kpr_terpilihInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutPengajuan_kpr_terpilihInput
+    upsert?: TransaksiUpsertWithoutPengajuan_kpr_terpilihInput
+    disconnect?: TransaksiWhereInput | boolean
+    delete?: TransaksiWhereInput | boolean
+    connect?: TransaksiWhereUniqueInput
+    update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutPengajuan_kpr_terpilihInput, TransaksiUpdateWithoutPengajuan_kpr_terpilihInput>, TransaksiUncheckedUpdateWithoutPengajuan_kpr_terpilihInput>
   }
 
   export type PengajuanKPRLogUncheckedUpdateManyWithoutPengajuanNestedInput = {
@@ -29192,10 +27282,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type NullableEnumTahapTransaksiFieldUpdateOperationsInput = {
-    set?: $Enums.TahapTransaksi | null
-  }
-
   export type NullableEnumTahapDetailFieldUpdateOperationsInput = {
     set?: $Enums.TahapDetail | null
   }
@@ -29222,18 +27308,8 @@ export namespace Prisma {
     connect?: TransaksiWhereUniqueInput
   }
 
-  export type UserCreateNestedOneWithoutDokumen_diverifikasiInput = {
-    create?: XOR<UserCreateWithoutDokumen_diverifikasiInput, UserUncheckedCreateWithoutDokumen_diverifikasiInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDokumen_diverifikasiInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type EnumJenisDokumenFieldUpdateOperationsInput = {
     set?: $Enums.JenisDokumen
-  }
-
-  export type EnumKategoriDokumenFieldUpdateOperationsInput = {
-    set?: $Enums.KategoriDokumen
   }
 
   export type EnumStatusDokumenFieldUpdateOperationsInput = {
@@ -29248,126 +27324,26 @@ export namespace Prisma {
     update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutDokumenInput, TransaksiUpdateWithoutDokumenInput>, TransaksiUncheckedUpdateWithoutDokumenInput>
   }
 
-  export type UserUpdateOneWithoutDokumen_diverifikasiNestedInput = {
-    create?: XOR<UserCreateWithoutDokumen_diverifikasiInput, UserUncheckedCreateWithoutDokumen_diverifikasiInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDokumen_diverifikasiInput
-    upsert?: UserUpsertWithoutDokumen_diverifikasiInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDokumen_diverifikasiInput, UserUpdateWithoutDokumen_diverifikasiInput>, UserUncheckedUpdateWithoutDokumen_diverifikasiInput>
-  }
-
-  export type TransaksiCreateNestedOneWithoutInspeksi_bastInput = {
-    create?: XOR<TransaksiCreateWithoutInspeksi_bastInput, TransaksiUncheckedCreateWithoutInspeksi_bastInput>
-    connectOrCreate?: TransaksiCreateOrConnectWithoutInspeksi_bastInput
+  export type TransaksiCreateNestedOneWithoutChecklist_bastInput = {
+    create?: XOR<TransaksiCreateWithoutChecklist_bastInput, TransaksiUncheckedCreateWithoutChecklist_bastInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutChecklist_bastInput
     connect?: TransaksiWhereUniqueInput
-  }
-
-  export type UserCreateNestedOneWithoutInspeksi_bastInput = {
-    create?: XOR<UserCreateWithoutInspeksi_bastInput, UserUncheckedCreateWithoutInspeksi_bastInput>
-    connectOrCreate?: UserCreateOrConnectWithoutInspeksi_bastInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type InspeksiBASTLogCreateNestedManyWithoutInspeksi_bastInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput> | InspeksiBASTLogCreateWithoutInspeksi_bastInput[] | InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput | InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput[]
-    createMany?: InspeksiBASTLogCreateManyInspeksi_bastInputEnvelope
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-  }
-
-  export type InspeksiBASTLogUncheckedCreateNestedManyWithoutInspeksi_bastInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput> | InspeksiBASTLogCreateWithoutInspeksi_bastInput[] | InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput | InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput[]
-    createMany?: InspeksiBASTLogCreateManyInspeksi_bastInputEnvelope
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
   }
 
   export type EnumItemBASTFieldUpdateOperationsInput = {
     set?: $Enums.ItemBAST
   }
 
-  export type EnumStatusInspeksiFieldUpdateOperationsInput = {
-    set?: $Enums.StatusInspeksi
+  export type EnumStatusBASTFieldUpdateOperationsInput = {
+    set?: $Enums.StatusBAST
   }
 
-  export type TransaksiUpdateOneRequiredWithoutInspeksi_bastNestedInput = {
-    create?: XOR<TransaksiCreateWithoutInspeksi_bastInput, TransaksiUncheckedCreateWithoutInspeksi_bastInput>
-    connectOrCreate?: TransaksiCreateOrConnectWithoutInspeksi_bastInput
-    upsert?: TransaksiUpsertWithoutInspeksi_bastInput
+  export type TransaksiUpdateOneRequiredWithoutChecklist_bastNestedInput = {
+    create?: XOR<TransaksiCreateWithoutChecklist_bastInput, TransaksiUncheckedCreateWithoutChecklist_bastInput>
+    connectOrCreate?: TransaksiCreateOrConnectWithoutChecklist_bastInput
+    upsert?: TransaksiUpsertWithoutChecklist_bastInput
     connect?: TransaksiWhereUniqueInput
-    update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutInspeksi_bastInput, TransaksiUpdateWithoutInspeksi_bastInput>, TransaksiUncheckedUpdateWithoutInspeksi_bastInput>
-  }
-
-  export type UserUpdateOneWithoutInspeksi_bastNestedInput = {
-    create?: XOR<UserCreateWithoutInspeksi_bastInput, UserUncheckedCreateWithoutInspeksi_bastInput>
-    connectOrCreate?: UserCreateOrConnectWithoutInspeksi_bastInput
-    upsert?: UserUpsertWithoutInspeksi_bastInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInspeksi_bastInput, UserUpdateWithoutInspeksi_bastInput>, UserUncheckedUpdateWithoutInspeksi_bastInput>
-  }
-
-  export type InspeksiBASTLogUpdateManyWithoutInspeksi_bastNestedInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput> | InspeksiBASTLogCreateWithoutInspeksi_bastInput[] | InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput | InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput[]
-    upsert?: InspeksiBASTLogUpsertWithWhereUniqueWithoutInspeksi_bastInput | InspeksiBASTLogUpsertWithWhereUniqueWithoutInspeksi_bastInput[]
-    createMany?: InspeksiBASTLogCreateManyInspeksi_bastInputEnvelope
-    set?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    disconnect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    delete?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    update?: InspeksiBASTLogUpdateWithWhereUniqueWithoutInspeksi_bastInput | InspeksiBASTLogUpdateWithWhereUniqueWithoutInspeksi_bastInput[]
-    updateMany?: InspeksiBASTLogUpdateManyWithWhereWithoutInspeksi_bastInput | InspeksiBASTLogUpdateManyWithWhereWithoutInspeksi_bastInput[]
-    deleteMany?: InspeksiBASTLogScalarWhereInput | InspeksiBASTLogScalarWhereInput[]
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateManyWithoutInspeksi_bastNestedInput = {
-    create?: XOR<InspeksiBASTLogCreateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput> | InspeksiBASTLogCreateWithoutInspeksi_bastInput[] | InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput[]
-    connectOrCreate?: InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput | InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput[]
-    upsert?: InspeksiBASTLogUpsertWithWhereUniqueWithoutInspeksi_bastInput | InspeksiBASTLogUpsertWithWhereUniqueWithoutInspeksi_bastInput[]
-    createMany?: InspeksiBASTLogCreateManyInspeksi_bastInputEnvelope
-    set?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    disconnect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    delete?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    connect?: InspeksiBASTLogWhereUniqueInput | InspeksiBASTLogWhereUniqueInput[]
-    update?: InspeksiBASTLogUpdateWithWhereUniqueWithoutInspeksi_bastInput | InspeksiBASTLogUpdateWithWhereUniqueWithoutInspeksi_bastInput[]
-    updateMany?: InspeksiBASTLogUpdateManyWithWhereWithoutInspeksi_bastInput | InspeksiBASTLogUpdateManyWithWhereWithoutInspeksi_bastInput[]
-    deleteMany?: InspeksiBASTLogScalarWhereInput | InspeksiBASTLogScalarWhereInput[]
-  }
-
-  export type InspeksiBASTCreateNestedOneWithoutLogsInput = {
-    create?: XOR<InspeksiBASTCreateWithoutLogsInput, InspeksiBASTUncheckedCreateWithoutLogsInput>
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutLogsInput
-    connect?: InspeksiBASTWhereUniqueInput
-  }
-
-  export type UserCreateNestedOneWithoutInspeksi_bast_logsInput = {
-    create?: XOR<UserCreateWithoutInspeksi_bast_logsInput, UserUncheckedCreateWithoutInspeksi_bast_logsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutInspeksi_bast_logsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type NullableEnumStatusInspeksiFieldUpdateOperationsInput = {
-    set?: $Enums.StatusInspeksi | null
-  }
-
-  export type InspeksiBASTUpdateOneRequiredWithoutLogsNestedInput = {
-    create?: XOR<InspeksiBASTCreateWithoutLogsInput, InspeksiBASTUncheckedCreateWithoutLogsInput>
-    connectOrCreate?: InspeksiBASTCreateOrConnectWithoutLogsInput
-    upsert?: InspeksiBASTUpsertWithoutLogsInput
-    connect?: InspeksiBASTWhereUniqueInput
-    update?: XOR<XOR<InspeksiBASTUpdateToOneWithWhereWithoutLogsInput, InspeksiBASTUpdateWithoutLogsInput>, InspeksiBASTUncheckedUpdateWithoutLogsInput>
-  }
-
-  export type UserUpdateOneRequiredWithoutInspeksi_bast_logsNestedInput = {
-    create?: XOR<UserCreateWithoutInspeksi_bast_logsInput, UserUncheckedCreateWithoutInspeksi_bast_logsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutInspeksi_bast_logsInput
-    upsert?: UserUpsertWithoutInspeksi_bast_logsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInspeksi_bast_logsInput, UserUpdateWithoutInspeksi_bast_logsInput>, UserUncheckedUpdateWithoutInspeksi_bast_logsInput>
+    update?: XOR<XOR<TransaksiUpdateToOneWithWhereWithoutChecklist_bastInput, TransaksiUpdateWithoutChecklist_bastInput>, TransaksiUncheckedUpdateWithoutChecklist_bastInput>
   }
 
   export type TransaksiCreateNestedOneWithoutPembayaranInput = {
@@ -29555,6 +27531,17 @@ export namespace Prisma {
     not?: NestedEnumKategoriUnitFilter<$PrismaModel> | $Enums.KategoriUnit
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedDecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[]
@@ -29574,6 +27561,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumKategoriUnitFilter<$PrismaModel>
     _max?: NestedEnumKategoriUnitFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | null
+    notIn?: number[] | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -29634,44 +27648,6 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | null
-    notIn?: number[] | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedStringNullableFilter<$PrismaModel = never> = {
@@ -29834,28 +27810,11 @@ export namespace Prisma {
     _max?: NestedEnumStatusPekerjaanNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumTahapTransaksiFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel>
-    in?: $Enums.TahapTransaksi[]
-    notIn?: $Enums.TahapTransaksi[]
-    not?: NestedEnumTahapTransaksiFilter<$PrismaModel> | $Enums.TahapTransaksi
-  }
-
   export type NestedEnumTahapDetailFilter<$PrismaModel = never> = {
     equals?: $Enums.TahapDetail | EnumTahapDetailFieldRefInput<$PrismaModel>
     in?: $Enums.TahapDetail[]
     notIn?: $Enums.TahapDetail[]
     not?: NestedEnumTahapDetailFilter<$PrismaModel> | $Enums.TahapDetail
-  }
-
-  export type NestedEnumTahapTransaksiWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel>
-    in?: $Enums.TahapTransaksi[]
-    notIn?: $Enums.TahapTransaksi[]
-    not?: NestedEnumTahapTransaksiWithAggregatesFilter<$PrismaModel> | $Enums.TahapTransaksi
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTahapTransaksiFilter<$PrismaModel>
-    _max?: NestedEnumTahapTransaksiFilter<$PrismaModel>
   }
 
   export type NestedEnumTahapDetailWithAggregatesFilter<$PrismaModel = never> = {
@@ -29902,28 +27861,11 @@ export namespace Prisma {
     _max?: NestedEnumStatusPengajuanKPRNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumTahapTransaksiNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.TahapTransaksi[] | null
-    notIn?: $Enums.TahapTransaksi[] | null
-    not?: NestedEnumTahapTransaksiNullableFilter<$PrismaModel> | $Enums.TahapTransaksi | null
-  }
-
   export type NestedEnumTahapDetailNullableFilter<$PrismaModel = never> = {
     equals?: $Enums.TahapDetail | EnumTahapDetailFieldRefInput<$PrismaModel> | null
     in?: $Enums.TahapDetail[] | null
     notIn?: $Enums.TahapDetail[] | null
     not?: NestedEnumTahapDetailNullableFilter<$PrismaModel> | $Enums.TahapDetail | null
-  }
-
-  export type NestedEnumTahapTransaksiNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TahapTransaksi | EnumTahapTransaksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.TahapTransaksi[] | null
-    notIn?: $Enums.TahapTransaksi[] | null
-    not?: NestedEnumTahapTransaksiNullableWithAggregatesFilter<$PrismaModel> | $Enums.TahapTransaksi | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumTahapTransaksiNullableFilter<$PrismaModel>
-    _max?: NestedEnumTahapTransaksiNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumTahapDetailNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -29943,13 +27885,6 @@ export namespace Prisma {
     not?: NestedEnumJenisDokumenFilter<$PrismaModel> | $Enums.JenisDokumen
   }
 
-  export type NestedEnumKategoriDokumenFilter<$PrismaModel = never> = {
-    equals?: $Enums.KategoriDokumen | EnumKategoriDokumenFieldRefInput<$PrismaModel>
-    in?: $Enums.KategoriDokumen[]
-    notIn?: $Enums.KategoriDokumen[]
-    not?: NestedEnumKategoriDokumenFilter<$PrismaModel> | $Enums.KategoriDokumen
-  }
-
   export type NestedEnumStatusDokumenFilter<$PrismaModel = never> = {
     equals?: $Enums.StatusDokumen | EnumStatusDokumenFieldRefInput<$PrismaModel>
     in?: $Enums.StatusDokumen[]
@@ -29965,16 +27900,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumJenisDokumenFilter<$PrismaModel>
     _max?: NestedEnumJenisDokumenFilter<$PrismaModel>
-  }
-
-  export type NestedEnumKategoriDokumenWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.KategoriDokumen | EnumKategoriDokumenFieldRefInput<$PrismaModel>
-    in?: $Enums.KategoriDokumen[]
-    notIn?: $Enums.KategoriDokumen[]
-    not?: NestedEnumKategoriDokumenWithAggregatesFilter<$PrismaModel> | $Enums.KategoriDokumen
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumKategoriDokumenFilter<$PrismaModel>
-    _max?: NestedEnumKategoriDokumenFilter<$PrismaModel>
   }
 
   export type NestedEnumStatusDokumenWithAggregatesFilter<$PrismaModel = never> = {
@@ -29994,11 +27919,11 @@ export namespace Prisma {
     not?: NestedEnumItemBASTFilter<$PrismaModel> | $Enums.ItemBAST
   }
 
-  export type NestedEnumStatusInspeksiFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel>
-    in?: $Enums.StatusInspeksi[]
-    notIn?: $Enums.StatusInspeksi[]
-    not?: NestedEnumStatusInspeksiFilter<$PrismaModel> | $Enums.StatusInspeksi
+  export type NestedEnumStatusBASTFilter<$PrismaModel = never> = {
+    equals?: $Enums.StatusBAST | EnumStatusBASTFieldRefInput<$PrismaModel>
+    in?: $Enums.StatusBAST[]
+    notIn?: $Enums.StatusBAST[]
+    not?: NestedEnumStatusBASTFilter<$PrismaModel> | $Enums.StatusBAST
   }
 
   export type NestedEnumItemBASTWithAggregatesFilter<$PrismaModel = never> = {
@@ -30011,31 +27936,14 @@ export namespace Prisma {
     _max?: NestedEnumItemBASTFilter<$PrismaModel>
   }
 
-  export type NestedEnumStatusInspeksiWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel>
-    in?: $Enums.StatusInspeksi[]
-    notIn?: $Enums.StatusInspeksi[]
-    not?: NestedEnumStatusInspeksiWithAggregatesFilter<$PrismaModel> | $Enums.StatusInspeksi
+  export type NestedEnumStatusBASTWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StatusBAST | EnumStatusBASTFieldRefInput<$PrismaModel>
+    in?: $Enums.StatusBAST[]
+    notIn?: $Enums.StatusBAST[]
+    not?: NestedEnumStatusBASTWithAggregatesFilter<$PrismaModel> | $Enums.StatusBAST
     _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumStatusInspeksiFilter<$PrismaModel>
-    _max?: NestedEnumStatusInspeksiFilter<$PrismaModel>
-  }
-
-  export type NestedEnumStatusInspeksiNullableFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.StatusInspeksi[] | null
-    notIn?: $Enums.StatusInspeksi[] | null
-    not?: NestedEnumStatusInspeksiNullableFilter<$PrismaModel> | $Enums.StatusInspeksi | null
-  }
-
-  export type NestedEnumStatusInspeksiNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.StatusInspeksi | EnumStatusInspeksiFieldRefInput<$PrismaModel> | null
-    in?: $Enums.StatusInspeksi[] | null
-    notIn?: $Enums.StatusInspeksi[] | null
-    not?: NestedEnumStatusInspeksiNullableWithAggregatesFilter<$PrismaModel> | $Enums.StatusInspeksi | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedEnumStatusInspeksiNullableFilter<$PrismaModel>
-    _max?: NestedEnumStatusInspeksiNullableFilter<$PrismaModel>
+    _min?: NestedEnumStatusBASTFilter<$PrismaModel>
+    _max?: NestedEnumStatusBASTFilter<$PrismaModel>
   }
 
   export type NestedEnumJenisBayarFilter<$PrismaModel = never> = {
@@ -30119,37 +28027,39 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type TransaksiCreateWithoutMarketingInput = {
+  export type TransaksiCreateWithoutPicInput = {
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
-  export type TransaksiUncheckedCreateWithoutMarketingInput = {
+  export type TransaksiUncheckedCreateWithoutPicInput = {
     id?: number
     customer_id: number
     unit_id: number
@@ -30159,34 +28069,36 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
-  export type TransaksiCreateOrConnectWithoutMarketingInput = {
+  export type TransaksiCreateOrConnectWithoutPicInput = {
     where: TransaksiWhereUniqueInput
-    create: XOR<TransaksiCreateWithoutMarketingInput, TransaksiUncheckedCreateWithoutMarketingInput>
+    create: XOR<TransaksiCreateWithoutPicInput, TransaksiUncheckedCreateWithoutPicInput>
   }
 
-  export type TransaksiCreateManyMarketingInputEnvelope = {
-    data: TransaksiCreateManyMarketingInput | TransaksiCreateManyMarketingInput[]
+  export type TransaksiCreateManyPicInputEnvelope = {
+    data: TransaksiCreateManyPicInput | TransaksiCreateManyPicInput[]
     skipDuplicates?: boolean
   }
 
@@ -30233,14 +28145,10 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ItjCreateWithoutMarketingInput = {
+  export type ItjCreateWithoutCloserInput = {
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -30251,17 +28159,13 @@ export namespace Prisma {
     transaksi?: TransaksiCreateNestedOneWithoutItjInput
   }
 
-  export type ItjUncheckedCreateWithoutMarketingInput = {
+  export type ItjUncheckedCreateWithoutCloserInput = {
     id?: number
     lead_id: number
     unit_id: number
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -30270,19 +28174,17 @@ export namespace Prisma {
     transaksi?: TransaksiUncheckedCreateNestedOneWithoutItjInput
   }
 
-  export type ItjCreateOrConnectWithoutMarketingInput = {
+  export type ItjCreateOrConnectWithoutCloserInput = {
     where: ItjWhereUniqueInput
-    create: XOR<ItjCreateWithoutMarketingInput, ItjUncheckedCreateWithoutMarketingInput>
+    create: XOR<ItjCreateWithoutCloserInput, ItjUncheckedCreateWithoutCloserInput>
   }
 
-  export type ItjCreateManyMarketingInputEnvelope = {
-    data: ItjCreateManyMarketingInput | ItjCreateManyMarketingInput[]
+  export type ItjCreateManyCloserInputEnvelope = {
+    data: ItjCreateManyCloserInput | ItjCreateManyCloserInput[]
     skipDuplicates?: boolean
   }
 
-  export type TransaksiTahapLogCreateWithoutAdminInput = {
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
+  export type TransaksiTahapLogCreateWithoutActorInput = {
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
     catatan?: string | null
@@ -30290,24 +28192,22 @@ export namespace Prisma {
     transaksi: TransaksiCreateNestedOneWithoutLogsInput
   }
 
-  export type TransaksiTahapLogUncheckedCreateWithoutAdminInput = {
+  export type TransaksiTahapLogUncheckedCreateWithoutActorInput = {
     id?: number
     transaksi_id: number
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
     catatan?: string | null
     created_at?: Date | string
   }
 
-  export type TransaksiTahapLogCreateOrConnectWithoutAdminInput = {
+  export type TransaksiTahapLogCreateOrConnectWithoutActorInput = {
     where: TransaksiTahapLogWhereUniqueInput
-    create: XOR<TransaksiTahapLogCreateWithoutAdminInput, TransaksiTahapLogUncheckedCreateWithoutAdminInput>
+    create: XOR<TransaksiTahapLogCreateWithoutActorInput, TransaksiTahapLogUncheckedCreateWithoutActorInput>
   }
 
-  export type TransaksiTahapLogCreateManyAdminInputEnvelope = {
-    data: TransaksiTahapLogCreateManyAdminInput | TransaksiTahapLogCreateManyAdminInput[]
+  export type TransaksiTahapLogCreateManyActorInputEnvelope = {
+    data: TransaksiTahapLogCreateManyActorInput | TransaksiTahapLogCreateManyActorInput[]
     skipDuplicates?: boolean
   }
 
@@ -30337,41 +28237,6 @@ export namespace Prisma {
 
   export type AktivitasCreateManyUserInputEnvelope = {
     data: AktivitasCreateManyUserInput | AktivitasCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type DokumenTransaksiCreateWithoutVerifierInput = {
-    jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
-    status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-    transaksi: TransaksiCreateNestedOneWithoutDokumenInput
-  }
-
-  export type DokumenTransaksiUncheckedCreateWithoutVerifierInput = {
-    id?: number
-    transaksi_id: number
-    jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
-    status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
-  }
-
-  export type DokumenTransaksiCreateOrConnectWithoutVerifierInput = {
-    where: DokumenTransaksiWhereUniqueInput
-    create: XOR<DokumenTransaksiCreateWithoutVerifierInput, DokumenTransaksiUncheckedCreateWithoutVerifierInput>
-  }
-
-  export type DokumenTransaksiCreateManyVerifierInputEnvelope = {
-    data: DokumenTransaksiCreateManyVerifierInput | DokumenTransaksiCreateManyVerifierInput[]
     skipDuplicates?: boolean
   }
 
@@ -30418,63 +28283,7 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type InspeksiBASTCreateWithoutInspekturInput = {
-    item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    diperiksa_at?: Date | string | null
-    transaksi: TransaksiCreateNestedOneWithoutInspeksi_bastInput
-    logs?: InspeksiBASTLogCreateNestedManyWithoutInspeksi_bastInput
-  }
-
-  export type InspeksiBASTUncheckedCreateWithoutInspekturInput = {
-    id?: number
-    transaksi_id: number
-    item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    diperiksa_at?: Date | string | null
-    logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspeksi_bastInput
-  }
-
-  export type InspeksiBASTCreateOrConnectWithoutInspekturInput = {
-    where: InspeksiBASTWhereUniqueInput
-    create: XOR<InspeksiBASTCreateWithoutInspekturInput, InspeksiBASTUncheckedCreateWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTCreateManyInspekturInputEnvelope = {
-    data: InspeksiBASTCreateManyInspekturInput | InspeksiBASTCreateManyInspekturInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type InspeksiBASTLogCreateWithoutInspekturInput = {
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    created_at?: Date | string
-    inspeksi_bast: InspeksiBASTCreateNestedOneWithoutLogsInput
-  }
-
-  export type InspeksiBASTLogUncheckedCreateWithoutInspekturInput = {
-    id?: number
-    inspeksi_bast_id: number
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    created_at?: Date | string
-  }
-
-  export type InspeksiBASTLogCreateOrConnectWithoutInspekturInput = {
-    where: InspeksiBASTLogWhereUniqueInput
-    create: XOR<InspeksiBASTLogCreateWithoutInspekturInput, InspeksiBASTLogUncheckedCreateWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTLogCreateManyInspekturInputEnvelope = {
-    data: InspeksiBASTLogCreateManyInspekturInput | InspeksiBASTLogCreateManyInspekturInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type PengajuanKPRLogCreateWithoutAdminInput = {
+  export type PengajuanKPRLogCreateWithoutActorInput = {
     status_sebelum?: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR
     catatan?: string | null
@@ -30482,7 +28291,7 @@ export namespace Prisma {
     pengajuan: PengajuanKPRCreateNestedOneWithoutLogsInput
   }
 
-  export type PengajuanKPRLogUncheckedCreateWithoutAdminInput = {
+  export type PengajuanKPRLogUncheckedCreateWithoutActorInput = {
     id?: number
     pengajuan_id: number
     status_sebelum?: $Enums.StatusPengajuanKPR | null
@@ -30491,17 +28300,17 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
-  export type PengajuanKPRLogCreateOrConnectWithoutAdminInput = {
+  export type PengajuanKPRLogCreateOrConnectWithoutActorInput = {
     where: PengajuanKPRLogWhereUniqueInput
-    create: XOR<PengajuanKPRLogCreateWithoutAdminInput, PengajuanKPRLogUncheckedCreateWithoutAdminInput>
+    create: XOR<PengajuanKPRLogCreateWithoutActorInput, PengajuanKPRLogUncheckedCreateWithoutActorInput>
   }
 
-  export type PengajuanKPRLogCreateManyAdminInputEnvelope = {
-    data: PengajuanKPRLogCreateManyAdminInput | PengajuanKPRLogCreateManyAdminInput[]
+  export type PengajuanKPRLogCreateManyActorInputEnvelope = {
+    data: PengajuanKPRLogCreateManyActorInput | PengajuanKPRLogCreateManyActorInput[]
     skipDuplicates?: boolean
   }
 
-  export type UnitTipeLogCreateWithoutAdminInput = {
+  export type UnitTipeLogCreateWithoutActorInput = {
     blok: string
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
@@ -30512,7 +28321,7 @@ export namespace Prisma {
     tipe_baru: MasterTipeCreateNestedOneWithoutUnit_tipe_baruInput
   }
 
-  export type UnitTipeLogUncheckedCreateWithoutAdminInput = {
+  export type UnitTipeLogUncheckedCreateWithoutActorInput = {
     id?: number
     unit_id?: number | null
     blok: string
@@ -30524,13 +28333,13 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
-  export type UnitTipeLogCreateOrConnectWithoutAdminInput = {
+  export type UnitTipeLogCreateOrConnectWithoutActorInput = {
     where: UnitTipeLogWhereUniqueInput
-    create: XOR<UnitTipeLogCreateWithoutAdminInput, UnitTipeLogUncheckedCreateWithoutAdminInput>
+    create: XOR<UnitTipeLogCreateWithoutActorInput, UnitTipeLogUncheckedCreateWithoutActorInput>
   }
 
-  export type UnitTipeLogCreateManyAdminInputEnvelope = {
-    data: UnitTipeLogCreateManyAdminInput | UnitTipeLogCreateManyAdminInput[]
+  export type UnitTipeLogCreateManyActorInputEnvelope = {
+    data: UnitTipeLogCreateManyActorInput | UnitTipeLogCreateManyActorInput[]
     skipDuplicates?: boolean
   }
 
@@ -30571,20 +28380,20 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Lead"> | Date | string
   }
 
-  export type TransaksiUpsertWithWhereUniqueWithoutMarketingInput = {
+  export type TransaksiUpsertWithWhereUniqueWithoutPicInput = {
     where: TransaksiWhereUniqueInput
-    update: XOR<TransaksiUpdateWithoutMarketingInput, TransaksiUncheckedUpdateWithoutMarketingInput>
-    create: XOR<TransaksiCreateWithoutMarketingInput, TransaksiUncheckedCreateWithoutMarketingInput>
+    update: XOR<TransaksiUpdateWithoutPicInput, TransaksiUncheckedUpdateWithoutPicInput>
+    create: XOR<TransaksiCreateWithoutPicInput, TransaksiUncheckedCreateWithoutPicInput>
   }
 
-  export type TransaksiUpdateWithWhereUniqueWithoutMarketingInput = {
+  export type TransaksiUpdateWithWhereUniqueWithoutPicInput = {
     where: TransaksiWhereUniqueInput
-    data: XOR<TransaksiUpdateWithoutMarketingInput, TransaksiUncheckedUpdateWithoutMarketingInput>
+    data: XOR<TransaksiUpdateWithoutPicInput, TransaksiUncheckedUpdateWithoutPicInput>
   }
 
-  export type TransaksiUpdateManyWithWhereWithoutMarketingInput = {
+  export type TransaksiUpdateManyWithWhereWithoutPicInput = {
     where: TransaksiScalarWhereInput
-    data: XOR<TransaksiUpdateManyMutationInput, TransaksiUncheckedUpdateManyWithoutMarketingInput>
+    data: XOR<TransaksiUpdateManyMutationInput, TransaksiUncheckedUpdateManyWithoutPicInput>
   }
 
   export type TransaksiScalarWhereInput = {
@@ -30594,25 +28403,27 @@ export namespace Prisma {
     id?: IntFilter<"Transaksi"> | number
     customer_id?: IntFilter<"Transaksi"> | number
     unit_id?: IntFilter<"Transaksi"> | number
-    marketing_id?: IntFilter<"Transaksi"> | number
+    pic_id?: IntFilter<"Transaksi"> | number
     itj_id?: IntFilter<"Transaksi"> | number
     metode_bayar?: EnumMetodeBayarFilter<"Transaksi"> | $Enums.MetodeBayar
     harga_deal?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFilter<"Transaksi"> | Decimal | DecimalJsLike | number | string
     tenor_bulan?: IntNullableFilter<"Transaksi"> | number | null
-    status_transaksi?: EnumTahapTransaksiFilter<"Transaksi"> | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFilter<"Transaksi"> | $Enums.TahapDetail
-    nama_bank?: StringNullableFilter<"Transaksi"> | string | null
     nama_notaris?: StringNullableFilter<"Transaksi"> | string | null
+    rencana_akad_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
+    rencana_bast_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     tgl_akad?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     lunas_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     tgl_bast?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
-    closing_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
-    closed_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
+    closing_at?: DateTimeFilter<"Transaksi"> | Date | string
     cancelled_at?: DateTimeNullableFilter<"Transaksi"> | Date | string | null
     alasan_batal?: StringNullableFilter<"Transaksi"> | string | null
     catatan_admin?: StringNullableFilter<"Transaksi"> | string | null
+    version?: IntFilter<"Transaksi"> | number
+    active_unit_id?: IntNullableFilter<"Transaksi"> | number | null
+    pengajuan_kpr_terpilih_id?: IntNullableFilter<"Transaksi"> | number | null
     created_at?: DateTimeFilter<"Transaksi"> | Date | string
     updated_at?: DateTimeFilter<"Transaksi"> | Date | string
   }
@@ -30654,20 +28465,20 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Pembayaran"> | Date | string
   }
 
-  export type ItjUpsertWithWhereUniqueWithoutMarketingInput = {
+  export type ItjUpsertWithWhereUniqueWithoutCloserInput = {
     where: ItjWhereUniqueInput
-    update: XOR<ItjUpdateWithoutMarketingInput, ItjUncheckedUpdateWithoutMarketingInput>
-    create: XOR<ItjCreateWithoutMarketingInput, ItjUncheckedCreateWithoutMarketingInput>
+    update: XOR<ItjUpdateWithoutCloserInput, ItjUncheckedUpdateWithoutCloserInput>
+    create: XOR<ItjCreateWithoutCloserInput, ItjUncheckedCreateWithoutCloserInput>
   }
 
-  export type ItjUpdateWithWhereUniqueWithoutMarketingInput = {
+  export type ItjUpdateWithWhereUniqueWithoutCloserInput = {
     where: ItjWhereUniqueInput
-    data: XOR<ItjUpdateWithoutMarketingInput, ItjUncheckedUpdateWithoutMarketingInput>
+    data: XOR<ItjUpdateWithoutCloserInput, ItjUncheckedUpdateWithoutCloserInput>
   }
 
-  export type ItjUpdateManyWithWhereWithoutMarketingInput = {
+  export type ItjUpdateManyWithWhereWithoutCloserInput = {
     where: ItjScalarWhereInput
-    data: XOR<ItjUpdateManyMutationInput, ItjUncheckedUpdateManyWithoutMarketingInput>
+    data: XOR<ItjUpdateManyMutationInput, ItjUncheckedUpdateManyWithoutCloserInput>
   }
 
   export type ItjScalarWhereInput = {
@@ -30677,14 +28488,10 @@ export namespace Prisma {
     id?: IntFilter<"Itj"> | number
     lead_id?: IntFilter<"Itj"> | number
     unit_id?: IntFilter<"Itj"> | number
-    marketing_id?: IntNullableFilter<"Itj"> | number | null
+    closer_id?: IntNullableFilter<"Itj"> | number | null
     nik?: StringFilter<"Itj"> | string
     nama_ktp?: StringFilter<"Itj"> | string
     nominal?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFilter<"Itj"> | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFilter<"Itj"> | $Enums.MetodeBayar
     tenor?: IntNullableFilter<"Itj"> | number | null
     diajukan_at?: DateTimeFilter<"Itj"> | Date | string
@@ -30692,20 +28499,20 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"Itj"> | Date | string
   }
 
-  export type TransaksiTahapLogUpsertWithWhereUniqueWithoutAdminInput = {
+  export type TransaksiTahapLogUpsertWithWhereUniqueWithoutActorInput = {
     where: TransaksiTahapLogWhereUniqueInput
-    update: XOR<TransaksiTahapLogUpdateWithoutAdminInput, TransaksiTahapLogUncheckedUpdateWithoutAdminInput>
-    create: XOR<TransaksiTahapLogCreateWithoutAdminInput, TransaksiTahapLogUncheckedCreateWithoutAdminInput>
+    update: XOR<TransaksiTahapLogUpdateWithoutActorInput, TransaksiTahapLogUncheckedUpdateWithoutActorInput>
+    create: XOR<TransaksiTahapLogCreateWithoutActorInput, TransaksiTahapLogUncheckedCreateWithoutActorInput>
   }
 
-  export type TransaksiTahapLogUpdateWithWhereUniqueWithoutAdminInput = {
+  export type TransaksiTahapLogUpdateWithWhereUniqueWithoutActorInput = {
     where: TransaksiTahapLogWhereUniqueInput
-    data: XOR<TransaksiTahapLogUpdateWithoutAdminInput, TransaksiTahapLogUncheckedUpdateWithoutAdminInput>
+    data: XOR<TransaksiTahapLogUpdateWithoutActorInput, TransaksiTahapLogUncheckedUpdateWithoutActorInput>
   }
 
-  export type TransaksiTahapLogUpdateManyWithWhereWithoutAdminInput = {
+  export type TransaksiTahapLogUpdateManyWithWhereWithoutActorInput = {
     where: TransaksiTahapLogScalarWhereInput
-    data: XOR<TransaksiTahapLogUpdateManyMutationInput, TransaksiTahapLogUncheckedUpdateManyWithoutAdminInput>
+    data: XOR<TransaksiTahapLogUpdateManyMutationInput, TransaksiTahapLogUncheckedUpdateManyWithoutActorInput>
   }
 
   export type TransaksiTahapLogScalarWhereInput = {
@@ -30714,11 +28521,9 @@ export namespace Prisma {
     NOT?: TransaksiTahapLogScalarWhereInput | TransaksiTahapLogScalarWhereInput[]
     id?: IntFilter<"TransaksiTahapLog"> | number
     transaksi_id?: IntFilter<"TransaksiTahapLog"> | number
-    tahap_sebelum?: EnumTahapTransaksiNullableFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFilter<"TransaksiTahapLog"> | $Enums.TahapTransaksi
     detail_sebelum?: EnumTahapDetailNullableFilter<"TransaksiTahapLog"> | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFilter<"TransaksiTahapLog"> | $Enums.TahapDetail
-    admin_id?: IntFilter<"TransaksiTahapLog"> | number
+    actor_id?: IntFilter<"TransaksiTahapLog"> | number
     catatan?: StringNullableFilter<"TransaksiTahapLog"> | string | null
     created_at?: DateTimeFilter<"TransaksiTahapLog"> | Date | string
   }
@@ -30753,39 +28558,6 @@ export namespace Prisma {
     created_at?: DateTimeFilter<"Aktivitas"> | Date | string
   }
 
-  export type DokumenTransaksiUpsertWithWhereUniqueWithoutVerifierInput = {
-    where: DokumenTransaksiWhereUniqueInput
-    update: XOR<DokumenTransaksiUpdateWithoutVerifierInput, DokumenTransaksiUncheckedUpdateWithoutVerifierInput>
-    create: XOR<DokumenTransaksiCreateWithoutVerifierInput, DokumenTransaksiUncheckedCreateWithoutVerifierInput>
-  }
-
-  export type DokumenTransaksiUpdateWithWhereUniqueWithoutVerifierInput = {
-    where: DokumenTransaksiWhereUniqueInput
-    data: XOR<DokumenTransaksiUpdateWithoutVerifierInput, DokumenTransaksiUncheckedUpdateWithoutVerifierInput>
-  }
-
-  export type DokumenTransaksiUpdateManyWithWhereWithoutVerifierInput = {
-    where: DokumenTransaksiScalarWhereInput
-    data: XOR<DokumenTransaksiUpdateManyMutationInput, DokumenTransaksiUncheckedUpdateManyWithoutVerifierInput>
-  }
-
-  export type DokumenTransaksiScalarWhereInput = {
-    AND?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
-    OR?: DokumenTransaksiScalarWhereInput[]
-    NOT?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
-    id?: IntFilter<"DokumenTransaksi"> | number
-    transaksi_id?: IntFilter<"DokumenTransaksi"> | number
-    jenis?: EnumJenisDokumenFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFilter<"DokumenTransaksi"> | $Enums.KategoriDokumen
-    status?: EnumStatusDokumenFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
-    file_url?: StringNullableFilter<"DokumenTransaksi"> | string | null
-    catatan_verifikasi?: StringNullableFilter<"DokumenTransaksi"> | string | null
-    verified_by?: IntNullableFilter<"DokumenTransaksi"> | number | null
-    verified_at?: DateTimeNullableFilter<"DokumenTransaksi"> | Date | string | null
-    created_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
-    updated_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
-  }
-
   export type PembayaranUpsertWithWhereUniqueWithoutVoiderInput = {
     where: PembayaranWhereUniqueInput
     update: XOR<PembayaranUpdateWithoutVoiderInput, PembayaranUncheckedUpdateWithoutVoiderInput>
@@ -30802,78 +28574,20 @@ export namespace Prisma {
     data: XOR<PembayaranUpdateManyMutationInput, PembayaranUncheckedUpdateManyWithoutVoiderInput>
   }
 
-  export type InspeksiBASTUpsertWithWhereUniqueWithoutInspekturInput = {
-    where: InspeksiBASTWhereUniqueInput
-    update: XOR<InspeksiBASTUpdateWithoutInspekturInput, InspeksiBASTUncheckedUpdateWithoutInspekturInput>
-    create: XOR<InspeksiBASTCreateWithoutInspekturInput, InspeksiBASTUncheckedCreateWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTUpdateWithWhereUniqueWithoutInspekturInput = {
-    where: InspeksiBASTWhereUniqueInput
-    data: XOR<InspeksiBASTUpdateWithoutInspekturInput, InspeksiBASTUncheckedUpdateWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTUpdateManyWithWhereWithoutInspekturInput = {
-    where: InspeksiBASTScalarWhereInput
-    data: XOR<InspeksiBASTUpdateManyMutationInput, InspeksiBASTUncheckedUpdateManyWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTScalarWhereInput = {
-    AND?: InspeksiBASTScalarWhereInput | InspeksiBASTScalarWhereInput[]
-    OR?: InspeksiBASTScalarWhereInput[]
-    NOT?: InspeksiBASTScalarWhereInput | InspeksiBASTScalarWhereInput[]
-    id?: IntFilter<"InspeksiBAST"> | number
-    transaksi_id?: IntFilter<"InspeksiBAST"> | number
-    item?: EnumItemBASTFilter<"InspeksiBAST"> | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFilter<"InspeksiBAST"> | $Enums.StatusInspeksi
-    catatan?: StringNullableFilter<"InspeksiBAST"> | string | null
-    inspektur_id?: IntNullableFilter<"InspeksiBAST"> | number | null
-    diperiksa_at?: DateTimeNullableFilter<"InspeksiBAST"> | Date | string | null
-  }
-
-  export type InspeksiBASTLogUpsertWithWhereUniqueWithoutInspekturInput = {
-    where: InspeksiBASTLogWhereUniqueInput
-    update: XOR<InspeksiBASTLogUpdateWithoutInspekturInput, InspeksiBASTLogUncheckedUpdateWithoutInspekturInput>
-    create: XOR<InspeksiBASTLogCreateWithoutInspekturInput, InspeksiBASTLogUncheckedCreateWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTLogUpdateWithWhereUniqueWithoutInspekturInput = {
-    where: InspeksiBASTLogWhereUniqueInput
-    data: XOR<InspeksiBASTLogUpdateWithoutInspekturInput, InspeksiBASTLogUncheckedUpdateWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTLogUpdateManyWithWhereWithoutInspekturInput = {
-    where: InspeksiBASTLogScalarWhereInput
-    data: XOR<InspeksiBASTLogUpdateManyMutationInput, InspeksiBASTLogUncheckedUpdateManyWithoutInspekturInput>
-  }
-
-  export type InspeksiBASTLogScalarWhereInput = {
-    AND?: InspeksiBASTLogScalarWhereInput | InspeksiBASTLogScalarWhereInput[]
-    OR?: InspeksiBASTLogScalarWhereInput[]
-    NOT?: InspeksiBASTLogScalarWhereInput | InspeksiBASTLogScalarWhereInput[]
-    id?: IntFilter<"InspeksiBASTLog"> | number
-    inspeksi_bast_id?: IntFilter<"InspeksiBASTLog"> | number
-    status_sebelum?: EnumStatusInspeksiNullableFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFilter<"InspeksiBASTLog"> | $Enums.StatusInspeksi
-    catatan?: StringNullableFilter<"InspeksiBASTLog"> | string | null
-    inspektur_id?: IntFilter<"InspeksiBASTLog"> | number
-    created_at?: DateTimeFilter<"InspeksiBASTLog"> | Date | string
-  }
-
-  export type PengajuanKPRLogUpsertWithWhereUniqueWithoutAdminInput = {
+  export type PengajuanKPRLogUpsertWithWhereUniqueWithoutActorInput = {
     where: PengajuanKPRLogWhereUniqueInput
-    update: XOR<PengajuanKPRLogUpdateWithoutAdminInput, PengajuanKPRLogUncheckedUpdateWithoutAdminInput>
-    create: XOR<PengajuanKPRLogCreateWithoutAdminInput, PengajuanKPRLogUncheckedCreateWithoutAdminInput>
+    update: XOR<PengajuanKPRLogUpdateWithoutActorInput, PengajuanKPRLogUncheckedUpdateWithoutActorInput>
+    create: XOR<PengajuanKPRLogCreateWithoutActorInput, PengajuanKPRLogUncheckedCreateWithoutActorInput>
   }
 
-  export type PengajuanKPRLogUpdateWithWhereUniqueWithoutAdminInput = {
+  export type PengajuanKPRLogUpdateWithWhereUniqueWithoutActorInput = {
     where: PengajuanKPRLogWhereUniqueInput
-    data: XOR<PengajuanKPRLogUpdateWithoutAdminInput, PengajuanKPRLogUncheckedUpdateWithoutAdminInput>
+    data: XOR<PengajuanKPRLogUpdateWithoutActorInput, PengajuanKPRLogUncheckedUpdateWithoutActorInput>
   }
 
-  export type PengajuanKPRLogUpdateManyWithWhereWithoutAdminInput = {
+  export type PengajuanKPRLogUpdateManyWithWhereWithoutActorInput = {
     where: PengajuanKPRLogScalarWhereInput
-    data: XOR<PengajuanKPRLogUpdateManyMutationInput, PengajuanKPRLogUncheckedUpdateManyWithoutAdminInput>
+    data: XOR<PengajuanKPRLogUpdateManyMutationInput, PengajuanKPRLogUncheckedUpdateManyWithoutActorInput>
   }
 
   export type PengajuanKPRLogScalarWhereInput = {
@@ -30884,25 +28598,25 @@ export namespace Prisma {
     pengajuan_id?: IntFilter<"PengajuanKPRLog"> | number
     status_sebelum?: EnumStatusPengajuanKPRNullableFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFilter<"PengajuanKPRLog"> | $Enums.StatusPengajuanKPR
-    admin_id?: IntFilter<"PengajuanKPRLog"> | number
+    actor_id?: IntFilter<"PengajuanKPRLog"> | number
     catatan?: StringNullableFilter<"PengajuanKPRLog"> | string | null
     created_at?: DateTimeFilter<"PengajuanKPRLog"> | Date | string
   }
 
-  export type UnitTipeLogUpsertWithWhereUniqueWithoutAdminInput = {
+  export type UnitTipeLogUpsertWithWhereUniqueWithoutActorInput = {
     where: UnitTipeLogWhereUniqueInput
-    update: XOR<UnitTipeLogUpdateWithoutAdminInput, UnitTipeLogUncheckedUpdateWithoutAdminInput>
-    create: XOR<UnitTipeLogCreateWithoutAdminInput, UnitTipeLogUncheckedCreateWithoutAdminInput>
+    update: XOR<UnitTipeLogUpdateWithoutActorInput, UnitTipeLogUncheckedUpdateWithoutActorInput>
+    create: XOR<UnitTipeLogCreateWithoutActorInput, UnitTipeLogUncheckedCreateWithoutActorInput>
   }
 
-  export type UnitTipeLogUpdateWithWhereUniqueWithoutAdminInput = {
+  export type UnitTipeLogUpdateWithWhereUniqueWithoutActorInput = {
     where: UnitTipeLogWhereUniqueInput
-    data: XOR<UnitTipeLogUpdateWithoutAdminInput, UnitTipeLogUncheckedUpdateWithoutAdminInput>
+    data: XOR<UnitTipeLogUpdateWithoutActorInput, UnitTipeLogUncheckedUpdateWithoutActorInput>
   }
 
-  export type UnitTipeLogUpdateManyWithWhereWithoutAdminInput = {
+  export type UnitTipeLogUpdateManyWithWhereWithoutActorInput = {
     where: UnitTipeLogScalarWhereInput
-    data: XOR<UnitTipeLogUpdateManyMutationInput, UnitTipeLogUncheckedUpdateManyWithoutAdminInput>
+    data: XOR<UnitTipeLogUpdateManyMutationInput, UnitTipeLogUncheckedUpdateManyWithoutActorInput>
   }
 
   export type UnitTipeLogScalarWhereInput = {
@@ -30917,7 +28631,7 @@ export namespace Prisma {
     harga_khusus_lama?: DecimalNullableFilter<"UnitTipeLog"> | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFilter<"UnitTipeLog"> | boolean
     alasan?: StringFilter<"UnitTipeLog"> | string
-    changed_by?: IntFilter<"UnitTipeLog"> | number
+    actor_id?: IntFilter<"UnitTipeLog"> | number
     created_at?: DateTimeFilter<"UnitTipeLog"> | Date | string
   }
 
@@ -30928,6 +28642,7 @@ export namespace Prisma {
     status_unit?: $Enums.StatusUnit
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiCreateNestedOneWithoutActive_unitInput
     itj?: ItjCreateNestedManyWithoutUnitInput
     tipe_logs?: UnitTipeLogCreateNestedManyWithoutUnitInput
   }
@@ -30940,6 +28655,7 @@ export namespace Prisma {
     status_unit?: $Enums.StatusUnit
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiUncheckedCreateNestedOneWithoutActive_unitInput
     itj?: ItjUncheckedCreateNestedManyWithoutUnitInput
     tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
   }
@@ -30962,7 +28678,7 @@ export namespace Prisma {
     created_at?: Date | string
     unit?: MasterUnitCreateNestedOneWithoutTipe_logsInput
     tipe_baru: MasterTipeCreateNestedOneWithoutUnit_tipe_baruInput
-    admin: UserCreateNestedOneWithoutUnit_tipe_logsInput
+    actor: UserCreateNestedOneWithoutUnit_tipe_logsInput
   }
 
   export type UnitTipeLogUncheckedCreateWithoutTipe_lamaInput = {
@@ -30973,7 +28689,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -30995,7 +28711,7 @@ export namespace Prisma {
     created_at?: Date | string
     unit?: MasterUnitCreateNestedOneWithoutTipe_logsInput
     tipe_lama: MasterTipeCreateNestedOneWithoutUnit_tipe_lamaInput
-    admin: UserCreateNestedOneWithoutUnit_tipe_logsInput
+    actor: UserCreateNestedOneWithoutUnit_tipe_logsInput
   }
 
   export type UnitTipeLogUncheckedCreateWithoutTipe_baruInput = {
@@ -31006,7 +28722,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -31084,7 +28800,7 @@ export namespace Prisma {
   export type MasterTipeCreateWithoutUnitsInput = {
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     unit_tipe_lama?: UnitTipeLogCreateNestedManyWithoutTipe_lamaInput
@@ -31095,7 +28811,7 @@ export namespace Prisma {
     id?: number
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     unit_tipe_lama?: UnitTipeLogUncheckedCreateNestedManyWithoutTipe_lamaInput
@@ -31113,58 +28829,62 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateWithoutUnitInput = {
     id?: number
     customer_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
@@ -31178,35 +28898,97 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TransaksiCreateWithoutActive_unitInput = {
+    metode_bayar: $Enums.MetodeBayar
+    harga_deal: Decimal | DecimalJsLike | number | string
+    target_itj: Decimal | DecimalJsLike | number | string
+    target_dp: Decimal | DecimalJsLike | number | string
+    tenor_bulan?: number | null
+    tahap_detail: $Enums.TahapDetail
+    nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
+    tgl_akad?: Date | string | null
+    lunas_at?: Date | string | null
+    tgl_bast?: Date | string | null
+    closing_at: Date | string
+    cancelled_at?: Date | string | null
+    alasan_batal?: string | null
+    catatan_admin?: string | null
+    version?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    customer: CustomerCreateNestedOneWithoutTransaksiInput
+    unit: MasterUnitCreateNestedOneWithoutTransaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
+    itj: ItjCreateNestedOneWithoutTransaksiInput
+    pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
+    logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+    dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
+  }
+
+  export type TransaksiUncheckedCreateWithoutActive_unitInput = {
+    id?: number
+    customer_id: number
+    unit_id: number
+    pic_id: number
+    itj_id: number
+    metode_bayar: $Enums.MetodeBayar
+    harga_deal: Decimal | DecimalJsLike | number | string
+    target_itj: Decimal | DecimalJsLike | number | string
+    target_dp: Decimal | DecimalJsLike | number | string
+    tenor_bulan?: number | null
+    tahap_detail: $Enums.TahapDetail
+    nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
+    tgl_akad?: Date | string | null
+    lunas_at?: Date | string | null
+    tgl_bast?: Date | string | null
+    closing_at: Date | string
+    cancelled_at?: Date | string | null
+    alasan_batal?: string | null
+    catatan_admin?: string | null
+    version?: number
+    pengajuan_kpr_terpilih_id?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+    logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+    dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
+  }
+
+  export type TransaksiCreateOrConnectWithoutActive_unitInput = {
+    where: TransaksiWhereUniqueInput
+    create: XOR<TransaksiCreateWithoutActive_unitInput, TransaksiUncheckedCreateWithoutActive_unitInput>
+  }
+
   export type ItjCreateWithoutUnitInput = {
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
     created_at?: Date | string
     updated_at?: Date | string
     lead: LeadCreateNestedOneWithoutItjInput
-    marketing?: UserCreateNestedOneWithoutItj_diajukanInput
+    closer?: UserCreateNestedOneWithoutItj_diajukanInput
     transaksi?: TransaksiCreateNestedOneWithoutItjInput
   }
 
   export type ItjUncheckedCreateWithoutUnitInput = {
     id?: number
     lead_id: number
-    marketing_id?: number | null
+    closer_id?: number | null
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -31233,7 +29015,7 @@ export namespace Prisma {
     created_at?: Date | string
     tipe_lama: MasterTipeCreateNestedOneWithoutUnit_tipe_lamaInput
     tipe_baru: MasterTipeCreateNestedOneWithoutUnit_tipe_baruInput
-    admin: UserCreateNestedOneWithoutUnit_tipe_logsInput
+    actor: UserCreateNestedOneWithoutUnit_tipe_logsInput
   }
 
   export type UnitTipeLogUncheckedCreateWithoutUnitInput = {
@@ -31244,7 +29026,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -31272,7 +29054,7 @@ export namespace Prisma {
   export type MasterTipeUpdateWithoutUnitsInput = {
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     unit_tipe_lama?: UnitTipeLogUpdateManyWithoutTipe_lamaNestedInput
@@ -31283,7 +29065,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     unit_tipe_lama?: UnitTipeLogUncheckedUpdateManyWithoutTipe_lamaNestedInput
@@ -31304,6 +29086,82 @@ export namespace Prisma {
   export type TransaksiUpdateManyWithWhereWithoutUnitInput = {
     where: TransaksiScalarWhereInput
     data: XOR<TransaksiUpdateManyMutationInput, TransaksiUncheckedUpdateManyWithoutUnitInput>
+  }
+
+  export type TransaksiUpsertWithoutActive_unitInput = {
+    update: XOR<TransaksiUpdateWithoutActive_unitInput, TransaksiUncheckedUpdateWithoutActive_unitInput>
+    create: XOR<TransaksiCreateWithoutActive_unitInput, TransaksiUncheckedCreateWithoutActive_unitInput>
+    where?: TransaksiWhereInput
+  }
+
+  export type TransaksiUpdateToOneWithWhereWithoutActive_unitInput = {
+    where?: TransaksiWhereInput
+    data: XOR<TransaksiUpdateWithoutActive_unitInput, TransaksiUncheckedUpdateWithoutActive_unitInput>
+  }
+
+  export type TransaksiUpdateWithoutActive_unitInput = {
+    metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
+    tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+    nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
+    unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
+    pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
+    logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+    dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
+  }
+
+  export type TransaksiUncheckedUpdateWithoutActive_unitInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customer_id?: IntFieldUpdateOperationsInput | number
+    unit_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
+    itj_id?: IntFieldUpdateOperationsInput | number
+    metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
+    tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+    nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+    logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+    dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
   export type ItjUpsertWithWhereUniqueWithoutUnitInput = {
@@ -31346,6 +29204,7 @@ export namespace Prisma {
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     tipe: MasterTipeCreateNestedOneWithoutUnitsInput
     transaksi?: TransaksiCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiCreateNestedOneWithoutActive_unitInput
     itj?: ItjCreateNestedManyWithoutUnitInput
   }
 
@@ -31358,6 +29217,7 @@ export namespace Prisma {
     status_unit?: $Enums.StatusUnit
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiUncheckedCreateNestedOneWithoutActive_unitInput
     itj?: ItjUncheckedCreateNestedManyWithoutUnitInput
   }
 
@@ -31369,7 +29229,7 @@ export namespace Prisma {
   export type MasterTipeCreateWithoutUnit_tipe_lamaInput = {
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     units?: MasterUnitCreateNestedManyWithoutTipeInput
@@ -31380,7 +29240,7 @@ export namespace Prisma {
     id?: number
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     units?: MasterUnitUncheckedCreateNestedManyWithoutTipeInput
@@ -31395,7 +29255,7 @@ export namespace Prisma {
   export type MasterTipeCreateWithoutUnit_tipe_baruInput = {
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     units?: MasterUnitCreateNestedManyWithoutTipeInput
@@ -31406,7 +29266,7 @@ export namespace Prisma {
     id?: number
     nama_tipe: string
     kategori: $Enums.KategoriUnit
-    luas_bangunan?: number
+    luas_bangunan?: number | null
     luas_tanah: number
     harga_dasar: Decimal | DecimalJsLike | number | string
     units?: MasterUnitUncheckedCreateNestedManyWithoutTipeInput
@@ -31428,16 +29288,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutUnit_tipe_logsInput = {
@@ -31451,16 +29308,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutUnit_tipe_logsInput = {
@@ -31487,6 +29341,7 @@ export namespace Prisma {
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     tipe?: MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
     transaksi?: TransaksiUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUpdateOneWithoutActive_unitNestedInput
     itj?: ItjUpdateManyWithoutUnitNestedInput
   }
 
@@ -31499,6 +29354,7 @@ export namespace Prisma {
     status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUncheckedUpdateOneWithoutActive_unitNestedInput
     itj?: ItjUncheckedUpdateManyWithoutUnitNestedInput
   }
 
@@ -31516,7 +29372,7 @@ export namespace Prisma {
   export type MasterTipeUpdateWithoutUnit_tipe_lamaInput = {
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     units?: MasterUnitUpdateManyWithoutTipeNestedInput
@@ -31527,7 +29383,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     units?: MasterUnitUncheckedUpdateManyWithoutTipeNestedInput
@@ -31548,7 +29404,7 @@ export namespace Prisma {
   export type MasterTipeUpdateWithoutUnit_tipe_baruInput = {
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     units?: MasterUnitUpdateManyWithoutTipeNestedInput
@@ -31559,7 +29415,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     nama_tipe?: StringFieldUpdateOperationsInput | string
     kategori?: EnumKategoriUnitFieldUpdateOperationsInput | $Enums.KategoriUnit
-    luas_bangunan?: IntFieldUpdateOperationsInput | number
+    luas_bangunan?: NullableIntFieldUpdateOperationsInput | number | null
     luas_tanah?: IntFieldUpdateOperationsInput | number
     harga_dasar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     units?: MasterUnitUncheckedUpdateManyWithoutTipeNestedInput
@@ -31587,16 +29443,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUnit_tipe_logsInput = {
@@ -31610,16 +29463,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type UserCreateWithoutLeadsInput = {
@@ -31631,17 +29481,14 @@ export namespace Prisma {
     isActive?: boolean
     created_at?: Date | string
     updated_at?: Date | string
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutLeadsInput = {
@@ -31654,17 +29501,14 @@ export namespace Prisma {
     isActive?: boolean
     created_at?: Date | string
     updated_at?: Date | string
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutLeadsInput = {
@@ -31739,31 +29583,23 @@ export namespace Prisma {
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
     created_at?: Date | string
     updated_at?: Date | string
     unit: MasterUnitCreateNestedOneWithoutItjInput
-    marketing?: UserCreateNestedOneWithoutItj_diajukanInput
+    closer?: UserCreateNestedOneWithoutItj_diajukanInput
     transaksi?: TransaksiCreateNestedOneWithoutItjInput
   }
 
   export type ItjUncheckedCreateWithoutLeadInput = {
     id?: number
     unit_id: number
-    marketing_id?: number | null
+    closer_id?: number | null
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -31802,17 +29638,14 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutLeadsInput = {
@@ -31825,17 +29658,14 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type CustomerUpsertWithoutLeadsInput = {
@@ -31962,16 +29792,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutAktivitas_logInput = {
@@ -31985,16 +29812,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutAktivitas_logInput = {
@@ -32071,16 +29895,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAktivitas_logInput = {
@@ -32094,16 +29915,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type LeadCreateWithoutItjInput = {
@@ -32156,6 +29974,7 @@ export namespace Prisma {
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     tipe: MasterTipeCreateNestedOneWithoutUnitsInput
     transaksi?: TransaksiCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiCreateNestedOneWithoutActive_unitInput
     tipe_logs?: UnitTipeLogCreateNestedManyWithoutUnitInput
   }
 
@@ -32168,6 +29987,7 @@ export namespace Prisma {
     status_unit?: $Enums.StatusUnit
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedCreateNestedManyWithoutUnitInput
+    active_transaksi?: TransaksiUncheckedCreateNestedOneWithoutActive_unitInput
     tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
   }
 
@@ -32186,16 +30006,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutItj_diajukanInput = {
@@ -32209,16 +30026,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutItj_diajukanInput = {
@@ -32232,58 +30046,62 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateWithoutItjInput = {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
@@ -32359,6 +30177,7 @@ export namespace Prisma {
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     tipe?: MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
     transaksi?: TransaksiUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUpdateOneWithoutActive_unitNestedInput
     tipe_logs?: UnitTipeLogUpdateManyWithoutUnitNestedInput
   }
 
@@ -32371,6 +30190,7 @@ export namespace Prisma {
     status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUncheckedUpdateOneWithoutActive_unitNestedInput
     tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
   }
 
@@ -32395,16 +30215,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutItj_diajukanInput = {
@@ -32418,16 +30235,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type TransaksiUpsertWithoutItjInput = {
@@ -32447,58 +30261,62 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateWithoutItjInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
@@ -32508,58 +30326,62 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateWithoutCustomerInput = {
     id?: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
@@ -32693,6 +30515,7 @@ export namespace Prisma {
     status_unit?: $Enums.StatusUnit
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
     tipe: MasterTipeCreateNestedOneWithoutUnitsInput
+    active_transaksi?: TransaksiCreateNestedOneWithoutActive_unitInput
     itj?: ItjCreateNestedManyWithoutUnitInput
     tipe_logs?: UnitTipeLogCreateNestedManyWithoutUnitInput
   }
@@ -32705,6 +30528,7 @@ export namespace Prisma {
     blok_nomor?: number
     status_unit?: $Enums.StatusUnit
     harga_khusus?: Decimal | DecimalJsLike | number | string | null
+    active_transaksi?: TransaksiUncheckedCreateNestedOneWithoutActive_unitInput
     itj?: ItjUncheckedCreateNestedManyWithoutUnitInput
     tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
   }
@@ -32712,6 +30536,36 @@ export namespace Prisma {
   export type MasterUnitCreateOrConnectWithoutTransaksiInput = {
     where: MasterUnitWhereUniqueInput
     create: XOR<MasterUnitCreateWithoutTransaksiInput, MasterUnitUncheckedCreateWithoutTransaksiInput>
+  }
+
+  export type MasterUnitCreateWithoutActive_transaksiInput = {
+    blok: string
+    blok_prefix?: string
+    blok_nomor?: number
+    status_unit?: $Enums.StatusUnit
+    harga_khusus?: Decimal | DecimalJsLike | number | string | null
+    tipe: MasterTipeCreateNestedOneWithoutUnitsInput
+    transaksi?: TransaksiCreateNestedManyWithoutUnitInput
+    itj?: ItjCreateNestedManyWithoutUnitInput
+    tipe_logs?: UnitTipeLogCreateNestedManyWithoutUnitInput
+  }
+
+  export type MasterUnitUncheckedCreateWithoutActive_transaksiInput = {
+    id?: number
+    tipe_id: number
+    blok: string
+    blok_prefix?: string
+    blok_nomor?: number
+    status_unit?: $Enums.StatusUnit
+    harga_khusus?: Decimal | DecimalJsLike | number | string | null
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutUnitInput
+    itj?: ItjUncheckedCreateNestedManyWithoutUnitInput
+    tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutUnitInput
+  }
+
+  export type MasterUnitCreateOrConnectWithoutActive_transaksiInput = {
+    where: MasterUnitWhereUniqueInput
+    create: XOR<MasterUnitCreateWithoutActive_transaksiInput, MasterUnitUncheckedCreateWithoutActive_transaksiInput>
   }
 
   export type UserCreateWithoutTransaksiInput = {
@@ -32725,15 +30579,12 @@ export namespace Prisma {
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutTransaksiInput = {
@@ -32748,15 +30599,12 @@ export namespace Prisma {
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutTransaksiInput = {
@@ -32768,10 +30616,6 @@ export namespace Prisma {
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -32779,21 +30623,17 @@ export namespace Prisma {
     updated_at?: Date | string
     lead: LeadCreateNestedOneWithoutItjInput
     unit: MasterUnitCreateNestedOneWithoutItjInput
-    marketing?: UserCreateNestedOneWithoutItj_diajukanInput
+    closer?: UserCreateNestedOneWithoutItj_diajukanInput
   }
 
   export type ItjUncheckedCreateWithoutTransaksiInput = {
     id?: number
     lead_id: number
     unit_id: number
-    marketing_id?: number | null
+    closer_id?: number | null
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -32850,22 +30690,18 @@ export namespace Prisma {
   }
 
   export type TransaksiTahapLogCreateWithoutTransaksiInput = {
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
     catatan?: string | null
     created_at?: Date | string
-    admin: UserCreateNestedOneWithoutTransaksi_logsInput
+    actor: UserCreateNestedOneWithoutTransaksi_logsInput
   }
 
   export type TransaksiTahapLogUncheckedCreateWithoutTransaksiInput = {
     id?: number
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
@@ -32882,25 +30718,15 @@ export namespace Prisma {
 
   export type DokumenTransaksiCreateWithoutTransaksiInput = {
     jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
     status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
-    verifier?: UserCreateNestedOneWithoutDokumen_diverifikasiInput
   }
 
   export type DokumenTransaksiUncheckedCreateWithoutTransaksiInput = {
     id?: number
     jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
     status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_by?: number | null
-    verified_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -32915,32 +30741,28 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type InspeksiBASTCreateWithoutTransaksiInput = {
+  export type ChecklistBASTCreateWithoutTransaksiInput = {
     item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    diperiksa_at?: Date | string | null
-    inspektur?: UserCreateNestedOneWithoutInspeksi_bastInput
-    logs?: InspeksiBASTLogCreateNestedManyWithoutInspeksi_bastInput
+    status?: $Enums.StatusBAST
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
-  export type InspeksiBASTUncheckedCreateWithoutTransaksiInput = {
+  export type ChecklistBASTUncheckedCreateWithoutTransaksiInput = {
     id?: number
     item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id?: number | null
-    diperiksa_at?: Date | string | null
-    logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspeksi_bastInput
+    status?: $Enums.StatusBAST
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
-  export type InspeksiBASTCreateOrConnectWithoutTransaksiInput = {
-    where: InspeksiBASTWhereUniqueInput
-    create: XOR<InspeksiBASTCreateWithoutTransaksiInput, InspeksiBASTUncheckedCreateWithoutTransaksiInput>
+  export type ChecklistBASTCreateOrConnectWithoutTransaksiInput = {
+    where: ChecklistBASTWhereUniqueInput
+    create: XOR<ChecklistBASTCreateWithoutTransaksiInput, ChecklistBASTUncheckedCreateWithoutTransaksiInput>
   }
 
-  export type InspeksiBASTCreateManyTransaksiInputEnvelope = {
-    data: InspeksiBASTCreateManyTransaksiInput | InspeksiBASTCreateManyTransaksiInput[]
+  export type ChecklistBASTCreateManyTransaksiInputEnvelope = {
+    data: ChecklistBASTCreateManyTransaksiInput | ChecklistBASTCreateManyTransaksiInput[]
     skipDuplicates?: boolean
   }
 
@@ -32953,6 +30775,7 @@ export namespace Prisma {
     catatan?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    transaksi_terpilih?: TransaksiCreateNestedOneWithoutPengajuan_kpr_terpilihInput
     bank: BankCreateNestedOneWithoutPengajuan_kprInput
     logs?: PengajuanKPRLogCreateNestedManyWithoutPengajuanInput
   }
@@ -32968,6 +30791,7 @@ export namespace Prisma {
     catatan?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    transaksi_terpilih?: TransaksiUncheckedCreateNestedOneWithoutPengajuan_kpr_terpilihInput
     logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutPengajuanInput
   }
 
@@ -32979,6 +30803,40 @@ export namespace Prisma {
   export type PengajuanKPRCreateManyTransaksiInputEnvelope = {
     data: PengajuanKPRCreateManyTransaksiInput | PengajuanKPRCreateManyTransaksiInput[]
     skipDuplicates?: boolean
+  }
+
+  export type PengajuanKPRCreateWithoutTransaksi_terpilihInput = {
+    nomor_pengajuan: number
+    status?: $Enums.StatusPengajuanKPR
+    tanggal_ajukan?: Date | string
+    tanggal_keputusan?: Date | string | null
+    alasan_penolakan?: string | null
+    catatan?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    transaksi: TransaksiCreateNestedOneWithoutPengajuan_kprInput
+    bank: BankCreateNestedOneWithoutPengajuan_kprInput
+    logs?: PengajuanKPRLogCreateNestedManyWithoutPengajuanInput
+  }
+
+  export type PengajuanKPRUncheckedCreateWithoutTransaksi_terpilihInput = {
+    id?: number
+    transaksi_id: number
+    bank_id: number
+    nomor_pengajuan: number
+    status?: $Enums.StatusPengajuanKPR
+    tanggal_ajukan?: Date | string
+    tanggal_keputusan?: Date | string | null
+    alasan_penolakan?: string | null
+    catatan?: string | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutPengajuanInput
+  }
+
+  export type PengajuanKPRCreateOrConnectWithoutTransaksi_terpilihInput = {
+    where: PengajuanKPRWhereUniqueInput
+    create: XOR<PengajuanKPRCreateWithoutTransaksi_terpilihInput, PengajuanKPRUncheckedCreateWithoutTransaksi_terpilihInput>
   }
 
   export type CustomerUpsertWithoutTransaksiInput = {
@@ -33039,6 +30897,7 @@ export namespace Prisma {
     status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     tipe?: MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
+    active_transaksi?: TransaksiUpdateOneWithoutActive_unitNestedInput
     itj?: ItjUpdateManyWithoutUnitNestedInput
     tipe_logs?: UnitTipeLogUpdateManyWithoutUnitNestedInput
   }
@@ -33051,6 +30910,43 @@ export namespace Prisma {
     blok_nomor?: IntFieldUpdateOperationsInput | number
     status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    active_transaksi?: TransaksiUncheckedUpdateOneWithoutActive_unitNestedInput
+    itj?: ItjUncheckedUpdateManyWithoutUnitNestedInput
+    tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
+  }
+
+  export type MasterUnitUpsertWithoutActive_transaksiInput = {
+    update: XOR<MasterUnitUpdateWithoutActive_transaksiInput, MasterUnitUncheckedUpdateWithoutActive_transaksiInput>
+    create: XOR<MasterUnitCreateWithoutActive_transaksiInput, MasterUnitUncheckedCreateWithoutActive_transaksiInput>
+    where?: MasterUnitWhereInput
+  }
+
+  export type MasterUnitUpdateToOneWithWhereWithoutActive_transaksiInput = {
+    where?: MasterUnitWhereInput
+    data: XOR<MasterUnitUpdateWithoutActive_transaksiInput, MasterUnitUncheckedUpdateWithoutActive_transaksiInput>
+  }
+
+  export type MasterUnitUpdateWithoutActive_transaksiInput = {
+    blok?: StringFieldUpdateOperationsInput | string
+    blok_prefix?: StringFieldUpdateOperationsInput | string
+    blok_nomor?: IntFieldUpdateOperationsInput | number
+    status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
+    harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tipe?: MasterTipeUpdateOneRequiredWithoutUnitsNestedInput
+    transaksi?: TransaksiUpdateManyWithoutUnitNestedInput
+    itj?: ItjUpdateManyWithoutUnitNestedInput
+    tipe_logs?: UnitTipeLogUpdateManyWithoutUnitNestedInput
+  }
+
+  export type MasterUnitUncheckedUpdateWithoutActive_transaksiInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    tipe_id?: IntFieldUpdateOperationsInput | number
+    blok?: StringFieldUpdateOperationsInput | string
+    blok_prefix?: StringFieldUpdateOperationsInput | string
+    blok_nomor?: IntFieldUpdateOperationsInput | number
+    status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
+    harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    transaksi?: TransaksiUncheckedUpdateManyWithoutUnitNestedInput
     itj?: ItjUncheckedUpdateManyWithoutUnitNestedInput
     tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
   }
@@ -33077,15 +30973,12 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransaksiInput = {
@@ -33100,15 +30993,12 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type ItjUpsertWithoutTransaksiInput = {
@@ -33126,10 +31016,6 @@ export namespace Prisma {
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33137,21 +31023,17 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     lead?: LeadUpdateOneRequiredWithoutItjNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutItjNestedInput
-    marketing?: UserUpdateOneWithoutItj_diajukanNestedInput
+    closer?: UserUpdateOneWithoutItj_diajukanNestedInput
   }
 
   export type ItjUncheckedUpdateWithoutTransaksiInput = {
     id?: IntFieldUpdateOperationsInput | number
     lead_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
+    closer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -33207,20 +31089,44 @@ export namespace Prisma {
     data: XOR<DokumenTransaksiUpdateManyMutationInput, DokumenTransaksiUncheckedUpdateManyWithoutTransaksiInput>
   }
 
-  export type InspeksiBASTUpsertWithWhereUniqueWithoutTransaksiInput = {
-    where: InspeksiBASTWhereUniqueInput
-    update: XOR<InspeksiBASTUpdateWithoutTransaksiInput, InspeksiBASTUncheckedUpdateWithoutTransaksiInput>
-    create: XOR<InspeksiBASTCreateWithoutTransaksiInput, InspeksiBASTUncheckedCreateWithoutTransaksiInput>
+  export type DokumenTransaksiScalarWhereInput = {
+    AND?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
+    OR?: DokumenTransaksiScalarWhereInput[]
+    NOT?: DokumenTransaksiScalarWhereInput | DokumenTransaksiScalarWhereInput[]
+    id?: IntFilter<"DokumenTransaksi"> | number
+    transaksi_id?: IntFilter<"DokumenTransaksi"> | number
+    jenis?: EnumJenisDokumenFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
+    status?: EnumStatusDokumenFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
+    created_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
+    updated_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
   }
 
-  export type InspeksiBASTUpdateWithWhereUniqueWithoutTransaksiInput = {
-    where: InspeksiBASTWhereUniqueInput
-    data: XOR<InspeksiBASTUpdateWithoutTransaksiInput, InspeksiBASTUncheckedUpdateWithoutTransaksiInput>
+  export type ChecklistBASTUpsertWithWhereUniqueWithoutTransaksiInput = {
+    where: ChecklistBASTWhereUniqueInput
+    update: XOR<ChecklistBASTUpdateWithoutTransaksiInput, ChecklistBASTUncheckedUpdateWithoutTransaksiInput>
+    create: XOR<ChecklistBASTCreateWithoutTransaksiInput, ChecklistBASTUncheckedCreateWithoutTransaksiInput>
   }
 
-  export type InspeksiBASTUpdateManyWithWhereWithoutTransaksiInput = {
-    where: InspeksiBASTScalarWhereInput
-    data: XOR<InspeksiBASTUpdateManyMutationInput, InspeksiBASTUncheckedUpdateManyWithoutTransaksiInput>
+  export type ChecklistBASTUpdateWithWhereUniqueWithoutTransaksiInput = {
+    where: ChecklistBASTWhereUniqueInput
+    data: XOR<ChecklistBASTUpdateWithoutTransaksiInput, ChecklistBASTUncheckedUpdateWithoutTransaksiInput>
+  }
+
+  export type ChecklistBASTUpdateManyWithWhereWithoutTransaksiInput = {
+    where: ChecklistBASTScalarWhereInput
+    data: XOR<ChecklistBASTUpdateManyMutationInput, ChecklistBASTUncheckedUpdateManyWithoutTransaksiInput>
+  }
+
+  export type ChecklistBASTScalarWhereInput = {
+    AND?: ChecklistBASTScalarWhereInput | ChecklistBASTScalarWhereInput[]
+    OR?: ChecklistBASTScalarWhereInput[]
+    NOT?: ChecklistBASTScalarWhereInput | ChecklistBASTScalarWhereInput[]
+    id?: IntFilter<"ChecklistBAST"> | number
+    transaksi_id?: IntFilter<"ChecklistBAST"> | number
+    item?: EnumItemBASTFilter<"ChecklistBAST"> | $Enums.ItemBAST
+    status?: EnumStatusBASTFilter<"ChecklistBAST"> | $Enums.StatusBAST
+    created_at?: DateTimeFilter<"ChecklistBAST"> | Date | string
+    updated_at?: DateTimeFilter<"ChecklistBAST"> | Date | string
   }
 
   export type PengajuanKPRUpsertWithWhereUniqueWithoutTransaksiInput = {
@@ -33256,6 +31162,46 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"PengajuanKPR"> | Date | string
   }
 
+  export type PengajuanKPRUpsertWithoutTransaksi_terpilihInput = {
+    update: XOR<PengajuanKPRUpdateWithoutTransaksi_terpilihInput, PengajuanKPRUncheckedUpdateWithoutTransaksi_terpilihInput>
+    create: XOR<PengajuanKPRCreateWithoutTransaksi_terpilihInput, PengajuanKPRUncheckedCreateWithoutTransaksi_terpilihInput>
+    where?: PengajuanKPRWhereInput
+  }
+
+  export type PengajuanKPRUpdateToOneWithWhereWithoutTransaksi_terpilihInput = {
+    where?: PengajuanKPRWhereInput
+    data: XOR<PengajuanKPRUpdateWithoutTransaksi_terpilihInput, PengajuanKPRUncheckedUpdateWithoutTransaksi_terpilihInput>
+  }
+
+  export type PengajuanKPRUpdateWithoutTransaksi_terpilihInput = {
+    nomor_pengajuan?: IntFieldUpdateOperationsInput | number
+    status?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
+    tanggal_ajukan?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_keputusan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alasan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi?: TransaksiUpdateOneRequiredWithoutPengajuan_kprNestedInput
+    bank?: BankUpdateOneRequiredWithoutPengajuan_kprNestedInput
+    logs?: PengajuanKPRLogUpdateManyWithoutPengajuanNestedInput
+  }
+
+  export type PengajuanKPRUncheckedUpdateWithoutTransaksi_terpilihInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    transaksi_id?: IntFieldUpdateOperationsInput | number
+    bank_id?: IntFieldUpdateOperationsInput | number
+    nomor_pengajuan?: IntFieldUpdateOperationsInput | number
+    status?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
+    tanggal_ajukan?: DateTimeFieldUpdateOperationsInput | Date | string
+    tanggal_keputusan?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alasan_penolakan?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    logs?: PengajuanKPRLogUncheckedUpdateManyWithoutPengajuanNestedInput
+  }
+
   export type PengajuanKPRCreateWithoutBankInput = {
     nomor_pengajuan: number
     status?: $Enums.StatusPengajuanKPR
@@ -33266,6 +31212,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     transaksi: TransaksiCreateNestedOneWithoutPengajuan_kprInput
+    transaksi_terpilih?: TransaksiCreateNestedOneWithoutPengajuan_kpr_terpilihInput
     logs?: PengajuanKPRLogCreateNestedManyWithoutPengajuanInput
   }
 
@@ -33280,6 +31227,7 @@ export namespace Prisma {
     catatan?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    transaksi_terpilih?: TransaksiUncheckedCreateNestedOneWithoutPengajuan_kpr_terpilihInput
     logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutPengajuanInput
   }
 
@@ -33315,64 +31263,138 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateWithoutPengajuan_kprInput = {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
   export type TransaksiCreateOrConnectWithoutPengajuan_kprInput = {
     where: TransaksiWhereUniqueInput
     create: XOR<TransaksiCreateWithoutPengajuan_kprInput, TransaksiUncheckedCreateWithoutPengajuan_kprInput>
+  }
+
+  export type TransaksiCreateWithoutPengajuan_kpr_terpilihInput = {
+    metode_bayar: $Enums.MetodeBayar
+    harga_deal: Decimal | DecimalJsLike | number | string
+    target_itj: Decimal | DecimalJsLike | number | string
+    target_dp: Decimal | DecimalJsLike | number | string
+    tenor_bulan?: number | null
+    tahap_detail: $Enums.TahapDetail
+    nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
+    tgl_akad?: Date | string | null
+    lunas_at?: Date | string | null
+    tgl_bast?: Date | string | null
+    closing_at: Date | string
+    cancelled_at?: Date | string | null
+    alasan_batal?: string | null
+    catatan_admin?: string | null
+    version?: number
+    created_at?: Date | string
+    updated_at?: Date | string
+    customer: CustomerCreateNestedOneWithoutTransaksiInput
+    unit: MasterUnitCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
+    itj: ItjCreateNestedOneWithoutTransaksiInput
+    pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
+    logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
+    dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+  }
+
+  export type TransaksiUncheckedCreateWithoutPengajuan_kpr_terpilihInput = {
+    id?: number
+    customer_id: number
+    unit_id: number
+    pic_id: number
+    itj_id: number
+    metode_bayar: $Enums.MetodeBayar
+    harga_deal: Decimal | DecimalJsLike | number | string
+    target_itj: Decimal | DecimalJsLike | number | string
+    target_dp: Decimal | DecimalJsLike | number | string
+    tenor_bulan?: number | null
+    tahap_detail: $Enums.TahapDetail
+    nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
+    tgl_akad?: Date | string | null
+    lunas_at?: Date | string | null
+    tgl_bast?: Date | string | null
+    closing_at: Date | string
+    cancelled_at?: Date | string | null
+    alasan_batal?: string | null
+    catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    created_at?: Date | string
+    updated_at?: Date | string
+    pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
+    logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
+    dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
+  }
+
+  export type TransaksiCreateOrConnectWithoutPengajuan_kpr_terpilihInput = {
+    where: TransaksiWhereUniqueInput
+    create: XOR<TransaksiCreateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedCreateWithoutPengajuan_kpr_terpilihInput>
   }
 
   export type BankCreateWithoutPengajuan_kprInput = {
@@ -33404,14 +31426,14 @@ export namespace Prisma {
     status_sesudah: $Enums.StatusPengajuanKPR
     catatan?: string | null
     created_at?: Date | string
-    admin: UserCreateNestedOneWithoutPengajuan_kpr_logsInput
+    actor: UserCreateNestedOneWithoutPengajuan_kpr_logsInput
   }
 
   export type PengajuanKPRLogUncheckedCreateWithoutPengajuanInput = {
     id?: number
     status_sebelum?: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
@@ -33443,59 +31465,139 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateWithoutPengajuan_kprInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+  }
+
+  export type TransaksiUpsertWithoutPengajuan_kpr_terpilihInput = {
+    update: XOR<TransaksiUpdateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedUpdateWithoutPengajuan_kpr_terpilihInput>
+    create: XOR<TransaksiCreateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedCreateWithoutPengajuan_kpr_terpilihInput>
+    where?: TransaksiWhereInput
+  }
+
+  export type TransaksiUpdateToOneWithWhereWithoutPengajuan_kpr_terpilihInput = {
+    where?: TransaksiWhereInput
+    data: XOR<TransaksiUpdateWithoutPengajuan_kpr_terpilihInput, TransaksiUncheckedUpdateWithoutPengajuan_kpr_terpilihInput>
+  }
+
+  export type TransaksiUpdateWithoutPengajuan_kpr_terpilihInput = {
+    metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
+    tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+    nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
+    unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
+    pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
+    logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
+    dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+  }
+
+  export type TransaksiUncheckedUpdateWithoutPengajuan_kpr_terpilihInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    customer_id?: IntFieldUpdateOperationsInput | number
+    unit_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
+    itj_id?: IntFieldUpdateOperationsInput | number
+    metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
+    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
+    tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
+    nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
+    catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
+    logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
+    dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
   export type BankUpsertWithoutPengajuan_kprInput = {
@@ -33554,6 +31656,7 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     transaksi: TransaksiCreateNestedOneWithoutPengajuan_kprInput
+    transaksi_terpilih?: TransaksiCreateNestedOneWithoutPengajuan_kpr_terpilihInput
     bank: BankCreateNestedOneWithoutPengajuan_kprInput
   }
 
@@ -33569,6 +31672,7 @@ export namespace Prisma {
     catatan?: string | null
     created_at?: Date | string
     updated_at?: Date | string
+    transaksi_terpilih?: TransaksiUncheckedCreateNestedOneWithoutPengajuan_kpr_terpilihInput
   }
 
   export type PengajuanKPRCreateOrConnectWithoutLogsInput = {
@@ -33586,16 +31690,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutPengajuan_kpr_logsInput = {
@@ -33609,16 +31710,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutPengajuan_kpr_logsInput = {
@@ -33647,6 +31745,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     transaksi?: TransaksiUpdateOneRequiredWithoutPengajuan_kprNestedInput
+    transaksi_terpilih?: TransaksiUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
     bank?: BankUpdateOneRequiredWithoutPengajuan_kprNestedInput
   }
 
@@ -33662,6 +31761,7 @@ export namespace Prisma {
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi_terpilih?: TransaksiUncheckedUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
   }
 
   export type UserUpsertWithoutPengajuan_kpr_logsInput = {
@@ -33685,16 +31785,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPengajuan_kpr_logsInput = {
@@ -33708,16 +31805,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type TransaksiCreateWithoutLogsInput = {
@@ -33726,58 +31820,62 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateWithoutLogsInput = {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
@@ -33796,16 +31894,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutTransaksi_logsInput = {
@@ -33819,16 +31914,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutTransaksi_logsInput = {
@@ -33853,58 +31945,62 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateWithoutLogsInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
@@ -33929,16 +32025,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransaksi_logsInput = {
@@ -33952,16 +32045,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type TransaksiCreateWithoutDokumenInput = {
@@ -33970,114 +32060,68 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateWithoutDokumenInput = {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
   export type TransaksiCreateOrConnectWithoutDokumenInput = {
     where: TransaksiWhereUniqueInput
     create: XOR<TransaksiCreateWithoutDokumenInput, TransaksiUncheckedCreateWithoutDokumenInput>
-  }
-
-  export type UserCreateWithoutDokumen_diverifikasiInput = {
-    username: string
-    nama: string
-    no_hp: string
-    password: string
-    role: $Enums.Role
-    isActive?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
-    pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
-    aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserUncheckedCreateWithoutDokumen_diverifikasiInput = {
-    id?: number
-    username: string
-    nama: string
-    no_hp: string
-    password: string
-    role: $Enums.Role
-    isActive?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-    pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
-    aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserCreateOrConnectWithoutDokumen_diverifikasiInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutDokumen_diverifikasiInput, UserUncheckedCreateWithoutDokumen_diverifikasiInput>
   }
 
   export type TransaksiUpsertWithoutDokumenInput = {
@@ -34097,170 +32141,122 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateWithoutDokumenInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
-  export type UserUpsertWithoutDokumen_diverifikasiInput = {
-    update: XOR<UserUpdateWithoutDokumen_diverifikasiInput, UserUncheckedUpdateWithoutDokumen_diverifikasiInput>
-    create: XOR<UserCreateWithoutDokumen_diverifikasiInput, UserUncheckedCreateWithoutDokumen_diverifikasiInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutDokumen_diverifikasiInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutDokumen_diverifikasiInput, UserUncheckedUpdateWithoutDokumen_diverifikasiInput>
-  }
-
-  export type UserUpdateWithoutDokumen_diverifikasiInput = {
-    username?: StringFieldUpdateOperationsInput | string
-    nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
-    pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
-    aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutDokumen_diverifikasiInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    username?: StringFieldUpdateOperationsInput | string
-    nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-    pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
-    aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type TransaksiCreateWithoutInspeksi_bastInput = {
+  export type TransaksiCreateWithoutChecklist_bastInput = {
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     pembayaran?: PembayaranCreateNestedManyWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
-  export type TransaksiUncheckedCreateWithoutInspeksi_bastInput = {
+  export type TransaksiUncheckedCreateWithoutChecklist_bastInput = {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     pembayaran?: PembayaranUncheckedCreateNestedManyWithoutTransaksiInput
@@ -34269,152 +32265,79 @@ export namespace Prisma {
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
-  export type TransaksiCreateOrConnectWithoutInspeksi_bastInput = {
+  export type TransaksiCreateOrConnectWithoutChecklist_bastInput = {
     where: TransaksiWhereUniqueInput
-    create: XOR<TransaksiCreateWithoutInspeksi_bastInput, TransaksiUncheckedCreateWithoutInspeksi_bastInput>
+    create: XOR<TransaksiCreateWithoutChecklist_bastInput, TransaksiUncheckedCreateWithoutChecklist_bastInput>
   }
 
-  export type UserCreateWithoutInspeksi_bastInput = {
-    username: string
-    nama: string
-    no_hp: string
-    password: string
-    role: $Enums.Role
-    isActive?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
-    pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
-    aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
-    pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserUncheckedCreateWithoutInspeksi_bastInput = {
-    id?: number
-    username: string
-    nama: string
-    no_hp: string
-    password: string
-    role: $Enums.Role
-    isActive?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-    pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
-    aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
-    pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserCreateOrConnectWithoutInspeksi_bastInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutInspeksi_bastInput, UserUncheckedCreateWithoutInspeksi_bastInput>
-  }
-
-  export type InspeksiBASTLogCreateWithoutInspeksi_bastInput = {
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    created_at?: Date | string
-    inspektur: UserCreateNestedOneWithoutInspeksi_bast_logsInput
-  }
-
-  export type InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput = {
-    id?: number
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id: number
-    created_at?: Date | string
-  }
-
-  export type InspeksiBASTLogCreateOrConnectWithoutInspeksi_bastInput = {
-    where: InspeksiBASTLogWhereUniqueInput
-    create: XOR<InspeksiBASTLogCreateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput>
-  }
-
-  export type InspeksiBASTLogCreateManyInspeksi_bastInputEnvelope = {
-    data: InspeksiBASTLogCreateManyInspeksi_bastInput | InspeksiBASTLogCreateManyInspeksi_bastInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type TransaksiUpsertWithoutInspeksi_bastInput = {
-    update: XOR<TransaksiUpdateWithoutInspeksi_bastInput, TransaksiUncheckedUpdateWithoutInspeksi_bastInput>
-    create: XOR<TransaksiCreateWithoutInspeksi_bastInput, TransaksiUncheckedCreateWithoutInspeksi_bastInput>
+  export type TransaksiUpsertWithoutChecklist_bastInput = {
+    update: XOR<TransaksiUpdateWithoutChecklist_bastInput, TransaksiUncheckedUpdateWithoutChecklist_bastInput>
+    create: XOR<TransaksiCreateWithoutChecklist_bastInput, TransaksiUncheckedCreateWithoutChecklist_bastInput>
     where?: TransaksiWhereInput
   }
 
-  export type TransaksiUpdateToOneWithWhereWithoutInspeksi_bastInput = {
+  export type TransaksiUpdateToOneWithWhereWithoutChecklist_bastInput = {
     where?: TransaksiWhereInput
-    data: XOR<TransaksiUpdateWithoutInspeksi_bastInput, TransaksiUncheckedUpdateWithoutInspeksi_bastInput>
+    data: XOR<TransaksiUpdateWithoutChecklist_bastInput, TransaksiUncheckedUpdateWithoutChecklist_bastInput>
   }
 
-  export type TransaksiUpdateWithoutInspeksi_bastInput = {
+  export type TransaksiUpdateWithoutChecklist_bastInput = {
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
-  export type TransaksiUncheckedUpdateWithoutInspeksi_bastInput = {
+  export type TransaksiUncheckedUpdateWithoutChecklist_bastInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
@@ -34423,296 +32346,68 @@ export namespace Prisma {
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
-  export type UserUpsertWithoutInspeksi_bastInput = {
-    update: XOR<UserUpdateWithoutInspeksi_bastInput, UserUncheckedUpdateWithoutInspeksi_bastInput>
-    create: XOR<UserCreateWithoutInspeksi_bastInput, UserUncheckedCreateWithoutInspeksi_bastInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutInspeksi_bastInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutInspeksi_bastInput, UserUncheckedUpdateWithoutInspeksi_bastInput>
-  }
-
-  export type UserUpdateWithoutInspeksi_bastInput = {
-    username?: StringFieldUpdateOperationsInput | string
-    nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
-    pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
-    aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
-    pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutInspeksi_bastInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    username?: StringFieldUpdateOperationsInput | string
-    nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-    pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
-    aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
-    pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
-  export type InspeksiBASTLogUpsertWithWhereUniqueWithoutInspeksi_bastInput = {
-    where: InspeksiBASTLogWhereUniqueInput
-    update: XOR<InspeksiBASTLogUpdateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedUpdateWithoutInspeksi_bastInput>
-    create: XOR<InspeksiBASTLogCreateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedCreateWithoutInspeksi_bastInput>
-  }
-
-  export type InspeksiBASTLogUpdateWithWhereUniqueWithoutInspeksi_bastInput = {
-    where: InspeksiBASTLogWhereUniqueInput
-    data: XOR<InspeksiBASTLogUpdateWithoutInspeksi_bastInput, InspeksiBASTLogUncheckedUpdateWithoutInspeksi_bastInput>
-  }
-
-  export type InspeksiBASTLogUpdateManyWithWhereWithoutInspeksi_bastInput = {
-    where: InspeksiBASTLogScalarWhereInput
-    data: XOR<InspeksiBASTLogUpdateManyMutationInput, InspeksiBASTLogUncheckedUpdateManyWithoutInspeksi_bastInput>
-  }
-
-  export type InspeksiBASTCreateWithoutLogsInput = {
-    item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    diperiksa_at?: Date | string | null
-    transaksi: TransaksiCreateNestedOneWithoutInspeksi_bastInput
-    inspektur?: UserCreateNestedOneWithoutInspeksi_bastInput
-  }
-
-  export type InspeksiBASTUncheckedCreateWithoutLogsInput = {
-    id?: number
-    transaksi_id: number
-    item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id?: number | null
-    diperiksa_at?: Date | string | null
-  }
-
-  export type InspeksiBASTCreateOrConnectWithoutLogsInput = {
-    where: InspeksiBASTWhereUniqueInput
-    create: XOR<InspeksiBASTCreateWithoutLogsInput, InspeksiBASTUncheckedCreateWithoutLogsInput>
-  }
-
-  export type UserCreateWithoutInspeksi_bast_logsInput = {
-    username: string
-    nama: string
-    no_hp: string
-    password: string
-    role: $Enums.Role
-    isActive?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
-    pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
-    aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
-    pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserUncheckedCreateWithoutInspeksi_bast_logsInput = {
-    id?: number
-    username: string
-    nama: string
-    no_hp: string
-    password: string
-    role: $Enums.Role
-    isActive?: boolean
-    created_at?: Date | string
-    updated_at?: Date | string
-    leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-    pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
-    aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
-    pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
-  }
-
-  export type UserCreateOrConnectWithoutInspeksi_bast_logsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutInspeksi_bast_logsInput, UserUncheckedCreateWithoutInspeksi_bast_logsInput>
-  }
-
-  export type InspeksiBASTUpsertWithoutLogsInput = {
-    update: XOR<InspeksiBASTUpdateWithoutLogsInput, InspeksiBASTUncheckedUpdateWithoutLogsInput>
-    create: XOR<InspeksiBASTCreateWithoutLogsInput, InspeksiBASTUncheckedCreateWithoutLogsInput>
-    where?: InspeksiBASTWhereInput
-  }
-
-  export type InspeksiBASTUpdateToOneWithWhereWithoutLogsInput = {
-    where?: InspeksiBASTWhereInput
-    data: XOR<InspeksiBASTUpdateWithoutLogsInput, InspeksiBASTUncheckedUpdateWithoutLogsInput>
-  }
-
-  export type InspeksiBASTUpdateWithoutLogsInput = {
-    item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    transaksi?: TransaksiUpdateOneRequiredWithoutInspeksi_bastNestedInput
-    inspektur?: UserUpdateOneWithoutInspeksi_bastNestedInput
-  }
-
-  export type InspeksiBASTUncheckedUpdateWithoutLogsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    transaksi_id?: IntFieldUpdateOperationsInput | number
-    item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: NullableIntFieldUpdateOperationsInput | number | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UserUpsertWithoutInspeksi_bast_logsInput = {
-    update: XOR<UserUpdateWithoutInspeksi_bast_logsInput, UserUncheckedUpdateWithoutInspeksi_bast_logsInput>
-    create: XOR<UserCreateWithoutInspeksi_bast_logsInput, UserUncheckedCreateWithoutInspeksi_bast_logsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutInspeksi_bast_logsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutInspeksi_bast_logsInput, UserUncheckedUpdateWithoutInspeksi_bast_logsInput>
-  }
-
-  export type UserUpdateWithoutInspeksi_bast_logsInput = {
-    username?: StringFieldUpdateOperationsInput | string
-    nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
-    pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
-    aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
-    pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutInspeksi_bast_logsInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    username?: StringFieldUpdateOperationsInput | string
-    nama?: StringFieldUpdateOperationsInput | string
-    no_hp?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-    pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
-    aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
-    pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
-  }
-
   export type TransaksiCreateWithoutPembayaranInput = {
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
     created_at?: Date | string
     updated_at?: Date | string
     customer: CustomerCreateNestedOneWithoutTransaksiInput
     unit: MasterUnitCreateNestedOneWithoutTransaksiInput
-    marketing: UserCreateNestedOneWithoutTransaksiInput
+    active_unit?: MasterUnitCreateNestedOneWithoutActive_transaksiInput
+    pic: UserCreateNestedOneWithoutTransaksiInput
     itj: ItjCreateNestedOneWithoutTransaksiInput
     logs?: TransaksiTahapLogCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRCreateNestedManyWithoutTransaksiInput
+    pengajuan_kpr_terpilih?: PengajuanKPRCreateNestedOneWithoutTransaksi_terpilihInput
   }
 
   export type TransaksiUncheckedCreateWithoutPembayaranInput = {
     id?: number
     customer_id: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
     logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutTransaksiInput
     dokumen?: DokumenTransaksiUncheckedCreateNestedManyWithoutTransaksiInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutTransaksiInput
+    checklist_bast?: ChecklistBASTUncheckedCreateNestedManyWithoutTransaksiInput
     pengajuan_kpr?: PengajuanKPRUncheckedCreateNestedManyWithoutTransaksiInput
   }
 
@@ -34731,16 +32426,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutPembayaran_diterimaInput = {
@@ -34754,16 +32446,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
     pembayaran_divoid?: PembayaranUncheckedCreateNestedManyWithoutVoiderInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutPembayaran_diterimaInput = {
@@ -34781,16 +32470,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiCreateNestedManyWithoutVerifierInput
-    inspeksi_bast?: InspeksiBASTCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogCreateNestedManyWithoutActorInput
   }
 
   export type UserUncheckedCreateWithoutPembayaran_divoidInput = {
@@ -34804,16 +32490,13 @@ export namespace Prisma {
     created_at?: Date | string
     updated_at?: Date | string
     leads?: LeadUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi?: TransaksiUncheckedCreateNestedManyWithoutMarketingInput
+    transaksi?: TransaksiUncheckedCreateNestedManyWithoutPicInput
     pembayaran_diterima?: PembayaranUncheckedCreateNestedManyWithoutPenerimaInput
-    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutMarketingInput
-    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutAdminInput
+    itj_diajukan?: ItjUncheckedCreateNestedManyWithoutCloserInput
+    transaksi_logs?: TransaksiTahapLogUncheckedCreateNestedManyWithoutActorInput
     aktivitas_log?: AktivitasUncheckedCreateNestedManyWithoutUserInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedCreateNestedManyWithoutVerifierInput
-    inspeksi_bast?: InspeksiBASTUncheckedCreateNestedManyWithoutInspekturInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedCreateNestedManyWithoutInspekturInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutAdminInput
-    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutAdminInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedCreateNestedManyWithoutActorInput
+    unit_tipe_logs?: UnitTipeLogUncheckedCreateNestedManyWithoutActorInput
   }
 
   export type UserCreateOrConnectWithoutPembayaran_divoidInput = {
@@ -34838,58 +32521,62 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateWithoutPembayaranInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
@@ -34914,16 +32601,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPembayaran_diterimaInput = {
@@ -34937,16 +32621,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
     pembayaran_divoid?: PembayaranUncheckedUpdateManyWithoutVoiderNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type UserUpsertWithoutPembayaran_divoidInput = {
@@ -34970,16 +32651,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUpdateManyWithoutVerifierNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUpdateManyWithoutActorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPembayaran_divoidInput = {
@@ -34993,16 +32671,13 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     leads?: LeadUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi?: TransaksiUncheckedUpdateManyWithoutMarketingNestedInput
+    transaksi?: TransaksiUncheckedUpdateManyWithoutPicNestedInput
     pembayaran_diterima?: PembayaranUncheckedUpdateManyWithoutPenerimaNestedInput
-    itj_diajukan?: ItjUncheckedUpdateManyWithoutMarketingNestedInput
-    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutAdminNestedInput
+    itj_diajukan?: ItjUncheckedUpdateManyWithoutCloserNestedInput
+    transaksi_logs?: TransaksiTahapLogUncheckedUpdateManyWithoutActorNestedInput
     aktivitas_log?: AktivitasUncheckedUpdateManyWithoutUserNestedInput
-    dokumen_diverifikasi?: DokumenTransaksiUncheckedUpdateManyWithoutVerifierNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutInspekturNestedInput
-    inspeksi_bast_logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspekturNestedInput
-    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutAdminNestedInput
-    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutAdminNestedInput
+    pengajuan_kpr_logs?: PengajuanKPRLogUncheckedUpdateManyWithoutActorNestedInput
+    unit_tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutActorNestedInput
   }
 
   export type LeadCreateManyMarketingInput = {
@@ -35022,7 +32697,7 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
-  export type TransaksiCreateManyMarketingInput = {
+  export type TransaksiCreateManyPicInput = {
     id?: number
     customer_id: number
     unit_id: number
@@ -35032,18 +32707,20 @@ export namespace Prisma {
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -35065,17 +32742,13 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
-  export type ItjCreateManyMarketingInput = {
+  export type ItjCreateManyCloserInput = {
     id?: number
     lead_id: number
     unit_id: number
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -35083,11 +32756,9 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
-  export type TransaksiTahapLogCreateManyAdminInput = {
+  export type TransaksiTahapLogCreateManyActorInput = {
     id?: number
     transaksi_id: number
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
     catatan?: string | null
@@ -35102,19 +32773,6 @@ export namespace Prisma {
     catatan?: string | null
     tgl_follow_up?: Date | string | null
     created_at?: Date | string
-  }
-
-  export type DokumenTransaksiCreateManyVerifierInput = {
-    id?: number
-    transaksi_id: number
-    jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
-    status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_at?: Date | string | null
-    created_at?: Date | string
-    updated_at?: Date | string
   }
 
   export type PembayaranCreateManyVoiderInput = {
@@ -35134,25 +32792,7 @@ export namespace Prisma {
     updated_at?: Date | string
   }
 
-  export type InspeksiBASTCreateManyInspekturInput = {
-    id?: number
-    transaksi_id: number
-    item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    diperiksa_at?: Date | string | null
-  }
-
-  export type InspeksiBASTLogCreateManyInspekturInput = {
-    id?: number
-    inspeksi_bast_id: number
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    created_at?: Date | string
-  }
-
-  export type PengajuanKPRLogCreateManyAdminInput = {
+  export type PengajuanKPRLogCreateManyActorInput = {
     id?: number
     pengajuan_id: number
     status_sebelum?: $Enums.StatusPengajuanKPR | null
@@ -35161,7 +32801,7 @@ export namespace Prisma {
     created_at?: Date | string
   }
 
-  export type UnitTipeLogCreateManyAdminInput = {
+  export type UnitTipeLogCreateManyActorInput = {
     id?: number
     unit_id?: number | null
     blok: string
@@ -35227,37 +32867,39 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TransaksiUpdateWithoutMarketingInput = {
+  export type TransaksiUpdateWithoutPicInput = {
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
-  export type TransaksiUncheckedUpdateWithoutMarketingInput = {
+  export type TransaksiUncheckedUpdateWithoutPicInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
@@ -35267,28 +32909,30 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
-  export type TransaksiUncheckedUpdateManyWithoutMarketingInput = {
+  export type TransaksiUncheckedUpdateManyWithoutPicInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
@@ -35298,18 +32942,20 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -35364,14 +33010,10 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ItjUpdateWithoutMarketingInput = {
+  export type ItjUpdateWithoutCloserInput = {
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35382,17 +33024,13 @@ export namespace Prisma {
     transaksi?: TransaksiUpdateOneWithoutItjNestedInput
   }
 
-  export type ItjUncheckedUpdateWithoutMarketingInput = {
+  export type ItjUncheckedUpdateWithoutCloserInput = {
     id?: IntFieldUpdateOperationsInput | number
     lead_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35401,17 +33039,13 @@ export namespace Prisma {
     transaksi?: TransaksiUncheckedUpdateOneWithoutItjNestedInput
   }
 
-  export type ItjUncheckedUpdateManyWithoutMarketingInput = {
+  export type ItjUncheckedUpdateManyWithoutCloserInput = {
     id?: IntFieldUpdateOperationsInput | number
     lead_id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35419,9 +33053,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TransaksiTahapLogUpdateWithoutAdminInput = {
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
+  export type TransaksiTahapLogUpdateWithoutActorInput = {
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35429,22 +33061,18 @@ export namespace Prisma {
     transaksi?: TransaksiUpdateOneRequiredWithoutLogsNestedInput
   }
 
-  export type TransaksiTahapLogUncheckedUpdateWithoutAdminInput = {
+  export type TransaksiTahapLogUncheckedUpdateWithoutActorInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type TransaksiTahapLogUncheckedUpdateManyWithoutAdminInput = {
+  export type TransaksiTahapLogUncheckedUpdateManyWithoutActorInput = {
     id?: IntFieldUpdateOperationsInput | number
     transaksi_id?: IntFieldUpdateOperationsInput | number
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35478,44 +33106,6 @@ export namespace Prisma {
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     tgl_follow_up?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DokumenTransaksiUpdateWithoutVerifierInput = {
-    jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
-    status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    transaksi?: TransaksiUpdateOneRequiredWithoutDokumenNestedInput
-  }
-
-  export type DokumenTransaksiUncheckedUpdateWithoutVerifierInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    transaksi_id?: IntFieldUpdateOperationsInput | number
-    jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
-    status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DokumenTransaksiUncheckedUpdateManyWithoutVerifierInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    transaksi_id?: IntFieldUpdateOperationsInput | number
-    jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
-    status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PembayaranUpdateWithoutVoiderInput = {
@@ -35568,61 +33158,7 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type InspeksiBASTUpdateWithoutInspekturInput = {
-    item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    transaksi?: TransaksiUpdateOneRequiredWithoutInspeksi_bastNestedInput
-    logs?: InspeksiBASTLogUpdateManyWithoutInspeksi_bastNestedInput
-  }
-
-  export type InspeksiBASTUncheckedUpdateWithoutInspekturInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    transaksi_id?: IntFieldUpdateOperationsInput | number
-    item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspeksi_bastNestedInput
-  }
-
-  export type InspeksiBASTUncheckedUpdateManyWithoutInspekturInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    transaksi_id?: IntFieldUpdateOperationsInput | number
-    item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type InspeksiBASTLogUpdateWithoutInspekturInput = {
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    inspeksi_bast?: InspeksiBASTUpdateOneRequiredWithoutLogsNestedInput
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateWithoutInspekturInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    inspeksi_bast_id?: IntFieldUpdateOperationsInput | number
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateManyWithoutInspekturInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    inspeksi_bast_id?: IntFieldUpdateOperationsInput | number
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PengajuanKPRLogUpdateWithoutAdminInput = {
+  export type PengajuanKPRLogUpdateWithoutActorInput = {
     status_sebelum?: NullableEnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
@@ -35630,7 +33166,7 @@ export namespace Prisma {
     pengajuan?: PengajuanKPRUpdateOneRequiredWithoutLogsNestedInput
   }
 
-  export type PengajuanKPRLogUncheckedUpdateWithoutAdminInput = {
+  export type PengajuanKPRLogUncheckedUpdateWithoutActorInput = {
     id?: IntFieldUpdateOperationsInput | number
     pengajuan_id?: IntFieldUpdateOperationsInput | number
     status_sebelum?: NullableEnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR | null
@@ -35639,7 +33175,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PengajuanKPRLogUncheckedUpdateManyWithoutAdminInput = {
+  export type PengajuanKPRLogUncheckedUpdateManyWithoutActorInput = {
     id?: IntFieldUpdateOperationsInput | number
     pengajuan_id?: IntFieldUpdateOperationsInput | number
     status_sebelum?: NullableEnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR | null
@@ -35648,7 +33184,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UnitTipeLogUpdateWithoutAdminInput = {
+  export type UnitTipeLogUpdateWithoutActorInput = {
     blok?: StringFieldUpdateOperationsInput | string
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
@@ -35659,7 +33195,7 @@ export namespace Prisma {
     tipe_baru?: MasterTipeUpdateOneRequiredWithoutUnit_tipe_baruNestedInput
   }
 
-  export type UnitTipeLogUncheckedUpdateWithoutAdminInput = {
+  export type UnitTipeLogUncheckedUpdateWithoutActorInput = {
     id?: IntFieldUpdateOperationsInput | number
     unit_id?: NullableIntFieldUpdateOperationsInput | number | null
     blok?: StringFieldUpdateOperationsInput | string
@@ -35671,7 +33207,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UnitTipeLogUncheckedUpdateManyWithoutAdminInput = {
+  export type UnitTipeLogUncheckedUpdateManyWithoutActorInput = {
     id?: IntFieldUpdateOperationsInput | number
     unit_id?: NullableIntFieldUpdateOperationsInput | number | null
     blok?: StringFieldUpdateOperationsInput | string
@@ -35700,7 +33236,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -35712,7 +33248,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -35723,6 +33259,7 @@ export namespace Prisma {
     status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUpdateOneWithoutActive_unitNestedInput
     itj?: ItjUpdateManyWithoutUnitNestedInput
     tipe_logs?: UnitTipeLogUpdateManyWithoutUnitNestedInput
   }
@@ -35735,6 +33272,7 @@ export namespace Prisma {
     status_unit?: EnumStatusUnitFieldUpdateOperationsInput | $Enums.StatusUnit
     harga_khusus?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     transaksi?: TransaksiUncheckedUpdateManyWithoutUnitNestedInput
+    active_transaksi?: TransaksiUncheckedUpdateOneWithoutActive_unitNestedInput
     itj?: ItjUncheckedUpdateManyWithoutUnitNestedInput
     tipe_logs?: UnitTipeLogUncheckedUpdateManyWithoutUnitNestedInput
   }
@@ -35756,7 +33294,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     unit?: MasterUnitUpdateOneWithoutTipe_logsNestedInput
     tipe_baru?: MasterTipeUpdateOneRequiredWithoutUnit_tipe_baruNestedInput
-    admin?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
   }
 
   export type UnitTipeLogUncheckedUpdateWithoutTipe_lamaInput = {
@@ -35767,7 +33305,7 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35779,7 +33317,7 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35791,7 +33329,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     unit?: MasterUnitUpdateOneWithoutTipe_logsNestedInput
     tipe_lama?: MasterTipeUpdateOneRequiredWithoutUnit_tipe_lamaNestedInput
-    admin?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
   }
 
   export type UnitTipeLogUncheckedUpdateWithoutTipe_baruInput = {
@@ -35802,7 +33340,7 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35814,32 +33352,34 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransaksiCreateManyUnitInput = {
     id?: number
     customer_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -35847,14 +33387,10 @@ export namespace Prisma {
   export type ItjCreateManyUnitInput = {
     id?: number
     lead_id: number
-    marketing_id?: number | null
+    closer_id?: number | null
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -35870,7 +33406,7 @@ export namespace Prisma {
     harga_khusus_lama?: Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: boolean
     alasan: string
-    changed_by: number
+    actor_id: number
     created_at?: Date | string
   }
 
@@ -35880,83 +33416,89 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     customer?: CustomerUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateWithoutUnitInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
   export type TransaksiUncheckedUpdateManyWithoutUnitInput = {
     id?: IntFieldUpdateOperationsInput | number
     customer_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -35965,31 +33507,23 @@ export namespace Prisma {
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     lead?: LeadUpdateOneRequiredWithoutItjNestedInput
-    marketing?: UserUpdateOneWithoutItj_diajukanNestedInput
+    closer?: UserUpdateOneWithoutItj_diajukanNestedInput
     transaksi?: TransaksiUpdateOneWithoutItjNestedInput
   }
 
   export type ItjUncheckedUpdateWithoutUnitInput = {
     id?: IntFieldUpdateOperationsInput | number
     lead_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
+    closer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36001,14 +33535,10 @@ export namespace Prisma {
   export type ItjUncheckedUpdateManyWithoutUnitInput = {
     id?: IntFieldUpdateOperationsInput | number
     lead_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
+    closer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36024,7 +33554,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     tipe_lama?: MasterTipeUpdateOneRequiredWithoutUnit_tipe_lamaNestedInput
     tipe_baru?: MasterTipeUpdateOneRequiredWithoutUnit_tipe_baruNestedInput
-    admin?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutUnit_tipe_logsNestedInput
   }
 
   export type UnitTipeLogUncheckedUpdateWithoutUnitInput = {
@@ -36035,7 +33565,7 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -36047,7 +33577,7 @@ export namespace Prisma {
     harga_khusus_lama?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     harga_khusus_direset?: BoolFieldUpdateOperationsInput | boolean
     alasan?: StringFieldUpdateOperationsInput | string
-    changed_by?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -36064,14 +33594,10 @@ export namespace Prisma {
   export type ItjCreateManyLeadInput = {
     id?: number
     unit_id: number
-    marketing_id?: number | null
+    closer_id?: number | null
     nik: string
     nama_ktp: string
     nominal?: Decimal | DecimalJsLike | number | string
-    harga_deal?: Decimal | DecimalJsLike | number | string
-    target_itj?: Decimal | DecimalJsLike | number | string
-    target_dp: Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: Decimal | DecimalJsLike | number | string
     metode_bayar: $Enums.MetodeBayar
     tenor?: number | null
     diajukan_at?: Date | string
@@ -36112,31 +33638,23 @@ export namespace Prisma {
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     unit?: MasterUnitUpdateOneRequiredWithoutItjNestedInput
-    marketing?: UserUpdateOneWithoutItj_diajukanNestedInput
+    closer?: UserUpdateOneWithoutItj_diajukanNestedInput
     transaksi?: TransaksiUpdateOneWithoutItjNestedInput
   }
 
   export type ItjUncheckedUpdateWithoutLeadInput = {
     id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
+    closer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36148,14 +33666,10 @@ export namespace Prisma {
   export type ItjUncheckedUpdateManyWithoutLeadInput = {
     id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: NullableIntFieldUpdateOperationsInput | number | null
+    closer_id?: NullableIntFieldUpdateOperationsInput | number | null
     nik?: StringFieldUpdateOperationsInput | string
     nama_ktp?: StringFieldUpdateOperationsInput | string
     nominal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
-    nominal_dibayar?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     tenor?: NullableIntFieldUpdateOperationsInput | number | null
     diajukan_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36166,25 +33680,27 @@ export namespace Prisma {
   export type TransaksiCreateManyCustomerInput = {
     id?: number
     unit_id: number
-    marketing_id: number
+    pic_id: number
     itj_id: number
     metode_bayar: $Enums.MetodeBayar
     harga_deal: Decimal | DecimalJsLike | number | string
     target_itj: Decimal | DecimalJsLike | number | string
     target_dp: Decimal | DecimalJsLike | number | string
     tenor_bulan?: number | null
-    status_transaksi?: $Enums.TahapTransaksi
-    tahap_detail?: $Enums.TahapDetail
-    nama_bank?: string | null
+    tahap_detail: $Enums.TahapDetail
     nama_notaris?: string | null
+    rencana_akad_at?: Date | string | null
+    rencana_bast_at?: Date | string | null
     tgl_akad?: Date | string | null
     lunas_at?: Date | string | null
     tgl_bast?: Date | string | null
-    closing_at?: Date | string | null
-    closed_at?: Date | string | null
+    closing_at: Date | string
     cancelled_at?: Date | string | null
     alasan_batal?: string | null
     catatan_admin?: string | null
+    version?: number
+    active_unit_id?: number | null
+    pengajuan_kpr_terpilih_id?: number | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -36212,83 +33728,89 @@ export namespace Prisma {
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     unit?: MasterUnitUpdateOneRequiredWithoutTransaksiNestedInput
-    marketing?: UserUpdateOneRequiredWithoutTransaksiNestedInput
+    active_unit?: MasterUnitUpdateOneWithoutActive_transaksiNestedInput
+    pic?: UserUpdateOneRequiredWithoutTransaksiNestedInput
     itj?: ItjUpdateOneRequiredWithoutTransaksiNestedInput
     pembayaran?: PembayaranUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUpdateManyWithoutTransaksiNestedInput
+    pengajuan_kpr_terpilih?: PengajuanKPRUpdateOneWithoutTransaksi_terpilihNestedInput
   }
 
   export type TransaksiUncheckedUpdateWithoutCustomerInput = {
     id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     pembayaran?: PembayaranUncheckedUpdateManyWithoutTransaksiNestedInput
     logs?: TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiNestedInput
     dokumen?: DokumenTransaksiUncheckedUpdateManyWithoutTransaksiNestedInput
-    inspeksi_bast?: InspeksiBASTUncheckedUpdateManyWithoutTransaksiNestedInput
+    checklist_bast?: ChecklistBASTUncheckedUpdateManyWithoutTransaksiNestedInput
     pengajuan_kpr?: PengajuanKPRUncheckedUpdateManyWithoutTransaksiNestedInput
   }
 
   export type TransaksiUncheckedUpdateManyWithoutCustomerInput = {
     id?: IntFieldUpdateOperationsInput | number
     unit_id?: IntFieldUpdateOperationsInput | number
-    marketing_id?: IntFieldUpdateOperationsInput | number
+    pic_id?: IntFieldUpdateOperationsInput | number
     itj_id?: IntFieldUpdateOperationsInput | number
     metode_bayar?: EnumMetodeBayarFieldUpdateOperationsInput | $Enums.MetodeBayar
     harga_deal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_itj?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     target_dp?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     tenor_bulan?: NullableIntFieldUpdateOperationsInput | number | null
-    status_transaksi?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     tahap_detail?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    nama_bank?: NullableStringFieldUpdateOperationsInput | string | null
     nama_notaris?: NullableStringFieldUpdateOperationsInput | string | null
+    rencana_akad_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    rencana_bast_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_akad?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lunas_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     tgl_bast?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closing_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    closed_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    closing_at?: DateTimeFieldUpdateOperationsInput | Date | string
     cancelled_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     alasan_batal?: NullableStringFieldUpdateOperationsInput | string | null
     catatan_admin?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    active_unit_id?: NullableIntFieldUpdateOperationsInput | number | null
+    pengajuan_kpr_terpilih_id?: NullableIntFieldUpdateOperationsInput | number | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36366,11 +33888,9 @@ export namespace Prisma {
 
   export type TransaksiTahapLogCreateManyTransaksiInput = {
     id?: number
-    tahap_sebelum?: $Enums.TahapTransaksi | null
-    tahap_sesudah: $Enums.TahapTransaksi
     detail_sebelum?: $Enums.TahapDetail | null
     detail_sesudah: $Enums.TahapDetail
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
@@ -36378,23 +33898,17 @@ export namespace Prisma {
   export type DokumenTransaksiCreateManyTransaksiInput = {
     id?: number
     jenis: $Enums.JenisDokumen
-    kategori: $Enums.KategoriDokumen
     status?: $Enums.StatusDokumen
-    file_url?: string | null
-    catatan_verifikasi?: string | null
-    verified_by?: number | null
-    verified_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
 
-  export type InspeksiBASTCreateManyTransaksiInput = {
+  export type ChecklistBASTCreateManyTransaksiInput = {
     id?: number
     item: $Enums.ItemBAST
-    status?: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id?: number | null
-    diperiksa_at?: Date | string | null
+    status?: $Enums.StatusBAST
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
   export type PengajuanKPRCreateManyTransaksiInput = {
@@ -36461,58 +33975,42 @@ export namespace Prisma {
   }
 
   export type TransaksiTahapLogUpdateWithoutTransaksiInput = {
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    admin?: UserUpdateOneRequiredWithoutTransaksi_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutTransaksi_logsNestedInput
   }
 
   export type TransaksiTahapLogUncheckedUpdateWithoutTransaksiInput = {
     id?: IntFieldUpdateOperationsInput | number
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TransaksiTahapLogUncheckedUpdateManyWithoutTransaksiInput = {
     id?: IntFieldUpdateOperationsInput | number
-    tahap_sebelum?: NullableEnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi | null
-    tahap_sesudah?: EnumTahapTransaksiFieldUpdateOperationsInput | $Enums.TahapTransaksi
     detail_sebelum?: NullableEnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail | null
     detail_sesudah?: EnumTahapDetailFieldUpdateOperationsInput | $Enums.TahapDetail
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DokumenTransaksiUpdateWithoutTransaksiInput = {
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    verifier?: UserUpdateOneWithoutDokumen_diverifikasiNestedInput
   }
 
   export type DokumenTransaksiUncheckedUpdateWithoutTransaksiInput = {
     id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_by?: NullableIntFieldUpdateOperationsInput | number | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36520,42 +34018,32 @@ export namespace Prisma {
   export type DokumenTransaksiUncheckedUpdateManyWithoutTransaksiInput = {
     id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
-    kategori?: EnumKategoriDokumenFieldUpdateOperationsInput | $Enums.KategoriDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
-    file_url?: NullableStringFieldUpdateOperationsInput | string | null
-    catatan_verifikasi?: NullableStringFieldUpdateOperationsInput | string | null
-    verified_by?: NullableIntFieldUpdateOperationsInput | number | null
-    verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type InspeksiBASTUpdateWithoutTransaksiInput = {
+  export type ChecklistBASTUpdateWithoutTransaksiInput = {
     item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    inspektur?: UserUpdateOneWithoutInspeksi_bastNestedInput
-    logs?: InspeksiBASTLogUpdateManyWithoutInspeksi_bastNestedInput
+    status?: EnumStatusBASTFieldUpdateOperationsInput | $Enums.StatusBAST
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type InspeksiBASTUncheckedUpdateWithoutTransaksiInput = {
+  export type ChecklistBASTUncheckedUpdateWithoutTransaksiInput = {
     id?: IntFieldUpdateOperationsInput | number
     item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: NullableIntFieldUpdateOperationsInput | number | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    logs?: InspeksiBASTLogUncheckedUpdateManyWithoutInspeksi_bastNestedInput
+    status?: EnumStatusBASTFieldUpdateOperationsInput | $Enums.StatusBAST
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type InspeksiBASTUncheckedUpdateManyWithoutTransaksiInput = {
+  export type ChecklistBASTUncheckedUpdateManyWithoutTransaksiInput = {
     id?: IntFieldUpdateOperationsInput | number
     item?: EnumItemBASTFieldUpdateOperationsInput | $Enums.ItemBAST
-    status?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: NullableIntFieldUpdateOperationsInput | number | null
-    diperiksa_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumStatusBASTFieldUpdateOperationsInput | $Enums.StatusBAST
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PengajuanKPRUpdateWithoutTransaksiInput = {
@@ -36567,6 +34055,7 @@ export namespace Prisma {
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi_terpilih?: TransaksiUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
     bank?: BankUpdateOneRequiredWithoutPengajuan_kprNestedInput
     logs?: PengajuanKPRLogUpdateManyWithoutPengajuanNestedInput
   }
@@ -36582,6 +34071,7 @@ export namespace Prisma {
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi_terpilih?: TransaksiUncheckedUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
     logs?: PengajuanKPRLogUncheckedUpdateManyWithoutPengajuanNestedInput
   }
 
@@ -36621,6 +34111,7 @@ export namespace Prisma {
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     transaksi?: TransaksiUpdateOneRequiredWithoutPengajuan_kprNestedInput
+    transaksi_terpilih?: TransaksiUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
     logs?: PengajuanKPRLogUpdateManyWithoutPengajuanNestedInput
   }
 
@@ -36635,6 +34126,7 @@ export namespace Prisma {
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaksi_terpilih?: TransaksiUncheckedUpdateOneWithoutPengajuan_kpr_terpilihNestedInput
     logs?: PengajuanKPRLogUncheckedUpdateManyWithoutPengajuanNestedInput
   }
 
@@ -36655,7 +34147,7 @@ export namespace Prisma {
     id?: number
     status_sebelum?: $Enums.StatusPengajuanKPR | null
     status_sesudah: $Enums.StatusPengajuanKPR
-    admin_id: number
+    actor_id: number
     catatan?: string | null
     created_at?: Date | string
   }
@@ -36665,14 +34157,14 @@ export namespace Prisma {
     status_sesudah?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    admin?: UserUpdateOneRequiredWithoutPengajuan_kpr_logsNestedInput
+    actor?: UserUpdateOneRequiredWithoutPengajuan_kpr_logsNestedInput
   }
 
   export type PengajuanKPRLogUncheckedUpdateWithoutPengajuanInput = {
     id?: IntFieldUpdateOperationsInput | number
     status_sebelum?: NullableEnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36681,43 +34173,8 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     status_sebelum?: NullableEnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR | null
     status_sesudah?: EnumStatusPengajuanKPRFieldUpdateOperationsInput | $Enums.StatusPengajuanKPR
-    admin_id?: IntFieldUpdateOperationsInput | number
+    actor_id?: IntFieldUpdateOperationsInput | number
     catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type InspeksiBASTLogCreateManyInspeksi_bastInput = {
-    id?: number
-    status_sebelum?: $Enums.StatusInspeksi | null
-    status_sesudah: $Enums.StatusInspeksi
-    catatan?: string | null
-    inspektur_id: number
-    created_at?: Date | string
-  }
-
-  export type InspeksiBASTLogUpdateWithoutInspeksi_bastInput = {
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    inspektur?: UserUpdateOneRequiredWithoutInspeksi_bast_logsNestedInput
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateWithoutInspeksi_bastInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: IntFieldUpdateOperationsInput | number
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type InspeksiBASTLogUncheckedUpdateManyWithoutInspeksi_bastInput = {
-    id?: IntFieldUpdateOperationsInput | number
-    status_sebelum?: NullableEnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi | null
-    status_sesudah?: EnumStatusInspeksiFieldUpdateOperationsInput | $Enums.StatusInspeksi
-    catatan?: NullableStringFieldUpdateOperationsInput | string | null
-    inspektur_id?: IntFieldUpdateOperationsInput | number
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

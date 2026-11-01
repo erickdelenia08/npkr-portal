@@ -3,12 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { ItemBAST, StatusBAST } from "@/generated/prisma";
 import {
-  ItemBAST,
-  StatusInspeksi,
-} from "@/generated/prisma";
-import {
-  updateInspeksiBASTSchema,
+  updateChecklistBASTSchema,
+  type UpdateChecklistBASTInput,
   type UpdateInspeksiBASTInput,
 } from "@/schemas/bast.schema";
 
@@ -20,23 +18,17 @@ export interface BastActionResponse {
     id: number;
     transaksiId: number;
     item: ItemBAST;
-    status: StatusInspeksi;
-    catatan: string | null;
+    status: StatusBAST;
   };
 }
 
 /**
- * Updates an inspection item for BAST (Serah Terima Bangunan).
- * Inside a transaction:
- * 1. Upserts the InspeksiBAST record.
- * 2. Creates an audit log record in InspeksiBASTLog capturing status_sebelum and status_sesudah.
+ * Updates a checklist item for BAST (Serah Terima Bangunan / Kavling).
+ * Records status BELUM_LENGKAP or LENGKAP.
  * Role required: ADMIN
  */
-export async function updateInspeksiBAST(
-  inputOrTransaksiId: number | UpdateInspeksiBASTInput,
-  maybeItemId?: ItemBAST | string | number,
-  maybeNewStatus?: StatusInspeksi,
-  maybeNote?: string | null
+export async function updateChecklistBAST(
+  input: UpdateChecklistBASTInput
 ): Promise<BastActionResponse> {
   const session = await auth();
 
@@ -48,7 +40,7 @@ export async function updateInspeksiBAST(
   if (role !== "ADMIN") {
     return {
       success: false,
-      error: "Hanya Admin yang berwenang memperbarui hasil inspeksi BAST.",
+      error: "Hanya Admin yang berwenang memperbarui checklist serah terima BAST.",
     };
   }
 
@@ -60,7 +52,6 @@ export async function updateInspeksiBAST(
     };
   }
 
-  // Verify actor exists and is active in database
   const user = await prisma.user.findUnique({
     where: { id: adminId },
     select: { id: true, role: true, isActive: true },
@@ -73,104 +64,41 @@ export async function updateInspeksiBAST(
     };
   }
 
-  // Normalize positional vs object invocation
-  const rawInput =
-    typeof inputOrTransaksiId === "object"
-      ? inputOrTransaksiId
-      : {
-          transaksiId: inputOrTransaksiId,
-          itemId: maybeItemId,
-          newStatus: maybeNewStatus,
-          note: maybeNote,
-        };
-
-  const parsed = updateInspeksiBASTSchema.safeParse(rawInput);
+  const parsed = updateChecklistBASTSchema.safeParse(input);
   if (!parsed.success) {
     return {
       success: false,
-      error: parsed.error.issues[0]?.message ?? "Data inspeksi tidak valid.",
+      error: parsed.error.issues[0]?.message ?? "Data checklist BAST tidak valid.",
     };
   }
 
-  const { transaksiId, itemId, newStatus, note } = parsed.data;
+  const { transaksiId, item, status } = parsed.data;
 
   try {
-    const result = await prisma.$transaction(async (tx) => {
-      // 1. Verify transaction exists
-      const trx = await tx.transaksi.findUnique({
-        where: { id: transaksiId },
-        select: { id: true, unit: { select: { blok: true } } },
-      });
+    const trx = await prisma.transaksi.findUnique({
+      where: { id: transaksiId },
+      select: { id: true },
+    });
 
-      if (!trx) {
-        throw new Error("Transaksi tidak ditemukan.");
-      }
+    if (!trx) {
+      return { success: false, error: "Transaksi tidak ditemukan." };
+    }
 
-      // 2. Resolve ItemBAST enum
-      let targetItemEnum: ItemBAST;
-
-      if (typeof itemId === "number") {
-        const found = await tx.inspeksiBAST.findUnique({
-          where: { id: itemId },
-          select: { item: true },
-        });
-        if (!found) {
-          throw new Error("Item inspeksi tidak ditemukan.");
-        }
-        targetItemEnum = found.item;
-      } else {
-        targetItemEnum = itemId as ItemBAST;
-      }
-
-      // 3. Find current inspection record to get status_sebelum
-      const existing = await tx.inspeksiBAST.findUnique({
-        where: {
-          transaksi_id_item: {
-            transaksi_id: transaksiId,
-            item: targetItemEnum,
-          },
-        },
-      });
-
-      const statusSebelum: StatusInspeksi | null = existing ? existing.status : null;
-      const cleanNote = note?.trim() || null;
-
-      // 4. Upsert InspeksiBAST
-      const updated = await tx.inspeksiBAST.upsert({
-        where: {
-          transaksi_id_item: {
-            transaksi_id: transaksiId,
-            item: targetItemEnum,
-          },
-        },
-        create: {
+    const updated = await prisma.checklistBAST.upsert({
+      where: {
+        transaksi_id_item: {
           transaksi_id: transaksiId,
-          item: targetItemEnum,
-          status: newStatus,
-          catatan: cleanNote,
-          inspektur_id: adminId,
-          diperiksa_at: new Date(),
+          item,
         },
-        update: {
-          status: newStatus,
-          catatan: cleanNote,
-          inspektur_id: adminId,
-          diperiksa_at: new Date(),
-        },
-      });
-
-      // 5. CRITICAL: Create log record in InspeksiBASTLog
-      await tx.inspeksiBASTLog.create({
-        data: {
-          inspeksi_bast_id: updated.id,
-          status_sebelum: statusSebelum,
-          status_sesudah: newStatus,
-          catatan: cleanNote,
-          inspektur_id: adminId,
-        },
-      });
-
-      return updated;
+      },
+      create: {
+        transaksi_id: transaksiId,
+        item,
+        status,
+      },
+      update: {
+        status,
+      },
     });
 
     revalidatePath(`/admin/transaksi/${transaksiId}`);
@@ -179,19 +107,63 @@ export async function updateInspeksiBAST(
 
     return {
       success: true,
-      message: `Inspeksi ${result.item.replace(/_/g, " ")} berhasil diperbarui menjadi ${newStatus}.`,
+      message: `Item ${item.replace(/_/g, " ")} berhasil ditandai ${status === "LENGKAP" ? "Lengkap" : "Belum Lengkap"}.`,
       data: {
-        id: result.id,
-        transaksiId: result.transaksi_id,
-        item: result.item,
-        status: result.status,
-        catatan: result.catatan,
+        id: updated.id,
+        transaksiId: updated.transaksi_id,
+        item: updated.item,
+        status: updated.status,
       },
     };
   } catch (error: unknown) {
-    console.error("updateInspeksiBAST error:", error);
+    console.error("updateChecklistBAST error:", error);
     const message =
-      error instanceof Error ? error.message : "Gagal memperbarui inspeksi BAST.";
+      error instanceof Error ? error.message : "Gagal memperbarui checklist BAST.";
     return { success: false, error: message };
   }
+}
+
+/**
+ * Backwards compatibility wrapper for updateInspeksiBAST
+ */
+export async function updateInspeksiBAST(
+  inputOrTransaksiId: number | UpdateInspeksiBASTInput,
+  maybeItemId?: ItemBAST | string | number,
+  maybeNewStatus?: string
+): Promise<BastActionResponse> {
+  let transaksiId: number;
+  let targetItem: ItemBAST;
+  let targetStatus: StatusBAST = "LENGKAP";
+
+  if (typeof inputOrTransaksiId === "object") {
+    transaksiId = inputOrTransaksiId.transaksiId;
+    targetItem = (
+      typeof inputOrTransaksiId.itemId === "string"
+        ? inputOrTransaksiId.itemId
+        : "PONDASI_STRUKTUR"
+    ) as ItemBAST;
+    targetStatus =
+      inputOrTransaksiId.newStatus === "SESUAI" ||
+      inputOrTransaksiId.newStatus === "SELESAI_DIPERBAIKI" ||
+      inputOrTransaksiId.newStatus === "LENGKAP"
+        ? "LENGKAP"
+        : "BELUM_LENGKAP";
+  } else {
+    transaksiId = inputOrTransaksiId;
+    targetItem = (
+      typeof maybeItemId === "string" ? maybeItemId : "PONDASI_STRUKTUR"
+    ) as ItemBAST;
+    targetStatus =
+      maybeNewStatus === "SESUAI" ||
+      maybeNewStatus === "SELESAI_DIPERBAIKI" ||
+      maybeNewStatus === "LENGKAP"
+        ? "LENGKAP"
+        : "BELUM_LENGKAP";
+  }
+
+  return updateChecklistBAST({
+    transaksiId,
+    item: targetItem,
+    status: targetStatus,
+  });
 }

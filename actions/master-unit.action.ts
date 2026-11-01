@@ -18,6 +18,7 @@ import {
   UpdateMasterUnitStatusInput,
 } from "@/schemas/master-unit.schema";
 import { Prisma } from "@/generated/prisma";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import { buildNamaTipe, parseBlok } from "@/lib/tipe-name";
 import {
   normalizeBlok,
@@ -144,7 +145,7 @@ export interface SerializedMasterTipe {
   id: number;
   nama_tipe: string;
   kategori: "SUBSIDI" | "KOMERSIL" | "KAVLING";
-  luas_bangunan: number;
+  luas_bangunan: number | null;
   luas_tanah: number;
   harga_dasar: number;
   jumlah_unit: number;
@@ -210,18 +211,21 @@ export async function createMasterTipe(
     }
 
     const { kategori, luas_tanah, harga_dasar } = parsed.data;
-    const luas_bangunan = kategori === "KAVLING" ? 0 : Number(parsed.data.luas_bangunan || 0);
+    const luas_bangunan =
+      kategori === "KAVLING"
+        ? null
+        : parsed.data.luas_bangunan != null
+          ? Number(parsed.data.luas_bangunan)
+          : null;
 
     const nama_tipe = buildNamaTipe(kategori, luas_bangunan, luas_tanah);
 
-    // Unique combination check: @@unique([kategori, luas_bangunan, luas_tanah])
-    const existing = await prisma.masterTipe.findUnique({
+    // Unique combination check: find existing by kategori, luas_bangunan, luas_tanah
+    const existing = await prisma.masterTipe.findFirst({
       where: {
-        kategori_luas_bangunan_luas_tanah: {
-          kategori,
-          luas_bangunan,
-          luas_tanah,
-        },
+        kategori,
+        luas_bangunan,
+        luas_tanah,
       },
     });
 
@@ -303,7 +307,12 @@ export async function updateMasterTipe(
 
     const unitCount = currentTipe._count.units;
     const { kategori, luas_tanah, harga_dasar } = parsed.data;
-    const luas_bangunan = kategori === "KAVLING" ? 0 : Number(parsed.data.luas_bangunan || 0);
+    const luas_bangunan =
+      kategori === "KAVLING"
+        ? null
+        : parsed.data.luas_bangunan != null
+          ? Number(parsed.data.luas_bangunan)
+          : null;
 
     // Rule: If tipe is used by units, kategori and luas_tanah are FIXED because siteplan is legally approved
     if (unitCount > 0) {
@@ -440,7 +449,7 @@ export interface SerializedMasterUnit {
     id: number;
     nama_tipe: string;
     kategori: "SUBSIDI" | "KOMERSIL" | "KAVLING";
-    luas_bangunan: number;
+    luas_bangunan: number | null;
     luas_tanah: number;
     harga_dasar: number;
   };
@@ -490,7 +499,7 @@ export interface SerializedUnitTipeLog {
     nama_tipe: string;
     harga_dasar: number;
     kategori: string;
-    luas_bangunan: number;
+    luas_bangunan: number | null;
     luas_tanah: number;
   };
   tipe_baru: {
@@ -498,7 +507,7 @@ export interface SerializedUnitTipeLog {
     nama_tipe: string;
     harga_dasar: number;
     kategori: string;
-    luas_bangunan: number;
+    luas_bangunan: number | null;
     luas_tanah: number;
   };
   admin: {
@@ -523,7 +532,7 @@ export async function checkUnitIsLocked(unitId: number): Promise<boolean> {
           {
             transaksi: {
               is: {
-                status_transaksi: { not: "BATAL" },
+                tahap_detail: { not: "BATAL" },
                 cancelled_at: null,
               },
             },
@@ -534,7 +543,7 @@ export async function checkUnitIsLocked(unitId: number): Promise<boolean> {
     prisma.transaksi.count({
       where: {
         unit_id: unitId,
-        status_transaksi: { not: "BATAL" },
+        tahap_detail: { not: "BATAL" },
         cancelled_at: null,
       },
     }),
@@ -555,22 +564,21 @@ export async function checkUnitTransactionBinding(
   const bindingTransaksi = await tx.transaksi.findFirst({
     where: {
       unit_id: unitId,
-      status_transaksi: { not: "BATAL" },
+      tahap_detail: { not: "BATAL" },
       cancelled_at: null,
     },
     select: {
       id: true,
-      status_transaksi: true,
       tahap_detail: true,
       customer: { select: { nama_ktp: true } },
     },
   });
 
   if (bindingTransaksi) {
-    const isDone = bindingTransaksi.status_transaksi === "SERAH_TERIMA";
+    const isDone = bindingTransaksi.tahap_detail === "BAST";
     const stageDesc = isDone
       ? "transaksi selesai (Serah Terima / BAST)"
-      : `transaksi aktif tahap ${bindingTransaksi.status_transaksi.replace(/_/g, " ")}`;
+      : `transaksi aktif tahap ${MAKRO_OF[bindingTransaksi.tahap_detail]}`;
     return {
       isBound: true,
       reason: `Unit terikat dengan ${stageDesc} (ID: #${bindingTransaksi.id} a.n. ${bindingTransaksi.customer?.nama_ktp || "Konsumen"}).`,
@@ -586,7 +594,7 @@ export async function checkUnitTransactionBinding(
         {
           transaksi: {
             is: {
-              status_transaksi: { not: "BATAL" },
+              tahap_detail: { not: "BATAL" },
               cancelled_at: null,
             },
           },
@@ -738,7 +746,7 @@ export async function getMasterUnits(
                 {
                   transaksi: {
                     is: {
-                      status_transaksi: { not: "BATAL" },
+                      tahap_detail: { not: "BATAL" },
                       cancelled_at: null,
                     },
                   },
@@ -750,7 +758,7 @@ export async function getMasterUnits(
           },
           transaksi: {
             where: {
-              status_transaksi: { not: "BATAL" },
+              tahap_detail: { not: "BATAL" },
               cancelled_at: null,
             },
             select: { id: true },
@@ -820,7 +828,7 @@ export async function getAllMasterUnits(): Promise<ActionResponse<SerializedMast
               {
                 transaksi: {
                   is: {
-                    status_transaksi: { not: "BATAL" },
+                    tahap_detail: { not: "BATAL" },
                     cancelled_at: null,
                   },
                 },
@@ -832,7 +840,7 @@ export async function getAllMasterUnits(): Promise<ActionResponse<SerializedMast
         },
         transaksi: {
           where: {
-            status_transaksi: { not: "BATAL" },
+            tahap_detail: { not: "BATAL" },
             cancelled_at: null,
           },
           select: { id: true },
@@ -972,7 +980,7 @@ export interface SetupPreviewResult {
     tipeId: number;
     nama_tipe: string;
     kategori: string;
-    luas_bangunan: number;
+    luas_bangunan: number | null;
     luas_tanah: number;
     count: number;
   }>;
@@ -1099,7 +1107,7 @@ export async function previewSetupUnits(
         tipeId,
         nama_tipe: t?.nama_tipe || `Tipe #${tipeId}`,
         kategori: t?.kategori || "-",
-        luas_bangunan: t?.luas_bangunan || 0,
+        luas_bangunan: t ? t.luas_bangunan : null,
         luas_tanah: t?.luas_tanah || 0,
         count,
       };
@@ -1300,7 +1308,7 @@ export async function changeUnitTipe(
             where: {
               transaksi: {
                 is: {
-                  status_transaksi: { not: "BATAL" },
+                  tahap_detail: { not: "BATAL" },
                 },
               },
             },
@@ -1309,7 +1317,7 @@ export async function changeUnitTipe(
           },
           transaksi: {
             where: {
-              status_transaksi: { not: "BATAL" },
+              tahap_detail: { not: "BATAL" },
               cancelled_at: null,
             },
             select: { id: true },
@@ -1393,7 +1401,7 @@ export async function changeUnitTipe(
           harga_khusus_lama: unit.harga_khusus,
           harga_khusus_direset: Boolean(resetHargaKhusus && unit.harga_khusus !== null),
           alasan,
-          changed_by: userId,
+          actor_id: userId,
         },
       });
 
@@ -1461,7 +1469,7 @@ export async function changeUnitTipeBulk(
                 where: {
                   transaksi: {
                     is: {
-                      status_transaksi: { not: "BATAL" },
+                      tahap_detail: { not: "BATAL" },
                     },
                   },
                 },
@@ -1470,7 +1478,7 @@ export async function changeUnitTipeBulk(
               },
               transaksi: {
                 where: {
-                  status_transaksi: { not: "BATAL" },
+                  tahap_detail: { not: "BATAL" },
                   cancelled_at: null,
                 },
                 select: { id: true },
@@ -1557,7 +1565,7 @@ export async function changeUnitTipeBulk(
               harga_khusus_lama: unit.harga_khusus,
               harga_khusus_direset: Boolean(resetHargaKhusus && unit.harga_khusus !== null),
               alasan,
-              changed_by: userId,
+              actor_id: userId,
             },
           });
 
@@ -1606,7 +1614,7 @@ export async function getUnitTipeLogs(
       include: {
         tipe_lama: true,
         tipe_baru: true,
-        admin: {
+        actor: {
           select: { id: true, nama: true },
         },
       },
@@ -1640,8 +1648,8 @@ export async function getUnitTipeLogs(
         luas_tanah: l.tipe_baru.luas_tanah,
       },
       admin: {
-        id: l.admin.id,
-        nama: l.admin.nama,
+        id: l.actor.id,
+        nama: l.actor.nama,
       },
     }));
 

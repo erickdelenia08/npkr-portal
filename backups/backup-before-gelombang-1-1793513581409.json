@@ -1,0 +1,966 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "nama": "Ahmad Faisal",
+      "no_hp": "081234567890",
+      "password": "$2b$10$BIWIYfxlCm07OPgoJ/SSbOYlDznn9Q04DBJtyE/ZTojKpn98FemRi",
+      "role": "ADMIN",
+      "isActive": true,
+      "created_at": "2026-11-01T04:54:21.416Z",
+      "updated_at": "2026-11-01T04:54:21.416Z"
+    },
+    {
+      "id": 2,
+      "username": "marketing",
+      "nama": "Budi Darmawan",
+      "no_hp": "089876543210",
+      "password": "$2b$10$341DMKcoWw3lKSIS5TRJu.hdNPMMsdJDL7WfRgYZ6mnAv8LDbEn9K",
+      "role": "MARKETING",
+      "isActive": true,
+      "created_at": "2026-11-01T04:54:21.442Z",
+      "updated_at": "2026-11-01T04:54:21.442Z"
+    },
+    {
+      "id": 3,
+      "username": "manager",
+      "nama": "Manager",
+      "no_hp": "081234567891",
+      "password": "$2b$10$N29XAVUTKocqpeBmGyVlV.icKiXDpnLZ4CjfsZIX.7QhOu9TDV8r6",
+      "role": "MANAGER",
+      "isActive": true,
+      "created_at": "2026-11-01T04:54:21.458Z",
+      "updated_at": "2026-11-01T04:54:21.458Z"
+    }
+  ],
+  "masterTipe": [
+    {
+      "id": 1,
+      "nama_tipe": "SUBSIDI-31/60",
+      "kategori": "SUBSIDI",
+      "luas_bangunan": 31,
+      "luas_tanah": 60,
+      "harga_dasar": "166000000"
+    },
+    {
+      "id": 2,
+      "nama_tipe": "KOMERSIL-36/72",
+      "kategori": "KOMERSIL",
+      "luas_bangunan": 36,
+      "luas_tanah": 72,
+      "harga_dasar": "380000000"
+    }
+  ],
+  "masterUnit": [
+    {
+      "id": 1,
+      "tipe_id": 1,
+      "blok": "M-1",
+      "blok_prefix": "M-",
+      "blok_nomor": 1,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 2,
+      "tipe_id": 1,
+      "blok": "M-2",
+      "blok_prefix": "M-",
+      "blok_nomor": 2,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 3,
+      "tipe_id": 1,
+      "blok": "M-3",
+      "blok_prefix": "M-",
+      "blok_nomor": 3,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 4,
+      "tipe_id": 1,
+      "blok": "M-4",
+      "blok_prefix": "M-",
+      "blok_nomor": 4,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 5,
+      "tipe_id": 1,
+      "blok": "M-5",
+      "blok_prefix": "M-",
+      "blok_nomor": 5,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 6,
+      "tipe_id": 1,
+      "blok": "M-6",
+      "blok_prefix": "M-",
+      "blok_nomor": 6,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 7,
+      "tipe_id": 1,
+      "blok": "M-7",
+      "blok_prefix": "M-",
+      "blok_nomor": 7,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 8,
+      "tipe_id": 1,
+      "blok": "M-8",
+      "blok_prefix": "M-",
+      "blok_nomor": 8,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 9,
+      "tipe_id": 1,
+      "blok": "M-9",
+      "blok_prefix": "M-",
+      "blok_nomor": 9,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 10,
+      "tipe_id": 1,
+      "blok": "M-10",
+      "blok_prefix": "M-",
+      "blok_nomor": 10,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 11,
+      "tipe_id": 1,
+      "blok": "M-11",
+      "blok_prefix": "M-",
+      "blok_nomor": 11,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 12,
+      "tipe_id": 1,
+      "blok": "M-12",
+      "blok_prefix": "M-",
+      "blok_nomor": 12,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 13,
+      "tipe_id": 1,
+      "blok": "M-13",
+      "blok_prefix": "M-",
+      "blok_nomor": 13,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 14,
+      "tipe_id": 1,
+      "blok": "M-14",
+      "blok_prefix": "M-",
+      "blok_nomor": 14,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 15,
+      "tipe_id": 1,
+      "blok": "M-15",
+      "blok_prefix": "M-",
+      "blok_nomor": 15,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 16,
+      "tipe_id": 1,
+      "blok": "M-16",
+      "blok_prefix": "M-",
+      "blok_nomor": 16,
+      "status_unit": "SOLD",
+      "harga_khusus": null
+    },
+    {
+      "id": 17,
+      "tipe_id": 1,
+      "blok": "M-17",
+      "blok_prefix": "M-",
+      "blok_nomor": 17,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 18,
+      "tipe_id": 1,
+      "blok": "M-18",
+      "blok_prefix": "M-",
+      "blok_nomor": 18,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 19,
+      "tipe_id": 1,
+      "blok": "M-19",
+      "blok_prefix": "M-",
+      "blok_nomor": 19,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 20,
+      "tipe_id": 1,
+      "blok": "M-20",
+      "blok_prefix": "M-",
+      "blok_nomor": 20,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 21,
+      "tipe_id": 1,
+      "blok": "M-21",
+      "blok_prefix": "M-",
+      "blok_nomor": 21,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 22,
+      "tipe_id": 1,
+      "blok": "M-22",
+      "blok_prefix": "M-",
+      "blok_nomor": 22,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 23,
+      "tipe_id": 1,
+      "blok": "M-23",
+      "blok_prefix": "M-",
+      "blok_nomor": 23,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 24,
+      "tipe_id": 1,
+      "blok": "M-24",
+      "blok_prefix": "M-",
+      "blok_nomor": 24,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 25,
+      "tipe_id": 1,
+      "blok": "M-25",
+      "blok_prefix": "M-",
+      "blok_nomor": 25,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 26,
+      "tipe_id": 1,
+      "blok": "M-26",
+      "blok_prefix": "M-",
+      "blok_nomor": 26,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 27,
+      "tipe_id": 1,
+      "blok": "M-27",
+      "blok_prefix": "M-",
+      "blok_nomor": 27,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 28,
+      "tipe_id": 1,
+      "blok": "M-28",
+      "blok_prefix": "M-",
+      "blok_nomor": 28,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 29,
+      "tipe_id": 1,
+      "blok": "M-29",
+      "blok_prefix": "M-",
+      "blok_nomor": 29,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 30,
+      "tipe_id": 1,
+      "blok": "M-30",
+      "blok_prefix": "M-",
+      "blok_nomor": 30,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 31,
+      "tipe_id": 2,
+      "blok": "C-1",
+      "blok_prefix": "C-",
+      "blok_nomor": 1,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 32,
+      "tipe_id": 2,
+      "blok": "C-2",
+      "blok_prefix": "C-",
+      "blok_nomor": 2,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 33,
+      "tipe_id": 2,
+      "blok": "C-3",
+      "blok_prefix": "C-",
+      "blok_nomor": 3,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 34,
+      "tipe_id": 2,
+      "blok": "C-4",
+      "blok_prefix": "C-",
+      "blok_nomor": 4,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 35,
+      "tipe_id": 2,
+      "blok": "C-5",
+      "blok_prefix": "C-",
+      "blok_nomor": 5,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 36,
+      "tipe_id": 2,
+      "blok": "C-6",
+      "blok_prefix": "C-",
+      "blok_nomor": 6,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 37,
+      "tipe_id": 2,
+      "blok": "C-7",
+      "blok_prefix": "C-",
+      "blok_nomor": 7,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 38,
+      "tipe_id": 2,
+      "blok": "C-8",
+      "blok_prefix": "C-",
+      "blok_nomor": 8,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 39,
+      "tipe_id": 2,
+      "blok": "C-9",
+      "blok_prefix": "C-",
+      "blok_nomor": 9,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 40,
+      "tipe_id": 2,
+      "blok": "C-10",
+      "blok_prefix": "C-",
+      "blok_nomor": 10,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 41,
+      "tipe_id": 2,
+      "blok": "C-11",
+      "blok_prefix": "C-",
+      "blok_nomor": 11,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 42,
+      "tipe_id": 2,
+      "blok": "C-12",
+      "blok_prefix": "C-",
+      "blok_nomor": 12,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 43,
+      "tipe_id": 2,
+      "blok": "C-13",
+      "blok_prefix": "C-",
+      "blok_nomor": 13,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 44,
+      "tipe_id": 2,
+      "blok": "C-14",
+      "blok_prefix": "C-",
+      "blok_nomor": 14,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 45,
+      "tipe_id": 2,
+      "blok": "C-15",
+      "blok_prefix": "C-",
+      "blok_nomor": 15,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 46,
+      "tipe_id": 2,
+      "blok": "C-16",
+      "blok_prefix": "C-",
+      "blok_nomor": 16,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 47,
+      "tipe_id": 2,
+      "blok": "C-17",
+      "blok_prefix": "C-",
+      "blok_nomor": 17,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 48,
+      "tipe_id": 2,
+      "blok": "C-18",
+      "blok_prefix": "C-",
+      "blok_nomor": 18,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 49,
+      "tipe_id": 2,
+      "blok": "C-19",
+      "blok_prefix": "C-",
+      "blok_nomor": 19,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    },
+    {
+      "id": 50,
+      "tipe_id": 2,
+      "blok": "C-20",
+      "blok_prefix": "C-",
+      "blok_nomor": 20,
+      "status_unit": "AVAILABLE",
+      "harga_khusus": null
+    }
+  ],
+  "unitTipeLog": [],
+  "lead": [
+    {
+      "id": 1,
+      "marketing_id": 1,
+      "customer_id": 1,
+      "nama": "erick",
+      "no_hp": "0847829834234",
+      "sumber": "FACEBOOK_ADS",
+      "minat_tipe": "SUBSIDI-31/60",
+      "survei_jadwal_at": "2026-11-02T03:00:00.000Z",
+      "survei_selesai_at": "2026-11-01T04:56:50.091Z",
+      "lost_at": null,
+      "lost_reason": null,
+      "last_activity_at": "2026-11-01T04:57:53.812Z",
+      "next_follow_up_at": null,
+      "created_at": "2026-11-01T04:56:41.289Z",
+      "updated_at": "2026-11-01T04:57:53.822Z"
+    }
+  ],
+  "aktivitas": [
+    {
+      "id": 1,
+      "lead_id": 1,
+      "user_id": 1,
+      "jenis": "BERTEMU",
+      "hasil": "TERTARIK",
+      "catatan": "Survei lokasi dijadwalkan pada Senin, 2 Nov 2026, 10.00",
+      "tgl_follow_up": "2026-11-02T03:00:00.000Z",
+      "created_at": "2026-11-01T04:56:48.853Z"
+    },
+    {
+      "id": 2,
+      "lead_id": 1,
+      "user_id": 1,
+      "jenis": "BERTEMU",
+      "hasil": "TERTARIK",
+      "catatan": "Survei lokasi selesai dilaksanakan pada 1 Nov 2026",
+      "tgl_follow_up": null,
+      "created_at": "2026-11-01T04:56:50.118Z"
+    },
+    {
+      "id": 3,
+      "lead_id": 1,
+      "user_id": 1,
+      "jenis": "LAINNYA",
+      "hasil": "TERTARIK",
+      "catatan": "[TRANSAKSI ITJ BERHASIL] Blok M-16 berhasil dibooking dengan setoran ITJ Rp 300.000 (Target ITJ: Rp 1.000.000). Transaksi #1 aktif.",
+      "tgl_follow_up": null,
+      "created_at": "2026-11-01T04:57:53.812Z"
+    },
+    {
+      "id": 4,
+      "lead_id": 1,
+      "user_id": 1,
+      "jenis": "LAINNYA",
+      "hasil": "TERTARIK",
+      "catatan": "[PROFIL PEMBERKASAN] Status Pernikahan: BELUM_MENIKAH, Status Pekerjaan: TETAP",
+      "tgl_follow_up": null,
+      "created_at": "2026-11-01T04:58:07.883Z"
+    },
+    {
+      "id": 5,
+      "lead_id": 1,
+      "user_id": 1,
+      "jenis": "LAINNYA",
+      "hasil": "TERTARIK",
+      "catatan": "[STATUS TRANSAKSI] AKAD_KREDIT (AKAD_AJB)",
+      "tgl_follow_up": null,
+      "created_at": "2026-11-01T04:58:48.871Z"
+    },
+    {
+      "id": 6,
+      "lead_id": 1,
+      "user_id": 1,
+      "jenis": "LAINNYA",
+      "hasil": "TERTARIK",
+      "catatan": "[STATUS TRANSAKSI] BAST (SERAH_TERIMA)",
+      "tgl_follow_up": null,
+      "created_at": "2026-11-01T04:59:17.486Z"
+    }
+  ],
+  "itj": [
+    {
+      "id": 1,
+      "lead_id": 1,
+      "unit_id": 16,
+      "marketing_id": 1,
+      "nik": "1234123412341234",
+      "nama_ktp": "erick",
+      "nominal": "300000",
+      "metode_bayar": "KPR",
+      "tenor": 240,
+      "diajukan_at": "2026-11-01T04:57:53.785Z",
+      "created_at": "2026-11-01T04:57:53.791Z",
+      "updated_at": "2026-11-01T04:57:53.791Z"
+    }
+  ],
+  "customer": [
+    {
+      "id": 1,
+      "nama_ktp": "erick",
+      "nik": "1234123412341234",
+      "tempat_lahir": "adsfsdf",
+      "tgl_lahir": "2026-11-01T00:00:00.000Z",
+      "alamat_ktp": "asdf",
+      "no_hp": "0847829834234",
+      "status_pernikahan": "BELUM_MENIKAH",
+      "status_pekerjaan": "TETAP",
+      "created_at": "2026-11-01T04:57:53.767Z",
+      "updated_at": "2026-11-01T04:58:07.875Z"
+    }
+  ],
+  "transaksi": [
+    {
+      "id": 1,
+      "customer_id": 1,
+      "unit_id": 16,
+      "marketing_id": 1,
+      "itj_id": 1,
+      "metode_bayar": "KPR",
+      "harga_deal": "166000000",
+      "target_itj": "1000000",
+      "target_dp": "0",
+      "tenor_bulan": 240,
+      "status_transaksi": "SERAH_TERIMA",
+      "tahap_detail": "BAST",
+      "nama_notaris": "asdfasdf",
+      "tgl_akad": "2026-11-10T00:00:00.000Z",
+      "lunas_at": null,
+      "tgl_bast": "2026-11-02T00:00:00.000Z",
+      "closing_at": "2026-11-01T00:00:00.000Z",
+      "closed_at": null,
+      "cancelled_at": null,
+      "alasan_batal": null,
+      "catatan_admin": null,
+      "created_at": "2026-11-01T04:57:53.799Z",
+      "updated_at": "2026-11-01T04:59:17.473Z"
+    }
+  ],
+  "pengajuanKPR": [
+    {
+      "id": 1,
+      "transaksi_id": 1,
+      "bank_id": 2,
+      "nomor_pengajuan": 1,
+      "status": "SP3K",
+      "tanggal_ajukan": "2026-11-01T04:58:29.664Z",
+      "tanggal_keputusan": "2026-11-01T04:58:42.525Z",
+      "alasan_penolakan": null,
+      "catatan": "asdfasdf",
+      "created_at": "2026-11-01T04:58:29.667Z",
+      "updated_at": "2026-11-01T04:58:42.529Z"
+    }
+  ],
+  "pengajuanKPRLog": [
+    {
+      "id": 1,
+      "pengajuan_id": 1,
+      "status_sebelum": null,
+      "status_sesudah": "DIAJUKAN",
+      "admin_id": 1,
+      "catatan": "asdfasdf",
+      "created_at": "2026-11-01T04:58:29.675Z"
+    },
+    {
+      "id": 2,
+      "pengajuan_id": 1,
+      "status_sebelum": "DIAJUKAN",
+      "status_sesudah": "WAWANCARA",
+      "admin_id": 1,
+      "catatan": "Status pengajuan KPR diubah menjadi WAWANCARA",
+      "created_at": "2026-11-01T04:58:38.398Z"
+    },
+    {
+      "id": 3,
+      "pengajuan_id": 1,
+      "status_sebelum": "WAWANCARA",
+      "status_sesudah": "VERIFIKASI",
+      "admin_id": 1,
+      "catatan": "Status pengajuan KPR diubah menjadi VERIFIKASI",
+      "created_at": "2026-11-01T04:58:40.162Z"
+    },
+    {
+      "id": 4,
+      "pengajuan_id": 1,
+      "status_sebelum": "VERIFIKASI",
+      "status_sesudah": "SP3K",
+      "admin_id": 1,
+      "catatan": "Status pengajuan KPR diubah menjadi SP3K",
+      "created_at": "2026-11-01T04:58:42.522Z"
+    }
+  ],
+  "transaksiTahapLog": [
+    {
+      "id": 1,
+      "transaksi_id": 1,
+      "tahap_sebelum": "PEMBERKASAN",
+      "tahap_sesudah": "PROSES_BANK",
+      "detail_sebelum": "PENGUMPULAN_DOKUMEN",
+      "detail_sesudah": "PENGUMPULAN_DOKUMEN",
+      "admin_id": 1,
+      "catatan": "Tahap transaksi beralih ke Proses Bank seiring pengajuan KPR #1 ke Bank BRI",
+      "created_at": "2026-11-01T04:58:29.692Z"
+    },
+    {
+      "id": 2,
+      "transaksi_id": 1,
+      "tahap_sebelum": "PROSES_BANK",
+      "tahap_sesudah": "AKAD_AJB",
+      "detail_sebelum": "PENGUMPULAN_DOKUMEN",
+      "detail_sesudah": "AKAD_KREDIT",
+      "admin_id": 1,
+      "catatan": null,
+      "created_at": "2026-11-01T04:58:48.865Z"
+    },
+    {
+      "id": 3,
+      "transaksi_id": 1,
+      "tahap_sebelum": "AKAD_AJB",
+      "tahap_sesudah": "SERAH_TERIMA",
+      "detail_sebelum": "AKAD_KREDIT",
+      "detail_sesudah": "BAST",
+      "admin_id": 1,
+      "catatan": null,
+      "created_at": "2026-11-01T04:59:17.480Z"
+    }
+  ],
+  "dokumenTransaksi": [
+    {
+      "id": 1,
+      "transaksi_id": 1,
+      "jenis": "FORM_APLIKASI_KPR",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:11.726Z",
+      "updated_at": "2026-11-01T04:58:11.726Z"
+    },
+    {
+      "id": 2,
+      "transaksi_id": 1,
+      "jenis": "KTP_PEMOHON",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:12.463Z",
+      "updated_at": "2026-11-01T04:58:12.463Z"
+    },
+    {
+      "id": 3,
+      "transaksi_id": 1,
+      "jenis": "SURAT_PERNYATAAN_BELUM_MENIKAH",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:12.838Z",
+      "updated_at": "2026-11-01T04:58:12.838Z"
+    },
+    {
+      "id": 4,
+      "transaksi_id": 1,
+      "jenis": "PAS_FOTO",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:13.374Z",
+      "updated_at": "2026-11-01T04:58:13.374Z"
+    },
+    {
+      "id": 5,
+      "transaksi_id": 1,
+      "jenis": "FORM_FPPA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:14.060Z",
+      "updated_at": "2026-11-01T04:58:14.060Z"
+    },
+    {
+      "id": 6,
+      "transaksi_id": 1,
+      "jenis": "KARTU_KELUARGA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:14.711Z",
+      "updated_at": "2026-11-01T04:58:14.711Z"
+    },
+    {
+      "id": 7,
+      "transaksi_id": 1,
+      "jenis": "NPWP",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:15.142Z",
+      "updated_at": "2026-11-01T04:58:15.142Z"
+    },
+    {
+      "id": 8,
+      "transaksi_id": 1,
+      "jenis": "SURAT_KET_BELUM_PUNYA_RUMAH",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:15.701Z",
+      "updated_at": "2026-11-01T04:58:15.701Z"
+    },
+    {
+      "id": 9,
+      "transaksi_id": 1,
+      "jenis": "SLIP_GAJI",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:16.543Z",
+      "updated_at": "2026-11-01T04:58:16.543Z"
+    },
+    {
+      "id": 10,
+      "transaksi_id": 1,
+      "jenis": "DENAH_LOKASI_KERJA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:17.292Z",
+      "updated_at": "2026-11-01T04:58:17.292Z"
+    },
+    {
+      "id": 11,
+      "transaksi_id": 1,
+      "jenis": "SURAT_KET_KERJA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:17.849Z",
+      "updated_at": "2026-11-01T04:58:17.849Z"
+    },
+    {
+      "id": 12,
+      "transaksi_id": 1,
+      "jenis": "REKENING_KORAN",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:18.567Z",
+      "updated_at": "2026-11-01T04:58:18.567Z"
+    },
+    {
+      "id": 13,
+      "transaksi_id": 1,
+      "jenis": "FOTO_LOKASI_KERJA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:19.192Z",
+      "updated_at": "2026-11-01T04:58:19.192Z"
+    },
+    {
+      "id": 14,
+      "transaksi_id": 1,
+      "jenis": "SURAT_PENAWARAN_RUMAH",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:20.324Z",
+      "updated_at": "2026-11-01T04:58:20.324Z"
+    },
+    {
+      "id": 15,
+      "transaksi_id": 1,
+      "jenis": "BROSUR_SITEPLAN",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:21.231Z",
+      "updated_at": "2026-11-01T04:58:21.231Z"
+    },
+    {
+      "id": 16,
+      "transaksi_id": 1,
+      "jenis": "SERTIFIKAT_IMB",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:21.757Z",
+      "updated_at": "2026-11-01T04:58:21.757Z"
+    },
+    {
+      "id": 17,
+      "transaksi_id": 1,
+      "jenis": "SURAT_LUNAS_UANG_MUKA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:22.359Z",
+      "updated_at": "2026-11-01T04:58:23.618Z"
+    },
+    {
+      "id": 18,
+      "transaksi_id": 1,
+      "jenis": "BUKU_TABUNGAN_BTN",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:58:23.133Z",
+      "updated_at": "2026-11-01T04:58:23.133Z"
+    }
+  ],
+  "checklistBAST": [
+    {
+      "id": 1,
+      "transaksi_id": 1,
+      "item": "PONDASI_STRUKTUR",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:02.075Z",
+      "updated_at": "2026-11-01T04:59:02.075Z"
+    },
+    {
+      "id": 2,
+      "transaksi_id": 1,
+      "item": "ATAP_PLAFON",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:03.178Z",
+      "updated_at": "2026-11-01T04:59:03.178Z"
+    },
+    {
+      "id": 3,
+      "transaksi_id": 1,
+      "item": "KUSEN_PINTU_JENDELA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:03.919Z",
+      "updated_at": "2026-11-01T04:59:03.919Z"
+    },
+    {
+      "id": 4,
+      "transaksi_id": 1,
+      "item": "SANITASI_AIR_POMPA",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:05.142Z",
+      "updated_at": "2026-11-01T04:59:05.142Z"
+    },
+    {
+      "id": 5,
+      "transaksi_id": 1,
+      "item": "FASAD_KEBERSIHAN",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:05.797Z",
+      "updated_at": "2026-11-01T04:59:05.797Z"
+    },
+    {
+      "id": 6,
+      "transaksi_id": 1,
+      "item": "KELISTRIKAN",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:06.906Z",
+      "updated_at": "2026-11-01T04:59:06.906Z"
+    },
+    {
+      "id": 7,
+      "transaksi_id": 1,
+      "item": "LANTAI_KERAMIK",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:07.827Z",
+      "updated_at": "2026-11-01T04:59:07.827Z"
+    },
+    {
+      "id": 8,
+      "transaksi_id": 1,
+      "item": "DINDING_PLESTER_CAT",
+      "status": "LENGKAP",
+      "created_at": "2026-11-01T04:59:08.314Z",
+      "updated_at": "2026-11-01T04:59:08.314Z"
+    }
+  ],
+  "pembayaran": [
+    {
+      "id": 1,
+      "transaksi_id": 1,
+      "admin_id": 1,
+      "no_kwitansi": "KWT-ITJ-1793509073804-448",
+      "jenis_pembayaran": "ITJ",
+      "cara_bayar": "TRANSFER",
+      "nominal": "300000",
+      "tgl_bayar": "2026-11-01T00:00:00.000Z",
+      "catatan": "Pembayaran awal ITJ Blok M-16",
+      "is_void": false,
+      "void_at": null,
+      "void_by": null,
+      "void_reason": null,
+      "created_at": "2026-11-01T04:57:53.808Z",
+      "updated_at": "2026-11-01T04:57:53.808Z"
+    }
+  ]
+}

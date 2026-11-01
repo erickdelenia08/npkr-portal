@@ -1,42 +1,73 @@
 // lib/transaksi/stage-map.ts
 
-import type { TahapDetail, TahapTransaksi, MetodeBayar } from "@/generated/prisma";
+import type { TahapDetail, MetodeBayar, KategoriUnit } from "@/generated/prisma";
+
+export type TahapMakro =
+  | "PEMBERKASAN"
+  | "PROSES_BANK"
+  | "PEMBAYARAN"
+  | "AKAD_AJB"
+  | "SERAH_TERIMA"
+  | "BATAL";
 
 export interface StageOption {
   detail: TahapDetail;
-  macro: TahapTransaksi;
+  macro: TahapMakro;
   label: string;
+}
+
+/**
+ * Determines the initial TahapDetail upon transaction creation based on payment method and unit category.
+ * - KPR: PENGUMPULAN_DOKUMEN
+ * - CASH_KERAS: PEMBERKASAN_LEGALITAS
+ * - CASH_TEMPO: PEMBERKASAN_PPJB
+ */
+export function getInitialTahapDetail(
+  metode: MetodeBayar,
+  _kategori?: KategoriUnit | string | null
+): TahapDetail {
+  switch (metode) {
+    case "KPR":
+      return "PENGUMPULAN_DOKUMEN";
+    case "CASH_KERAS":
+      return "PEMBERKASAN_LEGALITAS";
+    case "CASH_TEMPO":
+      return "PEMBERKASAN_PPJB";
+    default:
+      return "PENGUMPULAN_DOKUMEN";
+  }
 }
 
 /**
  * Single Source of Truth (SSOT): Canonical detail -> macro mapping.
  */
-export function getMacroTahap(detail: TahapDetail): TahapTransaksi {
-  switch (detail) {
-    case "PENGUMPULAN_DOKUMEN":
-    case "PEMBERKASAN_LEGALITAS":
-    case "PEMBERKASAN_PPJB":
-      return "PEMBERKASAN";
-    case "WAWANCARA":
-    case "OTS":
-    case "VERIFIKASI":
-    case "SP3K":
-      return "PROSES_BANK";
-    case "MENUNGGU_PELUNASAN":
-    case "PEMBAYARAN_DP":
-    case "CICILAN_BERJALAN":
-    case "PELUNASAN":
-      return "PEMBAYARAN";
-    case "AKAD_KREDIT":
-    case "AJB":
-      return "AKAD_AJB";
-    case "BAST":
-      return "SERAH_TERIMA";
-    case "BATAL":
-      return "BATAL";
-    default:
-      return "SERAH_TERIMA";
-  }
+export const MAKRO_OF: Record<TahapDetail, TahapMakro> = {
+  PENGUMPULAN_DOKUMEN: "PEMBERKASAN",
+  PROSES_BANK: "PROSES_BANK",
+  AKAD_KREDIT: "AKAD_AJB",
+  PEMBERKASAN_LEGALITAS: "PEMBERKASAN",
+  MENUNGGU_PELUNASAN: "PEMBAYARAN",
+  PEMBERKASAN_PPJB: "PEMBERKASAN",
+  PEMBAYARAN_DP: "PEMBAYARAN",
+  CICILAN_BERJALAN: "PEMBAYARAN",
+  PELUNASAN: "PEMBAYARAN",
+  AJB: "AKAD_AJB",
+  BAST: "SERAH_TERIMA",
+  BATAL: "BATAL",
+};
+
+/**
+ * Returns all detail stages that map to a given macro stage.
+ */
+export function detailsOf(makro: TahapMakro): TahapDetail[] {
+  return (Object.keys(MAKRO_OF) as TahapDetail[]).filter((k) => MAKRO_OF[k] === makro);
+}
+
+/**
+ * Single Source of Truth (SSOT): Canonical detail -> macro getter.
+ */
+export function getMacroTahap(detail: TahapDetail): TahapMakro {
+  return MAKRO_OF[detail] ?? "PEMBERKASAN";
 }
 
 /**
@@ -47,12 +78,8 @@ export function getAllowedDetailsForMetode(metode: MetodeBayar): TahapDetail[] {
     case "KPR":
       return [
         "PENGUMPULAN_DOKUMEN",
-        "WAWANCARA",
-        "OTS",
-        "VERIFIKASI",
-        "SP3K",
+        "PROSES_BANK",
         "AKAD_KREDIT",
-        // "PEMBANGUNAN",
         "BAST",
         "BATAL",
       ];
@@ -62,7 +89,6 @@ export function getAllowedDetailsForMetode(metode: MetodeBayar): TahapDetail[] {
         "MENUNGGU_PELUNASAN",
         "PELUNASAN",
         "AJB",
-        // "PEMBANGUNAN",
         "BAST",
         "BATAL",
       ];
@@ -79,12 +105,8 @@ export function getAllowedDetailsForMetode(metode: MetodeBayar): TahapDetail[] {
     default:
       return [
         "PENGUMPULAN_DOKUMEN",
-        "WAWANCARA",
-        "OTS",
-        "VERIFIKASI",
-        "SP3K",
+        "PROSES_BANK",
         "AKAD_KREDIT",
-        // "PEMBANGUNAN",
         "BAST",
         "BATAL",
       ];
@@ -94,7 +116,7 @@ export function getAllowedDetailsForMetode(metode: MetodeBayar): TahapDetail[] {
 /**
  * Macro stages Indonesian labels and display order.
  */
-export const MACRO_STAGES: { key: TahapTransaksi; label: string }[] = [
+export const MACRO_STAGES: { key: TahapMakro; label: string }[] = [
   { key: "PEMBERKASAN", label: "Pemberkasan" },
   { key: "PROSES_BANK", label: "Proses Bank" },
   { key: "PEMBAYARAN", label: "Pembayaran" },
@@ -108,10 +130,7 @@ export const MACRO_STAGES: { key: TahapTransaksi; label: string }[] = [
  */
 export const STAGES_KPR: StageOption[] = [
   { detail: "PENGUMPULAN_DOKUMEN", macro: "PEMBERKASAN", label: "Pengumpulan dokumen" },
-  { detail: "WAWANCARA", macro: "PROSES_BANK", label: "Wawancara bank" },
-  { detail: "OTS", macro: "PROSES_BANK", label: "OTS" },
-  { detail: "VERIFIKASI", macro: "PROSES_BANK", label: "Verifikasi bank" },
-  { detail: "SP3K", macro: "PROSES_BANK", label: "Penerbitan SP3K" },
+  { detail: "PROSES_BANK", macro: "PROSES_BANK", label: "Proses bank" },
   { detail: "AKAD_KREDIT", macro: "AKAD_AJB", label: "Akad kredit" },
   { detail: "BAST", macro: "SERAH_TERIMA", label: "Serah terima (BAST)" },
   { detail: "BATAL", macro: "BATAL", label: "Pembatalan transaksi" },
@@ -150,59 +169,38 @@ export function getStagesByMetode(metode: MetodeBayar): StageOption[] {
 }
 
 /**
- * Returns fallback micro stage for a macro status when navigating/recovering.
+ * Returns stage option matching current detail.
  */
 export function getFallbackStage(
   stages: StageOption[],
   currentStatus: string,
-  metode: MetodeBayar
+  _metode?: MetodeBayar
 ): { stage: StageOption; isUnknown: boolean } {
   const exactDetail = stages.find((stage) => stage.detail === currentStatus);
   if (exactDetail) return { stage: exactDetail, isUnknown: false };
-
-  const preferredDetail: Partial<Record<TahapTransaksi, TahapDetail>> = {
-    PEMBERKASAN:
-      metode === "KPR"
-        ? "PENGUMPULAN_DOKUMEN"
-        : metode === "CASH_KERAS"
-          ? "PEMBERKASAN_LEGALITAS"
-          : "PEMBERKASAN_PPJB",
-    PROSES_BANK: "WAWANCARA",
-    PEMBAYARAN:
-      metode === "CASH_KERAS" ? "MENUNGGU_PELUNASAN" : "PEMBAYARAN_DP",
-    AKAD_AJB: metode === "KPR" ? "AKAD_KREDIT" : "AJB",
-    PEMBANGUNAN: "BAST",
-    SERAH_TERIMA: "BAST",
-    BATAL: "BATAL",
-  };
-
-  const preferred = preferredDetail[currentStatus as TahapTransaksi];
-  if (preferred) {
-    const found = stages.find((stage) => stage.detail === preferred);
-    if (found) return { stage: found, isUnknown: false };
-  }
 
   return { stage: stages[0], isUnknown: true };
 }
 
 /**
  * Single Source of Truth for determining if a transaction has closed sales.
- * Closing = closing_at is not null AND status_transaksi is NOT BATAL.
+ * Closing = closing_at is not null AND transaction is NOT BATAL.
  */
 export function isTransaksiClosing(trx: {
   closing_at?: Date | string | null;
+  tahap_detail?: TahapDetail | string | null;
   status_transaksi?: string | null;
 }): boolean {
-  return trx.closing_at != null && trx.status_transaksi !== "BATAL";
+  if (!trx.closing_at) return false;
+  if (trx.tahap_detail) return trx.tahap_detail !== "BATAL";
+  return trx.status_transaksi !== "BATAL";
 }
 
-export const MACRO_STAGE_LABELS: Record<TahapTransaksi, string> = {
+export const MACRO_STAGE_LABELS: Record<TahapMakro, string> = {
   PEMBERKASAN: "Pemberkasan",
   PROSES_BANK: "Proses KPR",
   PEMBAYARAN: "Pembayaran",
   AKAD_AJB: "Akad",
-  PEMBANGUNAN: "Pembangunan",
   SERAH_TERIMA: "Serah Terima (BAST)",
   BATAL: "Dibatalkan",
 };
-
