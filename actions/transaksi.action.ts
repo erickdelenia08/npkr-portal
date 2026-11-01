@@ -10,7 +10,9 @@ import {
 import {
   parseDateOnlyUTC,
   todayDateOnlyUTC,
+  toWibDay,
 } from "@/lib/date/wib";
+import { logActivity } from "@/lib/activity/log";
 import {
   Prisma,
   TahapDetail,
@@ -167,6 +169,8 @@ export async function createPembayaran(
       const trx = await tx.transaksi.findUnique({
         where: { id: validData.transaksiId },
         include: {
+          unit: true,
+          itj: true,
           pembayaran: {
             where: { is_void: false },
           },
@@ -229,6 +233,36 @@ export async function createPembayaran(
         },
       });
 
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "PEMBAYARAN",
+        entityId: newPayment.id,
+        action: "PAYMENT_RECORDED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          jenisBayar: validData.jenisBayar,
+          nominal: Number(validData.nominal),
+          noKwitansi,
+          blok: trx.unit.blok,
+        },
+        after: {
+          pembayaran_id: newPayment.id,
+          jenis_pembayaran: newPayment.jenis_pembayaran,
+          nominal: Number(newPayment.nominal),
+          no_kwitansi: newPayment.no_kwitansi,
+          cara_bayar: newPayment.cara_bayar,
+          tgl_bayar: toWibDay(newPayment.tgl_bayar),
+        },
+      });
+
       return { newPayment, noKwitansi };
     });
 
@@ -271,7 +305,11 @@ export async function voidPembayaran(
     const result = await prisma.$transaction(async (tx) => {
       const payment = await tx.pembayaran.findUnique({
         where: { id: pembayaranId },
-        include: { transaksi: true },
+        include: {
+          transaksi: {
+            include: { itj: true, unit: true },
+          },
+        },
       });
 
       if (!payment) {
@@ -294,6 +332,30 @@ export async function voidPembayaran(
           void_by: adminId,
           void_reason: voidReason.trim(),
         },
+      });
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "PEMBAYARAN",
+        entityId: payment.id,
+        action: "PAYMENT_VOIDED",
+        leadId: payment.transaksi.itj?.lead_id || null,
+        transaksiId: payment.transaksi_id,
+        tahapDetail: payment.transaksi.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          jenisBayar: payment.jenis_pembayaran,
+          noKwitansi: payment.no_kwitansi,
+          alasan: voidReason.trim(),
+          blok: payment.transaksi.unit?.blok,
+        },
+        before: { is_void: false },
+        after: { is_void: true, void_reason: voidReason.trim() },
       });
 
       // Recalculate remaining valid payments for transaction
@@ -350,7 +412,7 @@ export async function verifyDokumenTransaksi(
   input: VerifyDokumenInput
 ): Promise<ActionResponse> {
   try {
-    await requireCanEditTransaksi(input?.transaksiId);
+    const { adminId } = await requireCanEditTransaksi(input?.transaksiId);
 
     const parsed = verifyDokumenSchema.safeParse(input);
     if (!parsed.success) {
@@ -367,7 +429,12 @@ export async function verifyDokumenTransaksi(
     const result = await prisma.$transaction(async (tx) => {
       const trx = await tx.transaksi.findUnique({
         where: { id: transaksiId },
-        select: { id: true, tahap_detail: true },
+        select: {
+          id: true,
+          tahap_detail: true,
+          unit: { select: { blok: true } },
+          itj: { select: { lead_id: true } },
+        },
       });
 
       if (!trx) {
@@ -377,6 +444,15 @@ export async function verifyDokumenTransaksi(
       if (trx.tahap_detail === "BATAL") {
         throw new Error("Tidak dapat mengubah checklist dokumen pada transaksi yang sudah BATAL.");
       }
+
+      const existingDoc = await tx.dokumenTransaksi.findUnique({
+        where: {
+          transaksi_id_jenis: {
+            transaksi_id: transaksiId,
+            jenis,
+          },
+        },
+      });
 
       const updatedDoc = await tx.dokumenTransaksi.upsert({
         where: {
@@ -393,6 +469,28 @@ export async function verifyDokumenTransaksi(
         update: {
           status,
         },
+      });
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "DOKUMEN",
+        entityId: updatedDoc.id,
+        action: status === "LENGKAP" ? "DOC_CHECKED" : "DOC_UNCHECKED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          docLabel: jenis.replace(/_/g, " "),
+          blok: trx.unit.blok,
+        },
+        before: { status: existingDoc?.status || "BELUM_LENGKAP" },
+        after: { status },
       });
 
       return updatedDoc;
@@ -433,7 +531,7 @@ export async function updateProfilPemberkasan(
     const result = await prisma.$transaction(async (tx) => {
       const trx = await tx.transaksi.findUnique({
         where: { id: transaksiId },
-        include: { customer: true, itj: true },
+        include: { customer: true, itj: true, unit: true },
       });
 
       if (!trx) {
@@ -466,6 +564,33 @@ export async function updateProfilPemberkasan(
           },
         });
       }
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "TRANSAKSI",
+        entityId: trx.id,
+        action: "PROFILE_UPDATED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          blok: trx.unit?.blok,
+        },
+        before: {
+          status_pernikahan: trx.customer.status_pernikahan,
+          status_pekerjaan: trx.customer.status_pekerjaan,
+        },
+        after: {
+          status_pernikahan: statusPernikahan || null,
+          status_pekerjaan: statusPekerjaan || null,
+        },
+      });
 
       return updatedCustomer;
     });
@@ -598,35 +723,109 @@ export async function simpanJadwalTransaksi(
     }
 
     const { transaksiId, version, namaNotaris, rencanaAkadAt, rencanaBastAt } = parsed.data;
-    await requireCanEditTransaksi(transaksiId);
+    const { adminId } = await requireCanEditTransaksi(transaksiId);
 
-    const affected = await prisma.transaksi.updateMany({
-      where: {
-        id: transaksiId,
-        version: version,
-      },
-      data: {
-        nama_notaris: namaNotaris !== undefined ? namaNotaris?.trim() || null : undefined,
-        rencana_akad_at: rencanaAkadAt !== undefined
-          ? rencanaAkadAt?.trim()
-            ? parseDateOnlyUTC(rencanaAkadAt)
-            : null
-          : undefined,
-        rencana_bast_at: rencanaBastAt !== undefined
-          ? rencanaBastAt?.trim()
-            ? parseDateOnlyUTC(rencanaBastAt)
-            : null
-          : undefined,
-        version: { increment: 1 },
-      },
+    await prisma.$transaction(async (tx) => {
+      const trx = await tx.transaksi.findUnique({
+        where: { id: transaksiId },
+        include: { unit: true, itj: true },
+      });
+
+      if (!trx) {
+        throw new Error("Transaksi tidak ditemukan.");
+      }
+
+      if (trx.version !== version) {
+        throw new Error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+      }
+
+      const affected = await tx.transaksi.updateMany({
+        where: {
+          id: transaksiId,
+          version: version,
+        },
+        data: {
+          nama_notaris: namaNotaris !== undefined ? namaNotaris?.trim() || null : undefined,
+          rencana_akad_at: rencanaAkadAt !== undefined
+            ? rencanaAkadAt?.trim()
+              ? parseDateOnlyUTC(rencanaAkadAt)
+              : null
+            : undefined,
+          rencana_bast_at: rencanaBastAt !== undefined
+            ? rencanaBastAt?.trim()
+              ? parseDateOnlyUTC(rencanaBastAt)
+              : null
+            : undefined,
+          version: { increment: 1 },
+        },
+      });
+
+      if (affected.count !== 1) {
+        throw new Error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+      }
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      const schedType =
+        rencanaAkadAt !== undefined && rencanaBastAt !== undefined
+          ? "rencana akad & BAST"
+          : rencanaAkadAt !== undefined
+            ? "rencana akad"
+            : rencanaBastAt !== undefined
+              ? "rencana BAST"
+              : "notaris";
+
+      const oldDateStr =
+        rencanaAkadAt !== undefined
+          ? toWibDay(trx.rencana_akad_at) || "-"
+          : rencanaBastAt !== undefined
+            ? toWibDay(trx.rencana_bast_at) || "-"
+            : trx.nama_notaris || "-";
+
+      const newDateStr =
+        rencanaAkadAt !== undefined
+          ? rencanaAkadAt || "-"
+          : rencanaBastAt !== undefined
+            ? rencanaBastAt || "-"
+            : namaNotaris || "-";
+
+      await logActivity(tx, {
+        entityType: "TRANSAKSI",
+        entityId: transaksiId,
+        action: "SCHEDULE_UPDATED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          blok: trx.unit.blok,
+          scheduleType: schedType,
+          oldDate: oldDateStr,
+          newDate: newDateStr,
+        },
+        before: {
+          rencana_akad_at: toWibDay(trx.rencana_akad_at),
+          rencana_bast_at: toWibDay(trx.rencana_bast_at),
+          nama_notaris: trx.nama_notaris,
+        },
+        after: {
+          rencana_akad_at:
+            rencanaAkadAt !== undefined
+              ? rencanaAkadAt?.trim() || null
+              : toWibDay(trx.rencana_akad_at),
+          rencana_bast_at:
+            rencanaBastAt !== undefined
+              ? rencanaBastAt?.trim() || null
+              : toWibDay(trx.rencana_bast_at),
+          nama_notaris:
+            namaNotaris !== undefined ? namaNotaris?.trim() || null : trx.nama_notaris,
+        },
+      });
     });
-
-    if (affected.count !== 1) {
-      return {
-        success: false,
-        error: "Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.",
-      };
-    }
 
     revalidatePath(`/admin/transaksi/${transaksiId}`);
     revalidatePath(`/marketing/transaksi/${transaksiId}`);

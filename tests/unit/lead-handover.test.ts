@@ -30,6 +30,9 @@ const mockTx = {
   aktivitas: {
     create: vi.fn(),
   },
+  activityLog: {
+    create: vi.fn(),
+  },
 };
 
 vi.mock("@/lib/prisma", () => ({
@@ -41,7 +44,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-import { handoverLead, getEligiblePICs, type EligiblePIC } from "@/actions/lead-handover.action";
+import { handoverLead, getEligiblePICs } from "@/actions/lead-handover.action";
 import { prisma } from "@/lib/prisma";
 
 describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () => {
@@ -121,6 +124,19 @@ describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () =
             user_id: 10,
             jenis: "LAINNYA",
             catatan: expect.stringContaining("Marketing Beta"),
+          }),
+        })
+      );
+
+      // Verify append-only ActivityLog creation
+      expect(mockTx.activityLog.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            action: "LEAD_HANDOVER",
+            entity_type: "LEAD",
+            entity_id: 100,
+            lead_id: 100,
+            actor_id: 10,
           }),
         })
       );

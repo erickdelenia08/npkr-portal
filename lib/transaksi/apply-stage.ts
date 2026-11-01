@@ -19,6 +19,8 @@ import {
   todayDateOnlyUTC,
 } from "@/lib/date/wib";
 import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
+import { logActivity } from "@/lib/activity/log";
+import { ActivityAction } from "@/lib/activity/actions";
 
 export interface ApplyStageParams {
   transaksiId: number;
@@ -84,6 +86,13 @@ export async function applyStage(params: ApplyStageParams) {
     if (!existingTrx) {
       throw new Error("Transaksi tidak ditemukan.");
     }
+
+    const actorUser = actorId
+      ? await tx.user.findUnique({
+          where: { id: actorId },
+          select: { id: true, nama: true },
+        })
+      : null;
 
     // 2. Concurrency check against current DB state
     if (existingTrx.tahap_detail !== fromDetail || existingTrx.version !== version) {
@@ -300,6 +309,32 @@ export async function applyStage(params: ApplyStageParams) {
               },
             });
           }
+
+          const chosenApp = existingTrx.pengajuan_kpr.find(
+            (p) => p.id === chosenPengajuanId
+          );
+          const chosenBankName = chosenApp?.bank?.nama || "Bank";
+
+          await logActivity(tx, {
+            entityType: "PENGAJUAN_KPR",
+            entityId: chosenPengajuanId,
+            action: "KPR_BANK_SELECTED",
+            leadId: existingTrx.itj?.lead_id || null,
+            transaksiId: existingTrx.id,
+            tahapDetail: toDetail,
+            actorId,
+            summaryContext: {
+              actorName: actorUser?.nama,
+              bankName: chosenBankName,
+              cancelledCount: othersToCancel.length,
+              blok: existingTrx.unit?.blok,
+            },
+            after: {
+              pengajuan_id: chosenPengajuanId,
+              bank_nama: chosenBankName,
+              cancelled_count: othersToCancel.length,
+            },
+          });
         }
       }
     }
@@ -517,6 +552,7 @@ export async function applyStage(params: ApplyStageParams) {
       },
       data: {
         tahap_detail: toDetail,
+        tahap_since: isSameStage ? undefined : new Date(),
         nama_notaris: updateData.nama_notaris,
         catatan_admin: updateData.catatan_admin,
         rencana_akad_at: updateData.rencana_akad_at,
@@ -627,6 +663,59 @@ export async function applyStage(params: ApplyStageParams) {
           },
         });
       }
+
+      // Record Unified ActivityLog
+      let stageAction: ActivityAction = "STAGE_ADVANCED";
+      if (isCancellation) {
+        stageAction = "TRANSAKSI_CANCELLED";
+      } else if (isRegression) {
+        stageAction = "STAGE_REVERTED";
+      } else if (toDetail === "AKAD_KREDIT" || toDetail === "AJB") {
+        stageAction = "AKAD_CONFIRMED";
+      } else if (toDetail === "BAST") {
+        stageAction = "BAST_CONFIRMED";
+      }
+
+      const toIsoOrNull = (val: unknown): string | null => {
+        if (!val) return null;
+        if (val instanceof Date) return val.toISOString();
+        if (typeof val === "string") return val;
+        return null;
+      };
+
+      const toWibOrNull = (val: unknown): string | null => {
+        if (!val) return null;
+        if (val instanceof Date || typeof val === "string") return toWibDay(val);
+        return null;
+      };
+
+      await logActivity(tx, {
+        entityType: "TRANSAKSI",
+        entityId: existingTrx.id,
+        action: stageAction,
+        leadId: actualLeadId || null,
+        transaksiId: existingTrx.id,
+        tahapDetail: toDetail,
+        actorId,
+        summaryContext: {
+          actorName: actorUser?.nama,
+          blok: existingTrx.unit?.blok,
+          stageName: MAKRO_OF[toDetail],
+          prevStageName: MAKRO_OF[fromDetail],
+          alasan: alasanBatal || catatanAdmin,
+          isKavling: existingTrx.unit?.tipe?.kategori === "KAVLING",
+        },
+        before: {
+          tahap_detail: fromDetail,
+        },
+        after: {
+          tahap_detail: toDetail,
+          tgl_akad: toWibOrNull(updateData.tgl_akad),
+          lunas_at: toWibOrNull(updateData.lunas_at),
+          tgl_bast: toWibOrNull(updateData.tgl_bast),
+          cancelled_at: toIsoOrNull(updateData.cancelled_at),
+        },
+      });
     }
 
     // Return updated transaction

@@ -210,6 +210,22 @@ export function dayDiff(a: string, b: string): number {
 }
 
 /**
+ * Computes day boundaries in WIB (Asia/Jakarta, UTC+7) for a given YYYY-MM-DD string or Date.
+ * Strictly avoids server local time shifts (setHours).
+ * Returns { start, end } where start is 00:00:00+07:00 and end is 23:59:59.999+07:00.
+ */
+export function dayRangeWIB(date: string | Date): { start: Date; end: Date } {
+  const dayStr = toWibDay(date);
+  if (!dayStr) {
+    throw new Error("Invalid date provided to dayRangeWIB");
+  }
+  return {
+    start: new Date(`${dayStr}T00:00:00.000+07:00`),
+    end: new Date(`${dayStr}T23:59:59.999+07:00`),
+  };
+}
+
+/**
  * Format date-only (@db.Date) values safely using timeZone: "UTC".
  */
 export function formatDateOnly(

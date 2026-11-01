@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ItemBAST, StatusBAST } from "@/generated/prisma";
+import { logActivity } from "@/lib/activity/log";
 import {
   updateChecklistBASTSchema,
   type UpdateChecklistBASTInput,
@@ -75,30 +76,65 @@ export async function updateChecklistBAST(
   const { transaksiId, item, status } = parsed.data;
 
   try {
-    const trx = await prisma.transaksi.findUnique({
-      where: { id: transaksiId },
-      select: { id: true },
-    });
+    const updated = await prisma.$transaction(async (tx) => {
+      const trx = await tx.transaksi.findUnique({
+        where: { id: transaksiId },
+        select: {
+          id: true,
+          tahap_detail: true,
+          unit: { select: { blok: true } },
+          itj: { select: { lead_id: true } },
+        },
+      });
 
-    if (!trx) {
-      return { success: false, error: "Transaksi tidak ditemukan." };
-    }
+      if (!trx) {
+        throw new Error("Transaksi tidak ditemukan.");
+      }
 
-    const updated = await prisma.checklistBAST.upsert({
-      where: {
-        transaksi_id_item: {
+      const existingItem = await tx.checklistBAST.findUnique({
+        where: {
+          transaksi_id_item: {
+            transaksi_id: transaksiId,
+            item,
+          },
+        },
+      });
+
+      const res = await tx.checklistBAST.upsert({
+        where: {
+          transaksi_id_item: {
+            transaksi_id: transaksiId,
+            item,
+          },
+        },
+        create: {
           transaksi_id: transaksiId,
           item,
+          status,
         },
-      },
-      create: {
-        transaksi_id: transaksiId,
-        item,
-        status,
-      },
-      update: {
-        status,
-      },
+        update: {
+          status,
+        },
+      });
+
+      await logActivity(tx, {
+        entityType: "BAST_ITEM",
+        entityId: res.id,
+        action: status === "LENGKAP" ? "BAST_ITEM_CHECKED" : "BAST_ITEM_UNCHECKED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: session.user.name,
+          bastItemLabel: item.replace(/_/g, " "),
+          blok: trx.unit.blok,
+        },
+        before: { status: existingItem?.status || "BELUM_LENGKAP" },
+        after: { status },
+      });
+
+      return res;
     });
 
     revalidatePath(`/admin/transaksi/${transaksiId}`);

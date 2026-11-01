@@ -5,9 +5,10 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { itjSchema } from "@/schemas/itj/itj.schema";
-import { todayDateOnlyUTC } from "@/lib/date/wib";
+import { todayDateOnlyUTC, toWibDay } from "@/lib/date/wib";
 import { getInitialTahapDetail } from "@/lib/transaksi/stage-map";
 import { Prisma } from "@/generated/prisma";
+import { logActivity } from "@/lib/activity/log";
 
 export interface ITJActionResponse {
   success: boolean;
@@ -237,7 +238,7 @@ export async function submitITJ(
 
       // 8. Buat Pembayaran pertama (ITJ) dengan is_void: false
       const noKwitansi = `KWT-ITJ-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
-      await tx.pembayaran.create({
+      const createdPayment = await tx.pembayaran.create({
         data: {
           transaksi_id: createdTransaksi.id,
           admin_id: userId,
@@ -267,6 +268,55 @@ export async function submitITJ(
       await tx.lead.update({
         where: { id: lead.id },
         data: { last_activity_at: actNow },
+      });
+
+      // 10. Record Unified ActivityLog entries
+      await logActivity(tx, {
+        entityType: "TRANSAKSI",
+        entityId: createdTransaksi.id,
+        action: "ITJ_SUBMITTED",
+        leadId: lead.id,
+        transaksiId: createdTransaksi.id,
+        tahapDetail: detailTahap,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          blok: unit.blok,
+          nominal: Number(data.nominalDibayar),
+        },
+        after: {
+          transaksi_id: createdTransaksi.id,
+          itj_id: itjRecord.id,
+          unit_id: unit.id,
+          blok: unit.blok,
+          metode_bayar: data.metodeBayar,
+          harga_deal: Number(data.hargaDeal),
+          nominal_itj: Number(data.nominalDibayar),
+        },
+      });
+
+      await logActivity(tx, {
+        entityType: "PEMBAYARAN",
+        entityId: createdPayment.id,
+        action: "PAYMENT_RECORDED",
+        leadId: lead.id,
+        transaksiId: createdTransaksi.id,
+        tahapDetail: detailTahap,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          jenisBayar: "ITJ",
+          nominal: Number(data.nominalDibayar),
+          noKwitansi,
+        },
+        after: {
+          pembayaran_id: createdPayment.id,
+          jenis_pembayaran: "ITJ",
+          nominal: Number(data.nominalDibayar),
+          no_kwitansi: noKwitansi,
+          cara_bayar: "TRANSFER",
+          tgl_bayar: toWibDay(todayDateOnlyUTC()),
+        },
       });
     });
 

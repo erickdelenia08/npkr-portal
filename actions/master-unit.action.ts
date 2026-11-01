@@ -20,6 +20,7 @@ import {
 import { Prisma } from "@/generated/prisma";
 import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import { buildNamaTipe, parseBlok } from "@/lib/tipe-name";
+import { logActivity } from "@/lib/activity/log";
 import {
   normalizeBlok,
   expandRow,
@@ -1405,6 +1406,34 @@ export async function changeUnitTipe(
         },
       });
 
+      const actor = await tx.user.findUnique({
+        where: { id: userId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "UNIT",
+        entityId: unitId,
+        action: "UNIT_TYPE_CHANGED",
+        actorId: userId,
+        summaryContext: {
+          actorName: actor?.nama,
+          blok: unit.blok,
+          oldTipe: unit.tipe.nama_tipe,
+          newTipe: newTipe.nama_tipe,
+          alasan,
+        },
+        before: {
+          tipe_id: unit.tipe_id,
+          nama_tipe: unit.tipe.nama_tipe,
+        },
+        after: {
+          tipe_id: newTipeId,
+          nama_tipe: newTipe.nama_tipe,
+          alasan,
+        },
+      });
+
       return { blok: unit.blok, newNamaTipe: newTipe.nama_tipe };
     });
 
@@ -1447,9 +1476,15 @@ export async function changeUnitTipeBulk(
 
     const { unitIds, newTipeId, alasan, resetHargaKhusus } = parsed.data;
 
-    const newTipe = await prisma.masterTipe.findUnique({
-      where: { id: newTipeId },
-    });
+    const [newTipe, actor] = await Promise.all([
+      prisma.masterTipe.findUnique({
+        where: { id: newTipeId },
+      }),
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { nama: true },
+      }),
+    ]);
 
     if (!newTipe) {
       throw new BusinessError("Tipe baru tidak ditemukan");
@@ -1566,6 +1601,29 @@ export async function changeUnitTipeBulk(
               harga_khusus_direset: Boolean(resetHargaKhusus && unit.harga_khusus !== null),
               alasan,
               actor_id: userId,
+            },
+          });
+
+          await logActivity(tx, {
+            entityType: "UNIT",
+            entityId: uId,
+            action: "UNIT_TYPE_CHANGED",
+            actorId: userId,
+            summaryContext: {
+              actorName: actor?.nama,
+              blok: unit.blok,
+              oldTipe: unit.tipe.nama_tipe,
+              newTipe: newTipe.nama_tipe,
+              alasan,
+            },
+            before: {
+              tipe_id: unit.tipe_id,
+              nama_tipe: unit.tipe.nama_tipe,
+            },
+            after: {
+              tipe_id: newTipeId,
+              nama_tipe: newTipe.nama_tipe,
+              alasan,
             },
           });
 

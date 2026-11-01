@@ -29,6 +29,7 @@ model User {
   pembayaran_divoid   Pembayaran[]        @relation("AdminVoider")
   pengajuan_kpr_logs  PengajuanKPRLog[]   @relation("ActorPengajuanKPRLog")
   unit_tipe_logs      UnitTipeLog[]       @relation("ActorTipeLog")
+  activity_logs       ActivityLog[]       @relation("ActivityActor")
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -145,10 +146,11 @@ model Lead {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  marketing User?       @relation("MarketingLeads", fields: [marketing_id], references: [id])
-  customer  Customer?   @relation("CustomerLeads", fields: [customer_id], references: [id])
-  aktivitas Aktivitas[]
-  itj       Itj[]
+  marketing     User?         @relation("MarketingLeads", fields: [marketing_id], references: [id])
+  customer      Customer?     @relation("CustomerLeads", fields: [customer_id], references: [id])
+  aktivitas     Aktivitas[]
+  itj           Itj[]
+  activity_logs ActivityLog[]
 
   @@index([no_hp])
   @@index([marketing_id, created_at])
@@ -291,6 +293,7 @@ model Transaksi {
   tenor_bulan  Int?
 
   tahap_detail TahapDetail
+  tahap_since  DateTime    @default(now())
 
   nama_notaris String?
 
@@ -328,6 +331,7 @@ model Transaksi {
   checklist_bast         ChecklistBAST[]
   pengajuan_kpr          PengajuanKPR[]      @relation("TransaksiPengajuanKPR")
   pengajuan_kpr_terpilih PengajuanKPR?       @relation("PengajuanKPRTerpilih", fields: [pengajuan_kpr_terpilih_id], references: [id])
+  activity_logs          ActivityLog[]
 
   @@index([tahap_detail, updated_at])
   @@index([tahap_detail, rencana_akad_at])
@@ -545,4 +549,44 @@ model Pembayaran {
 
   @@index([transaksi_id, tgl_bayar])
   @@index([is_void, tgl_bayar]) // CHANGED: laporan kas (selalu is_void = false)
+}
+
+// ==========================================
+// 10. UNIFIED AUDIT LOG (ACTIVITY LOG)
+// ==========================================
+enum ActivityEntity {
+  LEAD
+  TRANSAKSI
+  DOKUMEN
+  BAST_ITEM
+  PEMBAYARAN
+  PENGAJUAN_KPR
+  UNIT
+}
+
+model ActivityLog {
+  id           Int            @id @default(autoincrement())
+  entity_type  ActivityEntity
+  entity_id    Int
+  action       String         @db.VarChar(48) // nilai dibatasi union TypeScript ACTIVITY_ACTIONS (lib/activity/actions.ts) + zod
+  lead_id      Int?
+  transaksi_id Int?
+  tahap_detail TahapDetail? // tahap transaksi SAAT kejadian
+  actor_id     Int? // null = sistem
+  summary      String         @db.Text // kalimat Indonesia siap tampil, dibuat saat penulisan
+  before       Json?
+  after        Json?
+  is_backfill  Boolean        @default(false)
+  created_at   DateTime       @default(now())
+
+  actor     User?      @relation("ActivityActor", fields: [actor_id], references: [id], onDelete: Restrict)
+  lead      Lead?      @relation(fields: [lead_id], references: [id], onDelete: Restrict)
+  transaksi Transaksi? @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
+
+  @@index([transaksi_id, created_at])
+  @@index([lead_id, created_at])
+  @@index([actor_id, created_at])
+  @@index([action, created_at])
+  @@index([entity_type, created_at])
+  @@index([created_at])
 }

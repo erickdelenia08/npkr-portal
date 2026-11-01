@@ -4,6 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity/log";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -166,6 +167,29 @@ export async function handoverLead(
           hasil: "TERTARIK",
           catatan: `[HANDOVER PIC] Tanggung jawab operasional dialihkan dari ${prevPicName} ke ${targetUser.nama}.${cleanNote}`,
           created_at: now,
+        },
+      });
+
+      // 7. Record append-only unified ActivityLog
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: lead.id,
+        action: "LEAD_HANDOVER",
+        leadId: lead.id,
+        actorId: currentUserId,
+        summaryContext: {
+          actorName: session.user.name,
+          leadName: lead.nama,
+          oldPicName: prevPicName,
+          newPicName: targetUser.nama,
+        },
+        before: {
+          marketing_id: lead.marketing_id,
+          marketing_nama: lead.marketing?.nama || null,
+        },
+        after: {
+          marketing_id: newMarketingId,
+          marketing_nama: targetUser.nama,
         },
       });
 

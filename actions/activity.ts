@@ -12,6 +12,9 @@ import {
 import { getLeadTahap, LeadTahap } from "@/lib/lead-utils";
 import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import { JenisAktivitas, HasilAktivitas, Prisma } from "@/generated/prisma";
+import { logActivity } from "@/lib/activity/log";
+import { ActivityAction } from "@/lib/activity/actions";
+import { dayRangeWIB } from "@/lib/date/wib";
 
 export interface GlobalActivityItem {
   id: number;
@@ -100,6 +103,11 @@ export async function getLeadDetail(
   id: number
 ): Promise<{ success: boolean; data?: SerializedLeadDetail; error?: string }> {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false, error: "Silakan login kembali." };
+    }
+
     const lead = await prisma.lead.findUnique({
       where: { id },
       include: {
@@ -204,7 +212,7 @@ export async function createActivity(
     // Check if parent lead exists
     const lead = await prisma.lead.findUnique({
       where: { id: lead_id },
-      select: { id: true },
+      select: { id: true, nama: true },
     });
 
     if (!lead) {
@@ -225,8 +233,8 @@ export async function createActivity(
     }
 
     // Maintain last_activity_at and next_follow_up_at on Lead atomically
-    const [createdActivity] = await prisma.$transaction([
-      prisma.aktivitas.create({
+    const createdActivity = await prisma.$transaction(async (tx) => {
+      const act = await tx.aktivitas.create({
         data: {
           lead_id,
           user_id: userId,
@@ -236,16 +244,46 @@ export async function createActivity(
           tgl_follow_up: followUpDate,
           created_at: now,
         },
-      }),
-      prisma.lead.update({
+      });
+
+      await tx.lead.update({
         where: { id: lead_id },
         data: {
           last_activity_at: now,
           next_follow_up_at: followUpDate,
           updated_at: now,
         },
-      }),
-    ]);
+      });
+
+      const actionName: ActivityAction =
+        jenis === "WHATSAPP"
+          ? "LEAD_FOLLOWUP_WHATSAPP"
+          : jenis === "TELEPON"
+            ? "LEAD_FOLLOWUP_TELEPON"
+            : jenis === "BERTEMU"
+              ? "LEAD_FOLLOWUP_BERTEMU"
+              : "LEAD_FOLLOWUP_LAINNYA";
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: lead_id,
+        action: actionName,
+        leadId: lead_id,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          leadName: lead.nama,
+          hasil,
+        },
+        after: {
+          jenis,
+          hasil,
+          tgl_follow_up: followUpDate.toISOString(),
+        },
+      });
+
+      return act;
+    });
 
     // Revalidate paths
     revalidatePath(`/marketing/lead/${lead_id}`);
@@ -312,17 +350,17 @@ export async function getGlobalActivities(
     if (filterData?.startDate || filterData?.endDate) {
       const dateFilter: Prisma.DateTimeFilter = {};
       if (filterData.startDate) {
-        const start = new Date(filterData.startDate);
-        if (!isNaN(start.getTime())) {
-          start.setHours(0, 0, 0, 0);
-          dateFilter.gte = start;
+        try {
+          dateFilter.gte = dayRangeWIB(filterData.startDate).start;
+        } catch {
+          // ignore invalid date
         }
       }
       if (filterData.endDate) {
-        const end = new Date(filterData.endDate);
-        if (!isNaN(end.getTime())) {
-          end.setHours(23, 59, 59, 999);
-          dateFilter.lte = end;
+        try {
+          dateFilter.lte = dayRangeWIB(filterData.endDate).end;
+        } catch {
+          // ignore invalid date
         }
       }
       if (dateFilter.gte || dateFilter.lte) {
@@ -378,6 +416,14 @@ export async function getActivityActors(): Promise<{
     const session = await auth();
     if (!session?.user) {
       return { success: false, error: "Silakan login kembali." };
+    }
+
+    const role = session.user.role;
+    if (role !== "MANAGER" && role !== "ADMIN") {
+      return {
+        success: false,
+        error: "Unauthorized: Hanya Manager dan Admin yang dapat mengakses daftar personel.",
+      };
     }
 
     const users = await prisma.user.findMany({

@@ -234,6 +234,7 @@ exports.Prisma.TransaksiScalarFieldEnum = {
   target_dp: 'target_dp',
   tenor_bulan: 'tenor_bulan',
   tahap_detail: 'tahap_detail',
+  tahap_since: 'tahap_since',
   nama_notaris: 'nama_notaris',
   rencana_akad_at: 'rencana_akad_at',
   rencana_bast_at: 'rencana_bast_at',
@@ -331,9 +332,30 @@ exports.Prisma.PembayaranScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.ActivityLogScalarFieldEnum = {
+  id: 'id',
+  entity_type: 'entity_type',
+  entity_id: 'entity_id',
+  action: 'action',
+  lead_id: 'lead_id',
+  transaksi_id: 'transaksi_id',
+  tahap_detail: 'tahap_detail',
+  actor_id: 'actor_id',
+  summary: 'summary',
+  before: 'before',
+  after: 'after',
+  is_backfill: 'is_backfill',
+  created_at: 'created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.UserOrderByRelevanceFieldEnum = {
@@ -415,6 +437,22 @@ exports.Prisma.PembayaranOrderByRelevanceFieldEnum = {
   no_kwitansi: 'no_kwitansi',
   catatan: 'catatan',
   void_reason: 'void_reason'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.ActivityLogOrderByRelevanceFieldEnum = {
+  action: 'action',
+  summary: 'summary'
 };
 exports.Role = exports.$Enums.Role = {
   MARKETING: 'MARKETING',
@@ -567,6 +605,16 @@ exports.CaraBayar = exports.$Enums.CaraBayar = {
   TRANSFER: 'TRANSFER'
 };
 
+exports.ActivityEntity = exports.$Enums.ActivityEntity = {
+  LEAD: 'LEAD',
+  TRANSAKSI: 'TRANSAKSI',
+  DOKUMEN: 'DOKUMEN',
+  BAST_ITEM: 'BAST_ITEM',
+  PEMBAYARAN: 'PEMBAYARAN',
+  PENGAJUAN_KPR: 'PENGAJUAN_KPR',
+  UNIT: 'UNIT'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   MasterTipe: 'MasterTipe',
@@ -583,7 +631,8 @@ exports.Prisma.ModelName = {
   TransaksiTahapLog: 'TransaksiTahapLog',
   DokumenTransaksi: 'DokumenTransaksi',
   ChecklistBAST: 'ChecklistBAST',
-  Pembayaran: 'Pembayaran'
+  Pembayaran: 'Pembayaran',
+  ActivityLog: 'ActivityLog'
 };
 
 /**

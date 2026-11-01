@@ -10,6 +10,7 @@ import {
   ALLOWED_KPR_STATUS_TRANSITIONS,
 } from "@/schemas/kpr.schema";
 import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
+import { logActivity } from "@/lib/activity/log";
 
 export interface ServerActionResponse<T = unknown> {
   success: boolean;
@@ -149,6 +150,7 @@ export async function ajukanKPR(
             include: { tipe: true },
           },
           dokumen: true,
+          itj: true,
         },
       });
 
@@ -252,12 +254,18 @@ export async function ajukanKPR(
         },
       });
 
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
       // 6. Advance transaction status to PROSES_BANK if still in PENGUMPULAN_DOKUMEN
       if (trx.tahap_detail === "PENGUMPULAN_DOKUMEN") {
         await tx.transaksi.update({
           where: { id: transaksiId },
           data: {
             tahap_detail: "PROSES_BANK",
+            tahap_since: new Date(),
             version: { increment: 1 },
           },
         });
@@ -271,7 +279,47 @@ export async function ajukanKPR(
             catatan: `Tahap transaksi beralih ke Proses Bank seiring pengajuan KPR #${nextNomor} ke ${bank.nama}`,
           },
         });
+
+        await logActivity(tx, {
+          entityType: "TRANSAKSI",
+          entityId: transaksiId,
+          action: "STAGE_ADVANCED",
+          leadId: trx.itj?.lead_id || null,
+          transaksiId: trx.id,
+          tahapDetail: "PROSES_BANK",
+          actorId: adminId,
+          summaryContext: {
+            actorName: actor?.nama,
+            blok: trx.unit.blok,
+            stageName: "Proses KPR (PROSES_BANK)",
+            prevStageName: "Pengumpulan Dokumen",
+          },
+          before: { tahap_detail: "PENGUMPULAN_DOKUMEN" },
+          after: { tahap_detail: "PROSES_BANK" },
+        });
       }
+
+      await logActivity(tx, {
+        entityType: "PENGAJUAN_KPR",
+        entityId: newPengajuan.id,
+        action: "KPR_SUBMITTED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail === "PENGUMPULAN_DOKUMEN" ? "PROSES_BANK" : trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          nomorPengajuan: nextNomor,
+          bankName: bank.nama,
+          blok: trx.unit.blok,
+        },
+        after: {
+          pengajuan_id: newPengajuan.id,
+          nomor_pengajuan: nextNomor,
+          bank_id: bankId,
+          bank_nama: bank.nama,
+        },
+      });
 
       return newPengajuan;
     });
@@ -317,7 +365,9 @@ export async function updateStatusPengajuanKPR(
         where: { id: pengajuanId },
         include: {
           bank: true,
-          transaksi: true,
+          transaksi: {
+            include: { itj: true, unit: true },
+          },
         },
       });
 
@@ -382,10 +432,39 @@ export async function updateStatusPengajuanKPR(
           where: { id: existing.transaksi.id },
           data: {
             tahap_detail: "PROSES_BANK",
+            tahap_since: new Date(),
             version: { increment: 1 },
           },
         });
       }
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "PENGAJUAN_KPR",
+        entityId: existing.id,
+        action: status === "DITOLAK" ? "KPR_REJECTED" : "KPR_STATUS_CHANGED",
+        leadId: existing.transaksi.itj?.lead_id || null,
+        transaksiId: existing.transaksi.id,
+        tahapDetail: existing.transaksi.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          bankName: existing.bank.nama,
+          nomorPengajuan: existing.nomor_pengajuan,
+          statusKpr: status,
+          alasan: alasanPenolakan,
+          blok: existing.transaksi.unit?.blok,
+        },
+        before: { status: existing.status },
+        after: {
+          status,
+          alasan_penolakan: status === "DITOLAK" ? alasanPenolakan?.trim() || null : undefined,
+        },
+      });
 
       return updated;
     });
