@@ -14,18 +14,18 @@ export const masterTipeSchema = z
   .object({
     id: z.number().optional(),
     kategori: KategoriUnitEnum,
-    luas_bangunan: z.number().min(0, "Luas bangunan tidak boleh negatif"),
+    luas_bangunan: z.number().min(0, "Luas bangunan tidak boleh negatif").nullable().optional(),
     luas_tanah: z.number().min(1, "Luas tanah harus lebih dari 0"),
     harga_dasar: z.number().min(1000000, "Harga dasar minimal Rp 1.000.000"),
   })
   .refine(
     (data) => {
-      // If kategori is KAVLING, luas_bangunan can be 0
+      // If kategori is KAVLING, luas_bangunan can be null, undefined, or 0 (handled as null)
       if (data.kategori === "KAVLING") {
         return true;
       }
       // For SUBSIDI & KOMERSIL, luas_bangunan must be > 0
-      return (data.luas_bangunan ?? 0) > 0;
+      return typeof data.luas_bangunan === "number" && data.luas_bangunan > 0;
     },
     {
       message: "Luas bangunan wajib diisi lebih dari 0 untuk kategori SUBSIDI dan KOMERSIL",

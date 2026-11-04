@@ -4,6 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity/log";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -117,7 +118,14 @@ export async function handoverLead(
         );
       }
 
-      // 3. Validate Target User
+      // 3. Status Guard: Lock if lead has reached ITJ / Closing
+      if (lead.itj && lead.itj.length > 0) {
+        throw new Error(
+          "Lead yang sudah mencapai tahap ITJ / closing tidak dapat dialihkan (handover terkunci). Tanggung jawab closing tetap pada marketing terkait."
+        );
+      }
+
+      // 4. Validate Target User
       const targetUser = await tx.user.findUnique({
         where: { id: newMarketingId, isActive: true },
         select: { id: true, nama: true, role: true },
@@ -136,23 +144,12 @@ export async function handoverLead(
       const now = new Date();
       const prevPicName = lead.marketing?.nama || "Sebelumnya";
 
-      // 4. Update Lead marketing_id (PIC baru). Do NOT touch original_marketing_id!
+      // 5. Update Lead marketing_id (PIC baru) ONLY. Do NOT touch Transaksi.pic_id or Itj.closer_id!
       await tx.lead.update({
         where: { id: lead.id },
         data: {
           marketing_id: newMarketingId,
           last_activity_at: now,
-        },
-      });
-
-      // 5. Update active Transaksi if any
-      const updatedTrx = await tx.transaksi.updateMany({
-        where: {
-          itj: { lead_id: lead.id },
-          status_transaksi: { not: "BATAL" },
-        },
-        data: {
-          marketing_id: newMarketingId,
         },
       });
 
@@ -164,32 +161,49 @@ export async function handoverLead(
           user_id: currentUserId,
           jenis: "LAINNYA",
           hasil: "TERTARIK",
-          catatan: `[HANDOVER PIC] Tanggung jawab operasional dialihkan dari ${prevPicName} ke ${targetUser.nama}.${cleanNote}`,
+          catatan: `[HANDOVER PIC LEAD] Tanggung jawab prospek lead dialihkan dari ${prevPicName} ke ${targetUser.nama}.${cleanNote}`,
           created_at: now,
+        },
+      });
+
+      // 7. Record append-only unified ActivityLog
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: lead.id,
+        action: "LEAD_HANDOVER",
+        leadId: lead.id,
+        actorId: currentUserId,
+        summaryContext: {
+          actorName: session.user.name,
+          leadName: lead.nama,
+          oldPicName: prevPicName,
+          newPicName: targetUser.nama,
+        },
+        before: {
+          marketing_id: lead.marketing_id,
+          marketing_nama: lead.marketing?.nama || null,
+        },
+        after: {
+          marketing_id: newMarketingId,
+          marketing_nama: targetUser.nama,
         },
       });
 
       return {
         targetName: targetUser.nama,
-        trxCount: updatedTrx.count,
       };
     });
 
-    // 7. Path revalidation
+    // 8. Path revalidation
     revalidatePath(`/marketing/lead/${leadId}`);
     revalidatePath("/marketing/lead");
     revalidatePath("/admin/lead");
     revalidatePath("/manager/lead");
-    revalidatePath("/admin/transaksi");
-    revalidatePath("/marketing/transaksi");
-    revalidatePath("/manager/transaksi");
     revalidatePath("/manager/aktivitas");
 
     return {
       success: true,
-      message: `PIC berhasil dialihkan ke ${result.targetName}.${
-        result.trxCount > 0 ? ` (${result.trxCount} transaksi berjalan ikut diperbarui)` : ""
-      }`,
+      message: `PIC lead berhasil dialihkan ke ${result.targetName}.`,
     };
   } catch (error: unknown) {
     const errorMsg =

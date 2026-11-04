@@ -107,6 +107,50 @@ export function MasterUnitClient({
   const latestRequestId = useRef(0);
   const isInitialMount = useRef(true);
 
+  const loadAllSiteplanUnits = async () => {
+    setIsSiteplanLoading(true);
+    try {
+      const res = await getAllMasterUnits();
+      if (res.success && res.data) {
+        setAllSiteplanUnits(res.data);
+      }
+    } catch (err: unknown) {
+      console.error("Failed to load siteplan units:", err);
+    } finally {
+      setIsSiteplanLoading(false);
+    }
+  };
+
+  const refreshUnits = async (
+    page = currentPage,
+    query = search,
+    status = statusFilter,
+    tipeId = tipeFilter,
+    kategori = kategoriFilter
+  ) => {
+    const reqId = ++latestRequestId.current;
+
+    startTransition(async () => {
+      const res = await getMasterUnits({
+        page,
+        limit: 15,
+        search: query || undefined,
+        status: status && status !== "ALL" ? status : undefined,
+        tipeId: tipeId && tipeId > 0 ? tipeId : undefined,
+        kategori: kategori && kategori !== "ALL" ? kategori : undefined,
+      });
+
+      if (reqId !== latestRequestId.current) return;
+
+      if (res.success && res.data) {
+        setUnits(res.data.units);
+        setTotalUnits(res.data.total);
+        setCurrentPage(res.data.page);
+        setTotalPages(res.data.totalPages);
+      }
+    });
+  };
+
   // Sync state to URL and fetch units
   useEffect(() => {
     if (isInitialMount.current) {
@@ -142,20 +186,6 @@ export function MasterUnitClient({
     }
   }, [activeTab, allSiteplanUnits, isSiteplanLoading]);
 
-  const loadAllSiteplanUnits = async () => {
-    setIsSiteplanLoading(true);
-    try {
-      const res = await getAllMasterUnits();
-      if (res.success && res.data) {
-        setAllSiteplanUnits(res.data);
-      }
-    } catch (err: unknown) {
-      console.error("Failed to load siteplan units:", err);
-    } finally {
-      setIsSiteplanLoading(false);
-    }
-  };
-
   const refreshTipeList = async () => {
     const res = await getMasterTipeList();
     if (res.success && res.data) setTipeList(res.data);
@@ -164,36 +194,6 @@ export function MasterUnitClient({
   const refreshSummary = async () => {
     const res = await getMasterUnitSummary();
     if (res.success && res.data) setSummary(res.data);
-  };
-
-  const refreshUnits = async (
-    page = currentPage,
-    query = search,
-    status = statusFilter,
-    tipeId = tipeFilter,
-    kategori = kategoriFilter
-  ) => {
-    const reqId = ++latestRequestId.current;
-
-    startTransition(async () => {
-      const res = await getMasterUnits({
-        page,
-        limit: 15,
-        search: query || undefined,
-        status: status && status !== "ALL" ? status : undefined,
-        tipeId: tipeId && tipeId > 0 ? tipeId : undefined,
-        kategori: kategori && kategori !== "ALL" ? kategori : undefined,
-      });
-
-      if (reqId !== latestRequestId.current) return;
-
-      if (res.success && res.data) {
-        setUnits(res.data.units);
-        setTotalUnits(res.data.total);
-        setCurrentPage(res.data.page);
-        setTotalPages(res.data.totalPages);
-      }
-    });
   };
 
   const handlePageChange = (page: number) => {

@@ -37,3 +37,33 @@ export const globalActivityFilterSchema = z.object({
 
 export type GlobalActivityFilterInput = z.infer<typeof globalActivityFilterSchema>;
 
+export const ActivityFeedCategoryEnum = z.enum([
+  "SEMUA",
+  "LEAD",
+  "TRANSAKSI",
+  "PEMBAYARAN",
+  "KPR",
+  "DOKUMEN",
+  "MASTER",
+]);
+export type ActivityFeedCategory = z.infer<typeof ActivityFeedCategoryEnum>;
+
+export const activityFeedFilterSchema = z.object({
+  actorId: z.coerce.number().int().positive().optional().nullable(),
+  leadId: z.coerce.number().int().positive().optional().nullable(),
+  transaksiId: z.coerce.number().int().positive().optional().nullable(),
+  entityType: z
+    .enum(["LEAD", "TRANSAKSI", "DOKUMEN", "BAST_ITEM", "PEMBAYARAN", "PENGAJUAN_KPR", "UNIT"])
+    .optional()
+    .nullable(),
+  actionCategory: ActivityFeedCategoryEnum.default("SEMUA"),
+  dateFrom: z.string().trim().optional().nullable(),
+  dateTo: z.string().trim().optional().nullable(),
+  search: z.string().trim().optional().nullable(),
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(5).max(100).default(25),
+});
+
+export type ActivityFeedFilterInput = z.input<typeof activityFeedFilterSchema>;
+export type ActivityFeedFilterOutput = z.output<typeof activityFeedFilterSchema>;
+

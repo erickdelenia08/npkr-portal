@@ -29,7 +29,7 @@ import { LeadMilestoneStepper } from "./LeadMilestoneStepper";
 import { LeadDynamicActionCard } from "./LeadDynamicActionCard";
 import { ActivityTimeline } from "./ActivityTimeline";
 import { ActivityLoggerModal } from "./ActivityLoggerModal";
-import { HandoverDialog } from "@/components/forms/handover-dialog";
+import { HandoverLeadDialog } from "@/components/forms/handover-dialog";
 
 interface LeadDetailClientProps {
   initialLead: SerializedLeadDetail;
@@ -281,10 +281,18 @@ export function LeadDetailClient({
               <span>WhatsApp</span>
             </a>
             {canHandover && (
-              <HandoverDialog
+              <HandoverLeadDialog
                 leadId={lead.id}
+                leadName={lead.nama}
                 currentMarketingId={lead.marketing_id}
                 currentMarketingName={lead.marketing?.nama}
+                isLocked={Boolean(
+                  (lead.itj && lead.itj.id) ||
+                  lead.closing_at != null ||
+                  lead.tahap === "CLOSING" ||
+                  lead.tahap === "Closing"
+                )}
+                lockedReason="Lead sudah mencapai tahap ITJ / Closing sehingga penugasan PIC terkunci."
                 onSuccess={fetchLatestLead}
               />
             )}

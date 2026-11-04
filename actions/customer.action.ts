@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { toWibDay, parseDateOnlyUTC } from "@/lib/date/wib";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import {
   updateCustomerIdentitySchema,
   UpdateCustomerIdentityInput,
@@ -189,7 +190,7 @@ export async function getCustomerDetail(
         id: t.id,
         metode_bayar: t.metode_bayar,
         harga_deal: Number(t.harga_deal),
-        status_transaksi: t.status_transaksi,
+        status_transaksi: MAKRO_OF[t.tahap_detail],
         tahap_detail: t.tahap_detail,
         closing_at: t.closing_at ? toWibDay(t.closing_at) : null,
         created_at: t.created_at.toISOString(),
@@ -317,7 +318,7 @@ export async function updateCustomerIdentity(
         id: t.id,
         metode_bayar: t.metode_bayar,
         harga_deal: Number(t.harga_deal),
-        status_transaksi: t.status_transaksi,
+        status_transaksi: MAKRO_OF[t.tahap_detail],
         tahap_detail: t.tahap_detail,
         closing_at: t.closing_at ? toWibDay(t.closing_at) : null,
         created_at: t.created_at.toISOString(),

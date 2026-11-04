@@ -160,7 +160,7 @@ exports.Prisma.UnitTipeLogScalarFieldEnum = {
   harga_khusus_lama: 'harga_khusus_lama',
   harga_khusus_direset: 'harga_khusus_direset',
   alasan: 'alasan',
-  changed_by: 'changed_by',
+  actor_id: 'actor_id',
   created_at: 'created_at'
 };
 
@@ -197,14 +197,10 @@ exports.Prisma.ItjScalarFieldEnum = {
   id: 'id',
   lead_id: 'lead_id',
   unit_id: 'unit_id',
-  marketing_id: 'marketing_id',
+  closer_id: 'closer_id',
   nik: 'nik',
   nama_ktp: 'nama_ktp',
   nominal: 'nominal',
-  harga_deal: 'harga_deal',
-  target_itj: 'target_itj',
-  target_dp: 'target_dp',
-  nominal_dibayar: 'nominal_dibayar',
   metode_bayar: 'metode_bayar',
   tenor: 'tenor',
   diajukan_at: 'diajukan_at',
@@ -230,25 +226,28 @@ exports.Prisma.TransaksiScalarFieldEnum = {
   id: 'id',
   customer_id: 'customer_id',
   unit_id: 'unit_id',
-  marketing_id: 'marketing_id',
+  pic_id: 'pic_id',
   itj_id: 'itj_id',
   metode_bayar: 'metode_bayar',
   harga_deal: 'harga_deal',
   target_itj: 'target_itj',
   target_dp: 'target_dp',
   tenor_bulan: 'tenor_bulan',
-  status_transaksi: 'status_transaksi',
   tahap_detail: 'tahap_detail',
-  nama_bank: 'nama_bank',
+  tahap_since: 'tahap_since',
   nama_notaris: 'nama_notaris',
+  rencana_akad_at: 'rencana_akad_at',
+  rencana_bast_at: 'rencana_bast_at',
   tgl_akad: 'tgl_akad',
   lunas_at: 'lunas_at',
   tgl_bast: 'tgl_bast',
   closing_at: 'closing_at',
-  closed_at: 'closed_at',
   cancelled_at: 'cancelled_at',
   alasan_batal: 'alasan_batal',
   catatan_admin: 'catatan_admin',
+  version: 'version',
+  active_unit_id: 'active_unit_id',
+  pengajuan_kpr_terpilih_id: 'pengajuan_kpr_terpilih_id',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
@@ -282,7 +281,7 @@ exports.Prisma.PengajuanKPRLogScalarFieldEnum = {
   pengajuan_id: 'pengajuan_id',
   status_sebelum: 'status_sebelum',
   status_sesudah: 'status_sesudah',
-  admin_id: 'admin_id',
+  actor_id: 'actor_id',
   catatan: 'catatan',
   created_at: 'created_at'
 };
@@ -290,11 +289,9 @@ exports.Prisma.PengajuanKPRLogScalarFieldEnum = {
 exports.Prisma.TransaksiTahapLogScalarFieldEnum = {
   id: 'id',
   transaksi_id: 'transaksi_id',
-  tahap_sebelum: 'tahap_sebelum',
-  tahap_sesudah: 'tahap_sesudah',
   detail_sebelum: 'detail_sebelum',
   detail_sesudah: 'detail_sesudah',
-  admin_id: 'admin_id',
+  actor_id: 'actor_id',
   catatan: 'catatan',
   created_at: 'created_at'
 };
@@ -303,34 +300,18 @@ exports.Prisma.DokumenTransaksiScalarFieldEnum = {
   id: 'id',
   transaksi_id: 'transaksi_id',
   jenis: 'jenis',
-  kategori: 'kategori',
   status: 'status',
-  file_url: 'file_url',
-  catatan_verifikasi: 'catatan_verifikasi',
-  verified_by: 'verified_by',
-  verified_at: 'verified_at',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };
 
-exports.Prisma.InspeksiBASTScalarFieldEnum = {
+exports.Prisma.ChecklistBASTScalarFieldEnum = {
   id: 'id',
   transaksi_id: 'transaksi_id',
   item: 'item',
   status: 'status',
-  catatan: 'catatan',
-  inspektur_id: 'inspektur_id',
-  diperiksa_at: 'diperiksa_at'
-};
-
-exports.Prisma.InspeksiBASTLogScalarFieldEnum = {
-  id: 'id',
-  inspeksi_bast_id: 'inspeksi_bast_id',
-  status_sebelum: 'status_sebelum',
-  status_sesudah: 'status_sesudah',
-  catatan: 'catatan',
-  inspektur_id: 'inspektur_id',
-  created_at: 'created_at'
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 };
 
 exports.Prisma.PembayaranScalarFieldEnum = {
@@ -351,9 +332,30 @@ exports.Prisma.PembayaranScalarFieldEnum = {
   updated_at: 'updated_at'
 };
 
+exports.Prisma.ActivityLogScalarFieldEnum = {
+  id: 'id',
+  entity_type: 'entity_type',
+  entity_id: 'entity_id',
+  action: 'action',
+  lead_id: 'lead_id',
+  transaksi_id: 'transaksi_id',
+  tahap_detail: 'tahap_detail',
+  actor_id: 'actor_id',
+  summary: 'summary',
+  before: 'before',
+  after: 'after',
+  is_backfill: 'is_backfill',
+  created_at: 'created_at'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.UserOrderByRelevanceFieldEnum = {
@@ -363,13 +365,13 @@ exports.Prisma.UserOrderByRelevanceFieldEnum = {
   password: 'password'
 };
 
-exports.Prisma.MasterTipeOrderByRelevanceFieldEnum = {
-  nama_tipe: 'nama_tipe'
-};
-
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.MasterTipeOrderByRelevanceFieldEnum = {
+  nama_tipe: 'nama_tipe'
 };
 
 exports.Prisma.MasterUnitOrderByRelevanceFieldEnum = {
@@ -407,7 +409,6 @@ exports.Prisma.CustomerOrderByRelevanceFieldEnum = {
 };
 
 exports.Prisma.TransaksiOrderByRelevanceFieldEnum = {
-  nama_bank: 'nama_bank',
   nama_notaris: 'nama_notaris',
   alasan_batal: 'alasan_batal',
   catatan_admin: 'catatan_admin'
@@ -432,23 +433,26 @@ exports.Prisma.TransaksiTahapLogOrderByRelevanceFieldEnum = {
   catatan: 'catatan'
 };
 
-exports.Prisma.DokumenTransaksiOrderByRelevanceFieldEnum = {
-  file_url: 'file_url',
-  catatan_verifikasi: 'catatan_verifikasi'
-};
-
-exports.Prisma.InspeksiBASTOrderByRelevanceFieldEnum = {
-  catatan: 'catatan'
-};
-
-exports.Prisma.InspeksiBASTLogOrderByRelevanceFieldEnum = {
-  catatan: 'catatan'
-};
-
 exports.Prisma.PembayaranOrderByRelevanceFieldEnum = {
   no_kwitansi: 'no_kwitansi',
   catatan: 'catatan',
   void_reason: 'void_reason'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.ActivityLogOrderByRelevanceFieldEnum = {
+  action: 'action',
+  summary: 'summary'
 };
 exports.Role = exports.$Enums.Role = {
   MARKETING: 'MARKETING',
@@ -511,22 +515,9 @@ exports.StatusPekerjaan = exports.$Enums.StatusPekerjaan = {
   TIDAK_TETAP: 'TIDAK_TETAP'
 };
 
-exports.TahapTransaksi = exports.$Enums.TahapTransaksi = {
-  PEMBERKASAN: 'PEMBERKASAN',
-  PROSES_BANK: 'PROSES_BANK',
-  PEMBAYARAN: 'PEMBAYARAN',
-  AKAD_AJB: 'AKAD_AJB',
-  PEMBANGUNAN: 'PEMBANGUNAN',
-  SERAH_TERIMA: 'SERAH_TERIMA',
-  BATAL: 'BATAL'
-};
-
 exports.TahapDetail = exports.$Enums.TahapDetail = {
   PENGUMPULAN_DOKUMEN: 'PENGUMPULAN_DOKUMEN',
-  WAWANCARA: 'WAWANCARA',
-  OTS: 'OTS',
-  VERIFIKASI: 'VERIFIKASI',
-  SP3K: 'SP3K',
+  PROSES_BANK: 'PROSES_BANK',
   AKAD_KREDIT: 'AKAD_KREDIT',
   PEMBERKASAN_LEGALITAS: 'PEMBERKASAN_LEGALITAS',
   MENUNGGU_PELUNASAN: 'MENUNGGU_PELUNASAN',
@@ -581,17 +572,9 @@ exports.JenisDokumen = exports.$Enums.JenisDokumen = {
   SERTIFIKAT_IMB: 'SERTIFIKAT_IMB'
 };
 
-exports.KategoriDokumen = exports.$Enums.KategoriDokumen = {
-  PEMBERKASAN: 'PEMBERKASAN',
-  BAST: 'BAST',
-  LEGALITAS_LAINNYA: 'LEGALITAS_LAINNYA'
-};
-
 exports.StatusDokumen = exports.$Enums.StatusDokumen = {
-  BELUM_DIUNGGAH: 'BELUM_DIUNGGAH',
-  MENUNGGU_VERIFIKASI: 'MENUNGGU_VERIFIKASI',
-  PERLU_REVISI: 'PERLU_REVISI',
-  TERVERIFIKASI: 'TERVERIFIKASI'
+  BELUM_LENGKAP: 'BELUM_LENGKAP',
+  LENGKAP: 'LENGKAP'
 };
 
 exports.ItemBAST = exports.$Enums.ItemBAST = {
@@ -605,11 +588,9 @@ exports.ItemBAST = exports.$Enums.ItemBAST = {
   FASAD_KEBERSIHAN: 'FASAD_KEBERSIHAN'
 };
 
-exports.StatusInspeksi = exports.$Enums.StatusInspeksi = {
-  BELUM_DICEK: 'BELUM_DICEK',
-  SESUAI: 'SESUAI',
-  PERLU_PERBAIKAN: 'PERLU_PERBAIKAN',
-  SELESAI_DIPERBAIKI: 'SELESAI_DIPERBAIKI'
+exports.StatusBAST = exports.$Enums.StatusBAST = {
+  BELUM_LENGKAP: 'BELUM_LENGKAP',
+  LENGKAP: 'LENGKAP'
 };
 
 exports.JenisBayar = exports.$Enums.JenisBayar = {
@@ -622,6 +603,16 @@ exports.JenisBayar = exports.$Enums.JenisBayar = {
 exports.CaraBayar = exports.$Enums.CaraBayar = {
   TUNAI: 'TUNAI',
   TRANSFER: 'TRANSFER'
+};
+
+exports.ActivityEntity = exports.$Enums.ActivityEntity = {
+  LEAD: 'LEAD',
+  TRANSAKSI: 'TRANSAKSI',
+  DOKUMEN: 'DOKUMEN',
+  BAST_ITEM: 'BAST_ITEM',
+  PEMBAYARAN: 'PEMBAYARAN',
+  PENGAJUAN_KPR: 'PENGAJUAN_KPR',
+  UNIT: 'UNIT'
 };
 
 exports.Prisma.ModelName = {
@@ -639,9 +630,9 @@ exports.Prisma.ModelName = {
   PengajuanKPRLog: 'PengajuanKPRLog',
   TransaksiTahapLog: 'TransaksiTahapLog',
   DokumenTransaksi: 'DokumenTransaksi',
-  InspeksiBAST: 'InspeksiBAST',
-  InspeksiBASTLog: 'InspeksiBASTLog',
-  Pembayaran: 'Pembayaran'
+  ChecklistBAST: 'ChecklistBAST',
+  Pembayaran: 'Pembayaran',
+  ActivityLog: 'ActivityLog'
 };
 
 /**

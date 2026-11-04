@@ -17,24 +17,24 @@ model User {
   no_hp    String  @unique
   password String
   role     Role
-  isActive Boolean @default(true)
+  isActive Boolean @default(true) @map("is_active")
 
   // Back-relations
-  leads                Lead[]              @relation("MarketingLeads")
-  transaksi            Transaksi[]         @relation("MarketingTransaksi")
-  pembayaran_diterima  Pembayaran[]        @relation("AdminPenerima")
-  itj_diajukan         Itj[]               @relation("ItjMarketing") // CHANGED: snapshot marketing pemilik ITJ
-  transaksi_logs       TransaksiTahapLog[] @relation("AdminLog")
-  aktivitas_log        Aktivitas[]         @relation("UserAktivitas")
-  dokumen_diverifikasi DokumenTransaksi[]  @relation("DocVerifier")
-  pembayaran_divoid    Pembayaran[]        @relation("AdminVoider")
-  inspeksi_bast        InspeksiBAST[]      @relation("AdminInspektur")
-  inspeksi_bast_logs   InspeksiBASTLog[]   @relation("AdminInspekturLog")
-  pengajuan_kpr_logs   PengajuanKPRLog[]   @relation("AdminPengajuanKPRLog")
-  unit_tipe_logs       UnitTipeLog[]       @relation("AdminTipeLog")
+  leads               Lead[]              @relation("MarketingLeads")
+  transaksi           Transaksi[]         @relation("PicTransaksi")
+  pembayaran_diterima Pembayaran[]        @relation("AdminPenerima")
+  itj_diajukan        Itj[]               @relation("ItjCloser")
+  transaksi_logs      TransaksiTahapLog[] @relation("ActorTransaksiLog")
+  aktivitas_log       Aktivitas[]         @relation("UserAktivitas")
+  pembayaran_divoid   Pembayaran[]        @relation("AdminVoider")
+  pengajuan_kpr_logs  PengajuanKPRLog[]   @relation("ActorPengajuanKPRLog")
+  unit_tipe_logs      UnitTipeLog[]       @relation("ActorTipeLog")
+  activity_logs       ActivityLog[]       @relation("ActivityActor")
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@map("users")
 }
 
 enum Role {
@@ -50,7 +50,7 @@ model MasterTipe {
   id             Int           @id @default(autoincrement())
   nama_tipe      String
   kategori       KategoriUnit
-  luas_bangunan  Int           @default(0)
+  luas_bangunan  Int?
   luas_tanah     Int
   harga_dasar    Decimal       @db.Decimal(15, 2)
   units          MasterUnit[]
@@ -58,6 +58,7 @@ model MasterTipe {
   unit_tipe_baru UnitTipeLog[] @relation("TipeBaru")
 
   @@unique([kategori, luas_bangunan, luas_tanah])
+  @@map("master_tipe")
 }
 
 model MasterUnit {
@@ -69,12 +70,14 @@ model MasterUnit {
   status_unit  StatusUnit @default(AVAILABLE)
   harga_khusus Decimal?   @db.Decimal(15, 2)
 
-  tipe      MasterTipe    @relation(fields: [tipe_id], references: [id])
-  transaksi Transaksi[]
-  itj       Itj[]
-  tipe_logs UnitTipeLog[]
+  tipe             MasterTipe    @relation(fields: [tipe_id], references: [id])
+  transaksi        Transaksi[]   @relation("UnitTransaksi")
+  active_transaksi Transaksi?    @relation("ActiveUnitTransaksi")
+  itj              Itj[]
+  tipe_logs        UnitTipeLog[]
 
   @@index([status_unit])
+  @@map("master_unit")
 }
 
 model UnitTipeLog {
@@ -86,16 +89,17 @@ model UnitTipeLog {
   harga_khusus_lama    Decimal? @db.Decimal(15, 2)
   harga_khusus_direset Boolean  @default(false)
   alasan               String   @db.Text
-  changed_by           Int
+  actor_id             Int      @map("actor_id")
   created_at           DateTime @default(now())
 
   unit      MasterUnit? @relation(fields: [unit_id], references: [id], onDelete: SetNull)
   tipe_lama MasterTipe  @relation("TipeLama", fields: [tipe_lama_id], references: [id])
   tipe_baru MasterTipe  @relation("TipeBaru", fields: [tipe_baru_id], references: [id])
-  admin     User        @relation("AdminTipeLog", fields: [changed_by], references: [id])
+  actor     User        @relation("ActorTipeLog", fields: [actor_id], references: [id])
 
   @@index([unit_id, created_at])
   @@index([blok])
+  @@map("unit_tipe_log")
 }
 
 enum KategoriUnit {
@@ -147,10 +151,11 @@ model Lead {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  marketing User?       @relation("MarketingLeads", fields: [marketing_id], references: [id])
-  customer  Customer?   @relation("CustomerLeads", fields: [customer_id], references: [id])
-  aktivitas Aktivitas[]
-  itj       Itj[]
+  marketing     User?         @relation("MarketingLeads", fields: [marketing_id], references: [id])
+  customer      Customer?     @relation("CustomerLeads", fields: [customer_id], references: [id])
+  aktivitas     Aktivitas[]
+  itj           Itj[]
+  activity_logs ActivityLog[]
 
   @@index([no_hp])
   @@index([marketing_id, created_at])
@@ -158,6 +163,7 @@ model Lead {
   @@index([sumber])
   @@index([survei_jadwal_at]) // CHANGED
   @@index([survei_selesai_at]) // CHANGED
+  @@map("leads")
 }
 
 model Aktivitas {
@@ -176,6 +182,7 @@ model Aktivitas {
 
   @@index([lead_id, tgl_follow_up])
   @@index([user_id])
+  @@map("aktivitas")
 }
 
 enum JenisAktivitas {
@@ -197,31 +204,28 @@ enum HasilAktivitas {
 // 4. ITJ WORKFLOW (Closing Langsung)
 // ==========================================
 model Itj {
-  id              Int         @id @default(autoincrement())
-  lead_id         Int
-  unit_id         Int
-  marketing_id    Int? // CHANGED: snapshot marketing saat ITJ dibuat (tidak ikut berubah jika lead dialihkan)
-  nik             String
-  nama_ktp        String
-  nominal         Decimal     @default(0) @db.Decimal(15, 2)
-  harga_deal      Decimal     @default(0) @db.Decimal(15, 2)
-  target_itj      Decimal     @default(0) @db.Decimal(15, 2)
-  target_dp       Decimal     @db.Decimal(15, 2)
-  nominal_dibayar Decimal     @default(0) @db.Decimal(15, 2)
-  metode_bayar    MetodeBayar
-  tenor           Int?
-  diajukan_at     DateTime    @default(now())
+  id           Int         @id @default(autoincrement())
+  lead_id      Int
+  unit_id      Int
+  closer_id    Int?        @map("closer_id") // Pemilik closing (snapshot marketing saat ITJ dibuat)
+  nik          String
+  nama_ktp     String
+  nominal      Decimal     @default(0) @db.Decimal(15, 2)
+  metode_bayar MetodeBayar
+  tenor        Int?
+  diajukan_at  DateTime    @default(now())
 
-  lead      Lead       @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+  lead      Lead       @relation(fields: [lead_id], references: [id], onDelete: Restrict)
   unit      MasterUnit @relation(fields: [unit_id], references: [id])
-  marketing User?      @relation("ItjMarketing", fields: [marketing_id], references: [id]) // CHANGED
+  closer    User?      @relation("ItjCloser", fields: [closer_id], references: [id])
   transaksi Transaksi?
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   @@index([unit_id])
-  @@index([marketing_id, diajukan_at]) // CHANGED: laporan bulanan
+  @@index([closer_id, diajukan_at])
+  @@map("itj")
 }
 
 // ==========================================
@@ -243,6 +247,8 @@ model Customer {
 
   transaksi Transaksi[]
   leads     Lead[]      @relation("CustomerLeads")
+
+  @@map("customers")
 }
 
 enum StatusPernikahan {
@@ -262,33 +268,12 @@ enum MetodeBayar {
   CASH_TEMPO
 }
 
-// STATUS MAKRO (Untuk Reporting Manager). Urutannya harus monoton maju.
-enum TahapTransaksi {
-  PEMBERKASAN
-  PROSES_BANK
-  PEMBAYARAN // CHANGED: baru. DP, cicilan, dan pelunasan (alur Cash)
-  AKAD_AJB
-  PEMBANGUNAN
-  SERAH_TERIMA
-  BATAL
-}
-
 // STATUS MIKRO (Sesuai Metode Bayar)
-// Pemetaan detail -> makro (SSOT, harus satu tempat di kode):
-//   PENGUMPULAN_DOKUMEN, PEMBERKASAN_LEGALITAS, PEMBERKASAN_PPJB -> PEMBERKASAN
-//   WAWANCARA, OTS, VERIFIKASI, SP3K                             -> PROSES_BANK
-//   MENUNGGU_PELUNASAN, PEMBAYARAN_DP, CICILAN_BERJALAN, PELUNASAN -> PEMBAYARAN
-//   AKAD_KREDIT, AJB                                             -> AKAD_AJB
-//   PEMBANGUNAN                                                  -> PEMBANGUNAN
-//   BAST                                                         -> SERAH_TERIMA
-//   BATAL                                                        -> BATAL
+// Pemetaan detail -> makro diturunkan lewat lib/transaksi/stage-map.ts
 enum TahapDetail {
   PENGUMPULAN_DOKUMEN
+  PROSES_BANK
   // KPR
-  WAWANCARA
-  OTS
-  VERIFIKASI
-  SP3K
   AKAD_KREDIT
   // Cash Keras
   PEMBERKASAN_LEGALITAS
@@ -300,17 +285,16 @@ enum TahapDetail {
   PELUNASAN
   // Bersama
   AJB
-  // PEMBANGUNAN
   BAST
   BATAL
 }
 
 model Transaksi {
-  id           Int @id @default(autoincrement())
-  customer_id  Int
-  unit_id      Int
-  marketing_id Int
-  itj_id       Int @unique
+  id          Int @id @default(autoincrement())
+  customer_id Int
+  unit_id     Int
+  pic_id      Int @map("pic_id") // PIC operasional saat ini
+  itj_id      Int @unique
 
   metode_bayar MetodeBayar
   harga_deal   Decimal     @db.Decimal(15, 2)
@@ -318,44 +302,53 @@ model Transaksi {
   target_dp    Decimal     @db.Decimal(15, 2)
   tenor_bulan  Int?
 
-  status_transaksi TahapTransaksi @default(PEMBERKASAN)
-  // Default ini HANYA valid untuk KPR. Saat membuat transaksi Cash,
-  // tahap_detail awal wajib diisi eksplisit (lihat pemetaan di atas).
-  tahap_detail     TahapDetail    @default(PENGUMPULAN_DOKUMEN)
+  tahap_detail TahapDetail
+  tahap_since  DateTime    @default(now())
 
-  nama_bank    String? // DEPRECATED: gunakan PengajuanKPR. Hapus setelah migrasi data selesai.
   nama_notaris String?
 
-  // OPERATIONAL MILESTONES (tanggal murni, simpan sebagai UTC midnight)
-  tgl_akad DateTime? @db.Date // Tanggal akad/closing operasional untuk KPR maupun Cash
-  // tgl_ajb  DateTime? @db.Date // DEPRECATED: dipertahankan untuk kompatibilitas data Cash lama
-  lunas_at DateTime? @db.Date // CHANGED
-  tgl_bast DateTime? @db.Date // CHANGED
+  // RENCANA MILESTONES (Boleh di masa depan, boleh diedit)
+  rencana_akad_at DateTime? @db.Date
+  rencana_bast_at DateTime? @db.Date
+
+  // OPERATIONAL MILESTONES AKTUAL (<= hari ini, tanggal kejadian nyata)
+  tgl_akad DateTime? @db.Date
+  lunas_at DateTime? @db.Date
+  tgl_bast DateTime? @db.Date
 
   // REPORTING MILESTONES (SSOT)
-  closing_at    DateTime? @db.Date // CHANGED: closing penjualan = tgl_akad (KPR) atau tgl_ajb (Cash)
-  closed_at     DateTime? // transaksi tuntas penuh (setelah BAST); BUKAN tanggal closing penjualan
+  closing_at    DateTime  @db.Date // Wajib, tanggal ITJ saat transaksi dibuat, tidak pernah diubah
   cancelled_at  DateTime?
   alasan_batal  String?   @db.Text
   catatan_admin String?   @db.Text
 
+  // CONCURRENCY & INTEGRITY
+  version                   Int  @default(0)
+  active_unit_id            Int? @unique
+  pengajuan_kpr_terpilih_id Int? @unique
+
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  customer      Customer            @relation(fields: [customer_id], references: [id])
-  unit          MasterUnit          @relation(fields: [unit_id], references: [id])
-  marketing     User                @relation("MarketingTransaksi", fields: [marketing_id], references: [id])
-  itj           Itj                 @relation(fields: [itj_id], references: [id])
-  pembayaran    Pembayaran[]
-  logs          TransaksiTahapLog[]
-  dokumen       DokumenTransaksi[]
-  inspeksi_bast InspeksiBAST[]
-  pengajuan_kpr PengajuanKPR[]
+  customer               Customer            @relation(fields: [customer_id], references: [id])
+  unit                   MasterUnit          @relation("UnitTransaksi", fields: [unit_id], references: [id])
+  active_unit            MasterUnit?         @relation("ActiveUnitTransaksi", fields: [active_unit_id], references: [id])
+  pic                    User                @relation("PicTransaksi", fields: [pic_id], references: [id])
+  itj                    Itj                 @relation(fields: [itj_id], references: [id])
+  pembayaran             Pembayaran[]
+  logs                   TransaksiTahapLog[]
+  dokumen                DokumenTransaksi[]
+  checklist_bast         ChecklistBAST[]
+  pengajuan_kpr          PengajuanKPR[]      @relation("TransaksiPengajuanKPR")
+  pengajuan_kpr_terpilih PengajuanKPR?       @relation("PengajuanKPRTerpilih", fields: [pengajuan_kpr_terpilih_id], references: [id])
+  activity_logs          ActivityLog[]
 
-  @@index([status_transaksi])
-  @@index([closed_at])
-  @@index([closing_at]) // CHANGED
-  @@index([marketing_id, closing_at]) // CHANGED: laporan bulanan per marketing
+  @@index([tahap_detail, updated_at])
+  @@index([tahap_detail, rencana_akad_at])
+  @@index([tahap_detail, rencana_bast_at])
+  @@index([closing_at])
+  @@index([pic_id, tahap_detail])
+  @@map("transaksi")
 }
 
 // ==========================================
@@ -371,6 +364,8 @@ model Bank {
   updated_at DateTime @updatedAt
 
   pengajuan_kpr PengajuanKPR[]
+
+  @@map("banks")
 }
 
 enum StatusPengajuanKPR {
@@ -397,13 +392,15 @@ model PengajuanKPR {
   created_at        DateTime           @default(now())
   updated_at        DateTime           @updatedAt
 
-  transaksi Transaksi         @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
-  bank      Bank              @relation(fields: [bank_id], references: [id], onDelete: Restrict)
-  logs      PengajuanKPRLog[]
+  transaksi          Transaksi         @relation("TransaksiPengajuanKPR", fields: [transaksi_id], references: [id], onDelete: Restrict)
+  transaksi_terpilih Transaksi?        @relation("PengajuanKPRTerpilih")
+  bank               Bank              @relation(fields: [bank_id], references: [id], onDelete: Restrict)
+  logs               PengajuanKPRLog[]
 
   @@unique([transaksi_id, nomor_pengajuan])
   @@index([transaksi_id, status])
   @@index([bank_id, status])
+  @@map("pengajuan_kpr")
 }
 
 model PengajuanKPRLog {
@@ -411,41 +408,35 @@ model PengajuanKPRLog {
   pengajuan_id   Int
   status_sebelum StatusPengajuanKPR?
   status_sesudah StatusPengajuanKPR
-  admin_id       Int
+  actor_id       Int                 @map("actor_id")
   catatan        String?             @db.Text
   created_at     DateTime            @default(now())
 
   pengajuan PengajuanKPR @relation(fields: [pengajuan_id], references: [id], onDelete: Restrict)
-  admin     User         @relation("AdminPengajuanKPRLog", fields: [admin_id], references: [id], onDelete: Restrict)
+  actor     User         @relation("ActorPengajuanKPRLog", fields: [actor_id], references: [id], onDelete: Restrict)
 
   @@index([pengajuan_id, created_at])
-  @@index([admin_id, created_at])
+  @@index([actor_id, created_at])
+  @@map("pengajuan_kpr_log")
 }
 
 // ==========================================
 // 7. MANAJEMEN DOKUMEN & AUDIT LOG
 // ==========================================
 model TransaksiTahapLog {
-  id             Int             @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   transaksi_id   Int
-  tahap_sebelum  TahapTransaksi?
-  tahap_sesudah  TahapTransaksi
   detail_sebelum TahapDetail?
   detail_sesudah TahapDetail
-  admin_id       Int
-  catatan        String?         @db.Text
-  created_at     DateTime        @default(now())
+  actor_id       Int          @map("actor_id")
+  catatan        String?      @db.Text
+  created_at     DateTime     @default(now())
 
   transaksi Transaksi @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
-  admin     User      @relation("AdminLog", fields: [admin_id], references: [id])
+  actor     User      @relation("ActorTransaksiLog", fields: [actor_id], references: [id])
 
   @@index([transaksi_id, created_at])
-}
-
-enum KategoriDokumen {
-  PEMBERKASAN
-  BAST
-  LEGALITAS_LAINNYA
+  @@map("transaksi_tahap_log")
 }
 
 enum JenisDokumen {
@@ -481,35 +472,28 @@ enum JenisDokumen {
 }
 
 enum StatusDokumen {
-  BELUM_DIUNGGAH
-  MENUNGGU_VERIFIKASI
-  PERLU_REVISI
-  TERVERIFIKASI
+  BELUM_LENGKAP
+  LENGKAP
 }
 
 model DokumenTransaksi {
-  id                 Int             @id @default(autoincrement())
-  transaksi_id       Int
-  jenis              JenisDokumen
-  kategori           KategoriDokumen
-  status             StatusDokumen   @default(BELUM_DIUNGGAH)
-  file_url           String?
-  catatan_verifikasi String?         @db.Text
-  verified_by        Int?
-  verified_at        DateTime?
+  id           Int           @id @default(autoincrement())
+  transaksi_id Int
+  jenis        JenisDokumen
+  status       StatusDokumen @default(BELUM_LENGKAP)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   transaksi Transaksi @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
-  verifier  User?     @relation("DocVerifier", fields: [verified_by], references: [id])
 
   @@unique([transaksi_id, jenis])
-  @@index([transaksi_id, kategori])
+  @@index([transaksi_id])
+  @@map("dokumen_transaksi")
 }
 
 // ==========================================
-// 8. INSPEKSI BAST & RIWAYAT KOMPLAIN
+// 8. CHECKLIST BAST (SERAH TERIMA UNIT)
 // ==========================================
 enum ItemBAST {
   PONDASI_STRUKTUR
@@ -522,42 +506,25 @@ enum ItemBAST {
   FASAD_KEBERSIHAN
 }
 
-enum StatusInspeksi {
-  BELUM_DICEK
-  SESUAI
-  PERLU_PERBAIKAN
-  SELESAI_DIPERBAIKI
+enum StatusBAST {
+  BELUM_LENGKAP
+  LENGKAP
 }
 
-model InspeksiBAST {
-  id           Int            @id @default(autoincrement())
+model ChecklistBAST {
+  id           Int        @id @default(autoincrement())
   transaksi_id Int
   item         ItemBAST
-  status       StatusInspeksi @default(BELUM_DICEK)
-  catatan      String?        @db.Text
-  inspektur_id Int?
-  diperiksa_at DateTime?
+  status       StatusBAST @default(BELUM_LENGKAP)
 
-  transaksi Transaksi         @relation(fields: [transaksi_id], references: [id], onDelete: Cascade)
-  inspektur User?             @relation("AdminInspektur", fields: [inspektur_id], references: [id])
-  logs      InspeksiBASTLog[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  transaksi Transaksi @relation(fields: [transaksi_id], references: [id], onDelete: Cascade)
 
   @@unique([transaksi_id, item])
-}
-
-model InspeksiBASTLog {
-  id               Int             @id @default(autoincrement())
-  inspeksi_bast_id Int
-  status_sebelum   StatusInspeksi?
-  status_sesudah   StatusInspeksi
-  catatan          String?         @db.Text
-  inspektur_id     Int
-  created_at       DateTime        @default(now())
-
-  inspeksi_bast InspeksiBAST @relation(fields: [inspeksi_bast_id], references: [id], onDelete: Cascade)
-  inspektur     User         @relation("AdminInspekturLog", fields: [inspektur_id], references: [id])
-
-  @@index([inspeksi_bast_id, created_at])
+  @@index([transaksi_id])
+  @@map("checklist_bast")
 }
 
 // ==========================================
@@ -600,4 +567,46 @@ model Pembayaran {
 
   @@index([transaksi_id, tgl_bayar])
   @@index([is_void, tgl_bayar]) // CHANGED: laporan kas (selalu is_void = false)
+  @@map("pembayaran")
+}
+
+// ==========================================
+// 10. UNIFIED AUDIT LOG (ACTIVITY LOG)
+// ==========================================
+enum ActivityEntity {
+  LEAD
+  TRANSAKSI
+  DOKUMEN
+  BAST_ITEM
+  PEMBAYARAN
+  PENGAJUAN_KPR
+  UNIT
+}
+
+model ActivityLog {
+  id           Int            @id @default(autoincrement())
+  entity_type  ActivityEntity
+  entity_id    Int
+  action       String         @db.VarChar(48) // nilai dibatasi union TypeScript ACTIVITY_ACTIONS (lib/activity/actions.ts) + zod
+  lead_id      Int?
+  transaksi_id Int?
+  tahap_detail TahapDetail? // tahap transaksi SAAT kejadian
+  actor_id     Int? // null = sistem
+  summary      String         @db.Text // kalimat Indonesia siap tampil, dibuat saat penulisan
+  before       Json?
+  after        Json?
+  is_backfill  Boolean        @default(false)
+  created_at   DateTime       @default(now())
+
+  actor     User?      @relation("ActivityActor", fields: [actor_id], references: [id], onDelete: Restrict)
+  lead      Lead?      @relation(fields: [lead_id], references: [id], onDelete: Restrict)
+  transaksi Transaksi? @relation(fields: [transaksi_id], references: [id], onDelete: Restrict)
+
+  @@index([transaksi_id, created_at])
+  @@index([lead_id, created_at])
+  @@index([actor_id, created_at])
+  @@index([action, created_at])
+  @@index([entity_type, created_at])
+  @@index([created_at])
+  @@map("activity_log")
 }

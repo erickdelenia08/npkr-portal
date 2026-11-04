@@ -49,7 +49,7 @@ export default async function ItjPage({ params }: PageProps) {
         where: {
           transaksi: {
             is: {
-              status_transaksi: { not: "BATAL" },
+              tahap_detail: { not: "BATAL" },
             },
           },
         },

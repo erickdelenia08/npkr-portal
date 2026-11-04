@@ -210,6 +210,22 @@ export function dayDiff(a: string, b: string): number {
 }
 
 /**
+ * Computes day boundaries in WIB (Asia/Jakarta, UTC+7) for a given YYYY-MM-DD string or Date.
+ * Strictly avoids server local time shifts (setHours).
+ * Returns { start, end } where start is 00:00:00+07:00 and end is 23:59:59.999+07:00.
+ */
+export function dayRangeWIB(date: string | Date): { start: Date; end: Date } {
+  const dayStr = toWibDay(date);
+  if (!dayStr) {
+    throw new Error("Invalid date provided to dayRangeWIB");
+  }
+  return {
+    start: new Date(`${dayStr}T00:00:00.000+07:00`),
+    end: new Date(`${dayStr}T23:59:59.999+07:00`),
+  };
+}
+
+/**
  * Format date-only (@db.Date) values safely using timeZone: "UTC".
  */
 export function formatDateOnly(
@@ -245,4 +261,30 @@ export function formatTimestampWIB(
     hour: "2-digit",
     minute: "2-digit",
   }).format(d);
+}
+
+/**
+ * Returns relative time badge text ("X jam lalu", "X mnt lalu", "Baru saja") ONLY if the date is today in WIB.
+ * Returns null if the date is from another day.
+ */
+export function relativeTimeTodayWIB(
+  date: Date | string | null | undefined
+): string | null {
+  if (!date) return null;
+  const d = typeof date === "string" ? new Date(date) : date;
+  if (isNaN(d.getTime())) return null;
+
+  const dateDay = toWibDay(d);
+  const today = todayWIB();
+  if (dateDay !== today) return null;
+
+  const diffMs = Date.now() - d.getTime();
+  if (diffMs < 0) return "Baru saja";
+
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  if (diffMins < 1) return "Baru saja";
+  if (diffMins < 60) return `${diffMins} mnt lalu`;
+
+  const diffHours = Math.floor(diffMins / 60);
+  return `${diffHours} jam lalu`;
 }

@@ -15,10 +15,13 @@ import {
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { formatDateOnly } from "@/lib/date/wib";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import { PembayaranModal } from "@/components/forms/pembayaran-modal";
 import { DynamicActionPanel } from "@/components/forms/dynamic-action-panel";
 import { QuickPrintActions } from "@/components/forms/quick-print-actions";
-import { HandoverDialog } from "@/components/forms/handover-dialog";
+import { HandoverTransaksiDialog } from "@/components/forms/handover-dialog";
+import { getTransactionHistory } from "@/actions/activity";
+import { TransactionAuditTrail } from "@/components/shared/transaction-audit-trail";
 
 export interface TransactionDetailViewProps {
   trxId: number;
@@ -55,7 +58,7 @@ export async function TransactionDetailView({
           bank: true,
           logs: {
             include: {
-              admin: {
+              actor: {
                 select: {
                   nama: true,
                 },
@@ -70,33 +73,13 @@ export async function TransactionDetailView({
           nomor_pengajuan: "desc",
         },
       },
-      inspeksi_bast: {
-        include: {
-          inspektur: {
-            select: {
-              nama: true,
-            },
-          },
-          logs: {
-            include: {
-              inspektur: {
-                select: {
-                  nama: true,
-                },
-              },
-            },
-            orderBy: {
-              created_at: "desc",
-            },
-          },
-        },
-      },
+      checklist_bast: true,
       unit: {
         include: {
           tipe: true,
         },
       },
-      marketing: {
+      pic: {
         select: {
           id: true,
           nama: true,
@@ -123,7 +106,7 @@ export async function TransactionDetailView({
 
   // PIC-based Access Control
   const canEdit =
-    (Number.isSafeInteger(currentUserId) && currentUserId === transaksi.marketing_id) ||
+    (Number.isSafeInteger(currentUserId) && currentUserId === transaksi.pic_id) ||
     currentUserRole === "ADMIN";
 
   const canHandover = canEdit || currentUserRole === "MANAGER";
@@ -152,6 +135,9 @@ export async function TransactionDetailView({
       orderBy: { nama: "asc" },
     });
   }
+
+  const historyRes = await getTransactionHistory(transaksi.id);
+  const auditLogs = historyRes.success && historyRes.data ? historyRes.data : [];
 
   // Currency & Date formatters
   const formatCurrency = (val: number): string =>
@@ -239,7 +225,7 @@ export async function TransactionDetailView({
             <p className="font-bold">Mode Hanya Baca (Read-Only)</p>
             <p className="text-amber-800 mt-0.5">
               Anda tidak memiliki izin mengedit transaksi ini. Perubahan progres dan pencatatan pembayaran hanya dapat dilakukan oleh Marketing PIC (
-              <span className="font-semibold">{transaksi.marketing.nama}</span>) atau Administrator.
+              <span className="font-semibold">{transaksi.pic.nama}</span>) atau Administrator.
             </p>
           </div>
         </div>
@@ -260,14 +246,14 @@ export async function TransactionDetailView({
                 Unit {transaksi.unit.blok}
               </span>
               <span className="px-2.5 py-0.5 rounded-sm text-xs font-semibold bg-teal-50 text-deep-teal border border-teal-200">
-                {transaksi.status_transaksi}
+                {MAKRO_OF[transaksi.tahap_detail]}
               </span>
             </div>
             <p className="text-xs text-slate mt-1">
               Transaksi #{transaksi.id} • Dibuat pada{" "}
               {formatDate(transaksi.created_at)} • Marketing PIC:{" "}
               <span className="font-semibold text-carbon-ink">
-                {transaksi.marketing.nama}
+                {transaksi.pic.nama}
               </span>
             </p>
           </div>
@@ -276,10 +262,22 @@ export async function TransactionDetailView({
         {/* Quick Action Buttons (Oper PIC, Cetak SPR & Cetak Kwitansi) */}
         <div className="flex items-center gap-2 flex-wrap">
           {canHandover && (
-            <HandoverDialog
-              leadId={transaksi.itj.lead_id}
-              currentMarketingId={transaksi.marketing_id}
-              currentMarketingName={transaksi.marketing.nama}
+            <HandoverTransaksiDialog
+              transaksiId={transaksi.id}
+              blokUnit={transaksi.unit.blok}
+              currentPicId={transaksi.pic_id}
+              currentPicName={transaksi.pic.nama}
+              isLocked={
+                transaksi.tahap_detail === "BAST" ||
+                transaksi.tgl_bast !== null ||
+                transaksi.tahap_detail === "BATAL" ||
+                transaksi.cancelled_at !== null
+              }
+              lockedReason={
+                transaksi.tahap_detail === "BATAL" || transaksi.cancelled_at !== null
+                  ? "Transaksi telah dibatalkan sehingga penugasan PIC terkunci."
+                  : "Transaksi telah selesai (BAST) sehingga penugasan PIC terkunci."
+              }
             />
           )}
           <QuickPrintActions
@@ -559,18 +557,15 @@ export async function TransactionDetailView({
       <DynamicActionPanel
         transaksiId={transaksi.id}
         leadId={transaksi.itj.lead_id}
+        version={transaksi.version}
         canEdit={canEdit}
         metodeBayar={transaksi.metode_bayar}
         kategoriUnit={transaksi.unit.tipe.kategori}
         statusPernikahan={transaksi.customer.status_pernikahan}
         statusPekerjaan={transaksi.customer.status_pekerjaan}
-        currentStatus={transaksi.status_transaksi}
         currentTahapDetail={transaksi.tahap_detail}
         initialNotaris={transaksi.nama_notaris}
         initialTglAkad={
-          transaksi.tgl_akad ? transaksi.tgl_akad.toISOString() : null
-        }
-        initialTglAjb={
           transaksi.tgl_akad ? transaksi.tgl_akad.toISOString() : null
         }
         initialTglBast={
@@ -579,14 +574,20 @@ export async function TransactionDetailView({
         initialLunasAt={
           transaksi.lunas_at ? transaksi.lunas_at.toISOString() : null
         }
+        initialRencanaAkad={
+          transaksi.rencana_akad_at ? transaksi.rencana_akad_at.toISOString() : null
+        }
+        initialRencanaBast={
+          transaksi.rencana_bast_at ? transaksi.rencana_bast_at.toISOString() : null
+        }
+        initialPengajuanTerpilihId={transaksi.pengajuan_kpr_terpilih_id}
         initialCatatan={transaksi.catatan_admin}
         initialVerifiedDocs={transaksi.dokumen
-          .filter((d) => d.status === "TERVERIFIKASI")
+          .filter((d) => d.status === "LENGKAP")
           .map((d) => d.jenis)}
-        initialInspeksiBast={transaksi.inspeksi_bast.map((b) => ({
+        initialChecklistBast={transaksi.checklist_bast.map((b) => ({
           item: b.item,
           status: b.status,
-          catatan: b.catatan,
         }))}
         initialPengajuanKpr={transaksi.pengajuan_kpr}
         masterBanks={masterBanks}
@@ -599,6 +600,12 @@ export async function TransactionDetailView({
           sisaDp,
           lastPaymentDate,
         }}
+      />
+
+      {/* ─── 5. AUDIT TRAIL / RIWAYAT AKTIVITAS ─── */}
+      <TransactionAuditTrail
+        logs={auditLogs}
+        transaksiId={transaksi.id}
       />
     </div>
   );

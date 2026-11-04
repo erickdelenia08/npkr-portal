@@ -8,11 +8,11 @@
 
 import { prisma } from "@/lib/prisma";
 import {
-  TahapTransaksi,
   SumberLead,
   StatusUnit,
   MetodeBayar,
 } from "@/generated/prisma";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import {
   monthRangeWIB,
   monthRangeDateOnly,
@@ -117,9 +117,14 @@ export async function getMarketingReport(year: number, month: number): Promise<R
       },
       _count: { _all: true },
     }),
-    prisma.transaksi.groupBy({
-      by: ["marketing_id"],
-      where: closedDealWhere(rangeDate.start, rangeDate.end),
+    prisma.itj.groupBy({
+      by: ["closer_id"],
+      where: {
+        closer_id: { not: null },
+        transaksi: {
+          is: closedDealWhere(rangeDate.start, rangeDate.end),
+        },
+      },
       _count: { _all: true },
     }),
   ]);
@@ -134,7 +139,7 @@ export async function getMarketingReport(year: number, month: number): Promise<R
   surveiSelesaiGroups.forEach((g) => g.marketing_id && ssMap.set(g.marketing_id, g._count?._all ?? 0));
 
   const clMap = new Map<number, number>();
-  closingGroups.forEach((g) => g.marketing_id && clMap.set(g.marketing_id, g._count?._all ?? 0));
+  closingGroups.forEach((g) => g.closer_id && clMap.set(g.closer_id, g._count?._all ?? 0));
 
   const rows: Record<string, unknown>[] = [];
   let tLm = 0,
@@ -225,7 +230,7 @@ export async function getPenjualanReport(year: number, month: number): Promise<R
     include: {
       customer: true,
       unit: { include: { tipe: true } },
-      marketing: true,
+      pic: true,
     },
     orderBy: { closing_at: "asc" },
   });
@@ -266,7 +271,7 @@ export async function getPenjualanReport(year: number, month: number): Promise<R
       unit: tx.unit.blok,
       tipe: tx.unit.tipe.nama_tipe,
       skema: humanizeEnum(tx.metode_bayar),
-      marketing: tx.marketing.nama,
+      marketing: tx.pic.nama,
       harga_deal: harga,
     });
   }
@@ -471,14 +476,14 @@ export async function getKasReport(year: number, month: number): Promise<ReportR
 export async function getPiutangReport(): Promise<ReportResult> {
   const transactions = await prisma.transaksi.findMany({
     where: {
-      status_transaksi: {
-        notIn: [TahapTransaksi.BATAL, TahapTransaksi.SERAH_TERIMA],
+      tahap_detail: {
+        notIn: ["BATAL", "BAST"],
       },
     },
     include: {
       customer: true,
       unit: true,
-      marketing: true,
+      pic: true,
       pembayaran: {
         where: { is_void: false },
         select: { nominal: true },
@@ -506,8 +511,8 @@ export async function getPiutangReport(): Promise<ReportResult> {
         konsumen: tx.customer.nama_ktp,
         unit: tx.unit.blok,
         skema: humanizeEnum(tx.metode_bayar),
-        tahap: humanizeEnum(tx.status_transaksi),
-        marketing: tx.marketing.nama,
+        tahap: humanizeEnum(MAKRO_OF[tx.tahap_detail]),
+        marketing: tx.pic.nama,
         harga_deal: hargaDeal,
         terbayar,
         sisa,
@@ -569,13 +574,13 @@ export async function getPembatalanReport(year: number, month: number): Promise<
 
   const cancellations = await prisma.transaksi.findMany({
     where: {
-      status_transaksi: TahapTransaksi.BATAL,
+      tahap_detail: "BATAL",
       cancelled_at: { gte: rangeWib.start, lt: rangeWib.end },
     },
     include: {
       customer: true,
       unit: true,
-      marketing: true,
+      pic: true,
       logs: {
         where: { detail_sesudah: "BATAL" },
         orderBy: { created_at: "desc" },
@@ -616,7 +621,7 @@ export async function getPembatalanReport(year: number, month: number): Promise<
       skema: humanizeEnum(tx.metode_bayar),
       tahap_sebelum: tahapSebelum,
       sudah_closing: tx.closing_at ? "Ya" : "Belum",
-      marketing: tx.marketing.nama,
+      marketing: tx.pic.nama,
       harga_deal: harga,
       alasan: tx.alasan_batal || tx.catatan_admin || "-",
     });
@@ -867,7 +872,7 @@ export async function getDurasiReport(year: number, month: number): Promise<Repo
     prisma.transaksi.findMany({
       where: {
         tgl_akad: { gte: rangeDate.start, lt: rangeDate.end },
-        status_transaksi: { not: TahapTransaksi.BATAL },
+        tahap_detail: { not: "BATAL" },
       },
       select: {
         metode_bayar: true,
@@ -879,7 +884,7 @@ export async function getDurasiReport(year: number, month: number): Promise<Repo
     prisma.transaksi.findMany({
       where: {
         tgl_bast: { gte: rangeDate.start, lt: rangeDate.end },
-        status_transaksi: { not: TahapTransaksi.BATAL },
+        tahap_detail: { not: "BATAL" },
       },
       select: {
         metode_bayar: true,

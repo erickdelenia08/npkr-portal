@@ -4,12 +4,13 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { auth } from "@/auth";
-import { getGlobalActivities, getActivityActors } from "@/actions/activity";
+import { getActivityFeed, getActivityActors } from "@/actions/activity";
 import { ManagerActivityTable } from "@/components/tables/manager-activity-table";
 
 export const metadata: Metadata = {
   title: "Audit Aktivitas Global | Manager Portal",
-  description: "Log aktivitas follow-up, komunikasi prospek, dan audit pengalihan PIC.",
+  description:
+    "Log audit terpadu (append-only) untuk seluruh aktivitas prospek, transaksi, pembayaran, KPR, dan BAST.",
 };
 
 export default async function ManagerAktivitasPage() {
@@ -25,12 +26,42 @@ export default async function ManagerAktivitasPage() {
     redirect("/marketing/dashboard");
   }
 
-  const [activitiesRes, actorsRes] = await Promise.all([
-    getGlobalActivities(),
+  const [feedRes, actorsRes] = await Promise.all([
+    getActivityFeed({
+      page: 1,
+      pageSize: 25,
+      actionCategory: "SEMUA",
+    }),
     getActivityActors(),
   ]);
 
-  const initialActivities = activitiesRes.success && activitiesRes.data ? activitiesRes.data : [];
+  const initialResult = feedRes.success && feedRes.data
+    ? feedRes.data
+    : {
+        items: [],
+        stats: {
+          totalActivities: 0,
+          breakdown: {
+            lead: 0,
+            transaksi: 0,
+            pembayaran: 0,
+            kpr: 0,
+            lainnya: 0,
+          },
+          mostActiveActor: null,
+        },
+        pagination: {
+          page: 1,
+          pageSize: 25,
+          total: 0,
+          totalPages: 1,
+        },
+        dateRange: {
+          from: "",
+          to: "",
+        },
+      };
+
   const actors = actorsRes.success && actorsRes.data ? actorsRes.data : [];
 
   return (
@@ -43,18 +74,20 @@ export default async function ManagerAktivitasPage() {
               Audit Aktivitas
             </h1>
             <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium">
-              Log Global
+              Log Global Terpadu
             </span>
           </div>
           <p className="text-xs text-zinc-500 mt-0.5">
-            Pencatatan interaksi prospek, riwayat follow-up sales, dan riwayat delegasi PIC unit.
+            Riwayat kronologis operasional: interaksi prospek, progres tahap transaksi, pembayaran, status bank KPR, dan checklist BAST.
           </p>
         </div>
       </div>
 
       <ManagerActivityTable
-        initialActivities={initialActivities}
+        initialResult={initialResult}
         actors={actors}
+        defaultDateFrom={initialResult.dateRange.from}
+        defaultDateTo={initialResult.dateRange.to}
         basePath="/manager"
       />
     </div>

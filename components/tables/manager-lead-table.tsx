@@ -14,6 +14,7 @@ import {
   ExternalLink,
   Calendar,
   UserCheck,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -156,6 +157,10 @@ export function ManagerLeadTable({
   }, [leads]);
 
   const handleOpenReassign = (lead: LeadCardData) => {
+    if (lead.tahap === "CLOSING" || lead.closing_at != null || lead.transaksi_id != null) {
+      toast.error("Lead yang sudah mencapai ITJ / Closing tidak dapat dialihkan (handover terkunci).");
+      return;
+    }
     setReassignModalLead(lead);
     setTargetMarketingId(lead.marketing_id ? String(lead.marketing_id) : "");
   };
@@ -409,13 +414,23 @@ export function ManagerLeadTable({
                       {/* 7. Aksi */}
                       <td className="px-4 py-3 text-right whitespace-nowrap">
                         <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenReassign(lead)}
-                            className="px-2 py-1 rounded text-xs font-medium border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 transition-colors"
-                          >
-                            {isUnassigned ? "Tugaskan" : "Pindah PIC"}
-                          </button>
+                          {lead.tahap === "CLOSING" || lead.closing_at != null || lead.transaksi_id != null ? (
+                            <span
+                              className="px-2 py-1 rounded text-[11px] font-medium border border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed inline-flex items-center gap-1"
+                              title="Terkunci: Lead sudah mencapai ITJ / Closing"
+                            >
+                              <Lock className="w-3 h-3 text-zinc-400" />
+                              Terkunci
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => handleOpenReassign(lead)}
+                              className="px-2 py-1 rounded text-xs font-medium border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 transition-colors"
+                            >
+                              {isUnassigned ? "Tugaskan" : "Pindah PIC"}
+                            </button>
+                          )}
                           <Link
                             href={`${basePath}/lead/${lead.id}`}
                             className="p-1 rounded text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"

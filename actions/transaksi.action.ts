@@ -10,14 +10,15 @@ import {
 import {
   parseDateOnlyUTC,
   todayDateOnlyUTC,
+  toWibDay,
 } from "@/lib/date/wib";
+import { logActivity } from "@/lib/activity/log";
 import {
   Prisma,
-  TahapTransaksi,
   TahapDetail,
   JenisDokumen,
   ItemBAST,
-  StatusInspeksi,
+  StatusBAST,
   MetodeBayar,
   StatusDokumen,
 } from "@/generated/prisma";
@@ -27,12 +28,16 @@ import {
   verifyDokumenSchema,
   updateTransactionStatusSchema,
   updateProfilPemberkasanSchema,
+  simpanJadwalTransaksiSchema,
   type CreatePembayaranInput,
   type VerifyDokumenInput,
   type UpdateTransactionStatusInput,
   type UpdateProfilPemberkasanInput,
+  type SimpanJadwalTransaksiInput,
 } from "@/schemas/transaksi.schema";
 import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
+import { applyStage } from "@/lib/transaksi/apply-stage";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 
 export interface ActionResponse<T = unknown> {
   success: boolean;
@@ -72,12 +77,12 @@ async function requireCanEditTransaksi(transaksiId?: number) {
   if (transaksiId) {
     const trx = await prisma.transaksi.findUnique({
       where: { id: transaksiId },
-      select: { id: true, marketing_id: true },
+      select: { id: true, pic_id: true },
     });
     if (!trx) {
       throw new Error("Transaksi tidak ditemukan.");
     }
-    const canEdit = userId === trx.marketing_id || role === "ADMIN";
+    const canEdit = userId === trx.pic_id || role === "ADMIN";
     if (!canEdit) {
       throw new Error(
         "Hanya PIC Marketing penanggung jawab atau Admin yang dapat memperbarui transaksi ini."
@@ -164,6 +169,8 @@ export async function createPembayaran(
       const trx = await tx.transaksi.findUnique({
         where: { id: validData.transaksiId },
         include: {
+          unit: true,
+          itj: true,
           pembayaran: {
             where: { is_void: false },
           },
@@ -174,7 +181,7 @@ export async function createPembayaran(
         throw new Error("Transaksi tidak ditemukan.");
       }
 
-      if (trx.status_transaksi === "BATAL") {
+      if (trx.tahap_detail === "BATAL") {
         throw new Error("Tidak dapat mencatat pembayaran pada transaksi yang sudah BATAL.");
       }
 
@@ -226,6 +233,36 @@ export async function createPembayaran(
         },
       });
 
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "PEMBAYARAN",
+        entityId: newPayment.id,
+        action: "PAYMENT_RECORDED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          jenisBayar: validData.jenisBayar,
+          nominal: Number(validData.nominal),
+          noKwitansi,
+          blok: trx.unit.blok,
+        },
+        after: {
+          pembayaran_id: newPayment.id,
+          jenis_pembayaran: newPayment.jenis_pembayaran,
+          nominal: Number(newPayment.nominal),
+          no_kwitansi: newPayment.no_kwitansi,
+          cara_bayar: newPayment.cara_bayar,
+          tgl_bayar: toWibDay(newPayment.tgl_bayar),
+        },
+      });
+
       return { newPayment, noKwitansi };
     });
 
@@ -268,7 +305,11 @@ export async function voidPembayaran(
     const result = await prisma.$transaction(async (tx) => {
       const payment = await tx.pembayaran.findUnique({
         where: { id: pembayaranId },
-        include: { transaksi: true },
+        include: {
+          transaksi: {
+            include: { itj: true, unit: true },
+          },
+        },
       });
 
       if (!payment) {
@@ -279,7 +320,7 @@ export async function voidPembayaran(
         throw new Error("Pembayaran ini sudah pernah dibatalkan (void) sebelumnya.");
       }
 
-      if (payment.transaksi.status_transaksi === "BATAL") {
+      if (payment.transaksi.tahap_detail === "BATAL") {
         throw new Error("Transaksi sudah berstatus BATAL.");
       }
 
@@ -291,6 +332,30 @@ export async function voidPembayaran(
           void_by: adminId,
           void_reason: voidReason.trim(),
         },
+      });
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "PEMBAYARAN",
+        entityId: payment.id,
+        action: "PAYMENT_VOIDED",
+        leadId: payment.transaksi.itj?.lead_id || null,
+        transaksiId: payment.transaksi_id,
+        tahapDetail: payment.transaksi.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          jenisBayar: payment.jenis_pembayaran,
+          noKwitansi: payment.no_kwitansi,
+          alasan: voidReason.trim(),
+          blok: payment.transaksi.unit?.blok,
+        },
+        before: { is_void: false },
+        after: { is_void: true, void_reason: voidReason.trim() },
       });
 
       // Recalculate remaining valid payments for transaction
@@ -357,28 +422,37 @@ export async function verifyDokumenTransaksi(
       };
     }
 
-    const { transaksiId, jenis, catatan } = parsed.data;
-    const status: StatusDokumen =
-      parsed.data.status ??
-      (parsed.data.verified ? "TERVERIFIKASI" : "BELUM_DIUNGGAH");
+    const { transaksiId, jenis } = parsed.data;
+    const isLengkap = parsed.data.status === "LENGKAP" || parsed.data.verified === true;
+    const status: StatusDokumen = isLengkap ? "LENGKAP" : "BELUM_LENGKAP";
 
     const result = await prisma.$transaction(async (tx) => {
       const trx = await tx.transaksi.findUnique({
         where: { id: transaksiId },
-        select: { id: true, status_transaksi: true },
+        select: {
+          id: true,
+          tahap_detail: true,
+          unit: { select: { blok: true } },
+          itj: { select: { lead_id: true } },
+        },
       });
 
       if (!trx) {
         throw new Error("Transaksi tidak ditemukan.");
       }
 
-      if (trx.status_transaksi === "BATAL") {
-        throw new Error("Tidak dapat memverifikasi dokumen pada transaksi yang sudah BATAL.");
+      if (trx.tahap_detail === "BATAL") {
+        throw new Error("Tidak dapat mengubah checklist dokumen pada transaksi yang sudah BATAL.");
       }
 
-      const isVerified = status === "TERVERIFIKASI";
-      const verifiedBy = isVerified ? adminId : null;
-      const verifiedAt = isVerified ? new Date() : null;
+      const existingDoc = await tx.dokumenTransaksi.findUnique({
+        where: {
+          transaksi_id_jenis: {
+            transaksi_id: transaksiId,
+            jenis,
+          },
+        },
+      });
 
       const updatedDoc = await tx.dokumenTransaksi.upsert({
         where: {
@@ -390,18 +464,33 @@ export async function verifyDokumenTransaksi(
         create: {
           transaksi_id: transaksiId,
           jenis,
-          kategori: "PEMBERKASAN",
           status,
-          verified_by: verifiedBy,
-          verified_at: verifiedAt,
-          catatan_verifikasi: catatan?.trim() || null,
         },
         update: {
           status,
-          verified_by: verifiedBy,
-          verified_at: verifiedAt,
-          catatan_verifikasi: catatan?.trim() || null,
         },
+      });
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "DOKUMEN",
+        entityId: updatedDoc.id,
+        action: status === "LENGKAP" ? "DOC_CHECKED" : "DOC_UNCHECKED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          docLabel: jenis.replace(/_/g, " "),
+          blok: trx.unit.blok,
+        },
+        before: { status: existingDoc?.status || "BELUM_LENGKAP" },
+        after: { status },
       });
 
       return updatedDoc;
@@ -410,12 +499,12 @@ export async function verifyDokumenTransaksi(
     revalidatePath(`/admin/transaksi/${transaksiId}`);
     return {
       success: true,
-      message: `Status dokumen ${result.jenis.replace(/_/g, " ")} berhasil diubah menjadi ${result.status}.`,
+      message: `Status dokumen ${result.jenis.replace(/_/g, " ")} berhasil ditandai ${result.status === "LENGKAP" ? "Lengkap" : "Belum Lengkap"}.`,
       data: result,
     };
   } catch (error: unknown) {
     const message =
-      error instanceof Error ? error.message : "Gagal memverifikasi dokumen.";
+      error instanceof Error ? error.message : "Gagal memperbarui checklist dokumen.";
     return { success: false, error: message };
   }
 }
@@ -442,14 +531,14 @@ export async function updateProfilPemberkasan(
     const result = await prisma.$transaction(async (tx) => {
       const trx = await tx.transaksi.findUnique({
         where: { id: transaksiId },
-        include: { customer: true, itj: true },
+        include: { customer: true, itj: true, unit: true },
       });
 
       if (!trx) {
         throw new Error("Transaksi tidak ditemukan.");
       }
 
-      if (trx.status_transaksi === "BATAL") {
+      if (trx.tahap_detail === "BATAL") {
         throw new Error("Tidak dapat mengubah profil pada transaksi yang sudah BATAL.");
       }
 
@@ -475,6 +564,33 @@ export async function updateProfilPemberkasan(
           },
         });
       }
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      await logActivity(tx, {
+        entityType: "TRANSAKSI",
+        entityId: trx.id,
+        action: "PROFILE_UPDATED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId: trx.id,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          blok: trx.unit?.blok,
+        },
+        before: {
+          status_pernikahan: trx.customer.status_pernikahan,
+          status_pekerjaan: trx.customer.status_pekerjaan,
+        },
+        after: {
+          status_pernikahan: statusPernikahan || null,
+          status_pekerjaan: statusPekerjaan || null,
+        },
+      });
 
       return updatedCustomer;
     });
@@ -517,9 +633,9 @@ export async function updateTransactionStatus(
       typeof inputOrId === "object"
         ? inputOrId
         : {
-          transaksiId: inputOrId,
-          ...maybeData,
-        };
+            transaksiId: inputOrId,
+            ...maybeData,
+          };
 
     const { adminId, user } = await requireCanEditTransaksi(rawInput.transaksiId);
 
@@ -532,537 +648,40 @@ export async function updateTransactionStatus(
     }
 
     const validData = parsed.data;
-    const targetDetail: TahapDetail = validData.tahapDetail;
-    const targetMacro: TahapTransaksi = getMacroTahap(targetDetail);
 
-    const result = await prisma.$transaction(async (tx) => {
-      // 1. Fetch current transaction with all required relations
-      const existingTrx = await tx.transaksi.findUnique({
+    // Fetch current transaction if fromDetail or version is omitted
+    let fromDetail = validData.fromDetail;
+    let version = validData.version;
+
+    if (!fromDetail || version === undefined) {
+      const current = await prisma.transaksi.findUnique({
         where: { id: validData.transaksiId },
-        include: {
-          customer: true,
-          unit: {
-            include: { tipe: true },
-          },
-          itj: true,
-          pembayaran: {
-            where: { is_void: false },
-          },
-          pengajuan_kpr: {
-            orderBy: { nomor_pengajuan: "desc" },
-            include: { bank: true },
-          },
-          inspeksi_bast: true,
-          dokumen: true,
-        },
+        select: { tahap_detail: true, version: true },
       });
-
-      if (!existingTrx) {
-        throw new Error("Transaksi tidak ditemukan.");
+      if (!current) {
+        return { success: false, error: "Transaksi tidak ditemukan." };
       }
+      fromDetail = fromDetail || current.tahap_detail;
+      version = version !== undefined ? version : current.version;
+    }
 
-      // 2. Validate Lead ownership integrity
-      if (
-        validData.leadId &&
-        existingTrx.itj?.lead_id &&
-        validData.leadId !== existingTrx.itj.lead_id
-      ) {
-        throw new Error("ID Lead yang dikirimkan tidak sesuai dengan data transaksi.");
-      }
-      const actualLeadId = existingTrx.itj?.lead_id || validData.leadId;
-
-      // 3. State Guards
-      if (existingTrx.status_transaksi === "BATAL") {
-        throw new Error("Transaksi yang sudah BATAL tidak dapat diubah statusnya lagi.");
-      }
-
-      if (existingTrx.tahap_detail === "BAST" && targetDetail !== "BAST") {
-        throw new Error("Transaksi yang sudah menyelesaikan serah terima (BAST) telah tuntas.");
-      }
-
-      const allowedList = getAllowedDetailsForMetode(existingTrx.metode_bayar);
-      if (!allowedList.includes(targetDetail)) {
-        throw new Error(
-          `Tahap detail "${targetDetail}" tidak valid untuk metode pembayaran ${existingTrx.metode_bayar}.`
-        );
-      }
-
-      const currentIndex = allowedList.indexOf(existingTrx.tahap_detail);
-      const targetIndex = allowedList.indexOf(targetDetail);
-      const isCancellation = targetDetail === "BATAL";
-      const isSameStage = targetDetail === existingTrx.tahap_detail;
-      const isRegression = targetIndex < currentIndex && !isCancellation;
-      const isAdvancing = targetIndex > currentIndex && !isCancellation;
-
-      // 4. Transition Machine Guards
-      if (isCancellation) {
-        if (!validData.catatanAdmin?.trim()) {
-          throw new Error("Alasan pembatalan transaksi wajib diisi pada catatan progress.");
-        }
-      }
-
-      if (isRegression) {
-        if (!validData.catatanAdmin?.trim() || validData.catatanAdmin.trim().length < 5) {
-          throw new Error("Alasan pemunduran tahap transaksi wajib diisi pada catatan progress (minimal 5 karakter).");
-        }
-      }
-
-      // Check for illegal forward jumps (skipping intermediate stages)
-      if (isAdvancing) {
-        const stepDifference = targetIndex - currentIndex;
-        if (stepDifference > 1) {
-          const nextExpected = allowedList[currentIndex + 1];
-          throw new Error(
-            `Perpindahan tahap tidak valid: Tidak dapat melompati tahap. Tahap berikutnya adalah "${nextExpected}".`
-          );
-        }
-      }
-
-      // 5. Document Persistence & Verification Gates
-      const verifiedDocKeys = new Set(
-        existingTrx.dokumen
-          .filter((d) => d.status === "TERVERIFIKASI")
-          .map((d) => d.jenis)
-      );
-
-      if (validData.documents !== undefined && validData.documents !== null) {
-        const submittedDocKeys = new Set(validData.documents);
-        const allowedDocTypes: JenisDokumen[] = [
-          "KTP_SUAMI_ISTRI",
-          "KARTU_KELUARGA",
-          "NPWP",
-          "BUKU_NIKAH",
-          "SLIP_GAJI",
-          "SURAT_KET_KERJA",
-          "REKENING_KORAN",
-          "SURAT_KET_BELUM_PUNYA_RUMAH",
-          "SKU_WIRAUSAHA",
-          "LAPORAN_KEUANGAN",
-          "LEGALITAS_LAINNYA",
-        ];
-
-        for (const docKey of allowedDocTypes) {
-          const isChecked = submittedDocKeys.has(docKey);
-          const existingDoc = existingTrx.dokumen.find((d) => d.jenis === docKey);
-
-          if (isChecked) {
-            verifiedDocKeys.add(docKey);
-            if (!existingDoc || existingDoc.status !== "TERVERIFIKASI") {
-              await tx.dokumenTransaksi.upsert({
-                where: {
-                  transaksi_id_jenis: {
-                    transaksi_id: existingTrx.id,
-                    jenis: docKey,
-                  },
-                },
-                create: {
-                  transaksi_id: existingTrx.id,
-                  jenis: docKey,
-                  kategori: "PEMBERKASAN",
-                  status: "TERVERIFIKASI",
-                  verified_by: adminId,
-                  verified_at: new Date(),
-                },
-                update: {
-                  status: "TERVERIFIKASI",
-                  verified_by: adminId,
-                  verified_at: new Date(),
-                },
-              });
-            }
-          } else if (existingDoc && existingDoc.status === "TERVERIFIKASI") {
-            verifiedDocKeys.delete(docKey);
-            await tx.dokumenTransaksi.update({
-              where: { id: existingDoc.id },
-              data: {
-                status: "MENUNGGU_VERIFIKASI",
-                verified_by: null,
-                verified_at: null,
-              },
-            });
-          }
-        }
-      }
-
-      // If leaving documentation stage (index 0), enforce required verified documents
-      if (isAdvancing && currentIndex === 0 && targetIndex > 0) {
-        const docEvaluation = getRequiredDocuments({
-          metode: existingTrx.metode_bayar,
-          kategori: existingTrx.unit.tipe.kategori,
-          statusPernikahan: existingTrx.customer.status_pernikahan,
-          statusPekerjaan: existingTrx.customer.status_pekerjaan,
-        });
-
-        if (!docEvaluation.isProfileComplete) {
-          throw new Error(`Pemberkasan belum lengkap: ${docEvaluation.message}`);
-        }
-
-        const requiredDocs = docEvaluation.documents.filter(
-          (d) => d.required && !d.bisaMenyusul
-        );
-        const missingRequiredDocs = requiredDocs.filter((doc) => {
-          if (doc.key === "KTP_PEMOHON" || doc.key === "KTP_SUAMI_ISTRI") {
-            return !verifiedDocKeys.has("KTP_PEMOHON") && !verifiedDocKeys.has("KTP_SUAMI_ISTRI");
-          }
-          return !verifiedDocKeys.has(doc.key);
-        });
-
-        if (missingRequiredDocs.length > 0) {
-          const missingLabels = missingRequiredDocs
-            .map((d) => d.label)
-            .join(", ");
-          throw new Error(
-            `Dokumen pemberkasan belum lengkap: Dokumen [${missingLabels}] wajib diverifikasi sebelum dapat melanjutkan tahap transaksi.`
-          );
-        }
-      }
-
-
-
-      // 6. Specific Stage Prerequisites
-      // A. KPR Stage Validations & Active Bank Invariant
-      if (existingTrx.metode_bayar === "KPR") {
-        const activePengajuanList = existingTrx.pengajuan_kpr.filter(
-          (p) => p.status !== "DITOLAK" && p.status !== "DIBATALKAN"
-        );
-        if (activePengajuanList.length > 1) {
-          throw new Error(
-            `Integritas data KPR tidak valid: Terdapat ${activePengajuanList.length} pengajuan KPR aktif secara bersamaan pada transaksi #${existingTrx.id}. Harap periksa pengajuan bank.`
-          );
-        }
-        const activeKpr = activePengajuanList[0] || null;
-
-        // Reject advancing directly into KPR micro stages via this action
-        if (isAdvancing && ["WAWANCARA", "OTS", "VERIFIKASI", "SP3K"].includes(targetDetail)) {
-          throw new Error(
-            `Perpindahan tahap ke "${targetDetail}" hanya dapat dilakukan melalui modul Pengajuan Bank KPR.`
-          );
-        }
-
-        // Regression from AKAD_KREDIT into SP3K
-        if (isRegression && existingTrx.tahap_detail === "AKAD_KREDIT" && targetDetail === "SP3K") {
-          // if (activeKpr && activeKpr.status === "DISETUJUI") {
-          if (activeKpr && activeKpr.status === "SP3K") {
-            await tx.pengajuanKPR.update({
-              where: { id: activeKpr.id },
-              data: { status: "SP3K" },
-            });
-
-            await tx.pengajuanKPRLog.create({
-              data: {
-                pengajuan_id: activeKpr.id,
-                // status_sebelum: "DISETUJUI",
-                status_sebelum: activeKpr.status,
-                status_sesudah: "SP3K",
-                admin_id: adminId,
-                catatan: `Status KPR di ${activeKpr.bank.nama} dikembalikan ke SP3K seiring pemunduran tahap dari Akad Kredit. Alasan: ${validData.catatanAdmin?.trim() || "-"}`,
-              },
-            });
-          }
-        }
-
-        if (targetDetail === "AKAD_KREDIT") {
-          if (!activeKpr) {
-            throw new Error(
-              "Akad Kredit KPR memerlukan data Pengajuan KPR yang aktif ke Bank. Silakan buat pengajuan ke Bank terlebih dahulu."
-            );
-          }
-
-          const isValidStatus = activeKpr.status === "SP3K" || isSameStage;
-          // const isValidStatus = activeKpr.status === "SP3K" || (isSameStage && activeKpr.status === "DISETUJUI");
-          if (!isValidStatus) {
-            throw new Error(
-              `Akad Kredit KPR belum dapat diproses: Status pengajuan KPR di ${activeKpr.bank.nama} saat ini adalah "${activeKpr.status}". Status harus SP3K Terbit sebelum dapat melanjutkan ke Akad Kredit.`
-            );
-          }
-
-          if (!validData.tglAkad?.trim()) {
-            throw new Error("Tanggal Akad Kredit wajib diisi.");
-          }
-
-          if (!validData.namaNotaris?.trim()) {
-            throw new Error("Nama Notaris/PPAT rekanan bank wajib diisi.");
-          }
-
-          // Otomatis tandai bank aktif sebagai DISETUJUI saat masuk ke Akad Kredit
-          // if (activeKpr.status !== "DISETUJUI") {
-          if (activeKpr.status !== "SP3K") {
-            await tx.pengajuanKPR.update({
-              where: { id: activeKpr.id },
-              data: {
-                status: "SP3K",
-                tanggal_keputusan: new Date(),
-              },
-            });
-
-            await tx.pengajuanKPRLog.create({
-              data: {
-                pengajuan_id: activeKpr.id,
-                status_sebelum: activeKpr.status,
-                // status_sesudah: "DISETUJUI",
-                status_sesudah: "SP3K",
-                admin_id: adminId,
-                catatan: `Status KPR di ${activeKpr.bank.nama} otomatis disetujui seiring pelaksanaan Akad Kredit`,
-              },
-            });
-          }
-        }
-      }
-
-      // B. Settlement Validations (Cash Keras & Cash Tempo)
-      const totalPaid = existingTrx.pembayaran.reduce(
-        (sum, p) => sum + Number(p.nominal),
-        0
-      );
-      const hargaDeal = Number(existingTrx.harga_deal);
-
-      if (targetDetail === "PEMBAYARAN_DP" && existingTrx.metode_bayar === "CASH_TEMPO") {
-        const dpPaid = existingTrx.pembayaran
-          .filter((p) => p.jenis_pembayaran === "DP" || p.jenis_pembayaran === "ITJ")
-          .reduce((sum, p) => sum + Number(p.nominal), 0);
-
-        const targetDp = Number(existingTrx.target_dp);
-        if (dpPaid < targetDp) {
-          throw new Error(
-            `Tahap Pembayaran DP belum tercapai: Pembayaran DP yang masuk (Rp ${dpPaid.toLocaleString(
-              "id-ID"
-            )}) belum memenuhi target DP (Rp ${targetDp.toLocaleString("id-ID")}).`
-          );
-        }
-      }
-
-      if (targetDetail === "PELUNASAN") {
-        if (totalPaid < hargaDeal) {
-          const sisa = hargaDeal - totalPaid;
-          throw new Error(
-            `Tahap Pelunasan belum dapat dicatat: Total penerimaan yang sah (Rp ${totalPaid.toLocaleString(
-              "id-ID"
-            )}) belum melunasi harga deal (Rp ${hargaDeal.toLocaleString(
-              "id-ID"
-            )}). Sisa tagihan: Rp ${sisa.toLocaleString("id-ID")}.`
-          );
-        }
-      }
-
-      if (targetDetail === "AJB") {
-        if (totalPaid < hargaDeal) {
-          throw new Error(
-            `Akad (Cash) belum dapat diproses: Pembayaran belum lunas 100%. Sisa tagihan: Rp ${(
-              hargaDeal - totalPaid
-            ).toLocaleString("id-ID")}.`
-          );
-        }
-
-        const dateStr = validData.tglAkad?.trim() || validData.tglAjb?.trim();
-        if (!dateStr && !existingTrx.tgl_akad) {
-          throw new Error("Tanggal Akad wajib diisi.");
-        }
-
-        if (!validData.namaNotaris?.trim()) {
-          throw new Error("Nama Notaris / PPAT pembuat akta wajib diisi.");
-        }
-      }
-
-      // C. BAST Handover Inspection Validations
-      if (targetDetail === "BAST") {
-        if (user.role !== "ADMIN") {
-          throw new Error("Hanya Admin yang berwenang menyelesaikan serah terima (BAST).");
-        }
-
-        const isKavling = existingTrx.unit?.tipe?.kategori === "KAVLING";
-
-        if (isKavling) {
-          if (!validData.tglBast?.trim() && !existingTrx.tgl_bast) {
-            throw new Error("Tanggal serah terima (BAST) fisik lahan wajib diisi.");
-          }
-        } else {
-          const allItemEnums = Object.values(ItemBAST);
-          const currentInspections = await tx.inspeksiBAST.findMany({
-            where: { transaksi_id: existingTrx.id },
-          });
-
-          const inspectionMap = new Map<ItemBAST, StatusInspeksi>(
-            currentInspections.map((b) => [b.item, b.status])
-          );
-
-          const incompleteItems = allItemEnums.filter((item) => {
-            const status = inspectionMap.get(item);
-            return status !== "SESUAI" && status !== "SELESAI_DIPERBAIKI";
-          });
-
-          if (incompleteItems.length > 0) {
-            const perluPerbaikanCount = allItemEnums.filter(
-              (item) => inspectionMap.get(item) === "PERLU_PERBAIKAN"
-            ).length;
-            const belumDicekCount = incompleteItems.length - perluPerbaikanCount;
-
-            const errorDetails: string[] = [];
-            if (perluPerbaikanCount > 0) {
-              errorDetails.push(`${perluPerbaikanCount} item masih perlu perbaikan`);
-            }
-            if (belumDicekCount > 0) {
-              errorDetails.push(`${belumDicekCount} item belum diperiksa`);
-            }
-
-            throw new Error(
-              `Serah Terima (BAST) gagal: Seluruh ${allItemEnums.length} item inspeksi fisik unit wajib berstatus SESUAI atau SELESAI DIPERBAIKI (${errorDetails.join(", ")}).`
-            );
-          }
-        }
-      }
-
-      // 6. Build Transaksi Update Payload
-      const updateData: Prisma.TransaksiUpdateInput = {
-        status_transaksi: targetMacro,
-        tahap_detail: targetDetail,
-      };
-
-      if (validData.namaNotaris !== undefined) {
-        updateData.nama_notaris = validData.namaNotaris?.trim() || null;
-      }
-
-      if (validData.catatanAdmin !== undefined) {
-        updateData.catatan_admin = validData.catatanAdmin?.trim() || null;
-      }
-
-      // Date Milestones (Operational only; closing_at is set atomically upon ITJ submission)
-      if (targetDetail === "AKAD_KREDIT") {
-        const akadDate = validData.tglAkad
-          ? parseDateOnlyUTC(validData.tglAkad)
-          : (existingTrx.tgl_akad || todayDateOnlyUTC());
-        updateData.tgl_akad = akadDate;
-      }
-
-      if (targetDetail === "AJB") {
-        const akadDate = validData.tglAkad
-          ? parseDateOnlyUTC(validData.tglAkad)
-          : validData.tglAjb
-            ? parseDateOnlyUTC(validData.tglAjb)
-            : (existingTrx.tgl_akad || todayDateOnlyUTC());
-        updateData.tgl_akad = akadDate;
-      }
-
-      if (targetDetail === "PELUNASAN" || (targetDetail === "AJB" && validData.lunasAt)) {
-        updateData.lunas_at = validData.lunasAt
-          ? parseDateOnlyUTC(validData.lunasAt)
-          : (existingTrx.lunas_at || todayDateOnlyUTC());
-      }
-
-      if (targetDetail === "BAST") {
-        const bastDate = validData.tglBast
-          ? parseDateOnlyUTC(validData.tglBast)
-          : (existingTrx.tgl_bast || todayDateOnlyUTC());
-        updateData.tgl_bast = bastDate;
-
-        // Fallback jika transaksi lawas belum memiliki closing_at
-        if (!existingTrx.closing_at && !updateData.closing_at) {
-          updateData.closing_at =
-            existingTrx.tgl_akad || bastDate;
-        }
-      }
-
-      if (isCancellation) {
-        updateData.cancelled_at = new Date();
-        updateData.alasan_batal = validData.catatanAdmin?.trim() || "Dibatalkan oleh Admin";
-      }
-
-      // 7. Inventory Status & Official Sale Rules
-      // If advancing to official sale event (AKAD_KREDIT for KPR, AJB for Cash), mark SOLD
-      if (isOfficialSaleMilestone(existingTrx.metode_bayar, targetDetail)) {
-        await tx.masterUnit.update({
-          where: { id: existingTrx.unit_id },
-          data: { status_unit: "SOLD" },
-        });
-      }
-
-      // If regressing backwards from AKAD_KREDIT or AJB, revert unit to BOOKED (closing_at remains intact)
-      if (
-        (existingTrx.tahap_detail === "AKAD_KREDIT" || existingTrx.tahap_detail === "AJB") &&
-        !isSameStage &&
-        targetDetail !== "AKAD_KREDIT" &&
-        targetDetail !== "AJB" &&
-        targetDetail !== "BAST" &&
-        targetDetail !== "BATAL"
-      ) {
-        await tx.masterUnit.update({
-          where: { id: existingTrx.unit_id },
-          data: { status_unit: "BOOKED" },
-        });
-      }
-
-      // If cancelling transaction, check whether unit should be set to AVAILABLE
-      if (isCancellation) {
-        const otherActiveTrx = await tx.transaksi.findFirst({
-          where: {
-            unit_id: existingTrx.unit_id,
-            id: { not: existingTrx.id },
-            status_transaksi: { not: "BATAL" },
-          },
-        });
-
-        if (!otherActiveTrx) {
-          await tx.masterUnit.update({
-            where: { id: existingTrx.unit_id },
-            data: { status_unit: "AVAILABLE" },
-          });
-        } else {
-          const isSold =
-            otherActiveTrx.tahap_detail === "AKAD_KREDIT" ||
-            otherActiveTrx.tahap_detail === "AJB" ||
-            otherActiveTrx.status_transaksi === "SERAH_TERIMA";
-          await tx.masterUnit.update({
-            where: { id: existingTrx.unit_id },
-            data: { status_unit: isSold ? "SOLD" : "BOOKED" },
-          });
-        }
-      }
-
-      // 8. Apply Transaction Update
-      const updatedTrx = await tx.transaksi.update({
-        where: { id: validData.transaksiId },
-        data: updateData,
-      });
-
-      // 9. Audit Logging (TransaksiTahapLog & Aktivitas)
-      // Only insert stage log if status actually changed or cancellation note added
-      if (!isSameStage || isCancellation) {
-        let finalLogCatatan = validData.catatanAdmin?.trim() || null;
-        if (targetDetail === "BAST" && existingTrx.unit?.tipe?.kategori === "KAVLING") {
-          const kavlingNote = "Serah terima fisik lahan dikonfirmasi: patok batas dan aksesibilitas lahan terverifikasi.";
-          finalLogCatatan = finalLogCatatan ? `${finalLogCatatan} • ${kavlingNote}` : kavlingNote;
-        }
-
-        await tx.transaksiTahapLog.create({
-          data: {
-            transaksi_id: existingTrx.id,
-            tahap_sebelum: existingTrx.status_transaksi,
-            tahap_sesudah: targetMacro,
-            detail_sebelum: existingTrx.tahap_detail,
-            detail_sesudah: targetDetail,
-            admin_id: adminId,
-            catatan: finalLogCatatan,
-          },
-        });
-
-        const activityNotes = [
-          `[STATUS TRANSAKSI] ${targetDetail} (${targetMacro})`,
-          validData.catatanAdmin ? `Catatan: ${validData.catatanAdmin.trim()}` : null,
-        ]
-          .filter(Boolean)
-          .join(" • ");
-
-        await tx.aktivitas.create({
-          data: {
-            lead_id: actualLeadId,
-            user_id: adminId,
-            jenis: "LAINNYA",
-            hasil: isCancellation ? "TIDAK_JADI" : "TERTARIK",
-            catatan: activityNotes,
-          },
-        });
-      }
-
-      return updatedTrx;
+    const result = await applyStage({
+      transaksiId: validData.transaksiId,
+      fromDetail,
+      toDetail: validData.tahapDetail,
+      version,
+      actorId: adminId,
+      userRole: user.role,
+      catatanAdmin: validData.catatanAdmin,
+      namaNotaris: validData.namaNotaris,
+      tglAkad: validData.tglAkad || validData.tglAjb,
+      tglBast: validData.tglBast,
+      lunasAt: validData.lunasAt,
+      rencanaAkadAt: validData.rencanaAkadAt,
+      rencanaBastAt: validData.rencanaBastAt,
+      alasanBatal: validData.catatanAdmin,
+      pengajuanTerpilihId: validData.pengajuanTerpilihId,
+      documents: validData.documents,
     });
 
     revalidatePath(`/admin/transaksi/${validData.transaksiId}`);
@@ -1076,7 +695,7 @@ export async function updateTransactionStatus(
 
     return {
       success: true,
-      message: `Progres transaksi berhasil disimpan (${targetDetail}).`,
+      message: `Progres transaksi berhasil disimpan (${validData.tahapDetail}).`,
       data: result,
     };
   } catch (error: unknown) {
@@ -1088,21 +707,155 @@ export async function updateTransactionStatus(
 
 export const updateTransactionTahap = updateTransactionStatus;
 
+/**
+ * Saves planned transaction milestone dates and notary without advancing transaction stage.
+ */
+export async function simpanJadwalTransaksi(
+  input: SimpanJadwalTransaksiInput
+): Promise<ActionResponse> {
+  try {
+    const parsed = simpanJadwalTransaksiSchema.safeParse(input);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: parsed.error.issues[0]?.message ?? "Data jadwal tidak valid.",
+      };
+    }
+
+    const { transaksiId, version, namaNotaris, rencanaAkadAt, rencanaBastAt } = parsed.data;
+    const { adminId } = await requireCanEditTransaksi(transaksiId);
+
+    await prisma.$transaction(async (tx) => {
+      const trx = await tx.transaksi.findUnique({
+        where: { id: transaksiId },
+        include: { unit: true, itj: true },
+      });
+
+      if (!trx) {
+        throw new Error("Transaksi tidak ditemukan.");
+      }
+
+      if (trx.version !== version) {
+        throw new Error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+      }
+
+      const affected = await tx.transaksi.updateMany({
+        where: {
+          id: transaksiId,
+          version: version,
+        },
+        data: {
+          nama_notaris: namaNotaris !== undefined ? namaNotaris?.trim() || null : undefined,
+          rencana_akad_at: rencanaAkadAt !== undefined
+            ? rencanaAkadAt?.trim()
+              ? parseDateOnlyUTC(rencanaAkadAt)
+              : null
+            : undefined,
+          rencana_bast_at: rencanaBastAt !== undefined
+            ? rencanaBastAt?.trim()
+              ? parseDateOnlyUTC(rencanaBastAt)
+              : null
+            : undefined,
+          version: { increment: 1 },
+        },
+      });
+
+      if (affected.count !== 1) {
+        throw new Error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+      }
+
+      const actor = await tx.user.findUnique({
+        where: { id: adminId },
+        select: { nama: true },
+      });
+
+      const schedType =
+        rencanaAkadAt !== undefined && rencanaBastAt !== undefined
+          ? "rencana akad & BAST"
+          : rencanaAkadAt !== undefined
+            ? "rencana akad"
+            : rencanaBastAt !== undefined
+              ? "rencana BAST"
+              : "notaris";
+
+      const oldDateStr =
+        rencanaAkadAt !== undefined
+          ? toWibDay(trx.rencana_akad_at) || "-"
+          : rencanaBastAt !== undefined
+            ? toWibDay(trx.rencana_bast_at) || "-"
+            : trx.nama_notaris || "-";
+
+      const newDateStr =
+        rencanaAkadAt !== undefined
+          ? rencanaAkadAt || "-"
+          : rencanaBastAt !== undefined
+            ? rencanaBastAt || "-"
+            : namaNotaris || "-";
+
+      await logActivity(tx, {
+        entityType: "TRANSAKSI",
+        entityId: transaksiId,
+        action: "SCHEDULE_UPDATED",
+        leadId: trx.itj?.lead_id || null,
+        transaksiId,
+        tahapDetail: trx.tahap_detail,
+        actorId: adminId,
+        summaryContext: {
+          actorName: actor?.nama,
+          blok: trx.unit.blok,
+          scheduleType: schedType,
+          oldDate: oldDateStr,
+          newDate: newDateStr,
+        },
+        before: {
+          rencana_akad_at: toWibDay(trx.rencana_akad_at),
+          rencana_bast_at: toWibDay(trx.rencana_bast_at),
+          nama_notaris: trx.nama_notaris,
+        },
+        after: {
+          rencana_akad_at:
+            rencanaAkadAt !== undefined
+              ? rencanaAkadAt?.trim() || null
+              : toWibDay(trx.rencana_akad_at),
+          rencana_bast_at:
+            rencanaBastAt !== undefined
+              ? rencanaBastAt?.trim() || null
+              : toWibDay(trx.rencana_bast_at),
+          nama_notaris:
+            namaNotaris !== undefined ? namaNotaris?.trim() || null : trx.nama_notaris,
+        },
+      });
+    });
+
+    revalidatePath(`/admin/transaksi/${transaksiId}`);
+    revalidatePath(`/marketing/transaksi/${transaksiId}`);
+
+    return {
+      success: true,
+      message: "Rencana jadwal transaksi berhasil disimpan.",
+    };
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Gagal menyimpan rencana jadwal transaksi.";
+    return { success: false, error: message };
+  }
+}
+
 export interface MarketingTransaksiItem {
   id: number;
   customer_id: number;
   unit_id: number;
-  marketing_id: number;
+  pic_id: number;
+  marketing_id?: number;
   itj_id: number;
   metode_bayar: MetodeBayar;
   harga_deal: number;
   target_itj: number;
   target_dp: number;
   tenor_bulan: number | null;
-  status_transaksi: TahapTransaksi;
+  status_transaksi?: string | null;
   tahap_detail: TahapDetail;
   closing_at: string | null;
-  closed_at: string | null;
   cancelled_at: string | null;
   created_at: string;
   updated_at: string;
@@ -1142,7 +895,7 @@ export async function getTransaksiByMarketing(
     }
 
     const transaksiList = await prisma.transaksi.findMany({
-      where: { marketing_id: userId },
+      where: { pic_id: userId },
       include: {
         customer: {
           select: {
@@ -1181,17 +934,17 @@ export async function getTransaksiByMarketing(
       id: trx.id,
       customer_id: trx.customer_id,
       unit_id: trx.unit_id,
-      marketing_id: trx.marketing_id,
+      pic_id: trx.pic_id,
+      marketing_id: trx.pic_id,
       itj_id: trx.itj_id,
       metode_bayar: trx.metode_bayar,
       harga_deal: Number(trx.harga_deal),
       target_itj: Number(trx.target_itj),
       target_dp: Number(trx.target_dp),
       tenor_bulan: trx.tenor_bulan,
-      status_transaksi: trx.status_transaksi,
+      status_transaksi: MAKRO_OF[trx.tahap_detail],
       tahap_detail: trx.tahap_detail,
       closing_at: trx.closing_at ? trx.closing_at.toISOString() : null,
-      closed_at: trx.closed_at ? trx.closed_at.toISOString() : null,
       cancelled_at: trx.cancelled_at ? trx.cancelled_at.toISOString() : null,
       created_at: trx.created_at.toISOString(),
       updated_at: trx.updated_at.toISOString(),
@@ -1207,18 +960,18 @@ export async function getTransaksiByMarketing(
         status_unit: trx.unit.status_unit,
         tipe: trx.unit.tipe
           ? {
-            id: trx.unit.tipe.id,
-            nama_tipe: trx.unit.tipe.nama_tipe,
-            kategori: trx.unit.tipe.kategori,
-          }
+              id: trx.unit.tipe.id,
+              nama_tipe: trx.unit.tipe.nama_tipe,
+              kategori: trx.unit.tipe.kategori,
+            }
           : null,
       },
       itj: trx.itj
         ? {
-          id: trx.itj.id,
-          nominal: Number(trx.itj.nominal),
-          diajukan_at: trx.itj.diajukan_at.toISOString(),
-        }
+            id: trx.itj.id,
+            nominal: Number(trx.itj.nominal),
+            diajukan_at: trx.itj.diajukan_at.toISOString(),
+          }
         : null,
     }));
 
@@ -1233,4 +986,6 @@ export async function getTransaksiByMarketing(
     return { success: false, error: message, data: [] };
   }
 }
+
+
 

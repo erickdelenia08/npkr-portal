@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import {
   ManagerTransaksiTable,
   SerializedManagerTransaksi,
@@ -41,7 +42,7 @@ export default async function ManagerTransaksiPage() {
           tipe: true,
         },
       },
-      marketing: {
+      pic: {
         select: {
           id: true,
           nama: true,
@@ -75,8 +76,10 @@ export default async function ManagerTransaksiPage() {
       ? approvedItjDate.toISOString()
       : trx.created_at.toISOString();
 
-    const activeKpr = trx.pengajuan_kpr?.find((k) => k.status !== "DITOLAK");
-    const activeBank = activeKpr?.bank?.nama || trx.nama_bank;
+    const activeKpr = trx.pengajuan_kpr?.find(
+      (k) => k.status !== "DITOLAK" && k.status !== "DIBATALKAN"
+    );
+    const activeBank = activeKpr?.bank?.nama || null;
 
     return {
       id: trx.id,
@@ -85,7 +88,7 @@ export default async function ManagerTransaksiPage() {
       target_itj: Number(trx.target_itj),
       target_dp: Number(trx.target_dp),
       tenor_bulan: trx.tenor_bulan,
-      status_transaksi: trx.status_transaksi,
+      status_transaksi: MAKRO_OF[trx.tahap_detail],
       nama_bank: activeBank,
       nama_notaris: trx.nama_notaris,
       tgl_akad: trx.tgl_akad ? trx.tgl_akad.toISOString() : null,
@@ -109,10 +112,10 @@ export default async function ManagerTransaksiPage() {
         },
       },
       marketing: {
-        id: trx.marketing.id,
-        nama: trx.marketing.nama,
-        username: trx.marketing.username,
-        no_hp: trx.marketing.no_hp,
+        id: trx.pic.id,
+        nama: trx.pic.nama,
+        username: trx.pic.username,
+        no_hp: trx.pic.no_hp,
       },
       pembayaran: trx.pembayaran.map((p) => ({
         id: p.id,

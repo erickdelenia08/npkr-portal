@@ -23,12 +23,12 @@ export async function countAkad({
   marketingId,
 }: CountAkadParams = {}): Promise<number> {
   const where: Record<string, unknown> = {
-    status_transaksi: { not: "BATAL" },
+    tahap_detail: { not: "BATAL" },
     tgl_akad: { not: null },
   };
 
   if (marketingId) {
-    where.marketing_id = marketingId;
+    where.pic_id = marketingId;
   }
 
   if (from || to) {

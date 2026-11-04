@@ -72,10 +72,6 @@ function testStageGuards() {
 
   const stagesKpr = [
     "PENGUMPULAN_DOKUMEN",
-    "WAWANCARA",
-    "OTS",
-    "VERIFIKASI",
-    "SP3K",
     "AKAD_KREDIT",
     "BAST",
     "BATAL",
@@ -97,7 +93,7 @@ function testStageGuards() {
     `5. KPR cannot use Cash Keras stage "${invalidForKpr}"`
   );
 
-  const invalidForCashKeras = "WAWANCARA";
+  const invalidForCashKeras = "PENGUMPULAN_DOKUMEN";
   assert(
     !stagesCashKeras.includes(invalidForCashKeras),
     `5. Cash Keras cannot use KPR stage "${invalidForCashKeras}"`
@@ -105,12 +101,12 @@ function testStageGuards() {
 
   // Test 4: Skipping stages (impossible forward jumps)
   const currentDetail = "PENGUMPULAN_DOKUMEN";
-  const targetDetail = "AKAD_KREDIT";
+  const targetDetail = "BAST";
   const currentIndex = stagesKpr.indexOf(currentDetail);
   const targetIndex = stagesKpr.indexOf(targetDetail);
   const isSkip = targetIndex - currentIndex > 1;
 
-  assert(isSkip, "4. Forward jump from PENGUMPULAN_DOKUMEN to AKAD_KREDIT detected as invalid skip");
+  assert(isSkip, "4. Forward jump from PENGUMPULAN_DOKUMEN to BAST detected as invalid skip");
 }
 
 // -----------------------------------------------------------------------------
@@ -326,20 +322,16 @@ function testStageRegressionRules() {
 
   const allowedList = [
     "PENGUMPULAN_DOKUMEN",
-    "WAWANCARA",
-    "OTS",
-    "VERIFIKASI",
-    "SP3K",
     "AKAD_KREDIT",
     "BAST",
     "BATAL",
   ];
 
-  const currentIdx = allowedList.indexOf("VERIFIKASI");
+  const currentIdx = allowedList.indexOf("AKAD_KREDIT");
   const targetIdx = allowedList.indexOf("PENGUMPULAN_DOKUMEN");
   const isRegression = targetIdx < currentIdx;
 
-  assert(isRegression, "Regression from VERIFIKASI to PENGUMPULAN_DOKUMEN correctly identified");
+  assert(isRegression, "Regression from AKAD_KREDIT to PENGUMPULAN_DOKUMEN correctly identified");
 
   const emptyNote = "";
   const shortNote = "abc";

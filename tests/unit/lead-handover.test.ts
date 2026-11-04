@@ -30,6 +30,9 @@ const mockTx = {
   aktivitas: {
     create: vi.fn(),
   },
+  activityLog: {
+    create: vi.fn(),
+  },
 };
 
 vi.mock("@/lib/prisma", () => ({
@@ -41,7 +44,7 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
-import { handoverLead, getEligiblePICs, type EligiblePIC } from "@/actions/lead-handover.action";
+import { handoverLead, getEligiblePICs } from "@/actions/lead-handover.action";
 import { prisma } from "@/lib/prisma";
 
 describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () => {
@@ -71,12 +74,12 @@ describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () =
   });
 
   describe("handoverLead()", () => {
-    it("allows current PIC to handover lead, updates active transactions, and logs Aktivitas", async () => {
+    it("allows current PIC to handover lead before ITJ, logs Aktivitas & ActivityLog, and never touches Transaksi", async () => {
       mockTx.lead.findUnique.mockResolvedValue({
         id: 100,
         marketing_id: 10,
         marketing: { id: 10, nama: "Marketing Alpha" },
-        itj: [{ id: 1 }],
+        itj: [],
       });
 
       mockTx.user.findUnique.mockResolvedValue({
@@ -86,7 +89,6 @@ describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () =
       });
 
       mockTx.lead.update.mockResolvedValue({ id: 100, marketing_id: 11 });
-      mockTx.transaksi.updateMany.mockResolvedValue({ count: 1 });
       mockTx.aktivitas.create.mockResolvedValue({ id: 999 });
 
       const res = await handoverLead(100, 11, "Konsumen minta survei ulang hari Sabtu");
@@ -102,16 +104,8 @@ describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () =
         })
       );
 
-      // Verify Transaksi.marketing_id was updated to newMarketingId
-      expect(mockTx.transaksi.updateMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            itj: { lead_id: 100 },
-            status_transaksi: { not: "BATAL" },
-          },
-          data: { marketing_id: 11 },
-        })
-      );
+      // Verify Transaksi was NEVER touched
+      expect(mockTx.transaksi.updateMany).not.toHaveBeenCalled();
 
       // Verify Aktivitas log creation
       expect(mockTx.aktivitas.create).toHaveBeenCalledWith(
@@ -124,6 +118,40 @@ describe("actions/lead-handover.action.ts - Oper PIC / Handover Mechanism", () =
           }),
         })
       );
+
+      // Verify append-only ActivityLog creation
+      expect(mockTx.activityLog.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            action: "LEAD_HANDOVER",
+            entity_type: "LEAD",
+            entity_id: 100,
+            lead_id: 100,
+            actor_id: 10,
+          }),
+        })
+      );
+    });
+
+    it("rejects handover if lead has already reached ITJ / Closing", async () => {
+      mockTx.lead.findUnique.mockResolvedValue({
+        id: 100,
+        marketing_id: 10,
+        marketing: { id: 10, nama: "Marketing Alpha" },
+        itj: [{ id: 1 }],
+      });
+
+      mockTx.user.findUnique.mockResolvedValue({
+        id: 11,
+        nama: "Marketing Beta",
+        role: "MARKETING",
+      });
+
+      const res = await handoverLead(100, 11, "Coba alihkan lead closing");
+
+      expect(res.success).toBe(false);
+      expect(res.error).toContain("handover terkunci");
+      expect(mockTx.lead.update).not.toHaveBeenCalled();
     });
 
     it("allows ADMIN to handover a lead even if not current PIC", async () => {

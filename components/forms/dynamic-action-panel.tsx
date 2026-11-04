@@ -24,8 +24,9 @@ import {
   updateTransactionStatus,
   verifyDokumenTransaksi,
   updateProfilPemberkasan,
+  simpanJadwalTransaksi,
 } from "@/actions/transaksi.action";
-import { updateInspeksiBAST } from "@/actions/bast.action";
+import { updateChecklistBAST } from "@/actions/bast.action";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
@@ -36,20 +37,21 @@ import {
 
 import type {
   TahapDetail,
-  TahapTransaksi,
   MetodeBayar,
   JenisDokumen,
   ItemBAST,
-  StatusInspeksi,
+  StatusBAST,
   StatusPernikahan,
   StatusPekerjaan,
 } from "@/generated/prisma";
 import {
   type StageOption,
+  type TahapMakro,
   getStagesByMetode,
   getFallbackStage,
   MACRO_STAGE_LABELS,
 } from "@/lib/transaksi/stage-map";
+import { todayWIB } from "@/lib/date/wib";
 import {
   getRequiredDocuments,
   isDokumenTerverifikasi,
@@ -59,17 +61,15 @@ import {
 // Types & Defaults
 // --------------------------------------------------
 
-export interface InspeksiBastPropItem {
+export interface ChecklistBastPropItem {
   item: ItemBAST;
-  status: StatusInspeksi;
-  catatan?: string | null;
+  status: StatusBAST;
 }
 
-interface ItemInspectionState {
-  status: StatusInspeksi;
-  catatan: string;
-  isPerluPerbaikanOpen: boolean;
-  error?: string;
+export type InspeksiBastPropItem = ChecklistBastPropItem;
+
+interface ItemChecklistState {
+  status: StatusBAST;
 }
 
 export interface FinancialSummaryProp {
@@ -82,21 +82,26 @@ export interface FinancialSummaryProp {
   lastPaymentDate: string | null;
 }
 
-interface DynamicActionPanelProps {
+export interface DynamicActionPanelProps {
   transaksiId: number;
   leadId: number;
+  version: number;
   metodeBayar: MetodeBayar;
   kategoriUnit: "SUBSIDI" | "KOMERSIL" | "KAVLING";
-  currentStatus: string;
-  currentTahapDetail?: string;
+  currentTahapDetail: string;
+  currentStatus?: string;
   initialNotaris: string | null;
   initialTglAkad: string | null;
   initialTglAjb?: string | null;
   initialTglBast?: string | null;
   initialLunasAt?: string | null;
+  initialRencanaAkad?: string | null;
+  initialRencanaBast?: string | null;
+  initialPengajuanTerpilihId?: number | null;
   initialCatatan: string | null;
   initialVerifiedDocs?: string[];
-  initialInspeksiBast?: InspeksiBastPropItem[];
+  initialChecklistBast?: ChecklistBastPropItem[];
+  initialInspeksiBast?: ChecklistBastPropItem[];
   initialPengajuanKpr?: PengajuanKPRItem[];
   masterBanks?: BankItem[];
   canEdit?: boolean;
@@ -105,13 +110,13 @@ interface DynamicActionPanelProps {
   financialSummary?: FinancialSummaryProp;
 }
 
-interface BastItemDef {
+export interface BastItemDef {
   key: ItemBAST;
   title: string;
   description: string;
 }
 
-const MASTER_BAST_ITEMS: BastItemDef[] = [
+export const MASTER_BAST_ITEMS: BastItemDef[] = [
   {
     key: "PONDASI_STRUKTUR",
     title: "Pondasi & Struktur",
@@ -155,22 +160,18 @@ const MASTER_BAST_ITEMS: BastItemDef[] = [
 ];
 
 const EMPTY_STRINGS: string[] = [];
-const EMPTY_INSPEKSI: InspeksiBastPropItem[] = [];
+const EMPTY_CHECKLIST: ChecklistBastPropItem[] = [];
 const EMPTY_PENGAJUAN: PengajuanKPRItem[] = [];
 const EMPTY_BANKS: BankItem[] = [];
 
-function buildInitialInspeksiMap(
-  initial: InspeksiBastPropItem[] = []
-): Record<ItemBAST, ItemInspectionState> {
-  const map = {} as Record<ItemBAST, ItemInspectionState>;
+function buildInitialChecklistMap(
+  initial: ChecklistBastPropItem[] = []
+): Record<ItemBAST, ItemChecklistState> {
+  const map = {} as Record<ItemBAST, ItemChecklistState>;
   MASTER_BAST_ITEMS.forEach((def) => {
     const found = initial.find((x) => x.item === def.key);
-    const status = found?.status ?? "BELUM_DICEK";
     map[def.key] = {
-      status,
-      catatan: found?.catatan ?? "",
-      isPerluPerbaikanOpen:
-        status === "PERLU_PERBAIKAN" || status === "SELESAI_DIPERBAIKI",
+      status: found?.status ?? "BELUM_LENGKAP",
     };
   });
   return map;
@@ -217,9 +218,10 @@ function getDefaultLunasDate(
 }
 
 const inputClass = (invalid: boolean) =>
-  `w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none focus:ring-2 ${invalid
-    ? "border-red-400 focus:border-red-500 focus:ring-red-400/25"
-    : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
+  `w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none focus:ring-2 ${
+    invalid
+      ? "border-red-400 focus:border-red-500 focus:ring-red-400/25"
+      : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
   }`;
 
 function Field({
@@ -261,6 +263,7 @@ function Field({
 export function DynamicActionPanel({
   transaksiId,
   leadId,
+  version,
   metodeBayar,
   kategoriUnit,
   currentStatus,
@@ -270,9 +273,13 @@ export function DynamicActionPanel({
   initialTglAjb,
   initialTglBast,
   initialLunasAt,
+  initialRencanaAkad,
+  initialRencanaBast,
+  initialPengajuanTerpilihId,
   initialCatatan,
   initialVerifiedDocs = EMPTY_STRINGS,
-  initialInspeksiBast = EMPTY_INSPEKSI,
+  initialChecklistBast,
+  initialInspeksiBast,
   initialPengajuanKpr = EMPTY_PENGAJUAN,
   masterBanks = EMPTY_BANKS,
   canEdit = true,
@@ -282,6 +289,10 @@ export function DynamicActionPanel({
 }: DynamicActionPanelProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isSavingJadwal, startJadwalTransition] = useTransition();
+
+  const effectiveChecklistBast =
+    initialChecklistBast ?? initialInspeksiBast ?? EMPTY_CHECKLIST;
 
   // ---------- Stages Map ----------
   const stages = useMemo(() => getStagesByMetode(metodeBayar), [metodeBayar]);
@@ -290,12 +301,12 @@ export function DynamicActionPanel({
     [stages]
   );
 
-  const { stage: currentStage, isUnknown: isUnknownDbStage } = useMemo(() => {
+  const currentStage = useMemo(() => {
     if (currentTahapDetail) {
       const exact = stages.find((stage) => stage.detail === currentTahapDetail);
-      if (exact) return { stage: exact, isUnknown: false };
+      if (exact) return exact;
     }
-    return getFallbackStage(stages, currentStatus, metodeBayar);
+    return getFallbackStage(stages, currentStatus || "", metodeBayar).stage;
   }, [stages, currentTahapDetail, currentStatus, metodeBayar]);
 
   const currentIndex = stages.findIndex(
@@ -310,11 +321,39 @@ export function DynamicActionPanel({
   const isKpr = metodeBayar === "KPR";
   const isKavling = kategoriUnit === "KAVLING";
 
-  // Macro stages de-duplicated in order
+  // Macro steps: For KPR explicitly sequence PEMBERKASAN -> PROSES_BANK -> AKAD_AJB -> SERAH_TERIMA
+  const isUnknownDbStage =
+    Boolean(currentTahapDetail) &&
+    !stages.some((stage) => stage.detail === currentTahapDetail);
   const macroSteps = useMemo(() => {
-    const seen = new Set<TahapTransaksi>();
+    if (metodeBayar === "KPR") {
+      return [
+        {
+          macro: "PEMBERKASAN" as TahapMakro,
+          label: MACRO_STAGE_LABELS.PEMBERKASAN,
+          microStages: mainStages.filter((m) => m.macro === "PEMBERKASAN"),
+        },
+        {
+          macro: "PROSES_BANK" as TahapMakro,
+          label: MACRO_STAGE_LABELS.PROSES_BANK,
+          microStages: mainStages.filter((m) => m.macro === "PROSES_BANK"),
+        },
+        {
+          macro: "AKAD_AJB" as TahapMakro,
+          label: MACRO_STAGE_LABELS.AKAD_AJB,
+          microStages: mainStages.filter((m) => m.macro === "AKAD_AJB"),
+        },
+        {
+          macro: "SERAH_TERIMA" as TahapMakro,
+          label: MACRO_STAGE_LABELS.SERAH_TERIMA,
+          microStages: mainStages.filter((m) => m.macro === "SERAH_TERIMA"),
+        },
+      ];
+    }
+
+    const seen = new Set<TahapMakro>();
     const steps: {
-      macro: TahapTransaksi;
+      macro: TahapMakro;
       label: string;
       microStages: StageOption[];
     }[] = [];
@@ -329,10 +368,12 @@ export function DynamicActionPanel({
       }
     }
     return steps;
-  }, [mainStages]);
+  }, [mainStages, metodeBayar]);
+
+  const currentMacro = currentStage.macro;
 
   const currentMacroIndex = macroSteps.findIndex(
-    (s) => s.macro === currentStage.macro
+    (s) => s.macro === currentMacro
   );
 
   // ---------- State: Profile Konsumen ----------
@@ -343,10 +384,10 @@ export function DynamicActionPanel({
     initialStatusPekerjaan ?? null
   );
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
-  const [profileFormPernikahan, setProfileFormPernikahan] = useState<StatusPernikahan | "">(
+  const [profileFormPernikahan, setProfileFormPernikahan] = useState<StatusPekerjaan | StatusPernikahan | "">(
     initialStatusPernikahan ?? ""
   );
-  const [profileFormPekerjaan, setProfileFormPekerjaan] = useState<StatusPekerjaan | "">(
+  const [profileFormPekerjaan, setProfileFormPekerjaan] = useState<StatusPekerjaan | StatusPernikahan | "">(
     initialStatusPekerjaan ?? ""
   );
 
@@ -366,10 +407,21 @@ export function DynamicActionPanel({
   const [tglBast, setTglBast] = useState(() =>
     initialTglBast ? toDateInput(initialTglBast) : ""
   );
+  const [rencanaAkadAt, setRencanaAkadAt] = useState(() =>
+    initialRencanaAkad ? toDateInput(initialRencanaAkad) : ""
+  );
+  const [rencanaBastAt, setRencanaBastAt] = useState(() =>
+    initialRencanaBast ? toDateInput(initialRencanaBast) : ""
+  );
+  const [selectedPengajuanId, setSelectedPengajuanId] = useState<number | null>(() => {
+    if (initialPengajuanTerpilihId) return initialPengajuanTerpilihId;
+    const firstSp3k = initialPengajuanKpr.find((p) => p.status === "SP3K");
+    return firstSp3k?.id ?? null;
+  });
   const [catatanAdmin, setCatatanAdmin] = useState(initialCatatan ?? "");
   const [verifiedDocs, setVerifiedDocs] = useState<string[]>(initialVerifiedDocs);
-  const [inspeksiMap, setInspeksiMap] = useState<Record<ItemBAST, ItemInspectionState>>(() =>
-    buildInitialInspeksiMap(initialInspeksiBast)
+  const [checklistMap, setChecklistMap] = useState<Record<ItemBAST, ItemChecklistState>>(() =>
+    buildInitialChecklistMap(effectiveChecklistBast)
   );
   const [savingItems, setSavingItems] = useState<Partial<Record<ItemBAST, boolean>>>({});
   const [lahanChecked, setLahanChecked] = useState(false); // default false for Kavling BAST
@@ -394,6 +446,7 @@ export function DynamicActionPanel({
   // Sync state if server data changes
   const serverKey = JSON.stringify([
     currentStage.detail,
+    version,
     initialStatusPernikahan,
     initialStatusPekerjaan,
     initialNotaris,
@@ -401,11 +454,14 @@ export function DynamicActionPanel({
     initialTglAjb,
     initialTglBast,
     initialLunasAt,
+    initialRencanaAkad,
+    initialRencanaBast,
+    initialPengajuanTerpilihId,
     lastPaymentDate,
     initialCatatan,
     [...initialVerifiedDocs].sort(),
-    initialInspeksiBast
-      .map((b) => `${b.item}:${b.status}:${b.catatan ?? ""}`)
+    effectiveChecklistBast
+      .map((b) => `${b.item}:${b.status}`)
       .sort(),
   ]);
   const [prevServerKey, setPrevServerKey] = useState(serverKey);
@@ -418,18 +474,28 @@ export function DynamicActionPanel({
     setTglAkad(initialTglAkad ? toDateInput(initialTglAkad) : (initialTglAjb ? toDateInput(initialTglAjb) : ""));
     setTglPelunasan(defaultLunasDate);
     setTglBast(initialTglBast ? toDateInput(initialTglBast) : "");
+    setRencanaAkadAt(initialRencanaAkad ? toDateInput(initialRencanaAkad) : "");
+    setRencanaBastAt(initialRencanaBast ? toDateInput(initialRencanaBast) : "");
+    setSelectedPengajuanId(initialPengajuanTerpilihId ?? null);
     setCatatanAdmin(initialCatatan ?? "");
     setVerifiedDocs(initialVerifiedDocs);
-    setInspeksiMap(buildInitialInspeksiMap(initialInspeksiBast));
+    setChecklistMap(buildInitialChecklistMap(effectiveChecklistBast));
     setSavingItems({});
     setLahanChecked(false);
   }
 
-  // Active KPR Pengajuan
-  const activePengajuan = useMemo(
-    () => initialPengajuanKpr.find((p) => p.status !== "DITOLAK" && p.status !== "DIBATALKAN"),
+  // Active KPR Pengajuan & SP3K
+  const activeSubmissions = useMemo(
+    () => initialPengajuanKpr.filter((p) => p.status !== "DITOLAK" && p.status !== "DIBATALKAN"),
     [initialPengajuanKpr]
   );
+  const sp3kSubmissions = useMemo(
+    () => activeSubmissions.filter((p) => p.status === "SP3K"),
+    [activeSubmissions]
+  );
+  const hasSp3k = sp3kSubmissions.length > 0;
+  const approvedBankNames = sp3kSubmissions.map((s) => s.bank.nama).join(", ");
+  const effectiveSelectedPengajuanId = selectedPengajuanId ?? sp3kSubmissions[0]?.id ?? null;
 
   // ---------- Rule-based Documents Calculation ----------
   const ruleResult = useMemo(() => {
@@ -475,26 +541,15 @@ export function DynamicActionPanel({
 
   // ---------- Stage Identifiers ----------
   const isPemberkasan = currentStage.macro === "PEMBERKASAN";
-  const isKprMicroStage = isKpr && ["WAWANCARA", "OTS", "VERIFIKASI"].includes(currentStage.detail);
-  const isKprSp3k = isKpr && currentStage.detail === "SP3K";
+  const isProsesBank = currentStage.detail === "PROSES_BANK";
   const isAkadStage = currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB";
 
   // BAST completeness check
-  const okCount = useMemo(() => {
+  const lengkapBastCount = useMemo(() => {
     return MASTER_BAST_ITEMS.filter((item) => {
-      const s = inspeksiMap[item.key]?.status;
-      return s === "SESUAI" || s === "SELESAI_DIPERBAIKI";
+      return checklistMap[item.key]?.status === "LENGKAP";
     }).length;
-  }, [inspeksiMap]);
-
-  const perluPerbaikanCount = useMemo(() => {
-    return MASTER_BAST_ITEMS.filter((item) => {
-      const s = inspeksiMap[item.key]?.status;
-      return s === "PERLU_PERBAIKAN";
-    }).length;
-  }, [inspeksiMap]);
-
-  const belumDicekCount = MASTER_BAST_ITEMS.length - okCount - perluPerbaikanCount;
+  }, [checklistMap]);
 
   const isSavingAnyItem = useMemo(() => {
     return Object.values(savingItems).some(Boolean);
@@ -502,9 +557,9 @@ export function DynamicActionPanel({
 
   const isBastFormComplete = isKavling
     ? lahanChecked
-    : okCount === MASTER_BAST_ITEMS.length;
+    : lengkapBastCount === MASTER_BAST_ITEMS.length;
 
-  // ---------- Handlers: Document Toggle (Optimistic) ----------
+  // ---------- Handlers: Document Toggle (Pemberkasan Checklist) ----------
   const handleToggleDoc = async (docKey: JenisDokumen, currentChecked: boolean) => {
     if (!canEdit || isPending) return;
     const newVerified = !currentChecked;
@@ -518,7 +573,7 @@ export function DynamicActionPanel({
       const res = await verifyDokumenTransaksi({
         transaksiId,
         jenis: docKey,
-        status: newVerified ? "TERVERIFIKASI" : "BELUM_DIUNGGAH",
+        status: newVerified ? "LENGKAP" : "BELUM_LENGKAP",
         verified: newVerified,
       });
 
@@ -530,7 +585,7 @@ export function DynamicActionPanel({
         setVerifiedDocs((prev) =>
           currentChecked ? [...prev, docKey] : prev.filter((k) => k !== docKey)
         );
-        toast.error(res.error || "Gagal memperbarui verifikasi dokumen.");
+        toast.error(res.error || "Gagal memperbarui checklist dokumen.");
       }
     } catch (err: unknown) {
       // Rollback
@@ -571,41 +626,40 @@ export function DynamicActionPanel({
     });
   };
 
-  // ---------- Handlers: BAST Inspection Items ----------
-  const handleMarkSesuai = async (key: ItemBAST) => {
+  // ---------- Handlers: BAST Checklist Items ----------
+  const handleToggleBastItem = async (key: ItemBAST) => {
     if (!canEdit || isPending || savingItems[key]) return;
 
-    const prevState = inspeksiMap[key];
+    const currentItem = checklistMap[key] || { status: "BELUM_LENGKAP" };
+    const newStatus: StatusBAST = currentItem.status === "LENGKAP" ? "BELUM_LENGKAP" : "LENGKAP";
+
     // Optimistic UI update
-    setInspeksiMap((prev) => ({
+    setChecklistMap((prev) => ({
       ...prev,
       [key]: {
         ...prev[key],
-        status: "SESUAI",
-        isPerluPerbaikanOpen: false,
-        error: undefined,
+        status: newStatus,
       },
     }));
     setSavingItems((prev) => ({ ...prev, [key]: true }));
 
     try {
-      const res = await updateInspeksiBAST({
+      const res = await updateChecklistBAST({
         transaksiId,
-        itemId: key,
-        newStatus: "SESUAI",
-        note: prevState?.catatan?.trim() || null,
+        item: key,
+        status: newStatus,
       });
 
       if (!res.success) {
         // Rollback
-        setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
-        toast.error(res.error || "Gagal memperbarui status inspeksi.");
+        setChecklistMap((prev) => ({ ...prev, [key]: currentItem }));
+        toast.error(res.error || "Gagal memperbarui checklist serah terima.");
       } else {
-        toast.success(res.message || "Item inspeksi ditandai Sesuai.");
+        toast.success(res.message || "Status serah terima berhasil diperbarui.");
       }
     } catch (err: unknown) {
       // Rollback
-      setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
+      setChecklistMap((prev) => ({ ...prev, [key]: currentItem }));
       const msg = err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
       toast.error(msg);
     } finally {
@@ -613,131 +667,67 @@ export function DynamicActionPanel({
     }
   };
 
-  const handleOpenPerluPerbaikan = (key: ItemBAST) => {
-    if (!canEdit || isPending || savingItems[key]) return;
-    setInspeksiMap((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        isPerluPerbaikanOpen: true,
-        error: undefined,
-      },
-    }));
-    setTimeout(() => {
-      document.getElementById(`bast-catatan-${key}`)?.focus();
-    }, 50);
-  };
+  // ---------- Handlers: Simpan Jadwal Milestone (Agenda) ----------
+  const handleSimpanJadwalAkad = () => {
+    startJadwalTransition(async () => {
+      try {
+        const res = await simpanJadwalTransaksi({
+          transaksiId,
+          version,
+          namaNotaris: namaNotaris.trim() || null,
+          rencanaAkadAt: rencanaAkadAt || null,
+        });
 
-  const handleCatatanChange = (key: ItemBAST, val: string) => {
-    setInspeksiMap((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        catatan: val,
-        error: prev[key]?.error && val.trim().length >= 3 ? undefined : prev[key]?.error,
-      },
-    }));
-  };
+        if (!res.success) {
+          if (res.error?.includes("telah diubah oleh pengguna lain")) {
+            toast.error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+            router.refresh();
+            return;
+          }
+          toast.error(res.error || "Gagal menyimpan jadwal akad.");
+          return;
+        }
 
-  const handleSavePerluPerbaikan = async (key: ItemBAST) => {
-    if (!canEdit || isPending || savingItems[key]) return;
-
-    const currentItem = inspeksiMap[key];
-    const cleanNote = currentItem.catatan.trim();
-    if (cleanNote.length < 3) {
-      setInspeksiMap((prev) => ({
-        ...prev,
-        [key]: {
-          ...prev[key],
-          error: "Catatan perbaikan wajib diisi minimal 3 karakter.",
-        },
-      }));
-      document.getElementById(`bast-catatan-${key}`)?.focus();
-      return;
-    }
-
-    const prevState = currentItem;
-    // Optimistic UI update
-    setInspeksiMap((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        status: "PERLU_PERBAIKAN",
-        error: undefined,
-      },
-    }));
-    setSavingItems((prev) => ({ ...prev, [key]: true }));
-
-    try {
-      const res = await updateInspeksiBAST({
-        transaksiId,
-        itemId: key,
-        newStatus: "PERLU_PERBAIKAN",
-        note: cleanNote,
-      });
-
-      if (!res.success) {
-        // Rollback
-        setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
-        toast.error(res.error || "Gagal menyimpan catatan perbaikan.");
-      } else {
-        toast.success(res.message || "Status perlu perbaikan dan catatan berhasil disimpan.");
+        toast.success(res.message || "Rencana jadwal akad berhasil disimpan.");
+        router.refresh();
+      } catch (err: unknown) {
+        toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
       }
-    } catch (err: unknown) {
-      setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
-      const msg = err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
-      toast.error(msg);
-    } finally {
-      setSavingItems((prev) => ({ ...prev, [key]: false }));
-    }
+    });
   };
 
-  const handleMarkSudahDiperbaiki = async (key: ItemBAST) => {
-    if (!canEdit || isPending || savingItems[key]) return;
+  const handleSimpanJadwalBast = () => {
+    startJadwalTransition(async () => {
+      try {
+        const res = await simpanJadwalTransaksi({
+          transaksiId,
+          version,
+          rencanaBastAt: rencanaBastAt || null,
+        });
 
-    const currentItem = inspeksiMap[key];
-    const cleanNote = currentItem.catatan.trim();
-    const prevState = currentItem;
+        if (!res.success) {
+          if (res.error?.includes("telah diubah oleh pengguna lain")) {
+            toast.error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+            router.refresh();
+            return;
+          }
+          toast.error(res.error || "Gagal menyimpan rencana serah terima (BAST).");
+          return;
+        }
 
-    // Optimistic UI update
-    setInspeksiMap((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        status: "SELESAI_DIPERBAIKI",
-        error: undefined,
-      },
-    }));
-    setSavingItems((prev) => ({ ...prev, [key]: true }));
-
-    try {
-      const res = await updateInspeksiBAST({
-        transaksiId,
-        itemId: key,
-        newStatus: "SELESAI_DIPERBAIKI",
-        note: cleanNote || null,
-      });
-
-      if (!res.success) {
-        // Rollback
-        setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
-        toast.error(res.error || "Gagal memperbarui status perbaikan.");
-      } else {
-        toast.success(res.message || "Item inspeksi ditandai sudah selesai diperbaiki.");
+        toast.success(res.message || "Rencana serah terima (BAST) berhasil disimpan.");
+        router.refresh();
+      } catch (err: unknown) {
+        toast.error(err instanceof Error ? err.message : "Terjadi kesalahan sistem.");
       }
-    } catch (err: unknown) {
-      setInspeksiMap((prev) => ({ ...prev, [key]: prevState }));
-      const msg = err instanceof Error ? err.message : "Terjadi kesalahan sistem.";
-      toast.error(msg);
-    } finally {
-      setSavingItems((prev) => ({ ...prev, [key]: false }));
-    }
+    });
   };
 
   // ---------- Handlers: Advance Stage ----------
   const executeAdvance = (targetDetail: TahapDetail) => {
     startTransition(async () => {
       try {
+        const isTargetAkad = targetDetail === "AKAD_KREDIT";
         const isTargetAjb = targetDetail === "AJB";
         const isTargetPelunasan = targetDetail === "PELUNASAN";
         const isTargetBast = targetDetail === "BAST";
@@ -746,17 +736,28 @@ export function DynamicActionPanel({
           transaksiId,
           leadId,
           tahapDetail: targetDetail,
-          namaNotaris: isAkadStage || isKprSp3k || isTargetAjb ? namaNotaris.trim() : null,
-          tglAkad: (isAkadStage || isKprSp3k || isTargetAjb) && tglAkad ? tglAkad : null,
+          fromDetail: currentStage.detail,
+          version,
+          namaNotaris: isTargetAkad || isTargetAjb || isAkadStage ? (namaNotaris.trim() || null) : null,
+          tglAkad: (isTargetAkad || isTargetAjb || isAkadStage) && tglAkad ? tglAkad : null,
           tglAjb: isTargetAjb && tglAkad ? tglAkad : null,
           lunasAt: isTargetPelunasan || currentStage.detail === "PELUNASAN" ? (tglPelunasan || null) : null,
           tglBast: isTargetBast ? (tglBast || null) : null,
+          rencanaAkadAt: rencanaAkadAt || null,
+          rencanaBastAt: rencanaBastAt || null,
+          pengajuanTerpilihId:
+            isTargetAkad || currentStage.detail === "PROSES_BANK" ? effectiveSelectedPengajuanId : null,
           lahanConfirmed: isKavling && isTargetBast ? lahanChecked : null,
           catatanAdmin: catatanAdmin.trim() || null,
         });
 
         if (!result.success) {
           setPendingConfirm(null);
+          if (result.error?.includes("telah diubah oleh pengguna lain")) {
+            toast.error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+            router.refresh();
+            return;
+          }
           toast.error(result.error || "Gagal memperbarui transaksi.");
           return;
         }
@@ -774,15 +775,35 @@ export function DynamicActionPanel({
   // Validate and submit for primary action
   const handlePrimarySubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!nextStage) return;
 
     const errors: Record<string, string> = {};
+    const today = todayWIB();
 
     // Validation for KPR SP3K -> AKAD_KREDIT
-    if (isKprSp3k) {
+    if (isProsesBank && hasSp3k) {
+      if (sp3kSubmissions.length > 1 && !effectiveSelectedPengajuanId) {
+        errors.bank = "Pilih salah satu bank pembiaya (SP3K) terlebih dahulu.";
+      }
       if (!namaNotaris.trim()) errors.notaris = "Nama notaris/PPAT wajib diisi.";
-      if (!tglAkad) errors.tglAkad = "Tanggal akad kredit wajib diisi.";
+      if (!tglAkad) {
+        errors.tglAkad = "Tanggal akad kredit aktual wajib diisi.";
+      } else if (tglAkad > today) {
+        errors.tglAkad = "Tanggal akad kredit aktual tidak boleh di masa depan.";
+      }
+
+      setFormErrors(errors);
+      if (Object.keys(errors).length > 0) {
+        if (errors.bank) toast.error(errors.bank);
+        else if (errors.notaris) document.getElementById("fld-notaris")?.focus();
+        else if (errors.tglAkad) document.getElementById("fld-tglAkad")?.focus();
+        return;
+      }
+
+      executeAdvance("AKAD_KREDIT");
+      return;
     }
+
+    if (!nextStage) return;
 
     // Validation for Cash MENUNGGU_PELUNASAN -> PELUNASAN (Cash Keras)
     if (currentStage.detail === "MENUNGGU_PELUNASAN") {
@@ -791,6 +812,8 @@ export function DynamicActionPanel({
       }
       if (!tglPelunasan) {
         errors.tglPelunasan = "Tanggal pelunasan wajib diisi.";
+      } else if (tglPelunasan > today) {
+        errors.tglPelunasan = "Tanggal pelunasan aktual tidak boleh di masa depan.";
       }
     }
 
@@ -808,30 +831,33 @@ export function DynamicActionPanel({
       }
       if (!tglPelunasan) {
         errors.tglPelunasan = "Tanggal pelunasan wajib diisi.";
+      } else if (tglPelunasan > today) {
+        errors.tglPelunasan = "Tanggal pelunasan aktual tidak boleh di masa depan.";
       }
     }
 
     // Validation for Cash PELUNASAN -> AJB (Persiapan Akad)
     if (currentStage.detail === "PELUNASAN") {
       if (!namaNotaris.trim()) errors.notaris = "Nama notaris/PPAT wajib diisi.";
-      if (!tglAkad) errors.tglAkad = "Tanggal pelaksanaan akad (AJB) wajib diisi.";
+      if (!tglAkad) {
+        errors.tglAkad = "Tanggal pelaksanaan akad (AJB) aktual wajib diisi.";
+      } else if (tglAkad > today) {
+        errors.tglAkad = "Tanggal pelaksanaan akad (AJB) aktual tidak boleh di masa depan.";
+      }
     }
 
     // Validation for Akad -> BAST
     if (nextStage.detail === "BAST") {
-      if (!tglBast) errors.tglBast = "Tanggal serah terima (BAST) wajib diisi.";
+      if (!tglBast) {
+        errors.tglBast = "Tanggal serah terima (BAST) aktual wajib diisi.";
+      } else if (tglBast > today) {
+        errors.tglBast = "Tanggal serah terima (BAST) aktual tidak boleh di masa depan.";
+      }
       if (!isBastFormComplete) {
         if (isKavling) {
           errors.bast = "Centang konfirmasi serah terima fisik lahan terlebih dahulu.";
         } else {
-          const parts: string[] = [];
-          if (perluPerbaikanCount > 0) {
-            parts.push(`${perluPerbaikanCount} item masih perlu perbaikan`);
-          }
-          if (belumDicekCount > 0) {
-            parts.push(`${belumDicekCount} item belum diperiksa`);
-          }
-          errors.bast = `Inspeksi BAST belum tuntas: ${parts.join(" dan ")}. Seluruh ${MASTER_BAST_ITEMS.length} item wajib berstatus Sesuai atau Selesai Diperbaiki.`;
+          errors.bast = `Checklist serah terima belum lengkap: ${lengkapBastCount}/${MASTER_BAST_ITEMS.length} item lengkap. Seluruh ${MASTER_BAST_ITEMS.length} item wajib berstatus Lengkap sebelum BAST.`;
         }
       }
     }
@@ -859,21 +885,7 @@ export function DynamicActionPanel({
         return;
       }
       if (errors.bast) {
-        if (isKavling) {
-          document.getElementById("bast-kavling-check")?.focus();
-        } else {
-          const firstIncomplete = MASTER_BAST_ITEMS.find((item) => {
-            const s = inspeksiMap[item.key]?.status;
-            return s !== "SESUAI" && s !== "SELESAI_DIPERBAIKI";
-          });
-          if (firstIncomplete) {
-            const el =
-              document.getElementById(`bast-catatan-${firstIncomplete.key}`) ||
-              document.getElementById(`btn-sesuai-${firstIncomplete.key}`) ||
-              document.getElementById(`bast-item-${firstIncomplete.key}`);
-            el?.focus();
-          }
-        }
+        toast.error(errors.bast);
         return;
       }
       const firstKey = Object.keys(errors)[0];
@@ -903,17 +915,8 @@ export function DynamicActionPanel({
   // ---------- Handlers: Regression (Mundur Tahap) ----------
   const availableRegressionStages = useMemo(() => {
     if (currentIndex <= 0) return [];
-    // Only return stages prior to currentIndex that are allowed
-    return stages.slice(0, currentIndex).filter((s) => {
-      // Direct move into WAWANCARA, OTS, VERIFIKASI, SP3K via updateTransactionStatus is not allowed
-      // except regression from AKAD_KREDIT to SP3K
-      if (isKpr) {
-        if (["WAWANCARA", "OTS", "VERIFIKASI"].includes(s.detail)) return false;
-        if (s.detail === "SP3K" && currentStage.detail !== "AKAD_KREDIT") return false;
-      }
-      return true;
-    });
-  }, [stages, currentIndex, isKpr, currentStage.detail]);
+    return stages.slice(0, currentIndex).filter((s) => s.detail !== "BATAL");
+  }, [stages, currentIndex]);
 
   const handleRegressionSubmit = () => {
     if (!selectedRegressionDetail) {
@@ -934,11 +937,18 @@ export function DynamicActionPanel({
               transaksiId,
               leadId,
               tahapDetail: selectedRegressionDetail,
+              fromDetail: currentStage.detail,
+              version,
               catatanAdmin: catatanMundur.trim(),
             });
 
             if (!res.success) {
               setPendingConfirm(null);
+              if (res.error?.includes("telah diubah oleh pengguna lain")) {
+                toast.error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+                router.refresh();
+                return;
+              }
               toast.error(res.error || "Gagal memundurkan tahap.");
               return;
             }
@@ -964,11 +974,6 @@ export function DynamicActionPanel({
           <p className="rounded bg-slate-100 p-2 text-xs italic text-slate-600">
             &quot;{catatanMundur.trim()}&quot;
           </p>
-          {isKpr && currentStage.detail === "AKAD_KREDIT" && selectedRegressionDetail === "SP3K" && (
-            <p className="text-xs text-amber-800">
-              Pengajuan KPR bank akan dikembalikan ke status SP3K dan status unit dikembalikan ke BOOKED.
-            </p>
-          )}
         </div>
       ),
       confirmLabel: "Ya, Mundurkan Tahap",
@@ -991,11 +996,18 @@ export function DynamicActionPanel({
               transaksiId,
               leadId,
               tahapDetail: "BATAL",
+              fromDetail: currentStage.detail,
+              version,
               catatanAdmin: catatanBatal.trim(),
             });
 
             if (!res.success) {
               setPendingConfirm(null);
+              if (res.error?.includes("telah diubah oleh pengguna lain")) {
+                toast.error("Data transaksi telah diubah oleh pengguna lain. Halaman akan dimuat ulang.");
+                router.refresh();
+                return;
+              }
               toast.error(res.error || "Gagal membatalkan transaksi.");
               return;
             }
@@ -1058,10 +1070,34 @@ export function DynamicActionPanel({
           </div>
         </div>
 
-        <div className="sm:text-right">
+        <div className="sm:text-right space-y-0.5">
           <p className="text-xs text-slate-600">Tahap Saat Ini</p>
-          <p className="text-sm font-semibold text-slate-900">{currentStage.label}</p>
-          <p className="text-xs text-slate-600">{humanize(currentStage.macro)}</p>
+          <p className="text-sm font-semibold text-slate-900">
+            {isProsesBank ? "Proses Bank (KPR)" : currentStage.label}
+          </p>
+          <p className="text-xs text-slate-600">
+            {isProsesBank ? "Proses Bank" : humanize(currentStage.macro)}
+          </p>
+          {rencanaAkadAt && !initialTglAkad && (
+            <div className="flex items-center justify-start sm:justify-end gap-1.5 pt-0.5">
+              <span className="text-[11px] text-slate-500">Rencana Akad: {rencanaAkadAt}</span>
+              {rencanaAkadAt < todayWIB() && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] bg-red-100 text-red-700 font-bold">
+                  Terlambat
+                </span>
+              )}
+            </div>
+          )}
+          {rencanaBastAt && !initialTglBast && (
+            <div className="flex items-center justify-start sm:justify-end gap-1.5 pt-0.5">
+              <span className="text-[11px] text-slate-500">Rencana BAST: {rencanaBastAt}</span>
+              {rencanaBastAt < todayWIB() && (
+                <span className="px-1.5 py-0.5 rounded text-[10px] bg-red-100 text-red-700 font-bold">
+                  Terlambat
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -1077,7 +1113,7 @@ export function DynamicActionPanel({
               <div className="text-sm leading-6 text-teal-950">
                 <p className="font-semibold">Transaksi Selesai — Serah Terima (BAST)</p>
                 <p className="text-teal-900">
-                  Unit telah resmi diserahterimakan kepada konsumen. Seluruh tahapan selesai.
+                  Unit telah resmi diserahterimakan kepada konsumen. Seluruh tahapan transaksi telah selesai.
                 </p>
               </div>
             </div>
@@ -1087,18 +1123,13 @@ export function DynamicActionPanel({
               <div className="flex items-center justify-between gap-2 border-b border-slate-100 pb-3 mb-3">
                 <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                   <Home className="h-4 w-4 text-teal-700" aria-hidden="true" />
-                  Status Inspeksi & Serah Terima Unit
+                  Checklist Serah Terima Unit (BAST)
                 </h4>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-800 border border-emerald-200">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
                   {isKavling
                     ? "Lahan Terverifikasi"
-                    : `${initialInspeksiBast.filter(
-                      (b) =>
-                        b.status === "SESUAI" ||
-                        b.status === "SELESAI_DIPERBAIKI"
-                    ).length
-                    }/${MASTER_BAST_ITEMS.length} Item Selesai`}
+                    : `${effectiveChecklistBast.filter((b) => b.status === "LENGKAP").length}/${MASTER_BAST_ITEMS.length} Item Lengkap`}
                 </span>
               </div>
 
@@ -1109,55 +1140,37 @@ export function DynamicActionPanel({
               ) : (
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {MASTER_BAST_ITEMS.map((item) => {
-                    const found = initialInspeksiBast.find((b) => b.item === item.key);
-                    const isPassed =
-                      found?.status === "SESUAI" ||
-                      found?.status === "SELESAI_DIPERBAIKI";
+                    const found = effectiveChecklistBast.find((b) => b.item === item.key);
+                    const isLengkap = found?.status === "LENGKAP";
 
                     return (
                       <div
                         key={item.key}
-                        className={`flex flex-col gap-1.5 rounded-lg border p-2.5 text-xs ${isPassed
-                          ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
-                          : "border-slate-200 bg-slate-50 text-slate-500"
-                          }`}
+                        className={`flex items-start gap-2.5 rounded-lg border p-2.5 text-xs ${
+                          isLengkap
+                            ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
+                            : "border-slate-200 bg-slate-50 text-slate-500"
+                        }`}
                       >
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2
-                            className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${isPassed ? "text-emerald-600" : "text-slate-400"
+                        <CheckCircle2
+                          className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${
+                            isLengkap ? "text-emerald-600" : "text-slate-400"
+                          }`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <p className="font-semibold">{item.title}</p>
+                            <span
+                              className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
+                                isLengkap
+                                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                                  : "border-slate-200 bg-slate-100 text-slate-600"
                               }`}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-1">
-                              <p className="font-semibold">{item.title}</p>
-                              {found?.status && (
-                                <span
-                                  className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${found.status === "SESUAI"
-                                    ? "border-teal-200 bg-teal-50 text-teal-700"
-                                    : found.status === "SELESAI_DIPERBAIKI"
-                                      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                                      : found.status === "PERLU_PERBAIKAN"
-                                        ? "border-rose-200 bg-rose-50 text-rose-700"
-                                        : "border-slate-200 bg-slate-100 text-slate-600"
-                                    }`}
-                                >
-                                  {found.status === "SESUAI"
-                                    ? "Sesuai"
-                                    : found.status === "SELESAI_DIPERBAIKI"
-                                      ? "Selesai Diperbaiki"
-                                      : found.status === "PERLU_PERBAIKAN"
-                                        ? "Perlu Perbaikan"
-                                        : "Belum Dicek"}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-[11px] opacity-75">{item.description}</p>
-                            {found?.catatan && (
-                              <p className="mt-1.5 rounded border border-slate-200/60 bg-white/80 p-1.5 text-[11px] italic text-slate-700">
-                                Catatan: {found.catatan}
-                              </p>
-                            )}
+                            >
+                              {isLengkap ? "Lengkap" : "Belum Lengkap"}
+                            </span>
                           </div>
+                          <p className="text-[11px] opacity-75">{item.description}</p>
                         </div>
                       </div>
                     );
@@ -1199,7 +1212,7 @@ export function DynamicActionPanel({
           </div>
         )}
 
-        {/* ─── 1. READ-ONLY MACRO PROGRESS TRACKER (NO CLICK HANDLERS) ─── */}
+        {/* ─── 1. READ-ONLY MACRO PROGRESS TRACKER ─── */}
         {!isCancelled && (
           <section aria-labelledby="macro-stepper-heading" className="space-y-2">
             <h3 id="macro-stepper-heading" className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -1214,20 +1227,22 @@ export function DynamicActionPanel({
                 return (
                   <div
                     key={step.macro}
-                    className={`flex min-h-14 items-center gap-2.5 rounded-lg border p-3 text-sm transition-colors ${isStepCurrent
-                      ? "border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600/30"
-                      : isStepDone
-                        ? "border-slate-200 bg-slate-50/80 text-slate-700"
-                        : "border-slate-200 bg-white text-slate-400"
-                      }`}
+                    className={`flex min-h-14 items-center gap-2.5 rounded-lg border p-3 text-sm transition-colors ${
+                      isStepCurrent
+                        ? "border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600/30"
+                        : isStepDone
+                          ? "border-slate-200 bg-slate-50/80 text-slate-700"
+                          : "border-slate-200 bg-white text-slate-400"
+                    }`}
                   >
                     <span
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isStepDone
-                        ? "bg-teal-700 text-white"
-                        : isStepCurrent
-                          ? "bg-teal-600 text-white"
-                          : "bg-slate-100 text-slate-500"
-                        }`}
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                        isStepDone
+                          ? "bg-teal-700 text-white"
+                          : isStepCurrent
+                            ? "bg-teal-600 text-white"
+                            : "bg-slate-100 text-slate-500"
+                      }`}
                     >
                       {isStepDone ? (
                         <Check className="h-3.5 w-3.5" aria-label="Selesai" />
@@ -1239,7 +1254,7 @@ export function DynamicActionPanel({
                       <p className="font-semibold text-xs leading-4">{step.label}</p>
                       {isStepCurrent && (
                         <p className="text-[11px] font-medium text-teal-700 mt-0.5 truncate">
-                          {currentStage.label}
+                          {isProsesBank ? "Proses Pengajuan Bank" : currentStage.label}
                         </p>
                       )}
                     </div>
@@ -1255,7 +1270,7 @@ export function DynamicActionPanel({
           </section>
         )}
 
-        {/* ─── 2. "AKSI BERIKUTNYA" CARD (ONE PRIMARY ACTION AREA PER STAGE) ─── */}
+        {/* ─── 2. "AKSI BERIKUTNYA" CARD ─── */}
         {!isTerminal && (
           <section className="rounded-xl border border-teal-200/80 bg-white p-5 shadow-sm space-y-5 ring-1 ring-teal-600/10">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1265,27 +1280,25 @@ export function DynamicActionPanel({
                 </span>
                 <h3 className="text-base font-bold text-slate-900">
                   {isPemberkasan
-                    ? "Kelengkapan Dokumen Pemberkasan"
-                    : isKprMicroStage
-                      ? "Proses Pengajuan Bank (Wawancara / Verifikasi / SP3K)"
-                      : isKprSp3k
-                        ? "Pelaksanaan Akad Kredit"
-                        : currentStage.detail === "MENUNGGU_PELUNASAN"
-                          ? "Konfirmasi Pelunasan (Cash Keras)"
-                          : currentStage.detail === "PEMBAYARAN_DP"
-                            ? "Pemenuhan Uang Muka DP (Cash Tempo)"
-                            : currentStage.detail === "CICILAN_BERJALAN"
-                              ? "Progres Cicilan & Pelunasan (Cash Tempo)"
-                              : currentStage.detail === "PELUNASAN"
-                                ? "Pelaksanaan Akad / AJB"
-                                : currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB"
-                                  ? "Serah Terima Bangunan & Lahan (BAST)"
-                                  : `Lanjut ke ${nextStage?.label ?? "Tahap Berikutnya"}`}
+                    ? "Checklist Penerimaan Dokumen Pemberkasan"
+                    : isProsesBank
+                      ? "Proses Pengajuan Bank (KPR)"
+                      : currentStage.detail === "MENUNGGU_PELUNASAN"
+                        ? "Konfirmasi Pelunasan (Cash Keras)"
+                        : currentStage.detail === "PEMBAYARAN_DP"
+                          ? "Pemenuhan Uang Muka DP (Cash Tempo)"
+                          : currentStage.detail === "CICILAN_BERJALAN"
+                            ? "Progres Cicilan & Pelunasan (Cash Tempo)"
+                            : currentStage.detail === "PELUNASAN"
+                              ? "Pelaksanaan Akad / AJB"
+                              : currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB"
+                                ? "Serah Terima Bangunan & Lahan (BAST)"
+                                : `Lanjut ke ${nextStage?.label ?? "Tahap Berikutnya"}`}
                 </h3>
               </div>
             </div>
 
-            {/* ── STAGE A: PEMBERKASAN (ALL METHODS) ── */}
+            {/* ── STAGE A: PEMBERKASAN (CHECKLIST PENERIMAAN FISIK) ── */}
             {isPemberkasan && (
               <div className="space-y-4">
                 {/* Profile Summary & Edit Control */}
@@ -1294,7 +1307,6 @@ export function DynamicActionPanel({
                     <UserCheck className="h-4 w-4 text-teal-700 shrink-0" />
                     <span className="text-xs text-slate-600 font-medium">Profil Konsumen:</span>
                     <span className="text-xs font-bold text-slate-900">
-                      {/* {metodeBayar === "KPR" ? "KPR" : humanize(metodeBayar)} · {humanize(kategoriUnit)} ·{" "} */}
                       {statusPernikahan ? humanize(statusPernikahan) : (isKpr ? "Pernikahan (?)" : "Pernikahan (-)")} ·{" "}
                       {statusPekerjaan ? (statusPekerjaan === "TETAP" ? "Pegawai Tetap" : "Wirausaha") : (isKpr ? "Pekerjaan (?)" : "Pekerjaan (-)")}
                     </span>
@@ -1328,7 +1340,7 @@ export function DynamicActionPanel({
                           Profil Konsumen Belum Lengkap
                         </h4>
                         <p className="text-xs text-amber-900 mt-0.5 leading-relaxed">
-                          Daftar dokumen persyaratan bersifat dinamis berdasarkan status pernikahan dan status pekerjaan konsumen. Lengkapi profil terlebih dahulu untuk menampilkan daftar checklist berkas yang sesuai.
+                          Daftar dokumen persyaratan disesuaikan dengan status pernikahan dan status pekerjaan konsumen. Lengkapi profil terlebih dahulu untuk menampilkan checklist berkas yang sesuai.
                         </p>
                       </div>
                     </div>
@@ -1355,16 +1367,16 @@ export function DynamicActionPanel({
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div>
                           <p className="text-xs font-medium text-slate-800">
-                            Centang berkas yang telah diverifikasi fisik dan validitasnya.
+                            Centang dokumen yang telah diterima secara fisik dari konsumen.
                           </p>
                           {isKpr && (
                             <p className="text-[11px] text-slate-500">
-                              Form FPPA berstatus <span className="font-semibold text-amber-700">Bisa menyusul</span> (tidak menghalangi pengajuan KPR awal).
+                              Form FPPA berstatus <span className="font-semibold text-amber-700">Bisa menyusul</span> (tidak menghalangi pengajuan awal ke Bank).
                             </p>
                           )}
                         </div>
                         <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 text-nowrap self-start sm:self-auto">
-                          {verifiedRequiredCount} dari {requiredDocs.length} Dokumen Terverifikasi
+                          {verifiedRequiredCount} dari {requiredDocs.length} Dokumen Diterima
                         </span>
                       </div>
                     </div>
@@ -1388,10 +1400,11 @@ export function DynamicActionPanel({
                                 <label
                                   key={doc.key}
                                   htmlFor={id}
-                                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${checked
-                                    ? "border-teal-300 bg-teal-50/50"
-                                    : "border-slate-200 bg-white hover:bg-slate-50"
-                                    }`}
+                                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${
+                                    checked
+                                      ? "border-teal-300 bg-teal-50/50"
+                                      : "border-slate-200 bg-white hover:bg-slate-50"
+                                  }`}
                                 >
                                   <input
                                     id={id}
@@ -1419,11 +1432,11 @@ export function DynamicActionPanel({
                                       )}
                                       {checked ? (
                                         <span className="rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800">
-                                          Terverifikasi
+                                          Lengkap
                                         </span>
                                       ) : (
                                         <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
-                                          Belum verifikasi
+                                          Belum Lengkap
                                         </span>
                                       )}
                                     </div>
@@ -1454,7 +1467,7 @@ export function DynamicActionPanel({
                           disabledNew={!allRequiredVerified}
                           disabledNewReason={
                             !allRequiredVerified
-                              ? `Lengkapi dan verifikasi seluruh ${blockingRequiredDocs.length} dokumen wajib di atas (selain FPPA) sebelum mengajukan berkas ke Bank.`
+                              ? `Lengkapi seluruh ${blockingRequiredDocs.length} dokumen wajib di atas (selain FPPA) sebelum mengajukan berkas ke Bank.`
                               : undefined
                           }
                         />
@@ -1463,7 +1476,7 @@ export function DynamicActionPanel({
                       /* CTA for Cash */
                       <div className="pt-4 border-t border-slate-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-xs text-slate-500">
-                          Setelah berkas lengkap, transaksi dapat dilanjutkan ke tahap berikutnya.
+                          Setelah berkas lengkap, transaksi dapat dilanjutkan ke tahap pembayaran.
                         </p>
                         {canEdit && nextStage && (
                           <Button
@@ -1490,11 +1503,11 @@ export function DynamicActionPanel({
               </div>
             )}
 
-            {/* ── STAGE B: KPR WAWANCARA / OTS / VERIFIKASI ── */}
-            {isKprMicroStage && (
-              <div className="space-y-4">
-                <p className="text-xs text-slate-600">
-                  Tahapan proses bank dikelola secara langsung melalui kartu pengajuan bank di bawah. Klik tombol aksi status bank untuk memajukan, mencatat penolakan, atau membatalkan pengajuan.
+            {/* ── STAGE B: PROSES BANK (KPR) ── */}
+            {isProsesBank && (
+              <div className="space-y-5">
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Status perbankan dikelola secara independen per bank. Anda dapat memproses beberapa bank secara paralel, mencatat penolakan, atau menambah bank penyalur lainnya.
                 </p>
 
                 <KprSubmissionSection
@@ -1505,79 +1518,158 @@ export function DynamicActionPanel({
                   canEdit={canEdit}
                   hideHeader={true}
                 />
-              </div>
-            )}
 
-            {/* ── STAGE C: KPR SP3K (AKAD FORM) ── */}
-            {isKprSp3k && (
-              <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
-                <div className="rounded-lg border border-teal-200 bg-teal-50/60 p-3.5 flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <Building2 className="h-5 w-5 text-teal-700" />
-                    <div>
-                      <p className="text-xs font-semibold text-teal-900">
-                        Bank Pembiaya KPR Disetujui (SP3K Terbit)
-                      </p>
-                      <p className="text-sm font-bold text-slate-900">
-                        {activePengajuan ? activePengajuan.bank.nama : "Bank Utama"}
-                      </p>
+                {/* Form Akad Kredit aktif jika minimal satu bank SP3K */}
+                {hasSp3k && (
+                  <form
+                    onSubmit={handlePrimarySubmit}
+                    noValidate
+                    className="space-y-4 rounded-xl border border-teal-300 bg-teal-50/50 p-4 shadow-xs"
+                  >
+                    <div className="flex items-center justify-between border-b border-teal-200/80 pb-3">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="h-5 w-5 text-teal-700" />
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-teal-800">
+                            Persetujuan Bank (SP3K Terbit)
+                          </p>
+                          <p className="text-sm font-semibold text-slate-900">
+                            Bank Pembiaya: {approvedBankNames}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="rounded-md border border-teal-300 bg-white px-2.5 py-1 text-xs font-bold text-teal-800">
+                        Siap Akad Kredit
+                      </span>
                     </div>
-                  </div>
-                  <span className="rounded-md border border-teal-300 bg-white px-2 py-0.5 text-xs font-bold text-teal-800">
-                    SP3K Terbit
-                  </span>
-                </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
-                    <input
-                      id="fld-notaris"
-                      type="text"
-                      value={namaNotaris}
-                      disabled={!canEdit || isPending}
-                      onChange={(e) => {
-                        setNamaNotaris(e.target.value);
-                        if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
-                      }}
-                      placeholder="Nama Notaris / PPAT Rekanan"
-                      className={inputClass(Boolean(formErrors.notaris))}
-                    />
-                  </Field>
+                    {/* Radio group jika lebih dari satu bank SP3K */}
+                    {sp3kSubmissions.length > 1 && (
+                      <div className="rounded-lg border border-teal-200 bg-white p-3 space-y-2">
+                        <label className="block text-xs font-bold text-slate-800">
+                          Pilih Bank Pembiaya Utama (SP3K Terpilih) <span className="text-red-600">*</span>
+                        </label>
+                        <p className="text-[11px] text-slate-600">
+                          Terdapat {sp3kSubmissions.length} pengajuan berstatus SP3K. Pilih satu bank yang dipilih konsumen untuk pelaksanaan akad kredit.
+                        </p>
+                        <div className="space-y-2 pt-1">
+                          {sp3kSubmissions.map((sub) => {
+                            const isSelected = effectiveSelectedPengajuanId === sub.id;
+                            return (
+                              <label
+                                key={sub.id}
+                                className={`flex items-center justify-between rounded-lg border p-2.5 text-xs cursor-pointer transition-colors ${
+                                  isSelected
+                                    ? "border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600/30"
+                                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                                }`}
+                              >
+                                <div className="flex items-center gap-2.5">
+                                  <input
+                                    type="radio"
+                                    name="pengajuanTerpilihRadio"
+                                    checked={isSelected}
+                                    onChange={() => setSelectedPengajuanId(sub.id)}
+                                    disabled={!canEdit || isPending}
+                                    className="h-4 w-4 text-teal-600 focus:ring-teal-500"
+                                  />
+                                  <span className="font-semibold">{sub.bank.nama}</span>
+                                </div>
+                                <div className="text-right">
+                                  <span className="font-mono text-emerald-700 text-xs font-semibold">
+                                    SP3K #{sub.nomor_pengajuan}
+                                  </span>
+                                </div>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
 
-                  <Field id="fld-tglAkad" label="Tanggal Akad Kredit" required error={formErrors.tglAkad}>
-                    <input
-                      id="fld-tglAkad"
-                      type="date"
-                      value={tglAkad}
-                      disabled={!canEdit || isPending}
-                      onChange={(e) => {
-                        setTglAkad(e.target.value);
-                        if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
-                      }}
-                      className={inputClass(Boolean(formErrors.tglAkad))}
-                    />
-                  </Field>
-                </div>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
+                        <input
+                          id="fld-notaris"
+                          type="text"
+                          value={namaNotaris}
+                          disabled={!canEdit || isPending}
+                          onChange={(e) => {
+                            setNamaNotaris(e.target.value);
+                            if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
+                          }}
+                          placeholder="Nama Notaris / PPAT Rekanan"
+                          className={inputClass(Boolean(formErrors.notaris))}
+                        />
+                      </Field>
 
-                <div className="pt-3 border-t border-slate-100 flex justify-end">
-                  {canEdit && (
-                    <Button
-                      type="submit"
-                      disabled={isPending}
-                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
-                    >
-                      {isPending ? (
+                      <Field id="fld-rencanaAkad" label="Rencana Tanggal Akad" error={formErrors.rencanaAkad}>
+                        <input
+                          id="fld-rencanaAkad"
+                          type="date"
+                          value={rencanaAkadAt}
+                          disabled={!canEdit || isPending || isSavingJadwal}
+                          onChange={(e) => setRencanaAkadAt(e.target.value)}
+                          className={inputClass(false)}
+                        />
+                      </Field>
+
+                      <Field id="fld-tglAkad" label="Tanggal Akad Kredit Aktual" required error={formErrors.tglAkad}>
+                        <input
+                          id="fld-tglAkad"
+                          type="date"
+                          max={todayWIB()}
+                          value={tglAkad}
+                          disabled={!canEdit || isPending}
+                          onChange={(e) => {
+                            setTglAkad(e.target.value);
+                            if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
+                          }}
+                          className={inputClass(Boolean(formErrors.tglAkad))}
+                        />
+                      </Field>
+                    </div>
+
+                    <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 border-t border-teal-200/60">
+                      {canEdit && (
                         <>
-                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                          Menyimpan...
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            disabled={isPending || isSavingJadwal}
+                            onClick={handleSimpanJadwalAkad}
+                            className="text-xs font-semibold border-teal-400 text-teal-800 hover:bg-teal-100"
+                          >
+                            {isSavingJadwal ? (
+                              <>
+                                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                Menyimpan Jadwal...
+                              </>
+                            ) : (
+                              "Simpan Jadwal Akad"
+                            )}
+                          </Button>
+                          <Button
+                            type="submit"
+                            disabled={isPending}
+                            className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
+                          >
+                            {isPending ? (
+                              <>
+                                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                Menyimpan...
+                              </>
+                            ) : (
+                              "Akad Sudah Terlaksana"
+                            )}
+                          </Button>
                         </>
-                      ) : (
-                        "Lanjut ke Akad Kredit"
                       )}
-                    </Button>
-                  )}
-                </div>
-              </form>
+                    </div>
+                  </form>
+                )}
+              </div>
             )}
 
             {/* ── STAGE CASH 1: MENUNGGU PELUNASAN (CASH KERAS) ── */}
@@ -1615,8 +1707,9 @@ export function DynamicActionPanel({
                     <div className="rounded border border-slate-200 bg-white p-2.5">
                       <span className="block text-slate-500 text-[11px]">Sisa Pelunasan</span>
                       <span
-                        className={`font-mono font-bold ${(financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
-                          }`}
+                        className={`font-mono font-bold ${
+                          (financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                        }`}
                       >
                         {formatRupiah(financialSummary?.sisaPelunasan)}
                       </span>
@@ -1709,8 +1802,9 @@ export function DynamicActionPanel({
                     <div className="rounded border border-slate-200 bg-white p-2.5">
                       <span className="block text-slate-500 text-[11px]">Sisa Target DP</span>
                       <span
-                        className={`font-mono font-bold ${(financialSummary?.sisaDp ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
-                          }`}
+                        className={`font-mono font-bold ${
+                          (financialSummary?.sisaDp ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                        }`}
                       >
                         {formatRupiah(financialSummary?.sisaDp)}
                       </span>
@@ -1787,8 +1881,9 @@ export function DynamicActionPanel({
                     <div className="rounded border border-slate-200 bg-white p-2.5">
                       <span className="block text-slate-500 text-[11px]">Sisa Pelunasan</span>
                       <span
-                        className={`font-mono font-bold ${(financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
-                          }`}
+                        className={`font-mono font-bold ${
+                          (financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                        }`}
                       >
                         {formatRupiah(financialSummary?.sisaPelunasan)}
                       </span>
@@ -1866,7 +1961,7 @@ export function DynamicActionPanel({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
                     <input
                       id="fld-notaris"
@@ -1882,10 +1977,22 @@ export function DynamicActionPanel({
                     />
                   </Field>
 
-                  <Field id="fld-tglAkad" label="Tanggal Pelaksanaan Akad (AJB)" required error={formErrors.tglAkad}>
+                  <Field id="fld-rencanaAkad" label="Rencana Tanggal AJB">
+                    <input
+                      id="fld-rencanaAkad"
+                      type="date"
+                      value={rencanaAkadAt}
+                      disabled={!canEdit || isPending || isSavingJadwal}
+                      onChange={(e) => setRencanaAkadAt(e.target.value)}
+                      className={inputClass(false)}
+                    />
+                  </Field>
+
+                  <Field id="fld-tglAkad" label="Tanggal Pelaksanaan AJB Aktual" required error={formErrors.tglAkad}>
                     <input
                       id="fld-tglAkad"
                       type="date"
+                      max={todayWIB()}
                       value={tglAkad}
                       disabled={!canEdit || isPending}
                       onChange={(e) => {
@@ -1897,35 +2004,66 @@ export function DynamicActionPanel({
                   </Field>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex justify-end">
+                <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
                   {canEdit && nextStage && (
-                    <Button
-                      type="submit"
-                      disabled={isPending}
-                      className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
-                    >
-                      {isPending ? (
-                        <>
-                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                          Menyimpan...
-                        </>
-                      ) : (
-                        `Lanjut ke ${nextStage.label}`
-                      )}
-                    </Button>
+                    <>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={isPending || isSavingJadwal}
+                        onClick={handleSimpanJadwalAkad}
+                        className="text-xs font-semibold border-teal-400 text-teal-800 hover:bg-teal-100"
+                      >
+                        {isSavingJadwal ? (
+                          <>
+                            <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                            Menyimpan Jadwal...
+                          </>
+                        ) : (
+                          "Simpan Jadwal AJB"
+                        )}
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
+                      >
+                        {isPending ? (
+                          <>
+                            <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                            Menyimpan...
+                          </>
+                        ) : (
+                          "AJB Sudah Terlaksana"
+                        )}
+                      </Button>
+                    </>
                   )}
                 </div>
               </form>
             )}
 
             {/* ── STAGE E: AKAD -> BAST (KPR AKAD KREDIT ATAU CASH AJB) ── */}
-            {(currentStage.detail === "AKAD_KREDIT" || currentStage.detail === "AJB") && (
+            {isAkadStage && (
               <form onSubmit={handlePrimarySubmit} noValidate className="space-y-4">
-                <div className="max-w-sm">
-                  <Field id="fld-tglBast" label="Tanggal Serah Terima (BAST)" required error={formErrors.tglBast}>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-lg">
+                  <Field id="fld-rencanaBast" label="Rencana Tanggal Serah Terima">
+                    <input
+                      id="fld-rencanaBast"
+                      type="date"
+                      value={rencanaBastAt}
+                      disabled={!canEdit || isPending || isSavingJadwal}
+                      onChange={(e) => setRencanaBastAt(e.target.value)}
+                      className={inputClass(false)}
+                    />
+                  </Field>
+
+                  <Field id="fld-tglBast" label="Tanggal Serah Terima (BAST) Aktual" required error={formErrors.tglBast}>
                     <input
                       id="fld-tglBast"
                       type="date"
+                      max={todayWIB()}
                       value={tglBast}
                       disabled={!canEdit || isPending}
                       onChange={(e) => {
@@ -1935,6 +2073,28 @@ export function DynamicActionPanel({
                       className={inputClass(Boolean(formErrors.tglBast))}
                     />
                   </Field>
+                </div>
+
+                <div className="pt-1 flex justify-start">
+                  {canEdit && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={isPending || isSavingJadwal}
+                      onClick={handleSimpanJadwalBast}
+                      className="text-xs font-semibold border-teal-400 text-teal-800 hover:bg-teal-100"
+                    >
+                      {isSavingJadwal ? (
+                        <>
+                          <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                          Menyimpan Rencana...
+                        </>
+                      ) : (
+                        "Simpan Rencana BAST"
+                      )}
+                    </Button>
+                  )}
                 </div>
 
                 {isKavling ? (
@@ -1974,56 +2134,44 @@ export function DynamicActionPanel({
                 ) : (
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-xs text-slate-600">
-                        Inspeksi fisik per item sebelum serah terima. Catat temuan jika perlu perbaikan.
-                      </p>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span
-                          className={`rounded-md border px-2.5 py-1 text-xs font-bold ${okCount === MASTER_BAST_ITEMS.length
+                      <div>
+                        <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                          Checklist Serah Terima Fisik Unit
+                        </h4>
+                        <p className="text-xs text-slate-600">
+                          Pastikan seluruh item berikut telah diterima dan diverifikasi fisik sebelum menyelesaikan BAST.
+                        </p>
+                      </div>
+                      <span
+                        className={`rounded-md border px-2.5 py-1 text-xs font-bold ${
+                          lengkapBastCount === MASTER_BAST_ITEMS.length
                             ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                             : "border-slate-200 bg-slate-50 text-slate-700"
-                            }`}
-                        >
-                          {okCount}/{MASTER_BAST_ITEMS.length} OK
-                        </span>
-                        {perluPerbaikanCount > 0 && (
-                          <span className="rounded-md border border-rose-200 bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700">
-                            · {perluPerbaikanCount} perlu perbaikan
-                          </span>
-                        )}
-                      </div>
+                        }`}
+                      >
+                        {lengkapBastCount}/{MASTER_BAST_ITEMS.length} Lengkap
+                      </span>
                     </div>
 
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {MASTER_BAST_ITEMS.map((item) => {
-                        const itemState = inspeksiMap[item.key] || {
-                          status: "BELUM_DICEK",
+                        const itemState = checklistMap[item.key] || {
+                          status: "BELUM_LENGKAP",
                           catatan: "",
-                          isPerluPerbaikanOpen: false,
                         };
                         const isSavingThis = Boolean(savingItems[item.key]);
-                        const isOk =
-                          itemState.status === "SESUAI" ||
-                          itemState.status === "SELESAI_DIPERBAIKI";
-                        const isPerlu = itemState.status === "PERLU_PERBAIKAN";
-                        const isSelesai = itemState.status === "SELESAI_DIPERBAIKI";
-                        const showCatatanInput =
-                          itemState.isPerluPerbaikanOpen || isPerlu || isSelesai;
+                        const isLengkap = itemState.status === "LENGKAP";
 
                         return (
                           <div
                             key={item.key}
-                            id={`bast-item-${item.key}`}
-                            tabIndex={-1}
-                            className={`flex flex-col justify-between rounded-lg border p-3.5 text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500/30 ${isOk
-                              ? "border-teal-200 bg-teal-50/30"
-                              : isPerlu
-                                ? "border-rose-200 bg-rose-50/30"
+                            className={`flex flex-col justify-between rounded-lg border p-3.5 text-xs transition-colors ${
+                              isLengkap
+                                ? "border-teal-300 bg-teal-50/40"
                                 : "border-slate-200 bg-white"
-                              }`}
+                            }`}
                           >
                             <div>
-                              {/* Header & Status Badge */}
                               <div className="flex items-start justify-between gap-2">
                                 <span className="font-semibold text-slate-900">
                                   {item.title}
@@ -2033,22 +2181,13 @@ export function DynamicActionPanel({
                                     <Loader2 className="h-3 w-3 animate-spin text-slate-400" />
                                   )}
                                   <span
-                                    className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${itemState.status === "SESUAI"
-                                      ? "border-teal-200 bg-teal-50 text-teal-800"
-                                      : itemState.status === "SELESAI_DIPERBAIKI"
+                                    className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
+                                      isLengkap
                                         ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                                        : itemState.status === "PERLU_PERBAIKAN"
-                                          ? "border-rose-200 bg-rose-50 text-rose-800"
-                                          : "border-slate-200 bg-slate-100 text-slate-500"
-                                      }`}
+                                        : "border-slate-200 bg-slate-100 text-slate-500"
+                                    }`}
                                   >
-                                    {itemState.status === "SESUAI"
-                                      ? "Sesuai"
-                                      : itemState.status === "SELESAI_DIPERBAIKI"
-                                        ? "Selesai Diperbaiki"
-                                        : itemState.status === "PERLU_PERBAIKAN"
-                                          ? "Perlu Perbaikan"
-                                          : "Belum Dicek"}
+                                    {isLengkap ? "Lengkap" : "Belum Lengkap"}
                                   </span>
                                 </div>
                               </div>
@@ -2056,131 +2195,37 @@ export function DynamicActionPanel({
                               <p className="mt-1 text-[11px] text-slate-500">
                                 {item.description}
                               </p>
-
-                              {/* Action Buttons: Sesuai & Perlu Perbaikan */}
-                              <div className="mt-3 flex items-center gap-2">
-                                <button
-                                  type="button"
-                                  id={`btn-sesuai-${item.key}`}
-                                  aria-label={`Tandai ${item.title} sesuai`}
-                                  disabled={!canEdit || isPending || isSavingThis}
-                                  onClick={() => handleMarkSesuai(item.key)}
-                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${itemState.status === "SESUAI"
-                                    ? "border-teal-700 bg-teal-700 text-white shadow-sm"
-                                    : "border-slate-300 bg-white text-slate-700 hover:border-teal-500 hover:bg-teal-50/50"
-                                    }`}
-                                >
-                                  <span className="flex items-center justify-center gap-1">
-                                    <Check className="h-3.5 w-3.5" />
-                                    Sesuai
-                                  </span>
-                                </button>
-
-                                <button
-                                  type="button"
-                                  aria-label={`Tandai ${item.title} perlu perbaikan`}
-                                  disabled={!canEdit || isPending || isSavingThis}
-                                  onClick={() => handleOpenPerluPerbaikan(item.key)}
-                                  className={`flex-1 rounded-md border px-2.5 py-1.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${isPerlu
-                                    ? "border-rose-600 bg-rose-600 text-white shadow-sm"
-                                    : itemState.isPerluPerbaikanOpen && !isOk
-                                      ? "border-rose-400 bg-rose-50 text-rose-800"
-                                      : "border-slate-300 bg-white text-slate-700 hover:border-rose-400 hover:bg-rose-50/50"
-                                    }`}
-                                >
-                                  <span className="flex items-center justify-center gap-1">
-                                    <AlertTriangle className="h-3.5 w-3.5" />
-                                    Perlu Perbaikan
-                                  </span>
-                                </button>
-                              </div>
                             </div>
 
-                            {/* Section Catatan & Tombol Sudah Diperbaiki */}
-                            {showCatatanInput && (
-                              <div className="mt-3 border-t border-slate-200/80 pt-2.5 space-y-2">
-                                <div>
-                                  <label
-                                    htmlFor={`bast-catatan-${item.key}`}
-                                    className="block text-[11px] font-semibold text-slate-700 mb-1"
-                                  >
-                                    Catatan Temuan / Cacat Fisik{" "}
-                                    <span className="text-red-600">*</span>
-                                  </label>
-                                  <textarea
-                                    id={`bast-catatan-${item.key}`}
-                                    aria-label={`Catatan perbaikan ${item.title}`}
-                                    value={itemState.catatan}
-                                    readOnly={isSelesai || !canEdit || isSavingThis}
-                                    onChange={(e) =>
-                                      handleCatatanChange(item.key, e.target.value)
-                                    }
-                                    placeholder="Jelaskan bagian yang cacat / perlu diperbaiki (min. 3 karakter)..."
-                                    rows={2}
-                                    className={`w-full rounded-md border p-2 text-xs outline-none focus:ring-1 ${isSelesai
-                                      ? "bg-slate-100 text-slate-600 border-slate-300 cursor-not-allowed"
-                                      : itemState.error
-                                        ? "border-red-400 focus:border-red-500 focus:ring-red-400/25 bg-red-50/30"
-                                        : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20 bg-white"
-                                      }`}
-                                  />
-                                  {itemState.error && (
-                                    <p
-                                      role="alert"
-                                      className="mt-1 text-[11px] font-medium text-red-600"
-                                    >
-                                      {itemState.error}
-                                    </p>
-                                  )}
-                                </div>
-
-                                <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
-                                  {!isSelesai && (
-                                    <button
-                                      type="button"
-                                      aria-label={`Simpan catatan perbaikan ${item.title}`}
-                                      disabled={!canEdit || isPending || isSavingThis}
-                                      onClick={() => handleSavePerluPerbaikan(item.key)}
-                                      className="rounded-md border border-rose-300 bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-800 hover:bg-rose-100 disabled:opacity-50 transition-colors"
-                                    >
-                                      {isPerlu ? "Perbarui Catatan" : "Simpan Catatan Temuan"}
-                                    </button>
-                                  )}
-
-                                  {isPerlu && (
-                                    <button
-                                      type="button"
-                                      aria-label={`Tandai perbaikan ${item.title} sudah selesai`}
-                                      disabled={!canEdit || isPending || isSavingThis}
-                                      onClick={() => handleMarkSudahDiperbaiki(item.key)}
-                                      className="flex items-center gap-1 rounded-md bg-emerald-700 px-2.5 py-1 text-[11px] font-semibold text-white hover:bg-emerald-800 disabled:opacity-50 transition-colors shadow-sm"
-                                    >
-                                      <CheckCircle2 className="h-3 w-3" />
-                                      Sudah diperbaiki
-                                    </button>
-                                  )}
-
-                                  {isSelesai && (
-                                    <div className="flex w-full items-center justify-between text-[11px] text-emerald-800 font-medium">
-                                      <span className="flex items-center gap-1">
-                                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                                        Perbaikan terverifikasi selesai
-                                      </span>
-                                      {canEdit && (
-                                        <button
-                                          type="button"
-                                          aria-label={`Buka kembali catatan ${item.title}`}
-                                          onClick={() => handleOpenPerluPerbaikan(item.key)}
-                                          className="text-slate-500 hover:text-slate-800 underline text-[10px]"
-                                        >
-                                          Ubah Catatan
-                                        </button>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
+                            <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                              <span className="text-[11px] text-slate-500">
+                                {isLengkap ? "Fisik telah diterima" : "Belum diperiksa/diterima"}
+                              </span>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant={isLengkap ? "outline" : "default"}
+                                disabled={!canEdit || isPending || isSavingThis}
+                                onClick={() => handleToggleBastItem(item.key)}
+                                className={`h-7 px-2.5 text-xs font-semibold ${
+                                  isLengkap
+                                    ? "border-slate-300 text-slate-700 hover:bg-slate-100"
+                                    : "bg-teal-700 text-white hover:bg-teal-800"
+                                }`}
+                              >
+                                {isLengkap ? (
+                                  <>
+                                    <Check className="mr-1 h-3 w-3 text-emerald-600" />
+                                    Tandai Belum Lengkap
+                                  </>
+                                ) : (
+                                  <>
+                                    <Check className="mr-1 h-3 w-3" />
+                                    Tandai Lengkap
+                                  </>
+                                )}
+                              </Button>
+                            </div>
                           </div>
                         );
                       })}
@@ -2230,8 +2275,9 @@ export function DynamicActionPanel({
                 >
                   <span>⋯ Opsi lainnya</span>
                   <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-200 ${showOtherOptions ? "rotate-180" : ""
-                      }`}
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                      showOtherOptions ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
 
@@ -2298,7 +2344,7 @@ export function DynamicActionPanel({
                             onClick={handleRegressionSubmit}
                             className="h-8 text-xs font-semibold border-amber-300 text-amber-800 hover:bg-amber-50"
                           >
-                            <Undo2 className="mr-1 h-3.5 w-3.5" />
+                            <Undo2 className="mr-1.5 h-3.5 w-3.5" />
                             Mundur ke Tahap Dipilih
                           </Button>
                         </div>
@@ -2338,7 +2384,7 @@ export function DynamicActionPanel({
                           onClick={handleCancelSubmit}
                           className="h-8 bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
                         >
-                          <Ban className="mr-1 h-3.5 w-3.5" />
+                          <Ban className="mr-1.5 h-3.5 w-3.5" />
                           Batalkan Transaksi
                         </Button>
                       </div>

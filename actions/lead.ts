@@ -13,6 +13,7 @@ import {
   mapToSumberLead,
 } from "@/lib/lead-utils";
 import { Prisma, SumberLead } from "@/generated/prisma";
+import { logActivity } from "@/lib/activity/log";
 
 export interface CreateLeadResponse {
   success: boolean;
@@ -102,9 +103,15 @@ function computeLeadTahap(lead: unknown): LeadTahap {
     return "LOST";
   }
 
+  const isTrxActive = (trx?: Record<string, unknown> | null): boolean => {
+    if (!trx || trx.closing_at == null) return false;
+    if (trx.tahap_detail === "BATAL" || trx.status_transaksi === "BATAL") return false;
+    return true;
+  };
+
   // 2. If transaksi?.closing_at is not null (excluding BATAL) -> return 'CLOSING'
   const directTrx = l.transaksi as Record<string, unknown> | undefined;
-  if (directTrx?.closing_at != null && directTrx?.status_transaksi !== "BATAL") {
+  if (isTrxActive(directTrx)) {
     return "CLOSING";
   }
 
@@ -114,7 +121,7 @@ function computeLeadTahap(lead: unknown): LeadTahap {
         const trx = (item as Record<string, unknown>).transaksi as
           | Record<string, unknown>
           | undefined;
-        return trx?.closing_at != null && trx?.status_transaksi !== "BATAL";
+        return isTrxActive(trx);
       }
       return false;
     });
@@ -122,7 +129,7 @@ function computeLeadTahap(lead: unknown): LeadTahap {
   } else if (l.itj && typeof l.itj === "object") {
     const singleItj = l.itj as Record<string, unknown>;
     const trx = singleItj.transaksi as Record<string, unknown> | undefined;
-    if (trx?.closing_at != null && trx?.status_transaksi !== "BATAL") return "CLOSING";
+    if (isTrxActive(trx)) return "CLOSING";
   }
 
   if (l.customer && typeof l.customer === "object") {
@@ -130,7 +137,7 @@ function computeLeadTahap(lead: unknown): LeadTahap {
     if (Array.isArray(cust.transaksi)) {
       const hasClosed = cust.transaksi.some((trx) => {
         const t = trx as Record<string, unknown>;
-        return t?.closing_at != null && t?.status_transaksi !== "BATAL";
+        return isTrxActive(t);
       });
       if (hasClosed) return "CLOSING";
     }
@@ -210,32 +217,76 @@ export async function createLead(input: LeadInput): Promise<CreateLeadResponse> 
     const isValidFollowUp = parsedFollowUpDate && !isNaN(parsedFollowUpDate.getTime());
     const hasInitialActivity = Boolean(effectiveNotes || isValidFollowUp);
 
-    const newLead = await prisma.lead.create({
-      data: {
-        nama: nama.trim(),
-        no_hp: cleanNoHp,
-        sumber: mappedSumber,
-        minat_tipe: minat_tipe ? minat_tipe.trim() : null,
-        marketing_id: assignedMarketingId,
-        last_activity_at: hasInitialActivity ? new Date() : null,
-        next_follow_up_at: isValidFollowUp ? parsedFollowUpDate : null,
-        survei_jadwal_at: null,
-        survei_selesai_at: null,
-        lost_at: null,
-        lost_reason: null,
-        ...(hasInitialActivity &&
-          actorUserId && {
-          aktivitas: {
-            create: {
-              user_id: actorUserId,
-              jenis: "WHATSAPP",
-              hasil: "TERTARIK",
-              catatan: effectiveNotes || null,
-              tgl_follow_up: isValidFollowUp ? parsedFollowUpDate : null,
+    const newLead = await prisma.$transaction(async (tx) => {
+      const lead = await tx.lead.create({
+        data: {
+          nama: nama.trim(),
+          no_hp: cleanNoHp,
+          sumber: mappedSumber,
+          minat_tipe: minat_tipe ? minat_tipe.trim() : null,
+          marketing_id: assignedMarketingId,
+          last_activity_at: hasInitialActivity ? new Date() : null,
+          next_follow_up_at: isValidFollowUp ? parsedFollowUpDate : null,
+          survei_jadwal_at: null,
+          survei_selesai_at: null,
+          lost_at: null,
+          lost_reason: null,
+          ...(hasInitialActivity &&
+            actorUserId && {
+            aktivitas: {
+              create: {
+                user_id: actorUserId,
+                jenis: "WHATSAPP",
+                hasil: "TERTARIK",
+                catatan: effectiveNotes || null,
+                tgl_follow_up: isValidFollowUp ? parsedFollowUpDate : null,
+              },
             },
+          }),
+        },
+      });
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: lead.id,
+        action: "LEAD_CREATED",
+        leadId: lead.id,
+        actorId: sessionUserId || assignedMarketingId || null,
+        summaryContext: {
+          actorName: session?.user?.name,
+          leadName: lead.nama,
+          sumber: lead.sumber,
+        },
+        after: {
+          id: lead.id,
+          nama: lead.nama,
+          sumber: lead.sumber,
+          minat_tipe: lead.minat_tipe,
+          marketing_id: lead.marketing_id,
+        },
+      });
+
+      if (hasInitialActivity && actorUserId) {
+        await logActivity(tx, {
+          entityType: "LEAD",
+          entityId: lead.id,
+          action: "LEAD_FOLLOWUP_WHATSAPP",
+          leadId: lead.id,
+          actorId: actorUserId,
+          summaryContext: {
+            actorName: session?.user?.name,
+            leadName: lead.nama,
+            hasil: "TERTARIK",
           },
-        }),
-      },
+          after: {
+            jenis: "WHATSAPP",
+            hasil: "TERTARIK",
+            tgl_follow_up: isValidFollowUp ? parsedFollowUpDate : null,
+          },
+        });
+      }
+
+      return lead;
     });
 
     // Revalidate relevant routes
@@ -298,8 +349,8 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
       } else if (norm === "CLOSING" || norm === "ITJ") {
         where.lost_at = null;
         where.OR = [
-          { itj: { some: { transaksi: { closing_at: { not: null }, status_transaksi: { not: "BATAL" } } } } },
-          { customer: { transaksi: { some: { closing_at: { not: null }, status_transaksi: { not: "BATAL" } } } } },
+          { itj: { some: { transaksi: { tahap_detail: { not: "BATAL" } } } } },
+          { customer: { transaksi: { some: { tahap_detail: { not: "BATAL" } } } } },
         ];
       } else if (norm === "SUDAH SURVEI" || norm === "SUDAH_SURVEI") {
         where.survei_selesai_at = { not: null };
@@ -352,7 +403,7 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
                 select: {
                   id: true,
                   closing_at: true,
-                  status_transaksi: true,
+                  tahap_detail: true,
                 },
               },
             },
@@ -364,7 +415,7 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
                 select: {
                   id: true,
                   closing_at: true,
-                  status_transaksi: true,
+                  tahap_detail: true,
                 },
               },
             },
@@ -395,8 +446,8 @@ export async function getLeads(filters: LeadFilter = {}): Promise<GetLeadsRespon
       const itjTrx = l.itj?.[0]?.transaksi;
       const custTrx = l.customer?.transaksi?.[0];
       const activeTrx =
-        (itjTrx?.status_transaksi !== "BATAL" ? itjTrx : null) ||
-        (custTrx?.status_transaksi !== "BATAL" ? custTrx : null);
+        (itjTrx?.tahap_detail !== "BATAL" ? itjTrx : null) ||
+        (custTrx?.tahap_detail !== "BATAL" ? custTrx : null);
       const closingAtDate = activeTrx?.closing_at || null;
       const transaksiId = activeTrx?.id || null;
 
@@ -660,7 +711,13 @@ export async function reassignLead(
     // Verify lead exists
     const lead = await prisma.lead.findUnique({
       where: { id: parsedLeadId },
-      select: { id: true, nama: true, marketing_id: true },
+      select: {
+        id: true,
+        nama: true,
+        marketing_id: true,
+        marketing: { select: { id: true, nama: true } },
+        itj: { select: { id: true } },
+      },
     });
 
     if (!lead) {
@@ -671,19 +728,79 @@ export async function reassignLead(
       };
     }
 
-    // Update lead with new marketing PIC
-    const updated = await prisma.lead.update({
-      where: { id: parsedLeadId },
-      data: {
-        marketing_id: targetMarketing.id,
-        updated_at: new Date(),
-      },
+    // Status Guard: Lock if lead has already reached ITJ / Closing
+    if (lead.itj && lead.itj.length > 0) {
+      return {
+        success: false,
+        message: "Lead yang sudah mencapai tahap ITJ / closing tidak dapat dialihkan (handover terkunci).",
+        error: "Lead yang sudah mencapai tahap ITJ / closing tidak dapat dialihkan (handover terkunci).",
+      };
+    }
+
+    if (lead.marketing_id === parsedMarketingId) {
+      return {
+        success: false,
+        message: `Lead sudah ditugaskan kepada ${targetMarketing.nama}`,
+        error: `Lead sudah ditugaskan kepada ${targetMarketing.nama}`,
+      };
+    }
+
+    const now = new Date();
+    const prevPicName = lead.marketing?.nama || "Sebelumnya";
+    const actorId = Number(session.user.id);
+
+    // Update lead with new marketing PIC inside transaction with audit logging
+    const updated = await prisma.$transaction(async (tx) => {
+      const updatedLead = await tx.lead.update({
+        where: { id: parsedLeadId },
+        data: {
+          marketing_id: targetMarketing.id,
+          updated_at: now,
+          last_activity_at: now,
+        },
+      });
+
+      await tx.aktivitas.create({
+        data: {
+          lead_id: parsedLeadId,
+          user_id: actorId,
+          jenis: "LAINNYA",
+          hasil: "TERTARIK",
+          catatan: `[HANDOVER PIC LEAD] Ditugaskan oleh ${session.user?.name || "Manager"} dari ${prevPicName} ke ${targetMarketing.nama}.`,
+          created_at: now,
+        },
+      });
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: parsedLeadId,
+        action: "LEAD_HANDOVER",
+        leadId: parsedLeadId,
+        actorId,
+        summaryContext: {
+          actorName: session.user?.name,
+          leadName: lead.nama,
+          oldPicName: prevPicName,
+          newPicName: targetMarketing.nama,
+        },
+        before: {
+          marketing_id: lead.marketing_id,
+          marketing_nama: prevPicName,
+        },
+        after: {
+          marketing_id: targetMarketing.id,
+          marketing_nama: targetMarketing.nama,
+        },
+      });
+
+      return updatedLead;
     });
 
     // Revalidate relevant pages
     revalidatePath("/manager/lead");
     revalidatePath("/admin/lead");
     revalidatePath("/marketing/lead");
+    revalidatePath("/manager/aktivitas");
     revalidatePath(`/marketing/lead/${parsedLeadId}`);
 
     return {
@@ -717,7 +834,7 @@ export async function scheduleSurvey(
     // Fetch lead to get marketing_id if session user_id is missing
     const lead = await prisma.lead.findUnique({
       where: { id: leadId },
-      select: { id: true, marketing_id: true },
+      select: { id: true, nama: true, marketing_id: true, survei_jadwal_at: true },
     });
 
     if (!lead) {
@@ -733,8 +850,8 @@ export async function scheduleSurvey(
     }
 
     const now = new Date();
-    await prisma.$transaction([
-      prisma.lead.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.lead.update({
         where: { id: leadId },
         data: {
           survei_jadwal_at: parsedDate,
@@ -744,8 +861,9 @@ export async function scheduleSurvey(
           lost_reason: null,
           updated_at: now,
         },
-      }),
-      prisma.aktivitas.create({
+      });
+
+      await tx.aktivitas.create({
         data: {
           lead_id: leadId,
           user_id: userId,
@@ -761,8 +879,28 @@ export async function scheduleSurvey(
           })}`,
           tgl_follow_up: parsedDate,
         },
-      }),
-    ]);
+      });
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: leadId,
+        action: "LEAD_SURVEY_SCHEDULED",
+        leadId,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          leadName: lead.nama,
+          newDate: parsedDate.toLocaleDateString("id-ID", {
+            weekday: "long",
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          }),
+        },
+        before: { survei_jadwal_at: lead.survei_jadwal_at },
+        after: { survei_jadwal_at: parsedDate },
+      });
+    });
 
     revalidatePath(`/marketing/lead/${leadId}`);
     revalidatePath("/marketing/lead");
@@ -788,7 +926,7 @@ export async function completeSurvey(
 
     const lead = await prisma.lead.findUnique({
       where: { id: leadId },
-      select: { id: true, marketing_id: true },
+      select: { id: true, nama: true, marketing_id: true, survei_selesai_at: true },
     });
 
     if (!lead) {
@@ -803,8 +941,8 @@ export async function completeSurvey(
       return { success: false, message: "Pengguna penanggung jawab tidak teridentifikasi" };
     }
 
-    await prisma.$transaction([
-      prisma.lead.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.lead.update({
         where: { id: leadId },
         data: {
           survei_selesai_at: finalDate,
@@ -814,8 +952,9 @@ export async function completeSurvey(
           lost_reason: null,
           updated_at: now,
         },
-      }),
-      prisma.aktivitas.create({
+      });
+
+      await tx.aktivitas.create({
         data: {
           lead_id: leadId,
           user_id: userId,
@@ -827,8 +966,22 @@ export async function completeSurvey(
             year: "numeric",
           })}`,
         },
-      }),
-    ]);
+      });
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: leadId,
+        action: "LEAD_SURVEY_COMPLETED",
+        leadId,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          leadName: lead.nama,
+        },
+        before: { survei_selesai_at: lead.survei_selesai_at },
+        after: { survei_selesai_at: finalDate },
+      });
+    });
 
     revalidatePath(`/marketing/lead/${leadId}`);
     revalidatePath("/marketing/lead");
@@ -855,7 +1008,7 @@ export async function markLeadLost(
     const session = await auth();
     const lead = await prisma.lead.findUnique({
       where: { id: leadId },
-      select: { id: true, marketing_id: true },
+      select: { id: true, nama: true, marketing_id: true, lost_at: true, lost_reason: true },
     });
 
     if (!lead) {
@@ -871,8 +1024,8 @@ export async function markLeadLost(
     }
 
     const now = new Date();
-    await prisma.$transaction([
-      prisma.lead.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.lead.update({
         where: { id: leadId },
         data: {
           lost_at: now,
@@ -881,8 +1034,9 @@ export async function markLeadLost(
           next_follow_up_at: null,
           updated_at: now,
         },
-      }),
-      prisma.aktivitas.create({
+      });
+
+      await tx.aktivitas.create({
         data: {
           lead_id: leadId,
           user_id: userId,
@@ -890,8 +1044,23 @@ export async function markLeadLost(
           hasil: "TIDAK_JADI",
           catatan: `[LEAD LOST] ${reason.trim()}`,
         },
-      }),
-    ]);
+      });
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: leadId,
+        action: "LEAD_LOST",
+        leadId,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          leadName: lead.nama,
+          alasan: reason.trim(),
+        },
+        before: { lost_at: lead.lost_at, lost_reason: lead.lost_reason },
+        after: { lost_at: now, lost_reason: reason.trim() },
+      });
+    });
 
     revalidatePath(`/marketing/lead/${leadId}`);
     revalidatePath("/marketing/lead");

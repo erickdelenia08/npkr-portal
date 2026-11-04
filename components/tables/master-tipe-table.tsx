@@ -145,11 +145,11 @@ export function MasterTipeTable({
                     <td className="px-5 py-3.5 text-slate font-medium">
                       {tipe.kategori === "KAVLING" ? (
                         <span>
-                          <span className="text-fog">0 (Kavling)</span> / {tipe.luas_tanah} m²
+                          <span className="text-fog">—</span> / {tipe.luas_tanah} m²
                         </span>
                       ) : (
                         <span>
-                          {tipe.luas_bangunan || 0} m² / {tipe.luas_tanah} m²
+                          {tipe.luas_bangunan ?? "—"} m² / {tipe.luas_tanah} m²
                         </span>
                       )}
                     </td>

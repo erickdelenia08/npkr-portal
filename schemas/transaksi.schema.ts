@@ -75,10 +75,8 @@ export const JenisDokumenEnum = z.enum([
 ]);
 
 export const StatusDokumenEnum = z.enum([
-  "BELUM_DIUNGGAH",
-  "MENUNGGU_VERIFIKASI",
-  "PERLU_REVISI",
-  "TERVERIFIKASI",
+  "BELUM_LENGKAP",
+  "LENGKAP",
 ]);
 
 export const verifyDokumenSchema = z.object({
@@ -93,17 +91,18 @@ export type VerifyDokumenInput = z.infer<typeof verifyDokumenSchema>;
 
 export const TahapDetailEnum = z.enum([
   "PENGUMPULAN_DOKUMEN",
-  "WAWANCARA",
-  "OTS",
-  "VERIFIKASI",
-  "SP3K",
+  "PROSES_BANK",
+  // KPR
   "AKAD_KREDIT",
+  // Cash Keras
   "PEMBERKASAN_LEGALITAS",
   "MENUNGGU_PELUNASAN",
+  // Cash Tempo
   "PEMBERKASAN_PPJB",
   "PEMBAYARAN_DP",
   "CICILAN_BERJALAN",
   "PELUNASAN",
+  // Bersama
   "AJB",
   "BAST",
   "BATAL",
@@ -114,7 +113,6 @@ export const TahapTransaksiEnum = z.enum([
   "PROSES_BANK",
   "PEMBAYARAN",
   "AKAD_AJB",
-  "PEMBANGUNAN",
   "SERAH_TERIMA",
   "BATAL",
 ]);
@@ -123,13 +121,17 @@ export const updateTransactionStatusSchema = z.object({
   transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
   leadId: z.number().int().positive("ID Lead tidak valid"),
   tahapDetail: TahapDetailEnum,
+  fromDetail: TahapDetailEnum.optional(),
+  version: z.number().int().nonnegative().optional(),
   status: z.string().trim().optional(),
-  namaBank: z.string().trim().optional().nullable(),
   namaNotaris: z.string().trim().optional().nullable(),
   tglAkad: z.string().trim().optional().nullable(),
   tglAjb: z.string().trim().optional().nullable(),
   tglBast: z.string().trim().optional().nullable(),
   lunasAt: z.string().trim().optional().nullable(),
+  rencanaAkadAt: z.string().trim().optional().nullable(),
+  rencanaBastAt: z.string().trim().optional().nullable(),
+  pengajuanTerpilihId: z.number().int().positive().optional().nullable(),
   catatanAdmin: z.string().trim().optional().nullable(),
   documents: z.array(z.string()).optional().nullable(),
   lahanConfirmed: z.boolean().optional().nullable(),
@@ -137,4 +139,16 @@ export const updateTransactionStatusSchema = z.object({
 
 export type UpdateTransactionStatusInput = z.infer<
   typeof updateTransactionStatusSchema
+>;
+
+export const simpanJadwalTransaksiSchema = z.object({
+  transaksiId: z.number().int().positive("ID Transaksi tidak valid"),
+  version: z.number().int().nonnegative("Versi transaksi tidak valid"),
+  namaNotaris: z.string().trim().optional().nullable(),
+  rencanaAkadAt: z.string().trim().optional().nullable(),
+  rencanaBastAt: z.string().trim().optional().nullable(),
+});
+
+export type SimpanJadwalTransaksiInput = z.infer<
+  typeof simpanJadwalTransaksiSchema
 >;

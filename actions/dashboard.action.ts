@@ -139,7 +139,7 @@ export async function getMarketingDashboardData(
       },
     });
 
-    // 3. Metric 3 (Closing): Count Transaksi where marketing_id = userId AND closing_at is within current month (ITJ = Closing)
+    // 3. Metric 3 (Closing): Count Transaksi where closer_id = userId AND closing_at is within current month (ITJ = Closing)
     const { start: startOfMonthDate, end: endOfMonthDate } = monthRangeDateOnly(
       currentYear,
       currentMonth
@@ -147,8 +147,8 @@ export async function getMarketingDashboardData(
 
     const closingsCount = await prisma.transaksi.count({
       where: {
-        marketing_id: effectiveUserId,
-        status_transaksi: { not: "BATAL" },
+        itj: { closer_id: effectiveUserId },
+        tahap_detail: { not: "BATAL" },
         cancelled_at: null,
         closing_at: {
           gte: startOfMonthDate,
@@ -166,8 +166,7 @@ export async function getMarketingDashboardData(
         itj: {
           none: {
             transaksi: {
-              closing_at: { not: null },
-              status_transaksi: { not: "BATAL" },
+              tahap_detail: { not: "BATAL" },
             },
           },
         },
@@ -176,8 +175,7 @@ export async function getMarketingDashboardData(
           is: {
             transaksi: {
               none: {
-                closing_at: { not: null },
-                status_transaksi: { not: "BATAL" },
+                tahap_detail: { not: "BATAL" },
               },
             },
           },

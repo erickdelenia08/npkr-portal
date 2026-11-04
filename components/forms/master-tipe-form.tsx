@@ -102,43 +102,46 @@ export function MasterTipeForm({
     } else {
       reset({
         kategori: presetKategori || "KOMERSIL",
-        luas_bangunan: presetKategori === "KAVLING" ? 0 : undefined,
+        luas_bangunan: presetKategori === "KAVLING" ? null : undefined,
         luas_tanah: presetLuasTanah || undefined,
         harga_dasar: undefined,
       });
     }
   }, [initialData, reset, isOpen, presetKategori, presetLuasTanah]);
 
-  // If kategori is KAVLING, automatically set luas_bangunan to 0
+  // If kategori is KAVLING, automatically set luas_bangunan to null
   useEffect(() => {
     if (selectedKategori === "KAVLING") {
-      setValue("luas_bangunan", 0, { shouldValidate: true });
+      setValue("luas_bangunan", null, { shouldValidate: true });
     }
   }, [selectedKategori, setValue]);
 
   // Derived nama preview: show KOMERSIL-…/… until both luas fields are filled
   const derivedNama = useMemo(() => {
     const kat = selectedKategori || "KOMERSIL";
-    const lb = kat === "KAVLING" ? 0 : luasBangunanValue;
+    const lb = kat === "KAVLING" ? null : luasBangunanValue;
     const lt = luasTanahValue;
 
-    if ((lb === undefined || lb === null || isNaN(Number(lb))) || !lt || isNaN(Number(lt))) {
+    if (kat !== "KAVLING" && (lb === undefined || lb === null || isNaN(Number(lb)))) {
       return `${kat}-…/…`;
     }
-    return buildNamaTipe(kat, Number(lb), Number(lt));
+    if (!lt || isNaN(Number(lt))) {
+      return `${kat}-…/…`;
+    }
+    return buildNamaTipe(kat, lb, Number(lt));
   }, [selectedKategori, luasBangunanValue, luasTanahValue]);
 
   // Duplicate detection in existing tipe list
   const isDuplicate = useMemo(() => {
     if (!luasTanahValue) return false;
-    const lb = selectedKategori === "KAVLING" ? 0 : Number(luasBangunanValue || 0);
+    const lb = selectedKategori === "KAVLING" ? null : Number(luasBangunanValue || 0);
     const lt = Number(luasTanahValue || 0);
 
     return existingTipeList.some((t) => {
       if (initialData && t.id === initialData.id) return false;
       return (
         t.kategori === selectedKategori &&
-        t.luas_bangunan === lb &&
+        (t.luas_bangunan === lb || (t.luas_bangunan == null && lb == null)) &&
         t.luas_tanah === lt
       );
     });
@@ -295,16 +298,15 @@ export function MasterTipeForm({
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label htmlFor={lbId} className="text-xs font-semibold text-graphite">
-                  Luas Bangunan (m²) <span className="text-rose-500">*</span>
+                  Luas Bangunan (m²) {selectedKategori !== "KAVLING" && <span className="text-rose-500">*</span>}
                 </label>
                 {selectedKategori === "KAVLING" && (
-                  <span className="text-[10px] text-prism-teal font-medium">0 (Kavling)</span>
+                  <span className="text-[10px] text-prism-teal font-medium">— (Kavling)</span>
                 )}
               </div>
               {selectedKategori === "KAVLING" ? (
                 <div className="px-3 py-2 text-sm rounded-md border border-mist bg-bone text-slate font-mono">
-                  0
-                  <input type="hidden" {...register("luas_bangunan", { valueAsNumber: true })} />
+                  —
                 </div>
               ) : (
                 <input

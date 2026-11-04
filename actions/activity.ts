@@ -8,30 +8,557 @@ import {
   ActivityInput,
   globalActivityFilterSchema,
   GlobalActivityFilterInput,
+  activityFeedFilterSchema,
+  ActivityFeedFilterInput,
 } from "@/schemas/activity.schema";
 import { getLeadTahap, LeadTahap } from "@/lib/lead-utils";
-import { JenisAktivitas, HasilAktivitas, Prisma } from "@/generated/prisma";
+import { MAKRO_OF } from "@/lib/transaksi/stage-map";
+import { JenisAktivitas, HasilAktivitas, ActivityEntity, Prisma } from "@/generated/prisma";
+import { logActivity } from "@/lib/activity/log";
+import { ActivityAction } from "@/lib/activity/actions";
+import { dayRangeWIB, toWibDay, todayWIB } from "@/lib/date/wib";
 
-export interface GlobalActivityItem {
+export interface ActivityLogFeedItem {
   id: number;
-  lead_id: number;
-  user_id: number;
-  jenis: JenisAktivitas;
-  hasil: HasilAktivitas;
-  catatan: string | null;
-  tgl_follow_up: Date | null;
   created_at: Date;
-  user: {
+  entity_type: ActivityEntity;
+  entity_id: number;
+  action: string;
+  lead_id: number | null;
+  transaksi_id: number | null;
+  tahap_detail: string | null;
+  actor_id: number | null;
+  summary: string;
+  before: unknown;
+  after: unknown;
+  is_backfill: boolean;
+  actor: {
     id: number;
     nama: string;
     role: string;
-  };
+  } | null;
   lead: {
     id: number;
     nama: string;
     no_hp: string | null;
-    marketing_id: number | null;
+  } | null;
+  transaksi: {
+    id: number;
+    tahap_detail: string;
+    unit: {
+      blok: string;
+    } | null;
+  } | null;
+}
+
+export interface ActivityFeedStats {
+  totalActivities: number;
+  breakdown: {
+    lead: number;
+    transaksi: number;
+    pembayaran: number;
+    kpr: number;
+    lainnya: number;
   };
+  mostActiveActor: {
+    id: number;
+    nama: string;
+    role: string;
+    count: number;
+  } | null;
+}
+
+export interface ActivityFeedPagination {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface ActivityFeedResult {
+  items: ActivityLogFeedItem[];
+  stats: ActivityFeedStats;
+  pagination: ActivityFeedPagination;
+  dateRange: {
+    from: string;
+    to: string;
+  };
+}
+
+/**
+ * Server Action: Paginated Manager Activity Feed reading from the unified ActivityLog table.
+ * Computes top summary cards directly via SQL GROUP BY aggregation.
+ */
+export async function getActivityFeed(
+  filters?: ActivityFeedFilterInput
+): Promise<{
+  success: boolean;
+  data?: ActivityFeedResult;
+  error?: string;
+}> {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false, error: "Silakan login kembali." };
+    }
+
+    const role = session.user.role;
+    if (role !== "MANAGER" && role !== "ADMIN") {
+      return {
+        success: false,
+        error: "Unauthorized: Hanya Manager dan Admin yang dapat mengakses activity feed.",
+      };
+    }
+
+    const parsed = activityFeedFilterSchema.safeParse(filters || {});
+    if (!parsed.success) {
+      return { success: false, error: "Filter aktivitas tidak valid." };
+    }
+
+    const filterData = parsed.data;
+    const page = filterData.page || 1;
+    const pageSize = filterData.pageSize || 25;
+
+    // Date range filter: default to last 30 days in WIB
+    const defaultDateTo = todayWIB();
+    const past30Ms = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const defaultDateFrom = toWibDay(new Date(past30Ms));
+
+    const fromStr = filterData.dateFrom || defaultDateFrom;
+    const toStr = filterData.dateTo || defaultDateTo;
+
+    const startDate = dayRangeWIB(fromStr).start;
+    const endDate = dayRangeWIB(toStr).end;
+
+    const where: Prisma.ActivityLogWhereInput = {
+      created_at: {
+        gte: startDate,
+        lte: endDate,
+      },
+    };
+
+    if (filterData.actorId) {
+      where.actor_id = filterData.actorId;
+    }
+
+    if (filterData.leadId) {
+      where.lead_id = filterData.leadId;
+    }
+
+    if (filterData.transaksiId) {
+      where.transaksi_id = filterData.transaksiId;
+    }
+
+    if (filterData.entityType) {
+      where.entity_type = filterData.entityType;
+    } else if (filterData.actionCategory && filterData.actionCategory !== "SEMUA") {
+      switch (filterData.actionCategory) {
+        case "LEAD":
+          where.entity_type = "LEAD";
+          break;
+        case "TRANSAKSI":
+          where.entity_type = "TRANSAKSI";
+          break;
+        case "PEMBAYARAN":
+          where.entity_type = "PEMBAYARAN";
+          break;
+        case "KPR":
+          where.entity_type = "PENGAJUAN_KPR";
+          break;
+        case "DOKUMEN":
+          where.entity_type = { in: ["DOKUMEN", "BAST_ITEM"] };
+          break;
+        case "MASTER":
+          where.entity_type = "UNIT";
+          break;
+      }
+    }
+
+    if (filterData.search?.trim()) {
+      where.summary = {
+        contains: filterData.search.trim(),
+      };
+    }
+
+    // Top Card Metrics: aggregated by SQL (GROUP BY)
+    const statsWhere: Prisma.ActivityLogWhereInput = {
+      created_at: where.created_at,
+      ...(where.actor_id ? { actor_id: where.actor_id } : {}),
+      ...(where.summary ? { summary: where.summary } : {}),
+    };
+
+    const [totalActivities, categoryGroups, actorGroups] = await Promise.all([
+      prisma.activityLog.count({ where: statsWhere }),
+      prisma.activityLog.groupBy({
+        by: ["entity_type"],
+        where: statsWhere,
+        _count: { _all: true },
+      }),
+      prisma.activityLog.groupBy({
+        by: ["actor_id"],
+        where: {
+          ...statsWhere,
+          actor_id: { not: null },
+        },
+        _count: { _all: true },
+        orderBy: {
+          _count: {
+            actor_id: "desc",
+          },
+        },
+        take: 1,
+      }),
+    ]);
+
+    const catMap = new Map<string, number>();
+    for (const g of categoryGroups) {
+      catMap.set(g.entity_type, g._count._all);
+    }
+
+    let topActorData: ActivityFeedStats["mostActiveActor"] = null;
+    if (actorGroups.length > 0 && actorGroups[0].actor_id) {
+      const topUser = await prisma.user.findUnique({
+        where: { id: actorGroups[0].actor_id },
+        select: { id: true, nama: true, role: true },
+      });
+      if (topUser) {
+        topActorData = {
+          id: topUser.id,
+          nama: topUser.nama,
+          role: topUser.role,
+          count: actorGroups[0]._count._all,
+        };
+      }
+    }
+
+    const stats: ActivityFeedStats = {
+      totalActivities,
+      breakdown: {
+        lead: catMap.get("LEAD") || 0,
+        transaksi: catMap.get("TRANSAKSI") || 0,
+        pembayaran: catMap.get("PEMBAYARAN") || 0,
+        kpr: catMap.get("PENGAJUAN_KPR") || 0,
+        lainnya:
+          (catMap.get("DOKUMEN") || 0) +
+          (catMap.get("BAST_ITEM") || 0) +
+          (catMap.get("UNIT") || 0),
+      },
+      mostActiveActor: topActorData,
+    };
+
+    // Feed Items Pagination
+    const total = await prisma.activityLog.count({ where });
+    const totalPages = Math.ceil(total / pageSize) || 1;
+    const skip = (page - 1) * pageSize;
+
+    const rawItems = await prisma.activityLog.findMany({
+      where,
+      orderBy: { created_at: "desc" },
+      skip,
+      take: pageSize,
+      include: {
+        actor: {
+          select: {
+            id: true,
+            nama: true,
+            role: true,
+          },
+        },
+        lead: {
+          select: {
+            id: true,
+            nama: true,
+            no_hp: true,
+          },
+        },
+        transaksi: {
+          select: {
+            id: true,
+            tahap_detail: true,
+            unit: {
+              select: {
+                blok: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const items: ActivityLogFeedItem[] = rawItems.map((item) => ({
+      id: item.id,
+      created_at: item.created_at,
+      entity_type: item.entity_type,
+      entity_id: item.entity_id,
+      action: item.action,
+      lead_id: item.lead_id,
+      transaksi_id: item.transaksi_id,
+      tahap_detail: item.tahap_detail,
+      actor_id: item.actor_id,
+      summary: item.summary,
+      before: item.before,
+      after: item.after,
+      is_backfill: item.is_backfill,
+      actor: item.actor,
+      lead: item.lead,
+      transaksi: item.transaksi,
+    }));
+
+    return {
+      success: true,
+      data: {
+        items,
+        stats,
+        pagination: {
+          page,
+          pageSize,
+          total,
+          totalPages,
+        },
+        dateRange: {
+          from: fromStr,
+          to: toStr,
+        },
+      },
+    };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error ? error.message : "Gagal memuat activity feed.";
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Server Action: Get all ActivityLog records related to a transaction.
+ * Includes logs tied to the lead prior to transaction creation.
+ */
+export async function getTransactionHistory(
+  transaksiId: number
+): Promise<{ success: boolean; data?: ActivityLogFeedItem[]; error?: string }> {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false, error: "Silakan login kembali." };
+    }
+
+    if (!Number.isSafeInteger(transaksiId) || transaksiId <= 0) {
+      return { success: false, error: "ID Transaksi tidak valid." };
+    }
+
+    const trx = await prisma.transaksi.findUnique({
+      where: { id: transaksiId },
+      select: {
+        id: true,
+        pic_id: true,
+        itj: {
+          select: {
+            lead_id: true,
+            closer_id: true,
+          },
+        },
+      },
+    });
+
+    if (!trx) {
+      return { success: false, error: "Transaksi tidak ditemukan." };
+    }
+
+    const role = session.user.role;
+    const userId = Number(session.user.id);
+    const isAuthorized =
+      role === "MANAGER" ||
+      role === "ADMIN" ||
+      userId === trx.pic_id ||
+      userId === trx.itj?.closer_id;
+
+    if (!isAuthorized) {
+      return {
+        success: false,
+        error: "Akses ditolak: Anda tidak memiliki akses ke transaksi ini.",
+      };
+    }
+
+    const leadId = trx.itj?.lead_id;
+
+    const rawItems = await prisma.activityLog.findMany({
+      where: {
+        OR: [
+          { transaksi_id: transaksiId },
+          ...(leadId ? [{ lead_id: leadId }] : []),
+        ],
+      },
+      orderBy: { created_at: "desc" },
+      include: {
+        actor: {
+          select: {
+            id: true,
+            nama: true,
+            role: true,
+          },
+        },
+        lead: {
+          select: {
+            id: true,
+            nama: true,
+            no_hp: true,
+          },
+        },
+        transaksi: {
+          select: {
+            id: true,
+            tahap_detail: true,
+            unit: {
+              select: {
+                blok: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const items: ActivityLogFeedItem[] = rawItems.map((item) => ({
+      id: item.id,
+      created_at: item.created_at,
+      entity_type: item.entity_type,
+      entity_id: item.entity_id,
+      action: item.action,
+      lead_id: item.lead_id,
+      transaksi_id: item.transaksi_id,
+      tahap_detail: item.tahap_detail,
+      actor_id: item.actor_id,
+      summary: item.summary,
+      before: item.before,
+      after: item.after,
+      is_backfill: item.is_backfill,
+      actor: item.actor,
+      lead: item.lead,
+      transaksi: item.transaksi,
+    }));
+
+    return { success: true, data: items };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error ? error.message : "Gagal memuat riwayat transaksi.";
+    return { success: false, error: msg };
+  }
+}
+
+/**
+ * Server Action: Get all ActivityLog records related to a single Lead.
+ */
+export async function getLeadHistory(
+  leadId: number
+): Promise<{ success: boolean; data?: ActivityLogFeedItem[]; error?: string }> {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false, error: "Silakan login kembali." };
+    }
+
+    if (!Number.isSafeInteger(leadId) || leadId <= 0) {
+      return { success: false, error: "ID Lead tidak valid." };
+    }
+
+    const lead = await prisma.lead.findUnique({
+      where: { id: leadId },
+      select: { id: true, marketing_id: true },
+    });
+
+    if (!lead) {
+      return { success: false, error: "Lead tidak ditemukan." };
+    }
+
+    const role = session.user.role;
+    const userId = Number(session.user.id);
+    const isAuthorized =
+      role === "MANAGER" ||
+      role === "ADMIN" ||
+      userId === lead.marketing_id;
+
+    if (!isAuthorized) {
+      return { success: false, error: "Akses ditolak." };
+    }
+
+    const rawItems = await prisma.activityLog.findMany({
+      where: { lead_id: leadId },
+      orderBy: { created_at: "desc" },
+      include: {
+        actor: {
+          select: {
+            id: true,
+            nama: true,
+            role: true,
+          },
+        },
+        lead: {
+          select: {
+            id: true,
+            nama: true,
+            no_hp: true,
+          },
+        },
+        transaksi: {
+          select: {
+            id: true,
+            tahap_detail: true,
+            unit: {
+              select: {
+                blok: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const items: ActivityLogFeedItem[] = rawItems.map((item) => ({
+      id: item.id,
+      created_at: item.created_at,
+      entity_type: item.entity_type,
+      entity_id: item.entity_id,
+      action: item.action,
+      lead_id: item.lead_id,
+      transaksi_id: item.transaksi_id,
+      tahap_detail: item.tahap_detail,
+      actor_id: item.actor_id,
+      summary: item.summary,
+      before: item.before,
+      after: item.after,
+      is_backfill: item.is_backfill,
+      actor: item.actor,
+      lead: item.lead,
+      transaksi: item.transaksi,
+    }));
+
+    return { success: true, data: items };
+  } catch (error: unknown) {
+    const msg =
+      error instanceof Error ? error.message : "Gagal memuat riwayat lead.";
+    return { success: false, error: msg };
+  }
+}
+
+export interface GlobalActivityItem {
+  id: number;
+  lead_id: number;
+user_id: number;
+jenis: JenisAktivitas;
+hasil: HasilAktivitas;
+catatan: string | null;
+tgl_follow_up: Date | null;
+created_at: Date;
+user: {
+  id: number;
+  nama: string;
+  role: string;
+};
+lead: {
+  id: number;
+  nama: string;
+  no_hp: string | null;
+  marketing_id: number | null;
+};
 }
 
 export interface SerializedAktivitas {
@@ -99,6 +626,11 @@ export async function getLeadDetail(
   id: number
 ): Promise<{ success: boolean; data?: SerializedLeadDetail; error?: string }> {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return { success: false, error: "Silakan login kembali." };
+    }
+
     const lead = await prisma.lead.findUnique({
       where: { id },
       include: {
@@ -120,7 +652,8 @@ export async function getLeadDetail(
             transaksi: {
               select: {
                 id: true,
-                status_transaksi: true,
+                tahap_detail: true,
+                target_dp: true,
                 closing_at: true,
               },
             },
@@ -143,7 +676,7 @@ export async function getLeadDetail(
       itjSummary = {
         id: latest.id,
         nominal: Number(latest.nominal),
-        target_dp: Number(latest.target_dp),
+        target_dp: Number(latest.transaksi?.target_dp ?? 0),
         metode_bayar: latest.metode_bayar,
         tenor: latest.tenor,
         diajukan_at: latest.diajukan_at,
@@ -151,7 +684,7 @@ export async function getLeadDetail(
         transaksi: latest.transaksi
           ? {
             id: latest.transaksi.id,
-            status_transaksi: latest.transaksi.status_transaksi,
+            status_transaksi: MAKRO_OF[latest.transaksi.tahap_detail],
             closing_at: latest.transaksi.closing_at,
           }
           : null,
@@ -202,7 +735,7 @@ export async function createActivity(
     // Check if parent lead exists
     const lead = await prisma.lead.findUnique({
       where: { id: lead_id },
-      select: { id: true },
+      select: { id: true, nama: true },
     });
 
     if (!lead) {
@@ -223,8 +756,8 @@ export async function createActivity(
     }
 
     // Maintain last_activity_at and next_follow_up_at on Lead atomically
-    const [createdActivity] = await prisma.$transaction([
-      prisma.aktivitas.create({
+    const createdActivity = await prisma.$transaction(async (tx) => {
+      const act = await tx.aktivitas.create({
         data: {
           lead_id,
           user_id: userId,
@@ -234,16 +767,46 @@ export async function createActivity(
           tgl_follow_up: followUpDate,
           created_at: now,
         },
-      }),
-      prisma.lead.update({
+      });
+
+      await tx.lead.update({
         where: { id: lead_id },
         data: {
           last_activity_at: now,
           next_follow_up_at: followUpDate,
           updated_at: now,
         },
-      }),
-    ]);
+      });
+
+      const actionName: ActivityAction =
+        jenis === "WHATSAPP"
+          ? "LEAD_FOLLOWUP_WHATSAPP"
+          : jenis === "TELEPON"
+            ? "LEAD_FOLLOWUP_TELEPON"
+            : jenis === "BERTEMU"
+              ? "LEAD_FOLLOWUP_BERTEMU"
+              : "LEAD_FOLLOWUP_LAINNYA";
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: lead_id,
+        action: actionName,
+        leadId: lead_id,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          leadName: lead.nama,
+          hasil,
+        },
+        after: {
+          jenis,
+          hasil,
+          tgl_follow_up: followUpDate.toISOString(),
+        },
+      });
+
+      return act;
+    });
 
     // Revalidate paths
     revalidatePath(`/marketing/lead/${lead_id}`);
@@ -310,17 +873,17 @@ export async function getGlobalActivities(
     if (filterData?.startDate || filterData?.endDate) {
       const dateFilter: Prisma.DateTimeFilter = {};
       if (filterData.startDate) {
-        const start = new Date(filterData.startDate);
-        if (!isNaN(start.getTime())) {
-          start.setHours(0, 0, 0, 0);
-          dateFilter.gte = start;
+        try {
+          dateFilter.gte = dayRangeWIB(filterData.startDate).start;
+        } catch {
+          // ignore invalid date
         }
       }
       if (filterData.endDate) {
-        const end = new Date(filterData.endDate);
-        if (!isNaN(end.getTime())) {
-          end.setHours(23, 59, 59, 999);
-          dateFilter.lte = end;
+        try {
+          dateFilter.lte = dayRangeWIB(filterData.endDate).end;
+        } catch {
+          // ignore invalid date
         }
       }
       if (dateFilter.gte || dateFilter.lte) {
@@ -376,6 +939,14 @@ export async function getActivityActors(): Promise<{
     const session = await auth();
     if (!session?.user) {
       return { success: false, error: "Silakan login kembali." };
+    }
+
+    const role = session.user.role;
+    if (role !== "MANAGER" && role !== "ADMIN") {
+      return {
+        success: false,
+        error: "Unauthorized: Hanya Manager dan Admin yang dapat mengakses daftar personel.",
+      };
     }
 
     const users = await prisma.user.findMany({

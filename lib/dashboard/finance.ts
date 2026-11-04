@@ -8,7 +8,8 @@
  */
 
 import { prisma } from "@/lib/prisma";
-import { TahapTransaksi, MetodeBayar } from "@/generated/prisma";
+import { MetodeBayar } from "@/generated/prisma";
+import { type TahapMakro, MAKRO_OF } from "@/lib/transaksi/stage-map";
 import {
   monthRangeDateOnly,
   shiftMonth,
@@ -19,7 +20,7 @@ import { humanizeEnum } from "@/lib/dashboard/format";
 import { closedDealWhere, type MetricComparison } from "@/lib/dashboard/manager";
 
 export interface FinancialPipelineStage {
-  stage: TahapTransaksi;
+  stage: TahapMakro;
   label: string;
   count: number;
   totalHargaDeal: number;
@@ -189,8 +190,8 @@ export async function getManagerFinanceData(
     // 8. Active transactions for piutang & financial pipeline
     prisma.transaksi.findMany({
       where: {
-        status_transaksi: {
-          notIn: [TahapTransaksi.BATAL, TahapTransaksi.SERAH_TERIMA],
+        tahap_detail: {
+          notIn: ["BATAL", "BAST"],
         },
       },
       include: {
@@ -279,16 +280,15 @@ export async function getManagerFinanceData(
     .sort((a, b) => b.totalNominal - a.totalNominal);
 
   // Financial Pipeline & Piutang Berjalan
-  const pipelineOrder: TahapTransaksi[] = [
-    TahapTransaksi.PEMBERKASAN,
-    TahapTransaksi.PROSES_BANK,
-    TahapTransaksi.PEMBAYARAN,
-    TahapTransaksi.AKAD_AJB,
-    TahapTransaksi.PEMBANGUNAN,
+  const pipelineOrder: TahapMakro[] = [
+    "PEMBERKASAN",
+    "PROSES_BANK",
+    "PEMBAYARAN",
+    "AKAD_AJB",
   ];
 
   const pipelineMap = new Map<
-    TahapTransaksi,
+    TahapMakro,
     { count: number; totalDeal: number; totalPaid: number }
   >();
 
@@ -306,8 +306,9 @@ export async function getManagerFinanceData(
     totalHargaDealAktif += deal;
     totalTerbayarAktif += paid;
 
-    if (pipelineMap.has(tx.status_transaksi)) {
-      const entry = pipelineMap.get(tx.status_transaksi)!;
+    const macroStage = MAKRO_OF[tx.tahap_detail];
+    if (pipelineMap.has(macroStage)) {
+      const entry = pipelineMap.get(macroStage)!;
       entry.count += 1;
       entry.totalDeal += deal;
       entry.totalPaid += paid;

@@ -71,7 +71,7 @@ describe("actions/master-unit.action.ts - Smart Lock Guard & Manual Status Chang
             {
               transaksi: {
                 is: {
-                  status_transaksi: { not: "BATAL" },
+                  tahap_detail: { not: "BATAL" },
                   cancelled_at: null,
                 },
               },
@@ -91,7 +91,7 @@ describe("actions/master-unit.action.ts - Smart Lock Guard & Manual Status Chang
       expect(prisma.transaksi.count).toHaveBeenCalledWith({
         where: {
           unit_id: 102,
-          status_transaksi: { not: "BATAL" },
+          tahap_detail: { not: "BATAL" },
           cancelled_at: null,
         },
       });

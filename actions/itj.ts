@@ -5,8 +5,10 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { itjSchema } from "@/schemas/itj/itj.schema";
-import { todayDateOnlyUTC } from "@/lib/date/wib";
-import type { TahapDetail } from "@/generated/prisma";
+import { todayDateOnlyUTC, toWibDay } from "@/lib/date/wib";
+import { getInitialTahapDetail } from "@/lib/transaksi/stage-map";
+import { Prisma } from "@/generated/prisma";
+import { logActivity } from "@/lib/activity/log";
 
 export interface ITJActionResponse {
   success: boolean;
@@ -118,7 +120,7 @@ export async function submitITJ(
       }
 
       const hasActiveClosing = lead.itj.some(
-        (i) => i.transaksi && i.transaksi.status_transaksi !== "BATAL"
+        (i) => i.transaksi && i.transaksi.tahap_detail !== "BATAL"
       );
       if (hasActiveClosing) {
         throw new Error("Lead ini sudah memiliki transaksi aktif.");
@@ -202,14 +204,10 @@ export async function submitITJ(
         data: {
           lead_id: lead.id,
           unit_id: unit.id,
-          marketing_id: userId,
+          closer_id: userId,
           nik: cleanNik,
           nama_ktp: data.namaKtp.trim(),
           nominal: data.nominalDibayar,
-          harga_deal: data.hargaDeal,
-          target_itj: data.targetItj,
-          nominal_dibayar: data.nominalDibayar,
-          target_dp: data.targetDp,
           metode_bayar: data.metodeBayar,
           tenor: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
           diajukan_at: new Date(),
@@ -217,25 +215,20 @@ export async function submitITJ(
       });
 
       // 7. Langsung buat Transaksi
-      let detailTahap: TahapDetail = "PENGUMPULAN_DOKUMEN";
-      if (data.metodeBayar === "CASH_KERAS") {
-        detailTahap = "PEMBERKASAN_LEGALITAS";
-      } else if (data.metodeBayar === "CASH_TEMPO") {
-        detailTahap = "PEMBERKASAN_PPJB";
-      }
+      const detailTahap = getInitialTahapDetail(data.metodeBayar, unit.tipe.kategori);
 
       const createdTransaksi = await tx.transaksi.create({
         data: {
           customer_id: customerId,
           unit_id: unit.id,
-          marketing_id: userId,
+          active_unit_id: unit.id,
+          pic_id: userId,
           itj_id: itjRecord.id,
           metode_bayar: data.metodeBayar,
           harga_deal: data.hargaDeal,
           target_itj: data.targetItj,
           target_dp: data.targetDp,
           tenor_bulan: data.metodeBayar === "KPR" ? data.tenor ?? null : null,
-          status_transaksi: "PEMBERKASAN",
           tahap_detail: detailTahap,
           closing_at: todayDateOnlyUTC(),
         },
@@ -245,7 +238,7 @@ export async function submitITJ(
 
       // 8. Buat Pembayaran pertama (ITJ) dengan is_void: false
       const noKwitansi = `KWT-ITJ-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
-      await tx.pembayaran.create({
+      const createdPayment = await tx.pembayaran.create({
         data: {
           transaksi_id: createdTransaksi.id,
           admin_id: userId,
@@ -276,6 +269,55 @@ export async function submitITJ(
         where: { id: lead.id },
         data: { last_activity_at: actNow },
       });
+
+      // 10. Record Unified ActivityLog entries
+      await logActivity(tx, {
+        entityType: "TRANSAKSI",
+        entityId: createdTransaksi.id,
+        action: "ITJ_SUBMITTED",
+        leadId: lead.id,
+        transaksiId: createdTransaksi.id,
+        tahapDetail: detailTahap,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          blok: unit.blok,
+          nominal: Number(data.nominalDibayar),
+        },
+        after: {
+          transaksi_id: createdTransaksi.id,
+          itj_id: itjRecord.id,
+          unit_id: unit.id,
+          blok: unit.blok,
+          metode_bayar: data.metodeBayar,
+          harga_deal: Number(data.hargaDeal),
+          nominal_itj: Number(data.nominalDibayar),
+        },
+      });
+
+      await logActivity(tx, {
+        entityType: "PEMBAYARAN",
+        entityId: createdPayment.id,
+        action: "PAYMENT_RECORDED",
+        leadId: lead.id,
+        transaksiId: createdTransaksi.id,
+        tahapDetail: detailTahap,
+        actorId: userId,
+        summaryContext: {
+          actorName: session?.user?.name,
+          jenisBayar: "ITJ",
+          nominal: Number(data.nominalDibayar),
+          noKwitansi,
+        },
+        after: {
+          pembayaran_id: createdPayment.id,
+          jenis_pembayaran: "ITJ",
+          nominal: Number(data.nominalDibayar),
+          no_kwitansi: noKwitansi,
+          cara_bayar: "TRANSFER",
+          tgl_bayar: toWibDay(todayDateOnlyUTC()),
+        },
+      });
     });
 
     revalidatePath(`/marketing/lead/${leadTargetId}`);
@@ -299,6 +341,12 @@ export async function submitITJ(
     };
   } catch (error: unknown) {
     console.error("submitITJ error:", error);
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return { success: false, error: "Unit sudah dipesan." };
+    }
     const errorMsg =
       error instanceof Error
         ? error.message
