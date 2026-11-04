@@ -19,7 +19,7 @@ import { MAKRO_OF } from "@/lib/transaksi/stage-map";
 import { PembayaranModal } from "@/components/forms/pembayaran-modal";
 import { DynamicActionPanel } from "@/components/forms/dynamic-action-panel";
 import { QuickPrintActions } from "@/components/forms/quick-print-actions";
-import { HandoverDialog } from "@/components/forms/handover-dialog";
+import { HandoverTransaksiDialog } from "@/components/forms/handover-dialog";
 import { getTransactionHistory } from "@/actions/activity";
 import { TransactionAuditTrail } from "@/components/shared/transaction-audit-trail";
 
@@ -262,10 +262,22 @@ export async function TransactionDetailView({
         {/* Quick Action Buttons (Oper PIC, Cetak SPR & Cetak Kwitansi) */}
         <div className="flex items-center gap-2 flex-wrap">
           {canHandover && (
-            <HandoverDialog
-              leadId={transaksi.itj.lead_id}
-              currentMarketingId={transaksi.pic_id}
-              currentMarketingName={transaksi.pic.nama}
+            <HandoverTransaksiDialog
+              transaksiId={transaksi.id}
+              blokUnit={transaksi.unit.blok}
+              currentPicId={transaksi.pic_id}
+              currentPicName={transaksi.pic.nama}
+              isLocked={
+                transaksi.tahap_detail === "BAST" ||
+                transaksi.tgl_bast !== null ||
+                transaksi.tahap_detail === "BATAL" ||
+                transaksi.cancelled_at !== null
+              }
+              lockedReason={
+                transaksi.tahap_detail === "BATAL" || transaksi.cancelled_at !== null
+                  ? "Transaksi telah dibatalkan sehingga penugasan PIC terkunci."
+                  : "Transaksi telah selesai (BAST) sehingga penugasan PIC terkunci."
+              }
             />
           )}
           <QuickPrintActions

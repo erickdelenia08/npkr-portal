@@ -711,7 +711,13 @@ export async function reassignLead(
     // Verify lead exists
     const lead = await prisma.lead.findUnique({
       where: { id: parsedLeadId },
-      select: { id: true, nama: true, marketing_id: true },
+      select: {
+        id: true,
+        nama: true,
+        marketing_id: true,
+        marketing: { select: { id: true, nama: true } },
+        itj: { select: { id: true } },
+      },
     });
 
     if (!lead) {
@@ -722,19 +728,79 @@ export async function reassignLead(
       };
     }
 
-    // Update lead with new marketing PIC
-    const updated = await prisma.lead.update({
-      where: { id: parsedLeadId },
-      data: {
-        marketing_id: targetMarketing.id,
-        updated_at: new Date(),
-      },
+    // Status Guard: Lock if lead has already reached ITJ / Closing
+    if (lead.itj && lead.itj.length > 0) {
+      return {
+        success: false,
+        message: "Lead yang sudah mencapai tahap ITJ / closing tidak dapat dialihkan (handover terkunci).",
+        error: "Lead yang sudah mencapai tahap ITJ / closing tidak dapat dialihkan (handover terkunci).",
+      };
+    }
+
+    if (lead.marketing_id === parsedMarketingId) {
+      return {
+        success: false,
+        message: `Lead sudah ditugaskan kepada ${targetMarketing.nama}`,
+        error: `Lead sudah ditugaskan kepada ${targetMarketing.nama}`,
+      };
+    }
+
+    const now = new Date();
+    const prevPicName = lead.marketing?.nama || "Sebelumnya";
+    const actorId = Number(session.user.id);
+
+    // Update lead with new marketing PIC inside transaction with audit logging
+    const updated = await prisma.$transaction(async (tx) => {
+      const updatedLead = await tx.lead.update({
+        where: { id: parsedLeadId },
+        data: {
+          marketing_id: targetMarketing.id,
+          updated_at: now,
+          last_activity_at: now,
+        },
+      });
+
+      await tx.aktivitas.create({
+        data: {
+          lead_id: parsedLeadId,
+          user_id: actorId,
+          jenis: "LAINNYA",
+          hasil: "TERTARIK",
+          catatan: `[HANDOVER PIC LEAD] Ditugaskan oleh ${session.user?.name || "Manager"} dari ${prevPicName} ke ${targetMarketing.nama}.`,
+          created_at: now,
+        },
+      });
+
+      await logActivity(tx, {
+        entityType: "LEAD",
+        entityId: parsedLeadId,
+        action: "LEAD_HANDOVER",
+        leadId: parsedLeadId,
+        actorId,
+        summaryContext: {
+          actorName: session.user?.name,
+          leadName: lead.nama,
+          oldPicName: prevPicName,
+          newPicName: targetMarketing.nama,
+        },
+        before: {
+          marketing_id: lead.marketing_id,
+          marketing_nama: prevPicName,
+        },
+        after: {
+          marketing_id: targetMarketing.id,
+          marketing_nama: targetMarketing.nama,
+        },
+      });
+
+      return updatedLead;
     });
 
     // Revalidate relevant pages
     revalidatePath("/manager/lead");
     revalidatePath("/admin/lead");
     revalidatePath("/marketing/lead");
+    revalidatePath("/manager/aktivitas");
     revalidatePath(`/marketing/lead/${parsedLeadId}`);
 
     return {

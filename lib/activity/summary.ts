@@ -111,6 +111,11 @@ export function buildActivitySummary(
         ctx.alasan ? ` (alasan: ${ctx.alasan})` : ""
       }`;
 
+    case "TRANSAKSI_HANDOVER":
+      return `${actor} mengalihkan PIC transaksi ${blokStr} dari ${
+        ctx.oldPicName || "-"
+      } ke ${ctx.newPicName || "-"}`;
+
     case "SCHEDULE_UPDATED":
       if (ctx.oldDate && ctx.newDate) {
         return `${actor} mengubah ${ctx.scheduleType || "jadwal"} ${blokStr} dari ${

@@ -11,14 +11,15 @@ import { logActivity } from "@/lib/activity/log";
 import { prisma } from "@/lib/prisma";
 
 describe("Phase 1: Unified ActivityLog Engine & Privacy Tests", () => {
-  it("covers all 28 required actions in ACTIVITY_ACTIONS", () => {
-    expect(ACTIVITY_ACTIONS).toHaveLength(28);
+  it("covers all 29 required actions in ACTIVITY_ACTIONS", () => {
+    expect(ACTIVITY_ACTIONS).toHaveLength(29);
     expect(ACTIVITY_ACTIONS).toContain("LEAD_CREATED");
     expect(ACTIVITY_ACTIONS).toContain("LEAD_HANDOVER");
     expect(ACTIVITY_ACTIONS).toContain("ITJ_SUBMITTED");
     expect(ACTIVITY_ACTIONS).toContain("STAGE_ADVANCED");
     expect(ACTIVITY_ACTIONS).toContain("STAGE_REVERTED");
     expect(ACTIVITY_ACTIONS).toContain("TRANSAKSI_CANCELLED");
+    expect(ACTIVITY_ACTIONS).toContain("TRANSAKSI_HANDOVER");
     expect(ACTIVITY_ACTIONS).toContain("SCHEDULE_UPDATED");
     expect(ACTIVITY_ACTIONS).toContain("AKAD_CONFIRMED");
     expect(ACTIVITY_ACTIONS).toContain("BAST_CONFIRMED");
