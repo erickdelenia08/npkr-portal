@@ -34,7 +34,7 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  @@map("users")
+  @@map("user")
 }
 
 enum Role {
@@ -58,7 +58,7 @@ model MasterTipe {
   unit_tipe_baru UnitTipeLog[] @relation("TipeBaru")
 
   @@unique([kategori, luas_bangunan, luas_tanah])
-  @@map("master_tipe")
+  @@map("mastertipe")
 }
 
 model MasterUnit {
@@ -77,7 +77,7 @@ model MasterUnit {
   tipe_logs        UnitTipeLog[]
 
   @@index([status_unit])
-  @@map("master_unit")
+  @@map("masterunit")
 }
 
 model UnitTipeLog {
@@ -99,7 +99,7 @@ model UnitTipeLog {
 
   @@index([unit_id, created_at])
   @@index([blok])
-  @@map("unit_tipe_log")
+  @@map("unittipelog")
 }
 
 enum KategoriUnit {
@@ -163,7 +163,7 @@ model Lead {
   @@index([sumber])
   @@index([survei_jadwal_at]) // CHANGED
   @@index([survei_selesai_at]) // CHANGED
-  @@map("leads")
+  @@map("lead")
 }
 
 model Aktivitas {
@@ -248,7 +248,7 @@ model Customer {
   transaksi Transaksi[]
   leads     Lead[]      @relation("CustomerLeads")
 
-  @@map("customers")
+  @@map("customer")
 }
 
 enum StatusPernikahan {
@@ -364,8 +364,6 @@ model Bank {
   updated_at DateTime @updatedAt
 
   pengajuan_kpr PengajuanKPR[]
-
-  @@map("banks")
 }
 
 enum StatusPengajuanKPR {
@@ -400,7 +398,7 @@ model PengajuanKPR {
   @@unique([transaksi_id, nomor_pengajuan])
   @@index([transaksi_id, status])
   @@index([bank_id, status])
-  @@map("pengajuan_kpr")
+  @@map("pengajuankpr")
 }
 
 model PengajuanKPRLog {
@@ -417,7 +415,7 @@ model PengajuanKPRLog {
 
   @@index([pengajuan_id, created_at])
   @@index([actor_id, created_at])
-  @@map("pengajuan_kpr_log")
+  @@map("pengajuankprlog")
 }
 
 // ==========================================
@@ -436,7 +434,7 @@ model TransaksiTahapLog {
   actor     User      @relation("ActorTransaksiLog", fields: [actor_id], references: [id])
 
   @@index([transaksi_id, created_at])
-  @@map("transaksi_tahap_log")
+  @@map("transaksitahaplog")
 }
 
 enum JenisDokumen {
@@ -489,7 +487,7 @@ model DokumenTransaksi {
 
   @@unique([transaksi_id, jenis])
   @@index([transaksi_id])
-  @@map("dokumen_transaksi")
+  @@map("dokumentransaksi")
 }
 
 // ==========================================
@@ -524,7 +522,7 @@ model ChecklistBAST {
 
   @@unique([transaksi_id, item])
   @@index([transaksi_id])
-  @@map("checklist_bast")
+  @@map("checklistbast")
 }
 
 // ==========================================
@@ -608,5 +606,5 @@ model ActivityLog {
   @@index([action, created_at])
   @@index([entity_type, created_at])
   @@index([created_at])
-  @@map("activity_log")
+  @@map("activitylog")
 }
