@@ -38,6 +38,16 @@ const protectedRoutes: Record<string, Role[]> = {
     "/field-supervisor": ["FIELD_SUPERVISOR", "MANAGER", "DIRECTOR"],
     "/manager": ["MANAGER", "DIRECTOR"],
     "/director": ["DIRECTOR"],
+
+    // Shared Profile Settings: Dapat diakses oleh seluruh authenticated dashboard role
+    "/profile": [
+        "ADMIN",
+        "MARKETING",
+        "DIGITAL_MARKETING",
+        "FIELD_SUPERVISOR",
+        "MANAGER",
+        "DIRECTOR",
+    ],
 };
 
 /**

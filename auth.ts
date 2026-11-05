@@ -30,8 +30,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
                 if (!usernameInput || !passwordInput) return null;
 
-                const user = await prisma.user.findUnique({
-                    where: { username: usernameInput },
+                const trimmed = usernameInput.trim();
+                const normalized = trimmed.toLowerCase();
+
+                // Support case-insensitive query fallback
+                const user = await prisma.user.findFirst({
+                    where: {
+                        OR: [
+                            { username: normalized },
+                            { username: trimmed },
+                        ],
+                    },
                 });
 
                 if (!user || !user.password || user.isActive === false) return null;
@@ -44,24 +53,53 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     id: String(user.id),
                     name: user.nama,
                     role: user.role,
+                    username: user.username,
                 };
             },
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger }) {
             if (user) {
-                // Simpan role di JWT token untuk middleware RBAC
                 token.role = user.role;
                 token.id = user.id;
+                token.name = user.name;
+                if ("username" in user && typeof user.username === "string") {
+                    token.username = user.username;
+                }
             }
+
+            // Secure session refresh mechanism:
+            // When trigger === "update", fetch verified profile values directly from database
+            // using token.id. Prevents client-side manipulation of roles or IDs.
+            if (trigger === "update" && token.id) {
+                const userId = Number(token.id);
+                if (Number.isSafeInteger(userId) && userId > 0) {
+                    const dbUser = await prisma.user.findUnique({
+                        where: { id: userId },
+                        select: { nama: true, username: true, role: true, isActive: true },
+                    });
+
+                    if (dbUser && dbUser.isActive) {
+                        token.name = dbUser.nama;
+                        token.username = dbUser.username;
+                        token.role = dbUser.role;
+                    }
+                }
+            }
+
             return token;
         },
         async session({ session, token }) {
             if (token && session.user) {
                 session.user.role = token.role as Role;
-                // session.user.id = token.id as string;
                 session.user.id = (token.id as string) || (token.sub as string);
+                if (token.name) {
+                    session.user.name = token.name as string;
+                }
+                if (token.username) {
+                    session.user.username = token.username as string;
+                }
             }
             return session;
         },

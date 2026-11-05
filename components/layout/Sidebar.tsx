@@ -23,7 +23,20 @@ import { useSidebar } from "./SidebarContext";
 import { cn } from "@/lib/utils";
 import NpkrLogo from "../npkr-logo";
 
-export type RoleType = "marketing" | "admin" | "manager" | "MARKETING" | "ADMIN" | "MANAGER";
+export type RoleType =
+  | "marketing"
+  | "admin"
+  | "manager"
+  | "digital_marketing"
+  | "field_supervisor"
+  | "director"
+  | "MARKETING"
+  | "ADMIN"
+  | "MANAGER"
+  | "DIGITAL_MARKETING"
+  | "FIELD_SUPERVISOR"
+  | "DIRECTOR"
+  | (string & {});
 
 export interface NavItem {
   title: string;
@@ -60,6 +73,19 @@ export const ROLE_NAV_ITEMS: Record<string, NavItem[]> = {
     { title: "Audit Aktivitas", href: "/manager/aktivitas", icon: Activity },
     { title: "Pusat Laporan", href: "/manager/laporan", icon: BarChart3 },
   ],
+  digital_marketing: [
+    { title: "Dashboard", href: "/digital-marketing/dashboard", icon: LayoutDashboard },
+    { title: "Manajemen Lead", href: "/marketing/lead", icon: Users },
+  ],
+  field_supervisor: [
+    { title: "Dashboard", href: "/field-supervisor/dashboard", icon: LayoutDashboard },
+    { title: "Inventaris Unit", href: "/admin/master-unit", icon: Building2 },
+  ],
+  director: [
+    { title: "Dashboard", href: "/director/dashboard", icon: LayoutDashboard },
+    { title: "Pusat Laporan", href: "/manager/laporan", icon: BarChart3 },
+    { title: "Laporan Keuangan", href: "/manager/keuangan", icon: Banknote },
+  ],
 };
 
 const ROLE_METADATA: Record<string, { title: string; badge: string; colorClass: string }> = {
@@ -77,6 +103,21 @@ const ROLE_METADATA: Record<string, { title: string; badge: string; colorClass: 
     title: "Manager Portal",
     badge: "Manager",
     colorClass: "bg-amber-50 text-amber-800 border-amber-200",
+  },
+  digital_marketing: {
+    title: "Digital Marketing Portal",
+    badge: "Digital Marketing",
+    colorClass: "bg-blue-50 text-blue-700 border-blue-200",
+  },
+  field_supervisor: {
+    title: "Field Supervisor Portal",
+    badge: "Supervisor Lapangan",
+    colorClass: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  },
+  director: {
+    title: "Director Portal",
+    badge: "Direksi",
+    colorClass: "bg-purple-50 text-purple-800 border-purple-200",
   },
 };
 

@@ -2,20 +2,22 @@
 
 import React, { useState, useRef, useEffect, useTransition } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Menu,
   ChevronDown,
   LogOut,
   User as UserIcon,
-  Shield,
   Loader2,
   Layers,
+  Settings,
 } from "lucide-react";
 import { useSidebar } from "./SidebarContext";
 import { Breadcrumb } from "./Breadcrumb";
 import { logoutAction } from "@/actions/auth.action";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export interface AuthUser {
   id?: string | number;
@@ -65,22 +67,33 @@ export function AppBar({ user, role, className = "" }: AppBarProps) {
     };
   }, [dropdownOpen]);
 
+  const { data: liveSession } = useSession();
+
+  // Combine live session with fallback prop
+  const effectiveUser = liveSession?.user || user;
+
   // Resolve display name and role
-  const displayName = user?.name || user?.nama || "Pengguna Portal";
-  const displayRole = (user?.role || role || "USER").toUpperCase();
-  const userInitials = displayName
-    .split(" ")
-    .map((part) => part[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join("")
-    .toUpperCase() || "NP";
+  const displayName =
+    effectiveUser?.name ||
+    (effectiveUser && "nama" in effectiveUser && typeof effectiveUser.nama === "string"
+      ? effectiveUser.nama
+      : null) ||
+    "Pengguna Portal";
+  const displayRole = (effectiveUser?.role || role || "USER").toUpperCase();
+  const userInitials =
+    displayName
+      .split(" ")
+      .map((part) => part[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "NP";
 
   const handleLogout = () => {
     startTransition(async () => {
       try {
         await logoutAction();
-      } catch (error: unknown) {
+      } catch (_error: unknown) {
         // Fallback redirection if server action triggers redirect
         router.push("/login");
       }
@@ -205,14 +218,14 @@ export function AppBar({ user, role, className = "" }: AppBarProps) {
                 <p className="text-xs font-semibold text-graphite truncate">
                   {displayName}
                 </p>
-                {user?.email && (
+                {effectiveUser?.email && (
                   <p className="text-[11px] text-slate truncate mt-0.5">
-                    {user.email}
+                    {effectiveUser.email}
                   </p>
                 )}
-                {user?.no_hp && (
+                {effectiveUser && "no_hp" in effectiveUser && typeof effectiveUser.no_hp === "string" && (
                   <p className="text-[11px] text-slate font-mono mt-0.5">
-                    {user.no_hp}
+                    {effectiveUser.no_hp}
                   </p>
                 )}
                 <div className="mt-2">
@@ -229,7 +242,15 @@ export function AppBar({ user, role, className = "" }: AppBarProps) {
 
               {/* Menu items */}
               <div className="py-1">
-                <div className="px-4 py-2 text-xs text-slate flex items-center gap-2">
+                <Link
+                  href="/profile/settings"
+                  onClick={() => setDropdownOpen(false)}
+                  className="px-4 py-2 text-xs text-graphite hover:bg-bone flex items-center gap-2 transition-colors"
+                >
+                  <Settings className="w-3.5 h-3.5 text-steel" />
+                  <span>Pengaturan Profil</span>
+                </Link>
+                <div className="px-4 py-1.5 text-xs text-slate flex items-center gap-2">
                   <UserIcon className="w-3.5 h-3.5 text-steel" />
                   <span>Sesi Aktif</span>
                   <span className="ml-auto w-2 h-2 rounded-full bg-emerald-500" />
