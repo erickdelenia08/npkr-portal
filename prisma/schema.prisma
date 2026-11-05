@@ -364,6 +364,8 @@ model Bank {
   updated_at DateTime @updatedAt
 
   pengajuan_kpr PengajuanKPR[]
+
+  @@map("bank")
 }
 
 enum StatusPengajuanKPR {
