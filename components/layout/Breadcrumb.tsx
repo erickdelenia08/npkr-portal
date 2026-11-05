@@ -25,6 +25,7 @@ const ROUTE_LABELS: Record<string, string> = {
   customer: "Customer",
   pembayaran: "Pembayaran",
   kwitansi: "Kwitansi",
+  profile: "Profil",
   settings: "Pengaturan",
 };
 
