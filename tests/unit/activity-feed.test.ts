@@ -40,13 +40,21 @@ describe("Phase 2: Manager Activity Feed & Audit Trail Tests", () => {
     });
 
     it("returns relative time text for today", () => {
-      const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
-      const res = relativeTimeTodayWIB(fiveMinsAgo);
-      expect(res).toBe("5 mnt lalu");
+      // Pin time to 15:00 WIB so 2 hours ago is guaranteed within the same WIB calendar day
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-11-06T15:00:00+07:00"));
 
-      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-      const resHours = relativeTimeTodayWIB(twoHoursAgo);
-      expect(resHours).toBe("2 jam lalu");
+      try {
+        const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
+        const res = relativeTimeTodayWIB(fiveMinsAgo);
+        expect(res).toBe("5 mnt lalu");
+
+        const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+        const resHours = relativeTimeTodayWIB(twoHoursAgo);
+        expect(resHours).toBe("2 jam lalu");
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 
