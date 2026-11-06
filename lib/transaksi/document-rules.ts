@@ -280,6 +280,7 @@ export function getRequiredDocuments({
         key: "PAS_FOTO",
         label: "Pas foto 4x6 @ 1 lembar (suami istri)",
         required: true,
+        bisaMenyusul: true,
         group: "Identitas & Formulir",
         description: "Pas foto terbaru 4x6 masing-masing 1 lembar",
       },
@@ -419,6 +420,7 @@ export function getRequiredDocuments({
         key: "PAS_FOTO",
         label: "Pas foto 4x6 @ 1 lembar (suami istri)",
         required: true,
+        bisaMenyusul: true,
         group: "Identitas & Formulir",
         description: "Pas foto terbaru 4x6 masing-masing 1 lembar",
       },
@@ -441,10 +443,11 @@ export function getRequiredDocuments({
       // 13
       {
         key: "BUKU_TABUNGAN_BTN",
-        label: "Fotokopi buku tabungan BTN",
+        label: "Fotokopi buku tabungan",
         required: true,
+        bisaMenyusul: true,
         group: "Pekerjaan & Keuangan",
-        description: "Fotokopi buku rekening tabungan Bank BTN (halaman depan)",
+        description: "Fotokopi buku rekening tabungan Bank (halaman depan)",
       },
       // 14
       {
@@ -459,6 +462,7 @@ export function getRequiredDocuments({
         key: "SURAT_LUNAS_UANG_MUKA",
         label: "Surat Keterangan Lunas Uang Muka",
         required: true,
+        bisaMenyusul: true,
         group: "Dokumen Properti & Developer",
         description: "Surat keterangan lunas DP / Uang Muka dari developer",
       },

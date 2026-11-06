@@ -218,10 +218,9 @@ function getDefaultLunasDate(
 }
 
 const inputClass = (invalid: boolean) =>
-  `w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none focus:ring-2 ${
-    invalid
-      ? "border-red-400 focus:border-red-500 focus:ring-red-400/25"
-      : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
+  `w-full rounded-lg border bg-white px-3 py-2 text-sm outline-none focus:ring-2 ${invalid
+    ? "border-red-400 focus:border-red-500 focus:ring-red-400/25"
+    : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
   }`;
 
 function Field({
@@ -523,7 +522,12 @@ export function DynamicActionPanel({
     () => blockingRequiredDocs.filter((d) => isDokumenTerverifikasi(d.key, verifiedDocs)).length,
     [blockingRequiredDocs, verifiedDocs]
   );
-  const allRequiredVerified = isProfileComplete && verifiedBlockingCount >= blockingRequiredDocs.length;
+  const allRequiredVerified = useMemo(() => {
+    if (!isProfileComplete) return false;
+    return blockingRequiredDocs.every((doc) =>
+      isDokumenTerverifikasi(doc.key, verifiedDocs)
+    );
+  }, [isProfileComplete, blockingRequiredDocs, verifiedDocs]);
 
   const groupedDocs = useMemo(() => {
     const groups: { name: string; items: typeof ruleDocs }[] = [];
@@ -1041,6 +1045,167 @@ export function DynamicActionPanel({
   };
 
   // --------------------------------------------------
+  // Shared Document Checklist Renderer (Pemberkasan & Proses Bank)
+  // --------------------------------------------------
+  const renderDocumentChecklist = () => (
+    <div className="space-y-4">
+      {/* Profile Summary & Edit Control */}
+      <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <UserCheck className="h-4 w-4 text-teal-700 shrink-0" />
+          <span className="text-xs text-slate-600 font-medium">Profil Konsumen:</span>
+          <span className="text-xs font-bold text-slate-900">
+            {statusPernikahan ? humanize(statusPernikahan) : (isKpr ? "Pernikahan (?)" : "Pernikahan (-)")} ·{" "}
+            {statusPekerjaan ? (statusPekerjaan === "TETAP" ? "Pegawai Tetap" : "Wirausaha") : (isKpr ? "Pekerjaan (?)" : "Pekerjaan (-)")}
+          </span>
+        </div>
+
+        {canEdit && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setProfileFormPernikahan(statusPernikahan ?? "");
+              setProfileFormPekerjaan(statusPekerjaan ?? "");
+              setProfileDialogOpen(true);
+            }}
+            className="h-7 text-xs font-semibold border-slate-300 text-teal-700 hover:bg-teal-50"
+          >
+            <Edit2 className="mr-1 h-3 w-3" />
+            Ubah Profil
+          </Button>
+        )}
+      </div>
+
+      {/* Profile Incomplete Gate */}
+      {!isProfileComplete ? (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 space-y-3">
+          <div className="flex items-start gap-2.5">
+            <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-bold text-amber-950">
+                Profil Konsumen Belum Lengkap
+              </h4>
+              <p className="text-xs text-amber-900 mt-0.5 leading-relaxed">
+                Daftar dokumen persyaratan disesuaikan dengan status pernikahan dan status pekerjaan konsumen. Lengkapi profil terlebih dahulu untuk menampilkan checklist berkas yang sesuai.
+              </p>
+            </div>
+          </div>
+
+          {canEdit && (
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => {
+                setProfileFormPernikahan(statusPernikahan ?? "");
+                setProfileFormPekerjaan(statusPekerjaan ?? "");
+                setProfileDialogOpen(true);
+              }}
+              className="bg-amber-700 text-xs font-semibold text-white hover:bg-amber-800"
+            >
+              Lengkapi Profil Konsumen
+            </Button>
+          )}
+        </div>
+      ) : (
+        /* Rule-based Checklist */
+        <div className="space-y-4">
+          <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-3">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-800">
+                  Centang dokumen yang telah diterima secara fisik dari konsumen.
+                </p>
+                {/* {isKpr && (
+                  <p className="text-[11px] text-slate-500">
+                    Form FPPA berstatus <span className="font-semibold text-amber-700">Bisa menyusul</span> (tidak menghalangi pengajuan awal ke Bank).
+                  </p>
+                )} */}
+              </div>
+              <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 text-nowrap self-start sm:self-auto">
+                {verifiedRequiredCount} dari {requiredDocs.length} Dokumen Diterima
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {groupedDocs.map((grp) => (
+              <div key={grp.name} className="space-y-2">
+                <div className="flex items-center gap-2 pt-1 pb-0.5">
+                  <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                    {grp.name}
+                  </h5>
+                  <div className="h-px flex-1 bg-slate-200" />
+                </div>
+
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  {grp.items.map((doc) => {
+                    const checked = isDokumenTerverifikasi(doc.key, verifiedDocs);
+                    const id = `doc-${doc.key}`;
+
+                    return (
+                      <label
+                        key={doc.key}
+                        htmlFor={id}
+                        className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${checked
+                            ? "border-teal-300 bg-teal-50/50"
+                            : "border-slate-200 bg-white hover:bg-slate-50"
+                          }`}
+                      >
+                        <input
+                          id={id}
+                          type="checkbox"
+                          checked={checked}
+                          disabled={!canEdit || isPending}
+                          onChange={() => handleToggleDoc(doc.key, checked)}
+                          className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-semibold text-slate-900">{doc.label}</span>
+                            {doc.bisaMenyusul ? (
+                              <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200">
+                                Bisa menyusul
+                              </span>
+                            ) : doc.required ? (
+                              <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-bold text-rose-700 border border-rose-200">
+                                Wajib
+                              </span>
+                            ) : (
+                              <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">
+                                Opsional
+                              </span>
+                            )}
+                            {checked ? (
+                              <span className="rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800">
+                                Lengkap
+                              </span>
+                            ) : (
+                              <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+                                Belum Lengkap
+                              </span>
+                            )}
+                          </div>
+                          {doc.description && (
+                            <p className="mt-1 text-[11px] text-slate-500 line-clamp-2">
+                              {doc.description}
+                            </p>
+                          )}
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  // --------------------------------------------------
   // Render
   // --------------------------------------------------
 
@@ -1146,26 +1311,23 @@ export function DynamicActionPanel({
                     return (
                       <div
                         key={item.key}
-                        className={`flex items-start gap-2.5 rounded-lg border p-2.5 text-xs ${
-                          isLengkap
+                        className={`flex items-start gap-2.5 rounded-lg border p-2.5 text-xs ${isLengkap
                             ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
                             : "border-slate-200 bg-slate-50 text-slate-500"
-                        }`}
+                          }`}
                       >
                         <CheckCircle2
-                          className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${
-                            isLengkap ? "text-emerald-600" : "text-slate-400"
-                          }`}
+                          className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${isLengkap ? "text-emerald-600" : "text-slate-400"
+                            }`}
                         />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
                             <p className="font-semibold">{item.title}</p>
                             <span
-                              className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
-                                isLengkap
+                              className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${isLengkap
                                   ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                                   : "border-slate-200 bg-slate-100 text-slate-600"
-                              }`}
+                                }`}
                             >
                               {isLengkap ? "Lengkap" : "Belum Lengkap"}
                             </span>
@@ -1227,22 +1389,20 @@ export function DynamicActionPanel({
                 return (
                   <div
                     key={step.macro}
-                    className={`flex min-h-14 items-center gap-2.5 rounded-lg border p-3 text-sm transition-colors ${
-                      isStepCurrent
+                    className={`flex min-h-14 items-center gap-2.5 rounded-lg border p-3 text-sm transition-colors ${isStepCurrent
                         ? "border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600/30"
                         : isStepDone
                           ? "border-slate-200 bg-slate-50/80 text-slate-700"
                           : "border-slate-200 bg-white text-slate-400"
-                    }`}
+                      }`}
                   >
                     <span
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                        isStepDone
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isStepDone
                           ? "bg-teal-700 text-white"
                           : isStepCurrent
                             ? "bg-teal-600 text-white"
                             : "bg-slate-100 text-slate-500"
-                      }`}
+                        }`}
                     >
                       {isStepDone ? (
                         <Check className="h-3.5 w-3.5" aria-label="Selesai" />
@@ -1282,7 +1442,7 @@ export function DynamicActionPanel({
                   {isPemberkasan
                     ? "Checklist Penerimaan Dokumen Pemberkasan"
                     : isProsesBank
-                      ? "Proses Pengajuan Bank (KPR)"
+                      ? "Proses Pengajuan Bank & Kelengkapan Dokumen"
                       : currentStage.detail === "MENUNGGU_PELUNASAN"
                         ? "Konfirmasi Pelunasan (Cash Keras)"
                         : currentStage.detail === "PEMBAYARAN_DP"
@@ -1301,202 +1461,49 @@ export function DynamicActionPanel({
             {/* ── STAGE A: PEMBERKASAN (CHECKLIST PENERIMAAN FISIK) ── */}
             {isPemberkasan && (
               <div className="space-y-4">
-                {/* Profile Summary & Edit Control */}
-                <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-slate-50/70 p-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2">
-                    <UserCheck className="h-4 w-4 text-teal-700 shrink-0" />
-                    <span className="text-xs text-slate-600 font-medium">Profil Konsumen:</span>
-                    <span className="text-xs font-bold text-slate-900">
-                      {statusPernikahan ? humanize(statusPernikahan) : (isKpr ? "Pernikahan (?)" : "Pernikahan (-)")} ·{" "}
-                      {statusPekerjaan ? (statusPekerjaan === "TETAP" ? "Pegawai Tetap" : "Wirausaha") : (isKpr ? "Pekerjaan (?)" : "Pekerjaan (-)")}
-                    </span>
+                {renderDocumentChecklist()}
+
+                {/* CTA Area for Pemberkasan */}
+                {isKpr ? (
+                  <div className="mt-4 pt-4 border-t border-slate-100">
+                    <KprSubmissionSection
+                      transaksiId={transaksiId}
+                      initialPengajuan={initialPengajuanKpr}
+                      masterBanks={masterBanks}
+                      currentTahapDetail={currentStage.detail}
+                      canEdit={canEdit}
+                      hideHeader={true}
+                      disabledNew={!allRequiredVerified}
+                      disabledNewReason={
+                        !allRequiredVerified
+                          ? `Lengkapi seluruh ${blockingRequiredDocs.length} dokumen wajib di atas (selain FPPA) sebelum mengajukan berkas ke Bank.`
+                          : undefined
+                      }
+                    />
                   </div>
-
-                  {canEdit && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setProfileFormPernikahan(statusPernikahan ?? "");
-                        setProfileFormPekerjaan(statusPekerjaan ?? "");
-                        setProfileDialogOpen(true);
-                      }}
-                      className="h-7 text-xs font-semibold border-slate-300 text-teal-700 hover:bg-teal-50"
-                    >
-                      <Edit2 className="mr-1 h-3 w-3" />
-                      Ubah Profil
-                    </Button>
-                  )}
-                </div>
-
-                {/* Profile Incomplete Gate */}
-                {!isProfileComplete ? (
-                  <div className="rounded-lg border border-amber-300 bg-amber-50 p-4 space-y-3">
-                    <div className="flex items-start gap-2.5">
-                      <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0 mt-0.5" />
-                      <div>
-                        <h4 className="text-sm font-bold text-amber-950">
-                          Profil Konsumen Belum Lengkap
-                        </h4>
-                        <p className="text-xs text-amber-900 mt-0.5 leading-relaxed">
-                          Daftar dokumen persyaratan disesuaikan dengan status pernikahan dan status pekerjaan konsumen. Lengkapi profil terlebih dahulu untuk menampilkan checklist berkas yang sesuai.
-                        </p>
-                      </div>
-                    </div>
-
-                    {canEdit && (
+                ) : (
+                  /* CTA for Cash */
+                  <div className="pt-4 border-t border-slate-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-xs text-slate-500">
+                      Setelah berkas lengkap, transaksi dapat dilanjutkan ke tahap pembayaran.
+                    </p>
+                    {canEdit && nextStage && (
                       <Button
                         type="button"
                         size="sm"
-                        onClick={() => {
-                          setProfileFormPernikahan(statusPernikahan ?? "");
-                          setProfileFormPekerjaan(statusPekerjaan ?? "");
-                          setProfileDialogOpen(true);
-                        }}
-                        className="bg-amber-700 text-xs font-semibold text-white hover:bg-amber-800"
+                        disabled={!allRequiredVerified || isPending}
+                        onClick={() => executeAdvance(nextStage.detail)}
+                        className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
                       >
-                        Lengkapi Profil Konsumen
-                      </Button>
-                    )}
-                  </div>
-                ) : (
-                  /* Rule-based Checklist */
-                  <div className="space-y-4">
-                    <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-3">
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                          <p className="text-xs font-medium text-slate-800">
-                            Centang dokumen yang telah diterima secara fisik dari konsumen.
-                          </p>
-                          {isKpr && (
-                            <p className="text-[11px] text-slate-500">
-                              Form FPPA berstatus <span className="font-semibold text-amber-700">Bisa menyusul</span> (tidak menghalangi pengajuan awal ke Bank).
-                            </p>
-                          )}
-                        </div>
-                        <span className="rounded-md border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-800 text-nowrap self-start sm:self-auto">
-                          {verifiedRequiredCount} dari {requiredDocs.length} Dokumen Diterima
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      {groupedDocs.map((grp) => (
-                        <div key={grp.name} className="space-y-2">
-                          <div className="flex items-center gap-2 pt-1 pb-0.5">
-                            <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                              {grp.name}
-                            </h5>
-                            <div className="h-px flex-1 bg-slate-200" />
-                          </div>
-
-                          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                            {grp.items.map((doc) => {
-                              const checked = isDokumenTerverifikasi(doc.key, verifiedDocs);
-                              const id = `doc-${doc.key}`;
-
-                              return (
-                                <label
-                                  key={doc.key}
-                                  htmlFor={id}
-                                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-xs transition-colors ${
-                                    checked
-                                      ? "border-teal-300 bg-teal-50/50"
-                                      : "border-slate-200 bg-white hover:bg-slate-50"
-                                  }`}
-                                >
-                                  <input
-                                    id={id}
-                                    type="checkbox"
-                                    checked={checked}
-                                    disabled={!canEdit || isPending}
-                                    onChange={() => handleToggleDoc(doc.key, checked)}
-                                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-700 focus:ring-teal-600 disabled:cursor-not-allowed disabled:opacity-60"
-                                  />
-                                  <div className="min-w-0 flex-1">
-                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                      <span className="font-semibold text-slate-900">{doc.label}</span>
-                                      {doc.bisaMenyusul ? (
-                                        <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200">
-                                          Bisa menyusul
-                                        </span>
-                                      ) : doc.required ? (
-                                        <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[10px] font-bold text-rose-700 border border-rose-200">
-                                          Wajib
-                                        </span>
-                                      ) : (
-                                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600">
-                                          Opsional
-                                        </span>
-                                      )}
-                                      {checked ? (
-                                        <span className="rounded bg-teal-100 px-1.5 py-0.5 text-[10px] font-semibold text-teal-800">
-                                          Lengkap
-                                        </span>
-                                      ) : (
-                                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
-                                          Belum Lengkap
-                                        </span>
-                                      )}
-                                    </div>
-                                    {doc.description && (
-                                      <p className="mt-1 text-[11px] text-slate-500 line-clamp-2">
-                                        {doc.description}
-                                      </p>
-                                    )}
-                                  </div>
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* CTA Area for Pemberkasan */}
-                    {isKpr ? (
-                      <div className="mt-4 pt-4 border-t border-slate-100">
-                        <KprSubmissionSection
-                          transaksiId={transaksiId}
-                          initialPengajuan={initialPengajuanKpr}
-                          masterBanks={masterBanks}
-                          currentTahapDetail={currentStage.detail}
-                          canEdit={canEdit}
-                          hideHeader={true}
-                          disabledNew={!allRequiredVerified}
-                          disabledNewReason={
-                            !allRequiredVerified
-                              ? `Lengkapi seluruh ${blockingRequiredDocs.length} dokumen wajib di atas (selain FPPA) sebelum mengajukan berkas ke Bank.`
-                              : undefined
-                          }
-                        />
-                      </div>
-                    ) : (
-                      /* CTA for Cash */
-                      <div className="pt-4 border-t border-slate-100 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-xs text-slate-500">
-                          Setelah berkas lengkap, transaksi dapat dilanjutkan ke tahap pembayaran.
-                        </p>
-                        {canEdit && nextStage && (
-                          <Button
-                            type="button"
-                            size="sm"
-                            disabled={!allRequiredVerified || isPending}
-                            onClick={() => executeAdvance(nextStage.detail)}
-                            className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
-                          >
-                            {isPending ? (
-                              <>
-                                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                                Memproses...
-                              </>
-                            ) : (
-                              `Lanjut ke ${nextStage.label}`
-                            )}
-                          </Button>
+                        {isPending ? (
+                          <>
+                            <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                            Memproses...
+                          </>
+                        ) : (
+                          `Lanjut ke ${nextStage.label}`
                         )}
-                      </div>
+                      </Button>
                     )}
                   </div>
                 )}
@@ -1505,170 +1512,194 @@ export function DynamicActionPanel({
 
             {/* ── STAGE B: PROSES BANK (KPR) ── */}
             {isProsesBank && (
-              <div className="space-y-5">
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  Status perbankan dikelola secara independen per bank. Anda dapat memproses beberapa bank secara paralel, mencatat penolakan, atau menambah bank penyalur lainnya.
-                </p>
-
-                <KprSubmissionSection
-                  transaksiId={transaksiId}
-                  initialPengajuan={initialPengajuanKpr}
-                  masterBanks={masterBanks}
-                  currentTahapDetail={currentStage.detail}
-                  canEdit={canEdit}
-                  hideHeader={true}
-                />
-
-                {/* Form Akad Kredit aktif jika minimal satu bank SP3K */}
-                {hasSp3k && (
-                  <form
-                    onSubmit={handlePrimarySubmit}
-                    noValidate
-                    className="space-y-4 rounded-xl border border-teal-300 bg-teal-50/50 p-4 shadow-xs"
-                  >
-                    <div className="flex items-center justify-between border-b border-teal-200/80 pb-3">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle2 className="h-5 w-5 text-teal-700" />
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-teal-800">
-                            Persetujuan Bank (SP3K Terbit)
-                          </p>
-                          <p className="text-sm font-semibold text-slate-900">
-                            Bank Pembiaya: {approvedBankNames}
-                          </p>
-                        </div>
-                      </div>
-                      <span className="rounded-md border border-teal-300 bg-white px-2.5 py-1 text-xs font-bold text-teal-800">
-                        Siap Akad Kredit
-                      </span>
+              <div className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between pb-1">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-teal-800">
+                        Pengajuan &amp; Status Bank Penyalur
+                      </h4>
+                      <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                        Status perbankan dikelola secara independen per bank. Anda dapat memproses beberapa bank secara paralel, mencatat penolakan, atau menambah bank penyalur lainnya.
+                      </p>
                     </div>
+                  </div>
 
-                    {/* Radio group jika lebih dari satu bank SP3K */}
-                    {sp3kSubmissions.length > 1 && (
-                      <div className="rounded-lg border border-teal-200 bg-white p-3 space-y-2">
-                        <label className="block text-xs font-bold text-slate-800">
-                          Pilih Bank Pembiaya Utama (SP3K Terpilih) <span className="text-red-600">*</span>
-                        </label>
-                        <p className="text-[11px] text-slate-600">
-                          Terdapat {sp3kSubmissions.length} pengajuan berstatus SP3K. Pilih satu bank yang dipilih konsumen untuk pelaksanaan akad kredit.
-                        </p>
-                        <div className="space-y-2 pt-1">
-                          {sp3kSubmissions.map((sub) => {
-                            const isSelected = effectiveSelectedPengajuanId === sub.id;
-                            return (
-                              <label
-                                key={sub.id}
-                                className={`flex items-center justify-between rounded-lg border p-2.5 text-xs cursor-pointer transition-colors ${
-                                  isSelected
-                                    ? "border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600/30"
-                                    : "border-slate-200 hover:bg-slate-50 text-slate-700"
-                                }`}
-                              >
-                                <div className="flex items-center gap-2.5">
-                                  <input
-                                    type="radio"
-                                    name="pengajuanTerpilihRadio"
-                                    checked={isSelected}
-                                    onChange={() => setSelectedPengajuanId(sub.id)}
-                                    disabled={!canEdit || isPending}
-                                    className="h-4 w-4 text-teal-600 focus:ring-teal-500"
-                                  />
-                                  <span className="font-semibold">{sub.bank.nama}</span>
-                                </div>
-                                <div className="text-right">
-                                  <span className="font-mono text-emerald-700 text-xs font-semibold">
-                                    SP3K #{sub.nomor_pengajuan}
-                                  </span>
-                                </div>
-                              </label>
-                            );
-                          })}
+                  <KprSubmissionSection
+                    transaksiId={transaksiId}
+                    initialPengajuan={initialPengajuanKpr}
+                    masterBanks={masterBanks}
+                    currentTahapDetail={currentStage.detail}
+                    canEdit={canEdit}
+                    hideHeader={true}
+                  />
+
+                  {/* Form Akad Kredit aktif jika minimal satu bank SP3K */}
+                  {hasSp3k && (
+                    <form
+                      onSubmit={handlePrimarySubmit}
+                      noValidate
+                      className="space-y-4 rounded-xl border border-teal-300 bg-teal-50/50 p-4 shadow-xs"
+                    >
+                      <div className="flex items-center justify-between border-b border-teal-200/80 pb-3">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="h-5 w-5 text-teal-700" />
+                          <div>
+                            <p className="text-xs font-bold uppercase tracking-wider text-teal-800">
+                              Persetujuan Bank (SP3K Terbit)
+                            </p>
+                            <p className="text-sm font-semibold text-slate-900">
+                              Bank Pembiaya: {approvedBankNames}
+                            </p>
+                          </div>
                         </div>
+                        <span className="rounded-md border border-teal-300 bg-white px-2.5 py-1 text-xs font-bold text-teal-800">
+                          Siap Akad Kredit
+                        </span>
                       </div>
-                    )}
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
-                        <input
-                          id="fld-notaris"
-                          type="text"
-                          value={namaNotaris}
-                          disabled={!canEdit || isPending}
-                          onChange={(e) => {
-                            setNamaNotaris(e.target.value);
-                            if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
-                          }}
-                          placeholder="Nama Notaris / PPAT Rekanan"
-                          className={inputClass(Boolean(formErrors.notaris))}
-                        />
-                      </Field>
-
-                      <Field id="fld-rencanaAkad" label="Rencana Tanggal Akad" error={formErrors.rencanaAkad}>
-                        <input
-                          id="fld-rencanaAkad"
-                          type="date"
-                          value={rencanaAkadAt}
-                          disabled={!canEdit || isPending || isSavingJadwal}
-                          onChange={(e) => setRencanaAkadAt(e.target.value)}
-                          className={inputClass(false)}
-                        />
-                      </Field>
-
-                      <Field id="fld-tglAkad" label="Tanggal Akad Kredit Aktual" required error={formErrors.tglAkad}>
-                        <input
-                          id="fld-tglAkad"
-                          type="date"
-                          max={todayWIB()}
-                          value={tglAkad}
-                          disabled={!canEdit || isPending}
-                          onChange={(e) => {
-                            setTglAkad(e.target.value);
-                            if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
-                          }}
-                          className={inputClass(Boolean(formErrors.tglAkad))}
-                        />
-                      </Field>
-                    </div>
-
-                    <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 border-t border-teal-200/60">
-                      {canEdit && (
-                        <>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            disabled={isPending || isSavingJadwal}
-                            onClick={handleSimpanJadwalAkad}
-                            className="text-xs font-semibold border-teal-400 text-teal-800 hover:bg-teal-100"
-                          >
-                            {isSavingJadwal ? (
-                              <>
-                                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                                Menyimpan Jadwal...
-                              </>
-                            ) : (
-                              "Simpan Jadwal Akad"
-                            )}
-                          </Button>
-                          <Button
-                            type="submit"
-                            disabled={isPending}
-                            className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
-                          >
-                            {isPending ? (
-                              <>
-                                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                                Menyimpan...
-                              </>
-                            ) : (
-                              "Akad Sudah Terlaksana"
-                            )}
-                          </Button>
-                        </>
+                      {/* Radio group jika lebih dari satu bank SP3K */}
+                      {sp3kSubmissions.length > 1 && (
+                        <div className="rounded-lg border border-teal-200 bg-white p-3 space-y-2">
+                          <label className="block text-xs font-bold text-slate-800">
+                            Pilih Bank Pembiaya Utama (SP3K Terpilih) <span className="text-red-600">*</span>
+                          </label>
+                          <p className="text-[11px] text-slate-600">
+                            Terdapat {sp3kSubmissions.length} pengajuan berstatus SP3K. Pilih satu bank yang dipilih konsumen untuk pelaksanaan akad kredit.
+                          </p>
+                          <div className="space-y-2 pt-1">
+                            {sp3kSubmissions.map((sub) => {
+                              const isSelected = effectiveSelectedPengajuanId === sub.id;
+                              return (
+                                <label
+                                  key={sub.id}
+                                  className={`flex items-center justify-between rounded-lg border p-2.5 text-xs cursor-pointer transition-colors ${isSelected
+                                      ? "border-teal-600 bg-teal-50 text-teal-900 ring-1 ring-teal-600/30"
+                                      : "border-slate-200 hover:bg-slate-50 text-slate-700"
+                                    }`}
+                                >
+                                  <div className="flex items-center gap-2.5">
+                                    <input
+                                      type="radio"
+                                      name="pengajuanTerpilihRadio"
+                                      checked={isSelected}
+                                      onChange={() => setSelectedPengajuanId(sub.id)}
+                                      disabled={!canEdit || isPending}
+                                      className="h-4 w-4 text-teal-600 focus:ring-teal-500"
+                                    />
+                                    <span className="font-semibold">{sub.bank.nama}</span>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="font-mono text-emerald-700 text-xs font-semibold">
+                                      SP3K #{sub.nomor_pengajuan}
+                                    </span>
+                                  </div>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
                       )}
+
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <Field id="fld-notaris" label="Notaris / PPAT" required error={formErrors.notaris}>
+                          <input
+                            id="fld-notaris"
+                            type="text"
+                            value={namaNotaris}
+                            disabled={!canEdit || isPending}
+                            onChange={(e) => {
+                              setNamaNotaris(e.target.value);
+                              if (formErrors.notaris) setFormErrors((p) => ({ ...p, notaris: "" }));
+                            }}
+                            placeholder="Nama Notaris / PPAT Rekanan"
+                            className={inputClass(Boolean(formErrors.notaris))}
+                          />
+                        </Field>
+
+                        <Field id="fld-rencanaAkad" label="Rencana Tanggal Akad" error={formErrors.rencanaAkad}>
+                          <input
+                            id="fld-rencanaAkad"
+                            type="date"
+                            value={rencanaAkadAt}
+                            disabled={!canEdit || isPending || isSavingJadwal}
+                            onChange={(e) => setRencanaAkadAt(e.target.value)}
+                            className={inputClass(false)}
+                          />
+                        </Field>
+
+                        <Field id="fld-tglAkad" label="Tanggal Akad Kredit Aktual" required error={formErrors.tglAkad}>
+                          <input
+                            id="fld-tglAkad"
+                            type="date"
+                            max={todayWIB()}
+                            value={tglAkad}
+                            disabled={!canEdit || isPending}
+                            onChange={(e) => {
+                              setTglAkad(e.target.value);
+                              if (formErrors.tglAkad) setFormErrors((p) => ({ ...p, tglAkad: "" }));
+                            }}
+                            className={inputClass(Boolean(formErrors.tglAkad))}
+                          />
+                        </Field>
+                      </div>
+
+                      <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 border-t border-teal-200/60">
+                        {canEdit && (
+                          <>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={isPending || isSavingJadwal}
+                              onClick={handleSimpanJadwalAkad}
+                              className="text-xs font-semibold border-teal-400 text-teal-800 hover:bg-teal-100"
+                            >
+                              {isSavingJadwal ? (
+                                <>
+                                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                  Menyimpan Jadwal...
+                                </>
+                              ) : (
+                                "Simpan Jadwal Akad"
+                              )}
+                            </Button>
+                            <Button
+                              type="submit"
+                              disabled={isPending}
+                              className="bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800"
+                            >
+                              {isPending ? (
+                                <>
+                                  <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                                  Menyimpan...
+                                </>
+                              ) : (
+                                "Akad Sudah Terlaksana"
+                              )}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </form>
+                  )}
+                </div>
+
+                {/* Sub-section 2: Kelengkapan Berkas & Dokumen Konsumen */}
+                <div className="pt-5 border-t border-slate-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-teal-800">
+                        Kelengkapan Berkas &amp; Dokumen Konsumen
+                      </h4>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Checklist dokumen tetap dapat diperbarui untuk melengkapi berkas yang menyusul (seperti FPPA) atau berkas tambahan selama proses bank berlangsung.
+                      </p>
                     </div>
-                  </form>
-                )}
+                  </div>
+
+                  {renderDocumentChecklist()}
+                </div>
               </div>
             )}
 
@@ -1707,9 +1738,8 @@ export function DynamicActionPanel({
                     <div className="rounded border border-slate-200 bg-white p-2.5">
                       <span className="block text-slate-500 text-[11px]">Sisa Pelunasan</span>
                       <span
-                        className={`font-mono font-bold ${
-                          (financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
-                        }`}
+                        className={`font-mono font-bold ${(financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                          }`}
                       >
                         {formatRupiah(financialSummary?.sisaPelunasan)}
                       </span>
@@ -1802,9 +1832,8 @@ export function DynamicActionPanel({
                     <div className="rounded border border-slate-200 bg-white p-2.5">
                       <span className="block text-slate-500 text-[11px]">Sisa Target DP</span>
                       <span
-                        className={`font-mono font-bold ${
-                          (financialSummary?.sisaDp ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
-                        }`}
+                        className={`font-mono font-bold ${(financialSummary?.sisaDp ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                          }`}
                       >
                         {formatRupiah(financialSummary?.sisaDp)}
                       </span>
@@ -1881,9 +1910,8 @@ export function DynamicActionPanel({
                     <div className="rounded border border-slate-200 bg-white p-2.5">
                       <span className="block text-slate-500 text-[11px]">Sisa Pelunasan</span>
                       <span
-                        className={`font-mono font-bold ${
-                          (financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
-                        }`}
+                        className={`font-mono font-bold ${(financialSummary?.sisaPelunasan ?? 0) > 0 ? "text-rose-600" : "text-emerald-700"
+                          }`}
                       >
                         {formatRupiah(financialSummary?.sisaPelunasan)}
                       </span>
@@ -2143,11 +2171,10 @@ export function DynamicActionPanel({
                         </p>
                       </div>
                       <span
-                        className={`rounded-md border px-2.5 py-1 text-xs font-bold ${
-                          lengkapBastCount === MASTER_BAST_ITEMS.length
+                        className={`rounded-md border px-2.5 py-1 text-xs font-bold ${lengkapBastCount === MASTER_BAST_ITEMS.length
                             ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                             : "border-slate-200 bg-slate-50 text-slate-700"
-                        }`}
+                          }`}
                       >
                         {lengkapBastCount}/{MASTER_BAST_ITEMS.length} Lengkap
                       </span>
@@ -2165,11 +2192,10 @@ export function DynamicActionPanel({
                         return (
                           <div
                             key={item.key}
-                            className={`flex flex-col justify-between rounded-lg border p-3.5 text-xs transition-colors ${
-                              isLengkap
+                            className={`flex flex-col justify-between rounded-lg border p-3.5 text-xs transition-colors ${isLengkap
                                 ? "border-teal-300 bg-teal-50/40"
                                 : "border-slate-200 bg-white"
-                            }`}
+                              }`}
                           >
                             <div>
                               <div className="flex items-start justify-between gap-2">
@@ -2181,11 +2207,10 @@ export function DynamicActionPanel({
                                     <Loader2 className="h-3 w-3 animate-spin text-slate-400" />
                                   )}
                                   <span
-                                    className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${
-                                      isLengkap
+                                    className={`rounded border px-1.5 py-0.5 text-[10px] font-bold ${isLengkap
                                         ? "border-emerald-200 bg-emerald-50 text-emerald-800"
                                         : "border-slate-200 bg-slate-100 text-slate-500"
-                                    }`}
+                                      }`}
                                   >
                                     {isLengkap ? "Lengkap" : "Belum Lengkap"}
                                   </span>
@@ -2207,11 +2232,10 @@ export function DynamicActionPanel({
                                 variant={isLengkap ? "outline" : "default"}
                                 disabled={!canEdit || isPending || isSavingThis}
                                 onClick={() => handleToggleBastItem(item.key)}
-                                className={`h-7 px-2.5 text-xs font-semibold ${
-                                  isLengkap
+                                className={`h-7 px-2.5 text-xs font-semibold ${isLengkap
                                     ? "border-slate-300 text-slate-700 hover:bg-slate-100"
                                     : "bg-teal-700 text-white hover:bg-teal-800"
-                                }`}
+                                  }`}
                               >
                                 {isLengkap ? (
                                   <>
@@ -2275,9 +2299,8 @@ export function DynamicActionPanel({
                 >
                   <span>⋯ Opsi lainnya</span>
                   <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                      showOtherOptions ? "rotate-180" : ""
-                    }`}
+                    className={`h-3.5 w-3.5 transition-transform duration-200 ${showOtherOptions ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
 
