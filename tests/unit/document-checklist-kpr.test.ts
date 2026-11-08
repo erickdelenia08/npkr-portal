@@ -356,7 +356,7 @@ describe("KPR Document Checklist & Stage Independence Rules", () => {
               jenis: "FORM_FPPA",
             },
           },
-          update: { status: "LENGKAP" },
+          update: expect.objectContaining({ status: "LENGKAP" }),
         })
       );
 

@@ -10,7 +10,10 @@ import {
   tolakPengajuanKPRSchema,
   ALLOWED_KPR_STATUS_TRANSITIONS,
 } from "@/schemas/kpr.schema";
-import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
+import {
+  getRequiredDocuments,
+  summarizeDocuments,
+} from "@/lib/transaksi/document-rules";
 import { logActivity } from "@/lib/activity/log";
 
 export interface ServerActionResponse<T = unknown> {
@@ -211,11 +214,12 @@ export async function ajukanKPR(
       }
 
       if (
-        trx.tahap_detail === "BATAL" ||
-        trx.tahap_detail === "BAST"
+        trx.tahap_detail === "AKAD_KREDIT" ||
+        trx.tahap_detail === "BAST" ||
+        trx.tahap_detail === "BATAL"
       ) {
         throw new Error(
-          "Transaksi sudah selesai atau telah dibatalkan."
+          "Pengajuan KPR tidak dapat dilakukan pada transaksi yang telah mencapai tahap Akad, BAST, atau Batal."
         );
       }
 
@@ -228,54 +232,49 @@ export async function ajukanKPR(
         );
       }
 
-      // 4. Validasi dokumen saat pertama kali masuk proses bank
-      if (trx.tahap_detail === "PENGUMPULAN_DOKUMEN") {
-        const docEvaluation = getRequiredDocuments({
-          metode: trx.metode_bayar,
-          kategori: trx.unit.tipe.kategori,
-          statusPernikahan: trx.customer.status_pernikahan,
-          statusPekerjaan: trx.customer.status_pekerjaan,
-        });
+      // Pastikan bank tidak memiliki pengajuan aktif lain pada transaksi ini
+      const activeExistingBank = await tx.pengajuanKPR.findFirst({
+        where: {
+          transaksi_id: transaksiId,
+          bank_id: bankId,
+          status: { notIn: ["DITOLAK", "DIBATALKAN"] },
+        },
+        include: { bank: true },
+      });
 
-        if (!docEvaluation.isProfileComplete) {
-          throw new Error(
-            `Pengajuan KPR belum dapat dilakukan: ${docEvaluation.message}`
-          );
-        }
-
-        const verifiedDocKeys = new Set(
-          trx.dokumen
-            .filter((d) => d.status === "LENGKAP")
-            .map((d) => d.jenis)
+      if (activeExistingBank) {
+        throw new Error(
+          `Bank ${activeExistingBank.bank.nama} sudah memiliki pengajuan KPR aktif (#${activeExistingBank.nomor_pengajuan}).`
         );
+      }
 
-        const requiredDocs = docEvaluation.documents.filter(
-          (d) => d.required && !d.bisaMenyusul
+      // 4. Validasi dokumen wajib pengajuan (PENGAJUAN gate)
+      const docEvaluation = getRequiredDocuments({
+        metode: trx.metode_bayar,
+        kategori: trx.unit.tipe.kategori,
+        statusPernikahan: trx.customer.status_pernikahan,
+        statusPekerjaan: trx.customer.status_pekerjaan,
+      });
+
+      if (!docEvaluation.isProfileComplete) {
+        throw new Error(
+          `Pengajuan KPR belum dapat dilakukan: ${docEvaluation.message}`
         );
+      }
 
-        const missingRequiredDocs = requiredDocs.filter((doc) => {
-          if (
-            doc.key === "KTP_PEMOHON" ||
-            doc.key === "KTP_SUAMI_ISTRI"
-          ) {
-            return (
-              !verifiedDocKeys.has("KTP_PEMOHON") &&
-              !verifiedDocKeys.has("KTP_SUAMI_ISTRI")
-            );
-          }
+      const verifiedDocKeys = trx.dokumen
+        .filter((d) => d.status === "LENGKAP")
+        .map((d) => d.jenis);
 
-          return !verifiedDocKeys.has(doc.key);
-        });
+      const summary = summarizeDocuments(docEvaluation.documents, verifiedDocKeys);
+      if (summary.missingForPengajuan.length > 0) {
+        const missingLabels = summary.missingForPengajuan
+          .map((d) => d.label)
+          .join(", ");
 
-        if (missingRequiredDocs.length > 0) {
-          const missingLabels = missingRequiredDocs
-            .map((d) => d.label)
-            .join(", ");
-
-          throw new Error(
-            `Pengajuan KPR belum dapat dilakukan: Dokumen pemberkasan wajib [${missingLabels}] belum lengkap.`
-          );
-        }
+        throw new Error(
+          `Pengajuan KPR belum dapat dilakukan: Dokumen pemberkasan wajib [${missingLabels}] belum lengkap.`
+        );
       }
 
       // 5. Validasi bank
@@ -449,7 +448,27 @@ export async function updateStatusPengajuanKPR(
       catatan,
     } = parsed.data;
 
-    // 2. Ambil data pengajuan dan transaksi
+    // 2. Validasi autentikasi & otorisasi terlebih dahulu
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Silakan login kembali.");
+    }
+
+    const currentUserId = Number(session.user.id);
+    if (!Number.isSafeInteger(currentUserId) || currentUserId <= 0) {
+      throw new Error("Sesi pengguna tidak valid.");
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: { id: currentUserId },
+      select: { id: true, role: true, isActive: true },
+    });
+
+    if (!currentUser || !currentUser.isActive) {
+      throw new Error("Pengguna tidak aktif atau tidak ditemukan.");
+    }
+
+    // Ambil data pengajuan dan transaksi
     const existing = await prisma.pengajuanKPR.findUnique({
       where: { id: pengajuanId },
       include: {
@@ -467,10 +486,19 @@ export async function updateStatusPengajuanKPR(
       throw new Error("Data Pengajuan KPR tidak ditemukan.");
     }
 
-    // 3. Validasi hak akses berdasarkan transaksi
-    const { adminId } = await requireCanEditKpr(
-      existing.transaksi.id
-    );
+    // Role check: ADMIN boleh akses semua, MARKETING hanya PIC transaksi
+    if (currentUser.role !== "ADMIN") {
+      if (
+        currentUser.role !== "MARKETING" ||
+        currentUser.id !== existing.transaksi.pic_id
+      ) {
+        throw new Error(
+          "Hanya PIC Marketing atau Admin yang dapat memperbarui pengajuan KPR transaksi ini."
+        );
+      }
+    }
+
+    const adminId = currentUser.id;
 
     // 4. Proses perubahan status
     const result = await prisma.$transaction(async (tx) => {
@@ -489,6 +517,27 @@ export async function updateStatusPengajuanKPR(
 
       if (!current) {
         throw new Error("Data Pengajuan KPR tidak ditemukan.");
+      }
+
+      // Validasi tahap transaksi tidak boleh terkunci (AKAD_KREDIT, BAST, BATAL)
+      if (
+        current.transaksi.tahap_detail === "AKAD_KREDIT" ||
+        current.transaksi.tahap_detail === "BAST" ||
+        current.transaksi.tahap_detail === "BATAL"
+      ) {
+        throw new Error(
+          `Pengajuan KPR terkunci dan tidak dapat diubah karena transaksi telah mencapai tahap ${current.transaksi.tahap_detail}.`
+        );
+      }
+
+      // Bank yang dipilih tidak boleh ditolak atau dibatalkan
+      if (
+        current.transaksi.pengajuan_kpr_terpilih_id === current.id &&
+        (status === "DITOLAK" || status === "DIBATALKAN")
+      ) {
+        throw new Error(
+          "Bank ini telah dipilih sebagai bank pembiaya utama pada Akad Kredit dan tidak dapat ditolak atau dibatalkan."
+        );
       }
 
       if (
@@ -573,6 +622,43 @@ export async function updateStatusPengajuanKPR(
             tahap_detail: "PROSES_BANK",
             tahap_since: new Date(),
             version: { increment: 1 },
+          },
+        });
+
+        await tx.transaksiTahapLog.create({
+          data: {
+            transaksi_id: current.transaksi.id,
+            actor_id: adminId,
+            detail_sebelum: "PENGUMPULAN_DOKUMEN",
+            detail_sesudah: "PROSES_BANK",
+            catatan: `Tahap transaksi beralih ke Proses Bank seiring pembaruan status pengajuan KPR ke ${status}`,
+          },
+        });
+
+        const actorForStage = await tx.user.findUnique({
+          where: { id: adminId },
+          select: { nama: true },
+        });
+
+        await logActivity(tx, {
+          entityType: "TRANSAKSI",
+          entityId: current.transaksi.id,
+          action: "STAGE_ADVANCED",
+          leadId: current.transaksi.itj?.lead_id || null,
+          transaksiId: current.transaksi.id,
+          tahapDetail: "PROSES_BANK",
+          actorId: adminId,
+          summaryContext: {
+            actorName: actorForStage?.nama,
+            blok: current.transaksi.unit?.blok,
+            stageName: "Proses KPR (PROSES_BANK)",
+            prevStageName: "Pengumpulan Dokumen",
+          },
+          before: {
+            tahap_detail: "PENGUMPULAN_DOKUMEN",
+          },
+          after: {
+            tahap_detail: "PROSES_BANK",
           },
         });
       }

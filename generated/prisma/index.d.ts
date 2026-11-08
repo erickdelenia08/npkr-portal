@@ -17552,6 +17552,7 @@ export namespace Prisma {
     transaksi_id: number | null
     jenis: $Enums.JenisDokumen | null
     status: $Enums.StatusDokumen | null
+    diterima_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -17561,6 +17562,7 @@ export namespace Prisma {
     transaksi_id: number | null
     jenis: $Enums.JenisDokumen | null
     status: $Enums.StatusDokumen | null
+    diterima_at: Date | null
     created_at: Date | null
     updated_at: Date | null
   }
@@ -17570,6 +17572,7 @@ export namespace Prisma {
     transaksi_id: number
     jenis: number
     status: number
+    diterima_at: number
     created_at: number
     updated_at: number
     _all: number
@@ -17591,6 +17594,7 @@ export namespace Prisma {
     transaksi_id?: true
     jenis?: true
     status?: true
+    diterima_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -17600,6 +17604,7 @@ export namespace Prisma {
     transaksi_id?: true
     jenis?: true
     status?: true
+    diterima_at?: true
     created_at?: true
     updated_at?: true
   }
@@ -17609,6 +17614,7 @@ export namespace Prisma {
     transaksi_id?: true
     jenis?: true
     status?: true
+    diterima_at?: true
     created_at?: true
     updated_at?: true
     _all?: true
@@ -17705,6 +17711,7 @@ export namespace Prisma {
     transaksi_id: number
     jenis: $Enums.JenisDokumen
     status: $Enums.StatusDokumen
+    diterima_at: Date | null
     created_at: Date
     updated_at: Date
     _count: DokumenTransaksiCountAggregateOutputType | null
@@ -17733,6 +17740,7 @@ export namespace Prisma {
     transaksi_id?: boolean
     jenis?: boolean
     status?: boolean
+    diterima_at?: boolean
     created_at?: boolean
     updated_at?: boolean
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
@@ -17745,11 +17753,12 @@ export namespace Prisma {
     transaksi_id?: boolean
     jenis?: boolean
     status?: boolean
+    diterima_at?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type DokumenTransaksiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "jenis" | "status" | "created_at" | "updated_at", ExtArgs["result"]["dokumenTransaksi"]>
+  export type DokumenTransaksiOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transaksi_id" | "jenis" | "status" | "diterima_at" | "created_at" | "updated_at", ExtArgs["result"]["dokumenTransaksi"]>
   export type DokumenTransaksiInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaksi?: boolean | TransaksiDefaultArgs<ExtArgs>
   }
@@ -17764,6 +17773,7 @@ export namespace Prisma {
       transaksi_id: number
       jenis: $Enums.JenisDokumen
       status: $Enums.StatusDokumen
+      diterima_at: Date | null
       created_at: Date
       updated_at: Date
     }, ExtArgs["result"]["dokumenTransaksi"]>
@@ -18140,6 +18150,7 @@ export namespace Prisma {
     readonly transaksi_id: FieldRef<"DokumenTransaksi", 'Int'>
     readonly jenis: FieldRef<"DokumenTransaksi", 'JenisDokumen'>
     readonly status: FieldRef<"DokumenTransaksi", 'StatusDokumen'>
+    readonly diterima_at: FieldRef<"DokumenTransaksi", 'DateTime'>
     readonly created_at: FieldRef<"DokumenTransaksi", 'DateTime'>
     readonly updated_at: FieldRef<"DokumenTransaksi", 'DateTime'>
   }
@@ -21975,6 +21986,7 @@ export namespace Prisma {
     transaksi_id: 'transaksi_id',
     jenis: 'jenis',
     status: 'status',
+    diterima_at: 'diterima_at',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
@@ -23644,6 +23656,7 @@ export namespace Prisma {
     transaksi_id?: IntFilter<"DokumenTransaksi"> | number
     jenis?: EnumJenisDokumenFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
     status?: EnumStatusDokumenFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
+    diterima_at?: DateTimeNullableFilter<"DokumenTransaksi"> | Date | string | null
     created_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     updated_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
@@ -23654,6 +23667,7 @@ export namespace Prisma {
     transaksi_id?: SortOrder
     jenis?: SortOrder
     status?: SortOrder
+    diterima_at?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     transaksi?: TransaksiOrderByWithRelationInput
@@ -23668,6 +23682,7 @@ export namespace Prisma {
     transaksi_id?: IntFilter<"DokumenTransaksi"> | number
     jenis?: EnumJenisDokumenFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
     status?: EnumStatusDokumenFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
+    diterima_at?: DateTimeNullableFilter<"DokumenTransaksi"> | Date | string | null
     created_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     updated_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     transaksi?: XOR<TransaksiScalarRelationFilter, TransaksiWhereInput>
@@ -23678,6 +23693,7 @@ export namespace Prisma {
     transaksi_id?: SortOrder
     jenis?: SortOrder
     status?: SortOrder
+    diterima_at?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: DokumenTransaksiCountOrderByAggregateInput
@@ -23695,6 +23711,7 @@ export namespace Prisma {
     transaksi_id?: IntWithAggregatesFilter<"DokumenTransaksi"> | number
     jenis?: EnumJenisDokumenWithAggregatesFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
     status?: EnumStatusDokumenWithAggregatesFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
+    diterima_at?: DateTimeNullableWithAggregatesFilter<"DokumenTransaksi"> | Date | string | null
     created_at?: DateTimeWithAggregatesFilter<"DokumenTransaksi"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"DokumenTransaksi"> | Date | string
   }
@@ -25280,6 +25297,7 @@ export namespace Prisma {
   export type DokumenTransaksiCreateInput = {
     jenis: $Enums.JenisDokumen
     status?: $Enums.StatusDokumen
+    diterima_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
     transaksi: TransaksiCreateNestedOneWithoutDokumenInput
@@ -25290,6 +25308,7 @@ export namespace Prisma {
     transaksi_id: number
     jenis: $Enums.JenisDokumen
     status?: $Enums.StatusDokumen
+    diterima_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -25297,6 +25316,7 @@ export namespace Prisma {
   export type DokumenTransaksiUpdateInput = {
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
+    diterima_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     transaksi?: TransaksiUpdateOneRequiredWithoutDokumenNestedInput
@@ -25307,6 +25327,7 @@ export namespace Prisma {
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
+    diterima_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25316,6 +25337,7 @@ export namespace Prisma {
     transaksi_id: number
     jenis: $Enums.JenisDokumen
     status?: $Enums.StatusDokumen
+    diterima_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -25323,6 +25345,7 @@ export namespace Prisma {
   export type DokumenTransaksiUpdateManyMutationInput = {
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
+    diterima_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25332,6 +25355,7 @@ export namespace Prisma {
     transaksi_id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
+    diterima_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27105,6 +27129,7 @@ export namespace Prisma {
     transaksi_id?: SortOrder
     jenis?: SortOrder
     status?: SortOrder
+    diterima_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -27119,6 +27144,7 @@ export namespace Prisma {
     transaksi_id?: SortOrder
     jenis?: SortOrder
     status?: SortOrder
+    diterima_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -27128,6 +27154,7 @@ export namespace Prisma {
     transaksi_id?: SortOrder
     jenis?: SortOrder
     status?: SortOrder
+    diterima_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
@@ -32943,6 +32970,7 @@ export namespace Prisma {
   export type DokumenTransaksiCreateWithoutTransaksiInput = {
     jenis: $Enums.JenisDokumen
     status?: $Enums.StatusDokumen
+    diterima_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -32951,6 +32979,7 @@ export namespace Prisma {
     id?: number
     jenis: $Enums.JenisDokumen
     status?: $Enums.StatusDokumen
+    diterima_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -33362,6 +33391,7 @@ export namespace Prisma {
     transaksi_id?: IntFilter<"DokumenTransaksi"> | number
     jenis?: EnumJenisDokumenFilter<"DokumenTransaksi"> | $Enums.JenisDokumen
     status?: EnumStatusDokumenFilter<"DokumenTransaksi"> | $Enums.StatusDokumen
+    diterima_at?: DateTimeNullableFilter<"DokumenTransaksi"> | Date | string | null
     created_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
     updated_at?: DateTimeFilter<"DokumenTransaksi"> | Date | string
   }
@@ -36730,6 +36760,7 @@ export namespace Prisma {
     id?: number
     jenis: $Enums.JenisDokumen
     status?: $Enums.StatusDokumen
+    diterima_at?: Date | string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -36849,6 +36880,7 @@ export namespace Prisma {
   export type DokumenTransaksiUpdateWithoutTransaksiInput = {
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
+    diterima_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36857,6 +36889,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
+    diterima_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36865,6 +36898,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     jenis?: EnumJenisDokumenFieldUpdateOperationsInput | $Enums.JenisDokumen
     status?: EnumStatusDokumenFieldUpdateOperationsInput | $Enums.StatusDokumen
+    diterima_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }

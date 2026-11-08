@@ -117,8 +117,7 @@ export default async function AdminTransaksiPage() {
 
   return (
     <div className="space-y-6 font-sans text-zinc-900">
-      {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
+      {/* <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
         <div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
@@ -141,10 +140,9 @@ export default async function AdminTransaksiPage() {
             {formattedTotalDeal}
           </span>
         </div>
-      </div>
+      </div> */}
 
-      {/* Metric Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
           <span className="text-[11px] font-medium text-zinc-500 block">Total Unit Terjual</span>
           <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
@@ -178,7 +176,7 @@ export default async function AdminTransaksiPage() {
               : "Rp 0"}
           </span>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Table */}
       <TransaksiTable data={serialized} />

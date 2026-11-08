@@ -252,7 +252,7 @@ describe("Document Rules Matrix SSOT - Bank KPR Checklist", () => {
     }
   });
 
-  it("safely accepts legacy KTP_SUAMI_ISTRI for KTP_PEMOHON verification and vice-versa", () => {
+  it("safely accepts legacy KTP_SUAMI_ISTRI for KTP_PEMOHON, but KTP_PEMOHON must NOT satisfy KTP_SUAMI_ISTRI", () => {
     const legacyVerifiedDocs = ["KTP_SUAMI_ISTRI", "KARTU_KELUARGA"];
 
     expect(isDokumenTerverifikasi("KTP_PEMOHON", legacyVerifiedDocs)).toBe(true);
@@ -261,6 +261,6 @@ describe("Document Rules Matrix SSOT - Bank KPR Checklist", () => {
     expect(isDokumenTerverifikasi("NPWP", legacyVerifiedDocs)).toBe(false);
 
     const pemohonVerifiedDocs = ["KTP_PEMOHON"];
-    expect(isDokumenTerverifikasi("KTP_SUAMI_ISTRI", pemohonVerifiedDocs)).toBe(true);
+    expect(isDokumenTerverifikasi("KTP_SUAMI_ISTRI", pemohonVerifiedDocs)).toBe(false);
   });
 });

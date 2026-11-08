@@ -85,6 +85,12 @@ export const verifyDokumenSchema = z.object({
   status: StatusDokumenEnum.optional(),
   verified: z.boolean().optional(),
   catatan: z.string().trim().optional().nullable(),
+  diterimaAt: z
+    .string()
+    .trim()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Format tanggal diterima harus YYYY-MM-DD")
+    .optional()
+    .nullable(),
 });
 
 export type VerifyDokumenInput = z.infer<typeof verifyDokumenSchema>;

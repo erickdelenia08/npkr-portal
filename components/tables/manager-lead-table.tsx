@@ -202,11 +202,11 @@ export function ManagerLeadTable({
             <span className="text-xs px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium">
               {total} Total
             </span>
-            {unassignedCount > 0 && (
+            {/* {unassignedCount > 0 && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-medium">
                 {unassignedCount} Belum Dialokasikan
               </span>
-            )}
+            )} */}
           </div>
           <p className="text-xs text-zinc-500 mt-0.5">
             Manajemen alokasi prospek dan pemantauan aktivitas follow-up tim penjualan.

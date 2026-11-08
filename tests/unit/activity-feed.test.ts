@@ -59,7 +59,8 @@ describe("Phase 2: Manager Activity Feed & Audit Trail Tests", () => {
   });
 
   describe("getActivityFeed()", () => {
-    it("rejects non-manager and non-admin users", async () => {
+    it("rejects non-manager users (including admin and marketing)", async () => {
+      // Test MARKETING rejection
       mockAuth.mockResolvedValue({
         user: {
           id: "20",
@@ -68,9 +69,22 @@ describe("Phase 2: Manager Activity Feed & Audit Trail Tests", () => {
         },
       });
 
-      const res = await getActivityFeed();
-      expect(res.success).toBe(false);
-      expect(res.error).toContain("Unauthorized");
+      const resMarketing = await getActivityFeed();
+      expect(resMarketing.success).toBe(false);
+      expect(resMarketing.error).toContain("Unauthorized");
+
+      // Test ADMIN rejection
+      mockAuth.mockResolvedValue({
+        user: {
+          id: "2",
+          role: "ADMIN",
+          name: "Admin Beta",
+        },
+      });
+
+      const resAdmin = await getActivityFeed();
+      expect(resAdmin.success).toBe(false);
+      expect(resAdmin.error).toContain("Unauthorized");
     });
 
     it("returns paginated results with SQL aggregation stats for Manager", async () => {

@@ -7,13 +7,34 @@ import type {
   StatusPekerjaan,
 } from "@/generated/prisma";
 
+export type DocumentRuleGate = "PENGAJUAN" | "AKAD" | "OPSIONAL";
+
+export function computeDocumentGate(
+  required: boolean,
+  bisaMenyusul?: boolean
+): DocumentRuleGate {
+  if (!required) return "OPSIONAL";
+  if (bisaMenyusul) return "AKAD";
+  return "PENGAJUAN";
+}
+
 export interface DocumentRuleItem {
   key: JenisDokumen;
   label: string;
   required: boolean;
   bisaMenyusul?: boolean;
+  gate: DocumentRuleGate;
   group?: string;
   description?: string;
+}
+
+export type RawDocumentRuleItem = Omit<DocumentRuleItem, "gate">;
+
+function attachGate(item: RawDocumentRuleItem): DocumentRuleItem {
+  return {
+    ...item,
+    gate: computeDocumentGate(item.required, item.bisaMenyusul),
+  };
 }
 
 export interface DocumentRulesParams {
@@ -80,7 +101,7 @@ export function getRequiredDocuments({
 
   // --- NON-KPR (CASH_KERAS / CASH_TEMPO) ---
   if (!isKpr) {
-    const cashList: DocumentRuleItem[] = [];
+    const cashList: RawDocumentRuleItem[] = [];
 
     cashList.push({
       key: "KTP_PEMOHON",
@@ -150,17 +171,17 @@ export function getRequiredDocuments({
     return {
       isProfileComplete: true,
       missingFields: [],
-      documents: cashList,
+      documents: cashList.map(attachGate),
     };
   }
 
   // --- KPR (WIRASWASTA / PEGAWAI TIDAK TETAP vs KARYAWAN / PEGAWAI TETAP) ---
-  const list: DocumentRuleItem[] = [];
+  const list: RawDocumentRuleItem[] = [];
   const isMenikah = statusPernikahan === "MENIKAH";
   const isCerai = statusPernikahan === "CERAI";
 
   // Helper untuk Dokumen KTP (sesuai status pernikahan)
-  const ktpItem: DocumentRuleItem = isMenikah
+  const ktpItem: RawDocumentRuleItem = isMenikah
     ? {
       key: "KTP_SUAMI_ISTRI",
       label: "Fotokopi KTP suami istri",
@@ -177,7 +198,7 @@ export function getRequiredDocuments({
     };
 
   // Helper untuk Dokumen Pernikahan (sesuai status pernikahan)
-  const nikahItem: DocumentRuleItem = isMenikah
+  const nikahItem: RawDocumentRuleItem = isMenikah
     ? {
       key: "BUKU_NIKAH",
       label: "Fotokopi surat nikah",
@@ -201,6 +222,7 @@ export function getRequiredDocuments({
         description: "Surat keterangan belum menikah dari kelurahan/desa",
       };
 
+  // TODO (Business Confirmation): Periksa apakah BUKU_TABUNGAN_BTN dan SURAT_LUNAS_UANG_MUKA juga seharusnya bisaMenyusul untuk TIDAK_TETAP (saat ini hanya FORM_FPPA dan PAS_FOTO yang bisaMenyusul pada TIDAK_TETAP, sedangkan pada TETAP keduanya bisaMenyusul).
   if (statusPekerjaan === "TIDAK_TETAP") {
     // ========================================================
     // 1. KPR Wiraswasta / Pegawai Tidak Tetap (Tepat 19 Dokumen)
@@ -341,6 +363,7 @@ export function getRequiredDocuments({
         description: "Brosur perumahan dan denah siteplan letak unit",
       },
       // 19
+      // TODO (Business Confirmation): KPR + KAVLING saat ini mewajibkan SERTIFIKAT_IMB, perlu konfirmasi apakah kavling tanpa bangunan memerlukan IMB.
       {
         key: "SERTIFIKAT_IMB",
         label: "Fotokopi Sertifikat dan IMB",
@@ -475,6 +498,7 @@ export function getRequiredDocuments({
         description: "Brosur perumahan dan denah siteplan letak unit",
       },
       // 17
+      // TODO (Business Confirmation): KPR + KAVLING saat ini mewajibkan SERTIFIKAT_IMB, perlu konfirmasi apakah kavling tanpa bangunan memerlukan IMB.
       {
         key: "SERTIFIKAT_IMB",
         label: "Fotokopi Sertifikat dan IMB",
@@ -499,7 +523,7 @@ export function getRequiredDocuments({
   return {
     isProfileComplete: true,
     missingFields: [],
-    documents: list,
+    documents: list.map(attachGate),
   };
 }
 
@@ -520,14 +544,64 @@ export function isDokumenTerverifikasi(
   verifiedKeys: string[]
 ): boolean {
   if (verifiedKeys.includes(key)) return true;
-  // KTP compatibility: KTP_PEMOHON & KTP_SUAMI_ISTRI interchangeable
+  // Legacy compatibility: A verified KTP_SUAMI_ISTRI may satisfy KTP_PEMOHON.
+  // Note: A verified KTP_PEMOHON must NOT satisfy KTP_SUAMI_ISTRI (married profile requires combined document).
   if (key === "KTP_PEMOHON" && verifiedKeys.includes("KTP_SUAMI_ISTRI")) {
-    return true;
-  }
-  if (key === "KTP_SUAMI_ISTRI" && (verifiedKeys.includes("KTP_PEMOHON") || verifiedKeys.includes("KTP_SUAMI_ISTRI"))) {
     return true;
   }
   return false;
 }
 
 export const isDokumenLengkap = isDokumenTerverifikasi;
+
+export interface DocumentGateCount {
+  done: number;
+  total: number;
+}
+
+export interface DocumentsSummary {
+  pengajuan: DocumentGateCount;
+  akad: DocumentGateCount;
+  opsional: DocumentGateCount;
+  missingForPengajuan: DocumentRuleItem[];
+  missingForAkad: DocumentRuleItem[];
+}
+
+export function summarizeDocuments(
+  docs: DocumentRuleItem[],
+  verifiedKeys: string[]
+): DocumentsSummary {
+  const summary: DocumentsSummary = {
+    pengajuan: { done: 0, total: 0 },
+    akad: { done: 0, total: 0 },
+    opsional: { done: 0, total: 0 },
+    missingForPengajuan: [],
+    missingForAkad: [],
+  };
+
+  for (const doc of docs) {
+    const isDone = isDokumenTerverifikasi(doc.key, verifiedKeys);
+    if (doc.gate === "PENGAJUAN") {
+      summary.pengajuan.total++;
+      if (isDone) {
+        summary.pengajuan.done++;
+      } else {
+        summary.missingForPengajuan.push(doc);
+      }
+    } else if (doc.gate === "AKAD") {
+      summary.akad.total++;
+      if (isDone) {
+        summary.akad.done++;
+      } else {
+        summary.missingForAkad.push(doc);
+      }
+    } else {
+      summary.opsional.total++;
+      if (isDone) {
+        summary.opsional.done++;
+      }
+    }
+  }
+
+  return summary;
+}

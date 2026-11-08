@@ -113,7 +113,7 @@ export function CustomerTable({
               <tr className="border-b border-zinc-200 bg-zinc-50/75 text-zinc-500 font-medium">
                 <th className="px-4 py-3 whitespace-nowrap">Nama &amp; Identitas</th>
                 <th className="px-4 py-3 whitespace-nowrap">NIK</th>
-                <th className="px-4 py-3 whitespace-nowrap">Kontak</th>
+                {/* <th className="px-4 py-3 whitespace-nowrap">Kontak</th> */}
                 <th className="px-4 py-3 whitespace-nowrap">Alamat Domisili</th>
                 <th className="px-4 py-3 text-center whitespace-nowrap">Aset Unit</th>
                 <th className="px-4 py-3 text-right whitespace-nowrap">Aksi</th>
@@ -133,22 +133,22 @@ export function CustomerTable({
                   const isRepeatBuyer = cust.jumlah_unit > 1;
 
                   return (
-                    <tr key={cust.id} className="hover:bg-zinc-50/70 transition-colors">
+                    <tr key={cust.id} className="hover:bg-zinc-50/70 transition-colors text-xs">
                       {/* Nama & TTL */}
                       <td className="px-4 py-3">
                         <div className="flex flex-col">
                           <Link
                             href={`${basePath}/customer/${cust.id}`}
-                            className="font-semibold text-zinc-900 hover:underline text-[13px]"
+                            className="font-medium text-zinc-900 hover:underline text-[13px]"
                           >
                             {cust.nama_ktp}
                           </Link>
-                          {(cust.tempat_lahir || cust.tgl_lahir) && (
+                          {/* {(cust.tempat_lahir || cust.tgl_lahir) && (
                             <span className="text-[11px] text-zinc-400 mt-0.5">
                               {cust.tempat_lahir ? `${cust.tempat_lahir}, ` : ""}
                               {formatDate(cust.tgl_lahir)}
                             </span>
-                          )}
+                          )} */}
                         </div>
                       </td>
 

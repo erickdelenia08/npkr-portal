@@ -21,7 +21,6 @@ export function QuickPrintActions({
     response: Response,
     fallbackFilename: string
   ) => {
-    // Ambil filename dari Content-Disposition jika tersedia
     const disposition = response.headers.get("Content-Disposition");
     let filename = fallbackFilename;
 
@@ -117,14 +116,15 @@ export function QuickPrintActions({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    /* Menggunakan grid 2 kolom di HP agar tombol Cetak SPR & Kwitansi simetris */
+    <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
       <Button
         type="button"
         variant="outline"
         size="sm"
         disabled={isPrintingSpr}
         onClick={handlePrintSpr}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
       >
         {isPrintingSpr ? (
           <Loader2 className="w-3.5 h-3.5 text-deep-teal animate-spin" />
@@ -140,7 +140,7 @@ export function QuickPrintActions({
         size="sm"
         disabled={isPrintingKwitansi || !hasPembayaran}
         onClick={handlePrintKwitansi}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
       >
         {isPrintingKwitansi ? (
           <Loader2 className="w-3.5 h-3.5 text-indigo-600 animate-spin" />

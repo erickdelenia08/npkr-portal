@@ -57,7 +57,7 @@ export function AppShell({
         </div>
 
         {/* Mobile Bottom Navigation (Optimized for Marketing role) */}
-        <BottomNav />
+        {/* <BottomNav /> */}
       </div>
     </SidebarProvider>
   );
