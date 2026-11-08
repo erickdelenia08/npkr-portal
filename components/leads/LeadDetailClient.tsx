@@ -190,7 +190,7 @@ export function LeadDetailClient({
   return (
     <div className="space-y-5 pb-28 sm:pb-16 max-w-4xl mx-auto">
       {/* Breadcrumb & refresh */}
-      <div className="flex items-center justify-between gap-2">
+      {/* <div className="flex items-center justify-between gap-2">
         <Link
           href={`${basePath}/lead`}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate hover:text-carbon-ink transition-colors group"
@@ -208,7 +208,7 @@ export function LeadDetailClient({
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
         </button>
-      </div>
+      </div> */}
 
       {/* Banner Lost (terlihat di atas, bukan tersembunyi di bawah halaman) */}
       {isLost && (

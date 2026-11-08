@@ -22,7 +22,10 @@ export default async function ManagerAktivitasPage() {
   }
 
   const role = session.user.role;
-  if (role !== "MANAGER" && role !== "ADMIN") {
+  if (role !== "MANAGER") {
+    if (role === "ADMIN") {
+      redirect("/admin/dashboard");
+    }
     redirect("/marketing/dashboard");
   }
 

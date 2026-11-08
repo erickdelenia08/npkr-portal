@@ -301,6 +301,7 @@ exports.Prisma.DokumenTransaksiScalarFieldEnum = {
   transaksi_id: 'transaksi_id',
   jenis: 'jenis',
   status: 'status',
+  diterima_at: 'diterima_at',
   created_at: 'created_at',
   updated_at: 'updated_at'
 };

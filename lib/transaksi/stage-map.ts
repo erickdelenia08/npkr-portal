@@ -204,3 +204,104 @@ export const MACRO_STAGE_LABELS: Record<TahapMakro, string> = {
   SERAH_TERIMA: "Serah Terima (BAST)",
   BATAL: "Dibatalkan",
 };
+
+// ==========================================
+// MOBILE-FIRST STEPPER CONFIGURATION
+// ==========================================
+
+export type UiStepId = "pemberkasan" | "proses-bank" | "pembayaran" | "akad-bast";
+
+export interface UiStepDefinition {
+  id: UiStepId;
+  stepNumber: number;
+  label: string;
+  shortLabel: string;
+}
+
+export function getUiStepsForMetode(metode: MetodeBayar | string): UiStepDefinition[] {
+  const isKpr = metode === "KPR";
+  return [
+    {
+      id: "pemberkasan",
+      stepNumber: 1,
+      label: "Pemberkasan",
+      shortLabel: "Berkas",
+    },
+    {
+      id: isKpr ? "proses-bank" : "pembayaran",
+      stepNumber: 2,
+      label: isKpr ? "Proses Bank" : "Pembayaran",
+      shortLabel: isKpr ? "Bank" : "Bayar",
+    },
+    {
+      id: "akad-bast",
+      stepNumber: 3,
+      label: "Akad & BAST",
+      shortLabel: "Akad",
+    },
+  ];
+}
+
+export function getActiveStepForStage(
+  detail: TahapDetail | string,
+  metode: MetodeBayar | string
+): UiStepId {
+  switch (detail) {
+    case "PENGUMPULAN_DOKUMEN":
+    case "PEMBERKASAN_LEGALITAS":
+    case "PEMBERKASAN_PPJB":
+      return "pemberkasan";
+
+    case "PROSES_BANK":
+      return "proses-bank";
+
+    case "MENUNGGU_PELUNASAN":
+    case "PEMBAYARAN_DP":
+    case "CICILAN_BERJALAN":
+    case "PELUNASAN":
+      return "pembayaran";
+
+    case "AKAD_KREDIT":
+    case "AJB":
+    case "BAST":
+      return "akad-bast";
+
+    case "BATAL":
+      return "pemberkasan";
+
+    default:
+      return "pemberkasan";
+  }
+}
+
+export function getStepStatus(
+  stepId: UiStepId,
+  activeStepId: UiStepId,
+  currentTahapDetail: TahapDetail | string
+): "selesai" | "aktif" | "terkunci" {
+  if (currentTahapDetail === "BATAL") {
+    return stepId === activeStepId ? "aktif" : "selesai";
+  }
+
+  const stepOrder: Record<UiStepId, number> = {
+    pemberkasan: 1,
+    "proses-bank": 2,
+    pembayaran: 2,
+    "akad-bast": 3,
+  };
+
+  const currentOrder = stepOrder[activeStepId] ?? 1;
+  const targetOrder = stepOrder[stepId] ?? 1;
+
+  if (targetOrder < currentOrder) {
+    return "selesai";
+  }
+  if (targetOrder === currentOrder) {
+    // Special check for step 3: if in BAST, it's completed
+    if (stepId === "akad-bast" && currentTahapDetail === "BAST") {
+      return "selesai";
+    }
+    return "aktif";
+  }
+  return "terkunci";
+}

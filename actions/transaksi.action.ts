@@ -10,6 +10,7 @@ import {
 import {
   parseDateOnlyUTC,
   todayDateOnlyUTC,
+  todayWIB,
   toWibDay,
 } from "@/lib/date/wib";
 import { logActivity } from "@/lib/activity/log";
@@ -422,9 +423,23 @@ export async function verifyDokumenTransaksi(
       };
     }
 
-    const { transaksiId, jenis } = parsed.data;
+    const { transaksiId, jenis, diterimaAt } = parsed.data;
     const isLengkap = parsed.data.status === "LENGKAP" || parsed.data.verified === true;
     const status: StatusDokumen = isLengkap ? "LENGKAP" : "BELUM_LENGKAP";
+
+    if (isLengkap && diterimaAt) {
+      const today = todayWIB();
+      if (diterimaAt > today) {
+        return {
+          success: false,
+          error: "Tanggal diterima dokumen tidak boleh di masa depan.",
+        };
+      }
+    }
+
+    const targetDiterimaAt = isLengkap
+      ? (diterimaAt ? parseDateOnlyUTC(diterimaAt) : todayDateOnlyUTC())
+      : null;
 
     const result = await prisma.$transaction(async (tx) => {
       const trx = await tx.transaksi.findUnique({
@@ -441,8 +456,10 @@ export async function verifyDokumenTransaksi(
         throw new Error("Transaksi tidak ditemukan.");
       }
 
-      if (trx.tahap_detail === "BATAL") {
-        throw new Error("Tidak dapat mengubah checklist dokumen pada transaksi yang sudah BATAL.");
+      if (trx.tahap_detail === "BATAL" || trx.tahap_detail === "BAST") {
+        throw new Error(
+          "Tidak dapat mengubah checklist dokumen pada transaksi yang sudah selesai (BAST) atau BATAL."
+        );
       }
 
       const existingDoc = await tx.dokumenTransaksi.findUnique({
@@ -465,9 +482,11 @@ export async function verifyDokumenTransaksi(
           transaksi_id: transaksiId,
           jenis,
           status,
+          diterima_at: targetDiterimaAt,
         },
         update: {
           status,
+          diterima_at: targetDiterimaAt,
         },
       });
 
@@ -489,8 +508,14 @@ export async function verifyDokumenTransaksi(
           docLabel: jenis.replace(/_/g, " "),
           blok: trx.unit.blok,
         },
-        before: { status: existingDoc?.status || "BELUM_LENGKAP" },
-        after: { status },
+        before: {
+          status: existingDoc?.status || "BELUM_LENGKAP",
+          diterima_at: existingDoc?.diterima_at,
+        },
+        after: {
+          status,
+          diterima_at: targetDiterimaAt,
+        },
       });
 
       return updatedDoc;
@@ -538,8 +563,10 @@ export async function updateProfilPemberkasan(
         throw new Error("Transaksi tidak ditemukan.");
       }
 
-      if (trx.tahap_detail === "BATAL") {
-        throw new Error("Tidak dapat mengubah profil pada transaksi yang sudah BATAL.");
+      if (trx.tahap_detail === "BATAL" || trx.tahap_detail === "BAST") {
+        throw new Error(
+          "Tidak dapat mengubah profil pada transaksi yang sudah selesai (BAST) atau BATAL."
+        );
       }
 
       const updatedCustomer = await tx.customer.update({

@@ -103,10 +103,10 @@ export async function getActivityFeed(
     }
 
     const role = session.user.role;
-    if (role !== "MANAGER" && role !== "ADMIN") {
+    if (role !== "MANAGER") {
       return {
         success: false,
-        error: "Unauthorized: Hanya Manager dan Admin yang dapat mengakses activity feed.",
+        error: "Unauthorized: Hanya Manager yang dapat mengakses activity feed.",
       };
     }
 
@@ -942,10 +942,10 @@ export async function getActivityActors(): Promise<{
     }
 
     const role = session.user.role;
-    if (role !== "MANAGER" && role !== "ADMIN") {
+    if (role !== "MANAGER") {
       return {
         success: false,
-        error: "Unauthorized: Hanya Manager dan Admin yang dapat mengakses daftar personel.",
+        error: "Unauthorized: Hanya Manager yang dapat mengakses daftar personel.",
       };
     }
 

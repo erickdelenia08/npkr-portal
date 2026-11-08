@@ -15,6 +15,7 @@ import {
   Building2,
   ReceiptText,
   Contact,
+  Eye,
 } from "lucide-react";
 import {
   getAdminDashboardData,
@@ -101,8 +102,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      {/* 1. TOP WELCOME & COMMAND CENTER HEADER */}
-      <div className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+      {/* <div className="flex flex-col gap-4 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-sm font-medium text-slate-500">Administrasi &amp; Keuangan</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
@@ -113,7 +113,6 @@ export default async function AdminDashboardPage() {
           </p>
         </div>
 
-        {/* Quick Action Link */}
         <div className="flex items-center gap-2.5 shrink-0">
           <Link
             href="/admin/transaksi"
@@ -123,7 +122,7 @@ export default async function AdminDashboardPage() {
             <span>Pantauan Transaksi</span>
           </Link>
         </div>
-      </div>
+      </div> */}
 
       {/* 2. TOP SECTION: 3 LARGE SUMMARY METRIC CARDS */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -270,7 +269,7 @@ export default async function AdminDashboardPage() {
                     {widgets.pendingItj.map((itj) => (
                       <tr
                         key={itj.id}
-                        className="hover:bg-slate-50 transition-colors"
+                        className="hover:bg-slate-50 transition-colors text-xs"
                       >
                         <td className="py-3 px-4">
                           <span className="font-medium text-slate-900 block">
@@ -294,10 +293,10 @@ export default async function AdminDashboardPage() {
                         <td className="py-3 px-4 text-center">
                           <Link
                             href="/admin/transaksi"
-                            className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-slate-700"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors"
                           >
-                            <span>Lihat</span>
-                            <ArrowRight className="w-3 h-3" />
+                            {/* <span>Lihat</span> */}
+                            <Eye className="w-3 h-3" />
                           </Link>
                         </td>
                       </tr>
@@ -362,28 +361,28 @@ export default async function AdminDashboardPage() {
                     {widgets.pendingDocs.map((doc) => (
                       <tr
                         key={doc.id}
-                        className="hover:bg-slate-50 transition-colors"
+                        className="hover:bg-slate-50 transition-colors text-xs"
                       >
-                        <td className="py-3 px-4 font-semibold text-carbon-ink">
+                        <td className="py-3 px-4 font-medium text-carbon-ink">
                           {doc.customerNama}
                         </td>
                         <td className="py-3 px-3">
-                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700">
+                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700 text-nowrap">
                             {doc.unitBlok}
                           </span>
                         </td>
                         <td className="py-3 px-3 text-graphite">
                           <span className="font-medium">{doc.jenisLabel}</span>
                         </td>
-                        <td className="py-3 px-3 text-xs text-slate-500">
+                        <td className="py-3 px-3 text-xs text-slate-500 text-nowrap">
                           {doc.uploadedAt}
                         </td>
                         <td className="py-3 px-4 text-center">
                           <Link
                             href={`/admin/transaksi/${doc.transaksiId}`}
-                            className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-slate-700"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors"
                           >
-                            <span>Periksa</span>
+                            {/* <span>Periksa</span> */}
                             <ExternalLink className="w-3 h-3" />
                           </Link>
                         </td>
@@ -455,12 +454,12 @@ export default async function AdminDashboardPage() {
                       return (
                         <tr
                           key={kpr.id}
-                          className="hover:bg-slate-50 transition-colors"
+                          className="hover:bg-slate-50 transition-colors text-xs"
                         >
                           <td className="py-3 px-4 font-bold text-carbon-ink text-nowrap">
                             {kpr.bankNama}
                           </td>
-                          <td className="py-3 px-3 font-semibold text-graphite">
+                          <td className="py-3 px-3 font-medium text-graphite">
                             {kpr.customerNama}
                           </td>
                           <td className="py-3 px-3">
@@ -470,7 +469,7 @@ export default async function AdminDashboardPage() {
                           </td>
                           <td className="py-3 px-3">
                             <span
-                              className={`px-2 py-0.5 rounded-full text-xs font-medium border ${badgeInfo.className}`}
+                              className={`px-2 py-0.5 rounded-full text-xs font-medium border text-nowrap ${badgeInfo.className}`}
                             >
                               {badgeInfo.label}
                             </span>
@@ -478,9 +477,9 @@ export default async function AdminDashboardPage() {
                           <td className="py-3 px-4 text-center">
                             <Link
                               href={`/admin/transaksi/${kpr.transaksiId}`}
-                              className="inline-flex items-center gap-1.5 rounded-md bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-slate-700"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors"
                             >
-                              <span>Buka</span>
+                              {/* <span>Buka</span> */}
                               <ChevronRight className="w-3 h-3" />
                             </Link>
                           </td>

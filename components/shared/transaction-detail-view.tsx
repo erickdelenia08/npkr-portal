@@ -3,25 +3,23 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
-  User,
-  Receipt,
-  Phone,
-  CreditCard,
-  Banknote,
   ShieldCheck,
-  CheckCircle2,
-  FileSpreadsheet,
 } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { formatDateOnly } from "@/lib/date/wib";
+import { toWibDay } from "@/lib/date/wib";
 import { MAKRO_OF } from "@/lib/transaksi/stage-map";
-import { PembayaranModal } from "@/components/forms/pembayaran-modal";
 import { DynamicActionPanel } from "@/components/forms/dynamic-action-panel";
 import { QuickPrintActions } from "@/components/forms/quick-print-actions";
 import { HandoverTransaksiDialog } from "@/components/forms/handover-dialog";
-import { getTransactionHistory } from "@/actions/activity";
+import { getTransactionHistory, type ActivityLogFeedItem } from "@/actions/activity";
 import { TransactionAuditTrail } from "@/components/shared/transaction-audit-trail";
+import { TransactionCustomerUnitAccordions } from "@/components/shared/transaction-customer-unit-accordions";
+import {
+  TransactionFinancialSummary,
+  TransactionPaymentTable,
+  type PlainPaymentItem,
+} from "@/components/shared/transaction-financial-summary";
 
 export interface TransactionDetailViewProps {
   trxId: number;
@@ -41,6 +39,7 @@ export async function TransactionDetailView({
   const session = await auth();
   const currentUserId = Number(session?.user?.id);
   const currentUserRole = session?.user?.role;
+  const isManager = currentUserRole === "MANAGER";
 
   const transaksi = await prisma.transaksi.findUnique({
     where: { id: trxId },
@@ -136,16 +135,11 @@ export async function TransactionDetailView({
     });
   }
 
-  const historyRes = await getTransactionHistory(transaksi.id);
-  const auditLogs = historyRes.success && historyRes.data ? historyRes.data : [];
-
-  // Currency & Date formatters
-  const formatCurrency = (val: number): string =>
-    new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      maximumFractionDigits: 0,
-    }).format(val);
+  let auditLogs: ActivityLogFeedItem[] = [];
+  if (isManager) {
+    const historyRes = await getTransactionHistory(transaksi.id);
+    auditLogs = historyRes.success && historyRes.data ? historyRes.data : [];
+  }
 
   const formatDate = (date: Date): string =>
     new Intl.DateTimeFormat("id-ID", {
@@ -189,424 +183,226 @@ export async function TransactionDetailView({
     ? lastPayment.tgl_bayar.toISOString()
     : null;
 
-  const getJenisBayarBadge = (jenis: string) => {
-    switch (jenis) {
-      case "ITJ":
-        return "bg-amber-50 text-amber-700 border-amber-200";
-      case "DP":
-        return "bg-blue-50 text-blue-700 border-blue-200";
-      case "CICILAN":
-        return "bg-purple-50 text-purple-700 border-purple-200";
-      case "PELUNASAN":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200";
-      default:
-        return "bg-bone text-graphite border-mist";
-    }
-  };
+  const payments: PlainPaymentItem[] = transaksi.pembayaran.map((p) => ({
+    id: p.id,
+    tanggal: p.tgl_bayar ? p.tgl_bayar.toISOString() : p.created_at.toISOString(),
+    jenis: p.jenis_pembayaran,
+    noKwitansi: p.no_kwitansi,
+    nominal: Number(p.nominal),
+    penerima: p.penerima?.nama || "Admin",
+    catatan: p.catatan || "",
+    isVoid: p.is_void,
+    voidReason: p.void_reason || null,
+  }));
 
   return (
-    <div className="space-y-6 pb-12">
-      {/* ─── Breadcrumb Back Navigation ─── */}
-      <div>
-        <Link
-          href={backHref}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate hover:text-carbon-ink transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{backLabel}</span>
-        </Link>
-      </div>
-
-      {/* ─── Read-Only Access Banner for non-PIC / non-Admin ─── */}
-      {!canEdit && (
-        <div className="flex items-center gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs">
-          <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0" />
-          <div>
-            <p className="font-bold">Mode Hanya Baca (Read-Only)</p>
-            <p className="text-amber-800 mt-0.5">
-              Anda tidak memiliki izin mengedit transaksi ini. Perubahan progres dan pencatatan pembayaran hanya dapat dilakukan oleh Marketing PIC (
-              <span className="font-semibold">{transaksi.pic.nama}</span>) atau Administrator.
-            </p>
+    <div className="flex flex-col gap-6 pb-12">
+      {/* ─── 1. HEADER & READ-ONLY BANNER ─── */}
+      <div className="order-1 space-y-4">
+        {/* Read-Only Access Banner for non-PIC / non-Admin */}
+        {!canEdit && (
+          <div className="flex items-center gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs">
+            <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0" />
+            <div>
+              <p className="font-bold">Mode Hanya Baca (Read-Only)</p>
+              <p className="text-amber-800 mt-0.5">
+                Perubahan progres dan pencatatan pembayaran hanya dapat dilakukan oleh Marketing PIC (
+                <span className="font-semibold">{transaksi.pic.nama}</span>) atau Administrator.
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ─── 1. HEADER CARD ─── */}
-      <div className="bg-white p-5 rounded-lg border border-mist shadow-subtle flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-start gap-3.5">
-          {/* <div className="w-11 h-11 rounded-lg bg-teal-50 text-deep-teal flex items-center justify-center shrink-0 mt-0.5">
-            <Receipt className="w-6 h-6" />
-          </div> */}
+        {/* Back Navigation Link */}
+        {/* {backHref && (
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl md:text-2xl font-bold text-carbon-ink tracking-tight">
+            <Link
+              href={backHref}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate hover:text-carbon-ink transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>{backLabel}</span>
+            </Link>
+          </div>
+        )} */}
+
+        {/* Header Card */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-mist shadow-subtle flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          {/* Bagian Kiri: Informasi Konsumen, Unit & Status */}
+          <div className="space-y-1.5">
+            <div className="flex flex-row justify-between sm:items-center gap-2 sm:gap-3">
+              <h1 className="text-xl sm:text-2xl font-bold text-carbon-ink tracking-tight">
                 {transaksi.customer.nama_ktp}
               </h1>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-mono font-bold bg-bone text-carbon-ink border border-mist">
-                Unit {transaksi.unit.blok}
-              </span>
-              <span className="px-2.5 py-0.5 rounded-sm text-xs font-semibold bg-teal-50 text-deep-teal border border-teal-200">
-                {MAKRO_OF[transaksi.tahap_detail]}
-              </span>
+
+              {/* Badge Unit & Status dalam satu baris fleksibel */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-teal-50 text-deep-teal border border-teal-200">
+                  {MAKRO_OF[transaksi.tahap_detail]}
+                </span>
+              </div>
             </div>
-            <p className="text-xs text-slate mt-1">
-              Transaksi #{transaksi.id} • Dibuat pada{" "}
-              {formatDate(transaksi.created_at)} • Marketing PIC:{" "}
+
+            {/* Metadata Tanggal & PIC */}
+            <p className="text-xs text-slate font-light">
+              dibuat pada {formatDate(transaksi.created_at)} • PIC:{" "}
               <span className="font-semibold text-carbon-ink">
                 {transaksi.pic.nama}
               </span>
             </p>
           </div>
-        </div>
 
-        {/* Quick Action Buttons (Oper PIC, Cetak SPR & Cetak Kwitansi) */}
-        <div className="flex items-center gap-2 flex-wrap">
-          {canHandover && (
-            <HandoverTransaksiDialog
+          {/* Bagian Kanan: Quick Action Buttons (Responsive Layout) */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-3 lg:pt-0 border-t lg:border-t-0 border-mist">
+            {canHandover && (
+              <div className="w-full sm:w-auto">
+                <HandoverTransaksiDialog
+                  transaksiId={transaksi.id}
+                  blokUnit={transaksi.unit.blok}
+                  currentPicId={transaksi.pic_id}
+                  currentPicName={transaksi.pic.nama}
+                  isLocked={
+                    transaksi.tahap_detail === "BAST" ||
+                    transaksi.tgl_bast !== null ||
+                    transaksi.tahap_detail === "BATAL" ||
+                    transaksi.cancelled_at !== null
+                  }
+                  lockedReason={
+                    transaksi.tahap_detail === "BATAL" || transaksi.cancelled_at !== null
+                      ? "Transaksi telah dibatalkan sehingga penugasan PIC terkunci."
+                      : "Transaksi telah selesai (BAST) sehingga penugasan PIC terkunci."
+                  }
+                />
+              </div>
+            )}
+            <QuickPrintActions
               transaksiId={transaksi.id}
-              blokUnit={transaksi.unit.blok}
-              currentPicId={transaksi.pic_id}
-              currentPicName={transaksi.pic.nama}
-              isLocked={
-                transaksi.tahap_detail === "BAST" ||
-                transaksi.tgl_bast !== null ||
-                transaksi.tahap_detail === "BATAL" ||
-                transaksi.cancelled_at !== null
-              }
-              lockedReason={
-                transaksi.tahap_detail === "BATAL" || transaksi.cancelled_at !== null
-                  ? "Transaksi telah dibatalkan sehingga penugasan PIC terkunci."
-                  : "Transaksi telah selesai (BAST) sehingga penugasan PIC terkunci."
-              }
+              hasPembayaran={transaksi.pembayaran.length > 0}
             />
-          )}
-          <QuickPrintActions
+          </div>
+        </div>
+      </div>
+
+      {/* ─── 2. CUSTOMER & UNIT INFO ACCORDIONS ─── */}
+      {/* Mobile: Urutan 4 | Desktop: Urutan 2 */}
+      <div className="order-4 lg:order-2">
+        <TransactionCustomerUnitAccordions
+          customer={{
+            nama_ktp: transaksi.customer.nama_ktp,
+            nik: transaksi.customer.nik,
+            tempat_lahir: transaksi.customer.tempat_lahir,
+            tgl_lahir: transaksi.customer.tgl_lahir,
+            alamat_ktp: transaksi.customer.alamat_ktp,
+            no_hp: transaksi.customer.no_hp,
+          }}
+          unit={{
+            blok: transaksi.unit.blok,
+            tipe: {
+              nama_tipe: transaksi.unit.tipe.nama_tipe,
+              kategori: transaksi.unit.tipe.kategori,
+            },
+            metode_bayar: transaksi.metode_bayar,
+            tenor_bulan: transaksi.tenor_bulan,
+          }}
+        />
+      </div>
+
+      {/* ─── 3. KARTU PEMBAYARAN KOMPAK (DENGAN SHEET RIWAYAT MOBILE) ─── */}
+      {/* Mobile: Urutan 2 | Desktop: Urutan 3 */}
+      <div className="order-2 lg:order-3">
+        <TransactionFinancialSummary
+          transaksiId={transaksi.id}
+          hargaDeal={hargaDeal}
+          targetItj={targetItj}
+          targetDp={targetDp}
+          sisaPelunasan={sisaPelunasan}
+          totalPaid={totalPaid}
+          sisaItj={sisaItj}
+          sisaDp={sisaDp}
+          payments={payments}
+          canEdit={canEdit}
+        />
+      </div>
+
+      {/* ─── 4. PANEL PROGRES TRANSAKSI ─── */}
+      {/* Mobile: Urutan 3 | Desktop: Urutan 4 */}
+      <div className="order-3 lg:order-4">
+        <DynamicActionPanel
+          transaksiId={transaksi.id}
+          leadId={transaksi.itj.lead_id}
+          version={transaksi.version}
+          canEdit={canEdit}
+          metodeBayar={transaksi.metode_bayar}
+          kategoriUnit={transaksi.unit.tipe.kategori}
+          statusPernikahan={transaksi.customer.status_pernikahan}
+          statusPekerjaan={transaksi.customer.status_pekerjaan}
+          currentTahapDetail={transaksi.tahap_detail}
+          initialNotaris={transaksi.nama_notaris}
+          initialTglAkad={
+            transaksi.tgl_akad ? transaksi.tgl_akad.toISOString() : null
+          }
+          initialTglBast={
+            transaksi.tgl_bast ? transaksi.tgl_bast.toISOString() : null
+          }
+          initialLunasAt={
+            transaksi.lunas_at ? transaksi.lunas_at.toISOString() : null
+          }
+          initialRencanaAkad={
+            transaksi.rencana_akad_at ? transaksi.rencana_akad_at.toISOString() : null
+          }
+          initialRencanaBast={
+            transaksi.rencana_bast_at ? transaksi.rencana_bast_at.toISOString() : null
+          }
+          initialPengajuanTerpilihId={transaksi.pengajuan_kpr_terpilih_id}
+          initialCatatan={transaksi.catatan_admin}
+          initialVerifiedDocs={transaksi.dokumen
+            .filter((d) => d.status === "LENGKAP")
+            .map((d) => d.jenis)}
+          initialDokumenInfo={transaksi.dokumen.map((d) => ({
+            jenis: d.jenis,
+            diterima_at: d.diterima_at ? toWibDay(d.diterima_at) : null,
+          }))}
+          initialChecklistBast={transaksi.checklist_bast.map((b) => ({
+            item: b.item,
+            status: b.status,
+          }))}
+          initialPengajuanKpr={transaksi.pengajuan_kpr}
+          masterBanks={masterBanks}
+          financialSummary={{
+            hargaDeal,
+            totalPaid,
+            targetDp,
+            dpPaid,
+            sisaPelunasan,
+            sisaDp,
+            lastPaymentDate,
+          }}
+        />
+      </div>
+
+      {/* ─── 5. TABEL RIWAYAT PEMBAYARAN (DESKTOP INLINE) ─── */}
+      {/* Mobile: Hidden | Desktop: Urutan 5 */}
+      <div className="hidden lg:block lg:order-5">
+        <TransactionPaymentTable
+          transaksiId={transaksi.id}
+          sisaItj={sisaItj}
+          sisaDp={sisaDp}
+          totalPaid={totalPaid}
+          payments={payments}
+          canEdit={canEdit}
+        />
+      </div>
+
+      {/* ─── 6. AUDIT TRAIL / RIWAYAT AKTIVITAS (Hanya untuk MANAGER) ─── */}
+      {/* Mobile: Urutan 5 | Desktop: Urutan 6 */}
+      {isManager && (
+        <div className="order-5 lg:order-6">
+          <TransactionAuditTrail
+            logs={auditLogs}
             transaksiId={transaksi.id}
-            hasPembayaran={transaksi.pembayaran.length > 0}
           />
         </div>
-      </div>
-
-      {/* ─── 2. CUSTOMER & UNIT INFO CARD ─── */}
-      <div className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden">
-        <div className="px-5 py-4 border-b border-mist bg-bone/30 flex items-center gap-2">
-          <User className="w-4 h-4 text-deep-teal" />
-          <h2 className="text-sm font-bold text-carbon-ink uppercase tracking-wider">
-            Informasi Konsumen & Unit Properti
-          </h2>
-        </div>
-
-        <div className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Detail Konsumen */}
-          <div className="space-y-3">
-            <p className="text-xs font-semibold text-deep-teal border-b border-mist/80 pb-1">
-              Data Identitas Konsumen
-            </p>
-            <div className="space-y-2 text-xs">
-              <div>
-                <span className="text-slate block text-[11px]">Nomor Induk Kependudukan (NIK)</span>
-                <span className="font-mono font-semibold text-carbon-ink">
-                  {transaksi.customer.nik}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate block text-[11px]">Tempat, Tanggal Lahir (TTL)</span>
-                <span className="font-medium text-carbon-ink">
-                  {transaksi.customer.tempat_lahir},{" "}
-                  {formatDateOnly(transaksi.customer.tgl_lahir)}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate block text-[11px]">Alamat Sesuai KTP</span>
-                <span className="text-graphite leading-relaxed">
-                  {transaksi.customer.alamat_ktp}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 pt-1">
-                <Phone className="w-3.5 h-3.5 text-slate" />
-                <span className="font-mono text-carbon-ink">
-                  {transaksi.customer.no_hp}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Detail Unit Properti */}
-          <div className="space-y-3">
-            <p className="text-xs font-semibold text-deep-teal border-b border-mist/80 pb-1">
-              Spesifikasi Unit Terpilih
-            </p>
-            <div className="space-y-2 text-xs">
-              <div>
-                <span className="text-slate block text-[11px]">Blok & Nomor Unit</span>
-                <span className="font-mono font-bold text-sm text-carbon-ink">
-                  {transaksi.unit.blok}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate block text-[11px]">Tipe Properti</span>
-                <span className="font-semibold text-carbon-ink">
-                  {transaksi.unit.tipe.nama_tipe}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate block text-[11px]">Kategori Unit</span>
-                <span className="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-bone text-graphite border border-mist mt-0.5">
-                  {transaksi.unit.tipe.kategori}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate block text-[11px]">Skema Transaksi</span>
-                <span className="font-semibold text-carbon-ink">
-                  {transaksi.metode_bayar.replace(/_/g, " ")}
-                  {transaksi.tenor_bulan ? ` (${transaksi.tenor_bulan} Bulan)` : ""}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Ringkasan Finansial Tagihan */}
-          <div className="space-y-3">
-            <p className="text-xs font-semibold text-deep-teal border-b border-mist/80 pb-1">
-              Ringkasan Finansial Transaksi
-            </p>
-            <div className="space-y-2.5 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-slate">Harga Kesepakatan (Deal):</span>
-                <span className="font-mono font-bold text-carbon-ink">
-                  {formatCurrency(hargaDeal)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate">Target ITJ:</span>
-                <span className="font-mono font-medium text-carbon-ink">
-                  {formatCurrency(targetItj)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate">Target Uang Muka (DP):</span>
-                <span className="font-mono font-medium text-carbon-ink">
-                  {formatCurrency(targetDp)}
-                </span>
-              </div>
-              <div className="pt-2 border-t border-mist/80 flex justify-between items-center">
-                <span className="text-slate font-medium">Sisa Pelunasan:</span>
-                <span className="font-mono font-bold text-rose-600">
-                  {formatCurrency(sisaPelunasan)}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Financial Progress Bar */}
-        <div className="px-5 py-3.5 bg-bone/40 border-t border-mist flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-deep-teal" />
-            <span className="font-medium text-carbon-ink">
-              Progress Pembayaran:
-            </span>
-            <span className="font-bold text-emerald-600 font-mono">
-              {Math.min(100, Math.round((totalPaid / (hargaDeal || 1)) * 100))}%
-            </span>
-            <span className="text-slate">
-              ({formatCurrency(totalPaid)} dari {formatCurrency(hargaDeal)})
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {sisaItj > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                Sisa ITJ: {formatCurrency(sisaItj)}
-              </span>
-            )}
-            {sisaDp > 0 && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                Sisa DP: {formatCurrency(sisaDp)}
-              </span>
-            )}
-            {sisaPelunasan === 0 && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Lunas Penuh
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ─── 3. PAYMENT HISTORY CARD ─── */}
-      <div
-        id="riwayat-pembayaran"
-        className="bg-white rounded-lg border border-mist shadow-subtle overflow-hidden"
-      >
-        <div className="p-5 border-b border-mist flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-              <Banknote className="w-4 h-4" />
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-carbon-ink">
-                Riwayat Pembayaran & Kwitansi
-              </h2>
-              <p className="text-xs text-slate">
-                Total Penerimaan Masuk:{" "}
-                <span className="font-mono font-semibold text-emerald-600">
-                  {formatCurrency(totalPaid)}
-                </span>
-              </p>
-            </div>
-          </div>
-
-          {/* Button "+ Input Pembayaran" that opens Modal */}
-          {canEdit && (
-            <PembayaranModal
-              transaksiId={transaksi.id}
-              sisaItj={sisaItj}
-              sisaDp={sisaDp}
-            />
-          )}
-        </div>
-
-        {/* Payment History Table */}
-        {transaksi.pembayaran.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-12 h-12 rounded-full bg-bone text-slate flex items-center justify-center mx-auto mb-3">
-              <FileSpreadsheet className="w-6 h-6 text-steel" />
-            </div>
-            <h3 className="text-sm font-semibold text-carbon-ink">
-              Belum ada data pembayaran
-            </h3>
-            <p className="text-xs text-slate mt-1 max-w-sm mx-auto">
-              Klik tombol &quot;+ Input Pembayaran&quot; di atas untuk mencatat setoran
-              tanda jadi (ITJ) atau uang muka (DP) dari konsumen.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-bone/60 border-b border-mist text-slate font-semibold uppercase tracking-wider">
-                <tr>
-                  <th className="px-5 py-3">Tanggal</th>
-                  <th className="px-5 py-3">Jenis Pembayaran</th>
-                  <th className="px-5 py-3">Nominal</th>
-                  <th className="px-5 py-3">Admin Penerima</th>
-                  <th className="px-5 py-3">Catatan / Keterangan</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-mist">
-                {transaksi.pembayaran.map((bayar) => (
-                  <tr
-                    key={bayar.id}
-                    className={`hover:bg-bone/30 transition-colors ${bayar.is_void ? "opacity-50 line-through bg-rose-50/30" : ""
-                      }`}
-                  >
-                    {/* Tanggal */}
-                    <td className="px-5 py-3.5 text-slate font-medium whitespace-nowrap">
-                      {bayar.tgl_bayar ? formatDateOnly(bayar.tgl_bayar) : formatDate(bayar.created_at)}
-                    </td>
-
-                    {/* Jenis & Kwitansi */}
-                    <td className="px-5 py-3.5 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${getJenisBayarBadge(
-                            bayar.jenis_pembayaran
-                          )}`}
-                        >
-                          {bayar.jenis_pembayaran}
-                        </span>
-                        <span className="font-mono text-slate text-[11px]">
-                          {bayar.no_kwitansi}
-                        </span>
-                        {bayar.is_void && (
-                          <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
-                            VOID
-                          </span>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Nominal */}
-                    <td className="px-5 py-3.5 font-mono font-bold text-carbon-ink whitespace-nowrap">
-                      {formatCurrency(Number(bayar.nominal))}
-                    </td>
-
-                    {/* Admin Penerima */}
-                    <td className="px-5 py-3.5 text-graphite whitespace-nowrap">
-                      {bayar.penerima?.nama || "Admin"}
-                    </td>
-
-                    {/* Catatan / Keterangan */}
-                    <td className="px-5 py-3.5 text-slate max-w-xs truncate">
-                      {bayar.catatan || "-"}
-                      {bayar.is_void && bayar.void_reason && (
-                        <span className="block text-[11px] text-rose-600 italic mt-0.5">
-                          Alasan Void: {bayar.void_reason}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* ─── 4. DYNAMIC ACTION PANEL CARD ─── */}
-      <DynamicActionPanel
-        transaksiId={transaksi.id}
-        leadId={transaksi.itj.lead_id}
-        version={transaksi.version}
-        canEdit={canEdit}
-        metodeBayar={transaksi.metode_bayar}
-        kategoriUnit={transaksi.unit.tipe.kategori}
-        statusPernikahan={transaksi.customer.status_pernikahan}
-        statusPekerjaan={transaksi.customer.status_pekerjaan}
-        currentTahapDetail={transaksi.tahap_detail}
-        initialNotaris={transaksi.nama_notaris}
-        initialTglAkad={
-          transaksi.tgl_akad ? transaksi.tgl_akad.toISOString() : null
-        }
-        initialTglBast={
-          transaksi.tgl_bast ? transaksi.tgl_bast.toISOString() : null
-        }
-        initialLunasAt={
-          transaksi.lunas_at ? transaksi.lunas_at.toISOString() : null
-        }
-        initialRencanaAkad={
-          transaksi.rencana_akad_at ? transaksi.rencana_akad_at.toISOString() : null
-        }
-        initialRencanaBast={
-          transaksi.rencana_bast_at ? transaksi.rencana_bast_at.toISOString() : null
-        }
-        initialPengajuanTerpilihId={transaksi.pengajuan_kpr_terpilih_id}
-        initialCatatan={transaksi.catatan_admin}
-        initialVerifiedDocs={transaksi.dokumen
-          .filter((d) => d.status === "LENGKAP")
-          .map((d) => d.jenis)}
-        initialChecklistBast={transaksi.checklist_bast.map((b) => ({
-          item: b.item,
-          status: b.status,
-        }))}
-        initialPengajuanKpr={transaksi.pengajuan_kpr}
-        masterBanks={masterBanks}
-        financialSummary={{
-          hargaDeal,
-          totalPaid,
-          targetDp,
-          dpPaid,
-          sisaPelunasan,
-          sisaDp,
-          lastPaymentDate,
-        }}
-      />
-
-      {/* ─── 5. AUDIT TRAIL / RIWAYAT AKTIVITAS ─── */}
-      <TransactionAuditTrail
-        logs={auditLogs}
-        transaksiId={transaksi.id}
-      />
+      )}
     </div>
   );
 }

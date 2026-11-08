@@ -18,7 +18,10 @@ import {
   parseDateOnlyUTC,
   todayDateOnlyUTC,
 } from "@/lib/date/wib";
-import { getRequiredDocuments } from "@/lib/transaksi/document-rules";
+import {
+  getRequiredDocuments,
+  summarizeDocuments,
+} from "@/lib/transaksi/document-rules";
 import { logActivity } from "@/lib/activity/log";
 import { ActivityAction } from "@/lib/activity/actions";
 
@@ -212,7 +215,7 @@ export async function applyStage(params: ApplyStageParams) {
     }
 
     // 7. Gate checks when advancing
-    // A. Documentation Gate (Leaving index 0)
+    // A. Documentation Gate (Leaving index 0 - Pemberkasan)
     if (isAdvancing && currentIndex === 0 && targetIndex > 0) {
       const docEvaluation = getRequiredDocuments({
         metode: existingTrx.metode_bayar,
@@ -225,23 +228,51 @@ export async function applyStage(params: ApplyStageParams) {
         throw new Error(`Pemberkasan belum lengkap: ${docEvaluation.message}`);
       }
 
-      const requiredDocs = docEvaluation.documents.filter(
-        (d) => d.required && !d.bisaMenyusul
+      const summary = summarizeDocuments(
+        docEvaluation.documents,
+        Array.from(verifiedDocKeys)
       );
-      const missingRequiredDocs = requiredDocs.filter((doc) => {
-        if (doc.key === "KTP_PEMOHON" || doc.key === "KTP_SUAMI_ISTRI") {
-          return (
-            !verifiedDocKeys.has("KTP_PEMOHON") &&
-            !verifiedDocKeys.has("KTP_SUAMI_ISTRI")
-          );
-        }
-        return !verifiedDocKeys.has(doc.key);
-      });
 
-      if (missingRequiredDocs.length > 0) {
-        const missingLabels = missingRequiredDocs.map((d) => d.label).join(", ");
+      if (summary.missingForPengajuan.length > 0) {
+        const missingLabels = summary.missingForPengajuan
+          .map((d) => d.label)
+          .join(", ");
         throw new Error(
           `Dokumen pemberkasan belum lengkap: Dokumen [${missingLabels}] wajib diverifikasi sebelum dapat melanjutkan tahap transaksi.`
+        );
+      }
+    }
+
+    // A2. Documentation Gate before Akad (AKAD_KREDIT / AJB)
+    const isTargetAkad = toDetail === "AKAD_KREDIT" || toDetail === "AJB";
+    if (isAdvancing && isTargetAkad && !isRegression) {
+      const docEvaluation = getRequiredDocuments({
+        metode: existingTrx.metode_bayar,
+        kategori: existingTrx.unit.tipe.kategori,
+        statusPernikahan: existingTrx.customer.status_pernikahan,
+        statusPekerjaan: existingTrx.customer.status_pekerjaan,
+      });
+
+      if (!docEvaluation.isProfileComplete) {
+        throw new Error(`Pemberkasan belum lengkap: ${docEvaluation.message}`);
+      }
+
+      const summary = summarizeDocuments(
+        docEvaluation.documents,
+        Array.from(verifiedDocKeys)
+      );
+
+      if (
+        summary.missingForPengajuan.length > 0 ||
+        summary.missingForAkad.length > 0
+      ) {
+        const allMissing = [
+          ...summary.missingForPengajuan,
+          ...summary.missingForAkad,
+        ];
+        const missingLabels = allMissing.map((d) => d.label).join(", ");
+        throw new Error(
+          `Akad belum dapat diproses: Dokumen persyaratan [${missingLabels}] wajib diverifikasi lengkap sebelum Akad.`
         );
       }
     }
@@ -263,13 +294,25 @@ export async function applyStage(params: ApplyStageParams) {
         if (sp3kApps.length === 1) {
           chosenPengajuanId = sp3kApps[0].id;
         } else if (sp3kApps.length > 1) {
-          const selectedId = pengajuanTerpilihId || existingTrx.pengajuan_kpr_terpilih_id;
+          const selectedId =
+            pengajuanTerpilihId || existingTrx.pengajuan_kpr_terpilih_id;
           if (!selectedId || !sp3kApps.some((p) => p.id === selectedId)) {
             throw new Error(
               "Terdapat lebih dari satu SP3K yang terbit. Silakan pilih bank pembiaya sebelum melanjutkan ke Akad Kredit."
             );
           }
           chosenPengajuanId = selectedId;
+        }
+
+        if (chosenPengajuanId) {
+          const chosenApp = existingTrx.pengajuan_kpr.find(
+            (p) => p.id === chosenPengajuanId
+          );
+          if (!chosenApp || chosenApp.status !== "SP3K") {
+            throw new Error(
+              "Akad Kredit KPR belum dapat diproses: Bank pembiaya yang dipilih harus berstatus SP3K Terbit dari Bank."
+            );
+          }
         }
 
         if (!tglAkad?.trim() && !existingTrx.tgl_akad) {

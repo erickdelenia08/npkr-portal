@@ -10,10 +10,8 @@ import {
   Send,
   Loader2,
   ShieldAlert,
-  AlertTriangle,
   ChevronDown,
   ChevronUp,
-  Clock,
   ArrowRight,
   Ban,
 } from "lucide-react";
@@ -80,8 +78,7 @@ const STATUS_LABEL: Record<StatusPengajuanKPR, string> = {
   WAWANCARA: "Wawancara",
   OTS: "OTS (Survey)",
   VERIFIKASI: "Verifikasi",
-  SP3K: "SP3K Terbit (Disetujui Bank)",
-  // DISETUJUI: "Disetujui",
+  SP3K: "SP3K Terbit",
   DITOLAK: "Ditolak",
   DIBATALKAN: "Dibatalkan",
 };
@@ -91,17 +88,16 @@ const STATUS_BADGE_STYLE: Record<StatusPengajuanKPR, string> = {
   WAWANCARA: "bg-sky-50 text-sky-700 border-sky-200",
   OTS: "bg-indigo-50 text-indigo-700 border-indigo-200",
   VERIFIKASI: "bg-amber-50 text-amber-800 border-amber-200",
-  SP3K: "bg-teal-50 text-teal-800 border-teal-200",
-  // DISETUJUI: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  SP3K: "bg-teal-50 text-teal-800 border-teal-200 font-bold",
   DITOLAK: "bg-rose-50 text-rose-700 border-rose-200",
-  DIBATALKAN: "bg-slate-100 text-slate-600 border-slate-300",
+  DIBATALKAN: "bg-slate-100 text-slate-600 border-slate-200",
 };
 
 const formatDate = (value: string | Date) => {
   const d = new Date(value);
   return d.toLocaleDateString("id-ID", {
     day: "numeric",
-    month: "long",
+    month: "short",
     year: "numeric",
   });
 };
@@ -169,7 +165,7 @@ export function KprSubmissionSection({
   const [alasanPenolakan, setAlasanPenolakan] = useState("");
   const [rejectError, setRejectError] = useState<string | null>(null);
 
-  // Dialog konfirmasi untuk status kritis (SP3K, DISETUJUI, DIBATALKAN)
+  // Dialog konfirmasi untuk status kritis (SP3K, DIBATALKAN)
   const [pendingStatus, setPendingStatus] = useState<{
     id: number;
     status: StatusPengajuanKPR;
@@ -261,10 +257,9 @@ export function KprSubmissionSection({
     submission: PengajuanKPRItem,
     nextStatus: StatusPengajuanKPR
   ) => {
-    // Critical or final transitions require confirmation
+    // Critical transitions require confirmation
     const isCritical =
-      nextStatus === "SP3K" ||
-      nextStatus === "DIBATALKAN";
+      nextStatus === "SP3K" || nextStatus === "DIBATALKAN";
 
     if (isCritical) {
       setPendingStatus({
@@ -276,7 +271,7 @@ export function KprSubmissionSection({
       return;
     }
 
-    // Routine steps (e.g. DIAJUKAN -> WAWANCARA, WAWANCARA -> OTS/VERIFIKASI) execute directly
+    // Routine steps execute directly
     executeKprAction(
       () =>
         updateStatusPengajuanKPR({
@@ -332,21 +327,20 @@ export function KprSubmissionSection({
   };
 
   return (
-    <div className="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 sm:p-4">
+    <div className="space-y-4">
       {/* ─── 1. HEADER RINGKASAN PENGAJUAN BANK ─── */}
       {!hideHeader && (
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-slate-100">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-200/60">
-              <Building2 className="h-5 w-5" aria-hidden="true" />
+            <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 ring-1 ring-teal-200/60 flex items-center justify-center shrink-0">
+              <Building2 className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900">
                 Ringkasan Pengajuan Bank
               </h3>
-              <p className="text-xs text-slate-600">
-                Kelola status pengajuan KPR per bank. Riwayat status dan penolakan
-                tercatat tersendiri.
+              <p className="text-xs text-slate-500">
+                Kelola status berkas dan persetujuan KPR per bank penyalur.
               </p>
             </div>
           </div>
@@ -356,45 +350,44 @@ export function KprSubmissionSection({
               type="button"
               onClick={() => setShowPastList((v) => !v)}
               aria-expanded={showPastList}
-              className="inline-flex items-center gap-1.5 self-start rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-50 sm:self-auto"
+              className="inline-flex items-center gap-1.5 self-start sm:self-auto px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
             >
-              <History className="h-3.5 w-3.5 text-slate-500" aria-hidden="true" />
+              <History className="w-3.5 h-3.5 text-slate-500" aria-hidden="true" />
               <span>
                 {showPastList
-                  ? "Sembunyikan riwayat lalu"
-                  : `Riwayat pengajuan lalu (${pastSubmissions.length})`}
+                  ? "Sembunyikan Riwayat Lalu"
+                  : `Riwayat Lalu (${pastSubmissions.length})`}
               </span>
             </button>
           )}
         </div>
       )}
 
-      {/* Informasi jika ada multiple active submission */}
+      {/* Multiple Active Submissions Parallel Notice */}
       {hasMultipleActive && (
         <div
           role="status"
-          className="flex items-center gap-2.5 rounded-lg border border-teal-200 bg-teal-50/70 p-3 text-xs text-teal-900"
+          className="flex items-start sm:items-center gap-2.5 rounded-lg border border-teal-200/80 bg-teal-50/60 px-3.5 py-2.5 text-xs text-teal-900"
         >
           <Building2
-            className="h-4 w-4 shrink-0 text-teal-700"
+            className="w-4 h-4 shrink-0 text-teal-700 mt-0.5 sm:mt-0"
             aria-hidden="true"
           />
-          <div className="leading-5">
-            <span className="font-semibold">
-              {activeSubmissions.length} pengajuan bank aktif berjalan secara paralel.
+          <div className="leading-relaxed">
+            <span className="font-bold">
+              {activeSubmissions.length} pengajuan bank aktif
             </span>{" "}
-            Setiap pengajuan bank diproses secara independen hingga terbit persetujuan kredit (SP3K).
+            berjalan secara paralel. Setiap bank diproses secara independen hingga SP3K terbit.
           </div>
         </div>
       )}
 
-      {/* ─── 2. DAFTAR PENGAJUAN BANK AKTIF ─── */}
-      {activeSubmissions.length > 0 ? (
+      {/* ─── 2. DAFTAR KARTU PENGAJUAN BANK AKTIF ─── */}
+      {activeSubmissions.length > 0 && (
         <div className="space-y-3">
           {activeSubmissions.map((submission) => {
             const allowedNext =
               ALLOWED_KPR_STATUS_TRANSITIONS[submission.status] || [];
-            // Advance options (exclude terminal actions DITOLAK and DIBATALKAN)
             const forwardOptions = allowedNext.filter(
               (st) => st !== "DITOLAK" && st !== "DIBATALKAN"
             );
@@ -407,119 +400,129 @@ export function KprSubmissionSection({
             return (
               <article
                 key={submission.id}
-                className="space-y-3 rounded-lg border border-slate-200 bg-white p-4 shadow-xs"
+                className="rounded-xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-2xs space-y-3.5"
               >
-                {/* Header Card: Bank, Badge, Tanggal */}
+                {/* Header Card: Bank Name, Status Badge, Metadata */}
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
+                  <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-sm font-bold text-slate-900">
+                      <h4 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
                         {submission.bank.nama}
                       </h4>
                       {submission.bank.kode && (
-                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-mono text-slate-600">
+                        <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-mono text-slate-600 font-semibold">
                           {submission.bank.kode}
                         </span>
                       )}
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-400">
                         • Pengajuan #{submission.nomor_pengajuan}
-                      </span>
-                      <span
-                        className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-bold ${STATUS_BADGE_STYLE[submission.status]
-                          }`}
-                      >
-                        {STATUS_LABEL[submission.status]}
                       </span>
                     </div>
 
-                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
                       <span>
                         Diajukan:{" "}
-                        <strong className="text-slate-700">
+                        <strong className="text-slate-700 font-medium">
                           {formatDate(submission.tanggal_ajukan)}
                         </strong>
                       </span>
                       {submission.tanggal_keputusan && (
-                        <span>
-                          Keputusan:{" "}
-                          <strong className="text-slate-700">
-                            {formatDate(submission.tanggal_keputusan)}
-                          </strong>
-                        </span>
+                        <>
+                          <span className="text-slate-300">•</span>
+                          <span>
+                            Keputusan:{" "}
+                            <strong className="text-slate-700 font-medium">
+                              {formatDate(submission.tanggal_keputusan)}
+                            </strong>
+                          </span>
+                        </>
                       )}
                     </div>
-
-                    {submission.catatan && (
-                      <p className="mt-1.5 text-xs text-slate-600 italic">
-                        Catatan: &quot;{submission.catatan}&quot;
-                      </p>
-                    )}
                   </div>
 
-                  {/* Toggle Log Button */}
-                  {logs.length > 0 && (
+                  <div className="flex items-center gap-2 self-start sm:self-auto">
+                    <span
+                      className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${
+                        STATUS_BADGE_STYLE[submission.status]
+                      }`}
+                    >
+                      {STATUS_LABEL[submission.status]}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Catatan pengajuan jika ada */}
+                {submission.catatan && (
+                  <div className="rounded-lg bg-slate-50 border-l-2 border-slate-300 px-3 py-1.5 text-xs text-slate-600 italic">
+                    Catatan: &quot;{submission.catatan}&quot;
+                  </div>
+                )}
+
+                {/* Toggle Riwayat Status Accordion */}
+                {logs.length > 0 && (
+                  <div className="pt-0.5">
                     <button
                       type="button"
                       onClick={() => toggleLogAccordion(submission.id)}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-slate-900"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
                     >
-                      <History className="h-3.5 w-3.5 text-slate-500" />
-                      <span>{logs.length} riwayat status</span>
+                      <History className="w-3.5 h-3.5 text-slate-400" />
+                      <span>{logs.length} riwayat perubahan status</span>
                       {isExpanded ? (
-                        <ChevronUp className="h-3.5 w-3.5" />
+                        <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
                       ) : (
-                        <ChevronDown className="h-3.5 w-3.5" />
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                       )}
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Status Action Buttons Bar */}
                 {!isRejectingThis && canEdit && !readOnlyActions && (
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-3">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="text-xs font-semibold text-slate-700 mr-1">
-                        Aksi Tahap Bank:
-                      </span>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 border-t border-slate-100 pt-3">
+                    {/* Primary Forward Step */}
+                    <div className="w-full sm:w-auto">
                       {forwardOptions.length === 0 ? (
                         submission.status === "SP3K" ? (
-                          // submission.status === "SP3K" || submission.status === "DISETUJUI" ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
-                            <CheckCircle2 className="h-4 w-4" />
-                            SP3K terbit. Lanjutkan ke proses Akad.
-                          </span>
+                          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+                            <CheckCircle2 className="w-4 h-4 text-teal-700 shrink-0" />
+                            <span>SP3K terbit. Lanjutkan ke proses Akad Kredit.</span>
+                          </div>
                         ) : (
-                          <span className="text-xs text-slate-500 italic">Tidak ada tahap lanjutan.</span>
+                          <span className="text-xs text-slate-400 italic">
+                            Tidak ada tahap lanjutan.
+                          </span>
                         )
                       ) : (
-                        forwardOptions.map((stage) => {
-                          const isSuccessStep =
-                            stage === "SP3K";
-                          // stage === "SP3K" || stage === "DISETUJUI";
-                          return (
-                            <Button
-                              key={stage}
-                              type="button"
-                              size="sm"
-                              variant={isSuccessStep ? "default" : "outline"}
-                              disabled={isPending}
-                              onClick={() =>
-                                handleRequestStatusChange(submission, stage)
-                              }
-                              className={`h-8 text-xs font-semibold ${isSuccessStep
-                                ? "bg-teal-700 hover:bg-teal-800 text-white"
-                                : "border-slate-300 text-slate-800 hover:bg-slate-50"
+                        <div className="flex flex-wrap items-center gap-2">
+                          {forwardOptions.map((stage) => {
+                            const isSuccessStep = stage === "SP3K";
+                            return (
+                              <Button
+                                key={stage}
+                                type="button"
+                                size="sm"
+                                disabled={isPending}
+                                onClick={() =>
+                                  handleRequestStatusChange(submission, stage)
+                                }
+                                className={`h-8.5 px-3.5 text-xs font-semibold rounded-lg shadow-2xs w-full sm:w-auto justify-center ${
+                                  isSuccessStep
+                                    ? "bg-teal-700 hover:bg-teal-800 text-white"
+                                    : "bg-white border border-slate-300 text-slate-800 hover:bg-slate-50"
                                 }`}
-                            >
-                              <ArrowRight className="mr-1 h-3.5 w-3.5" />
-                              Lanjut ke {STATUS_LABEL[stage]}
-                            </Button>
-                          );
-                        })
+                              >
+                                <ArrowRight className="mr-1.5 h-3.5 w-3.5" />
+                                Lanjut ke {STATUS_LABEL[stage]}
+                              </Button>
+                            );
+                          })}
+                        </div>
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    {/* Secondary & Negative Actions (Tolak / Batalkan) */}
+                    <div className="flex items-center justify-end gap-1.5 self-end sm:self-auto">
                       {canReject && (
                         <Button
                           type="button"
@@ -531,10 +534,10 @@ export function KprSubmissionSection({
                             setAlasanPenolakan("");
                             setRejectError(null);
                           }}
-                          className="h-8 text-xs text-rose-700 hover:bg-rose-50 hover:text-rose-800"
+                          className="h-8 px-2.5 text-xs font-medium text-rose-700 hover:bg-rose-50 hover:text-rose-800 rounded-md"
                         >
                           <XCircle className="mr-1 h-3.5 w-3.5" />
-                          Tolak Pengajuan
+                          Tolak
                         </Button>
                       )}
                       {canCancel && (
@@ -546,7 +549,7 @@ export function KprSubmissionSection({
                           onClick={() =>
                             handleRequestStatusChange(submission, "DIBATALKAN")
                           }
-                          className="h-8 text-xs text-slate-600 hover:bg-slate-100"
+                          className="h-8 px-2.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800 rounded-md"
                         >
                           <Ban className="mr-1 h-3.5 w-3.5" />
                           Batalkan
@@ -556,46 +559,46 @@ export function KprSubmissionSection({
                   </div>
                 )}
 
-                {/* Form Catat Penolakan Inline */}
+                {/* Inline Rejection Form */}
                 {isRejectingThis && (
-                  <div className="space-y-2 rounded-lg border border-rose-200 bg-rose-50/70 p-3">
+                  <div className="space-y-3 rounded-xl border border-rose-200 bg-rose-50/60 p-4">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-rose-900">
-                      <ShieldAlert className="h-4 w-4" aria-hidden="true" />
-                      Catat Penolakan KPR dari {submission.bank.nama}
+                      <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0" aria-hidden="true" />
+                      <span>Catat Penolakan KPR dari {submission.bank.nama}</span>
                     </div>
 
-                    <label
-                      htmlFor={`kpr-reject-${submission.id}`}
-                      className="block text-xs font-semibold text-slate-700"
-                    >
-                      Alasan penolakan bank <span className="text-red-600">*</span>
-                    </label>
-                    <textarea
-                      id={`kpr-reject-${submission.id}`}
-                      value={alasanPenolakan}
-                      onChange={(event) => {
-                        setAlasanPenolakan(event.target.value);
-                        if (rejectError) setRejectError(null);
-                      }}
-                      rows={2}
-                      aria-invalid={Boolean(rejectError)}
-                      aria-describedby={
-                        rejectError
-                          ? `kpr-reject-err-${submission.id}`
-                          : undefined
-                      }
-                      placeholder="Contoh: BI Checking kol 3, kemampuan angsuran kurang, kuota habis"
-                      className="w-full rounded-md border border-slate-300 bg-white p-2 text-xs focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-400/30"
-                    />
-                    {rejectError && (
-                      <p
-                        id={`kpr-reject-err-${submission.id}`}
-                        role="alert"
-                        className="text-xs font-medium text-rose-700"
+                    <div>
+                      <label
+                        htmlFor={`kpr-reject-${submission.id}`}
+                        className="block text-xs font-semibold text-slate-700 mb-1"
                       >
-                        {rejectError}
-                      </p>
-                    )}
+                        Alasan penolakan bank <span className="text-rose-600">*</span>
+                      </label>
+                      <textarea
+                        id={`kpr-reject-${submission.id}`}
+                        value={alasanPenolakan}
+                        onChange={(event) => {
+                          setAlasanPenolakan(event.target.value);
+                          if (rejectError) setRejectError(null);
+                        }}
+                        rows={2}
+                        aria-invalid={Boolean(rejectError)}
+                        aria-describedby={
+                          rejectError ? `kpr-reject-err-${submission.id}` : undefined
+                        }
+                        placeholder="Contoh: BI Checking kol 3, kemampuan angsuran kurang, kuota habis"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-xs focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-400/20"
+                      />
+                      {rejectError && (
+                        <p
+                          id={`kpr-reject-err-${submission.id}`}
+                          role="alert"
+                          className="mt-1 text-xs font-medium text-rose-700"
+                        >
+                          {rejectError}
+                        </p>
+                      )}
+                    </div>
 
                     <div className="flex justify-end gap-2 pt-1">
                       <Button
@@ -604,7 +607,7 @@ export function KprSubmissionSection({
                         size="sm"
                         disabled={isPending}
                         onClick={closeRejectForm}
-                        className="h-8 text-xs"
+                        className="h-8 text-xs font-medium border-slate-300 text-slate-700"
                       >
                         Batal
                       </Button>
@@ -613,11 +616,11 @@ export function KprSubmissionSection({
                         size="sm"
                         disabled={isPending}
                         onClick={() => handleTolak(submission.id)}
-                        className="h-8 bg-rose-600 text-xs font-semibold text-white hover:bg-rose-700"
+                        className="h-8 bg-rose-600 hover:bg-rose-700 text-xs font-semibold text-white shadow-2xs"
                       >
                         {isPending ? (
                           <>
-                            <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                            <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
                             Menyimpan...
                           </>
                         ) : (
@@ -628,17 +631,17 @@ export function KprSubmissionSection({
                   </div>
                 )}
 
-                {/* Accordion Riwayat Log Status Pengajuan Ini */}
+                {/* Status Logs Accordion */}
                 {isExpanded && logs.length > 0 && (
-                  <div className="mt-2 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs space-y-2">
+                  <div className="rounded-lg border border-slate-200/80 bg-slate-50/70 p-3.5 text-xs space-y-2">
                     <div className="flex items-center gap-1.5 font-bold text-slate-700">
-                      <History className="h-3.5 w-3.5 text-slate-500" />
+                      <History className="w-3.5 h-3.5 text-slate-500" />
                       <span>Riwayat Status ({submission.bank.nama})</span>
                     </div>
-                    <ul className="divide-y divide-slate-200/70 max-h-48 overflow-y-auto pr-1 space-y-1">
+                    <ul className="divide-y divide-slate-200/60 max-h-48 overflow-y-auto pr-1 space-y-1">
                       {logs.map((log) => (
-                        <li key={log.id} className="pt-1.5 pb-1 space-y-0.5">
-                          <div className="flex items-center justify-between">
+                        <li key={log.id} className="pt-2 pb-1 space-y-1">
+                          <div className="flex flex-wrap items-center justify-between gap-1">
                             <span className="font-semibold text-slate-800">
                               {log.status_sebelum
                                 ? STATUS_LABEL[log.status_sebelum]
@@ -648,16 +651,16 @@ export function KprSubmissionSection({
                                 {STATUS_LABEL[log.status_sesudah]}
                               </span>
                             </span>
-                            <span className="text-[11px] text-slate-500">
+                            <span className="text-[11px] text-slate-400 font-mono">
                               {formatDateTime(log.created_at)}
                             </span>
                           </div>
                           {log.catatan && (
-                            <p className="rounded bg-white p-1 text-[11px] text-slate-600 border border-slate-200/60">
+                            <p className="rounded bg-white p-1.5 text-[11px] text-slate-600 border border-slate-200/60 italic">
                               &quot;{log.catatan}&quot;
                             </p>
                           )}
-                          <p className="text-[10px] text-slate-500">
+                          <p className="text-[10px] text-slate-400">
                             Petugas: {log.actor?.nama || log.admin?.nama || "Admin"}
                           </p>
                         </li>
@@ -669,13 +672,13 @@ export function KprSubmissionSection({
             );
           })}
         </div>
-      ) : null}
+      )}
 
-      {/* ─── 2b. TOMBOL / FORM PENGAJUAN BANK BARU ─── */}
+      {/* ─── 2b. TOMBOL & FORM PENGAJUAN BANK BARU ─── */}
       {canEdit && (
-        <>
+        <div className="pt-1">
           {activeSubmissions.length > 0 && !showAddForm ? (
-            <div className="flex justify-end pt-1">
+            <div className="flex justify-end">
               <Button
                 type="button"
                 variant="outline"
@@ -685,7 +688,7 @@ export function KprSubmissionSection({
                   setShowAddForm(true);
                   setBankError(null);
                 }}
-                className="h-8 text-xs font-semibold border-teal-300 text-teal-800 hover:bg-teal-50"
+                className="h-8.5 px-3.5 text-xs font-semibold border-teal-300 text-teal-800 hover:bg-teal-50 shadow-2xs rounded-lg"
               >
                 <Send className="mr-1.5 h-3.5 w-3.5 text-teal-700" />
                 + Ajukan ke Bank Lain
@@ -695,17 +698,17 @@ export function KprSubmissionSection({
             <form
               onSubmit={handleAjukanBaru}
               noValidate
-              className="space-y-3 rounded-lg border border-slate-200 bg-white p-4"
+              className="space-y-4 rounded-xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-2xs"
             >
-              <div className="flex items-center justify-between">
-                <h4 className="flex items-center gap-1.5 text-sm font-bold text-slate-900">
-                  <Send className="h-4 w-4 text-teal-700" aria-hidden="true" />
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <h4 className="flex items-center gap-2 text-sm font-bold text-slate-900 tracking-tight">
+                  <Send className="w-4 h-4 text-teal-700" aria-hidden="true" />
                   {activeSubmissions.length > 0
                     ? "Ajukan KPR ke Bank Tambahan (Paralel)"
-                    : "Ajukan KPR ke Bank"}
+                    : "Ajukan KPR ke Bank Penyalur"}
                 </h4>
                 {activeSubmissions.length === 0 ? (
-                  <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 sm:block hidden">
+                  <span className="rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-800 hidden sm:inline-block">
                     Belum ada pengajuan aktif
                   </span>
                 ) : (
@@ -717,20 +720,20 @@ export function KprSubmissionSection({
                       setCatatanBaru("");
                       setBankError(null);
                     }}
-                    className="text-xs text-slate-500 hover:text-slate-800 underline"
+                    className="text-xs text-slate-500 hover:text-slate-800 font-medium underline cursor-pointer"
                   >
                     Batal
                   </button>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                 <div>
                   <label
                     htmlFor="kpr-bank-select"
-                    className="mb-1 block text-xs font-semibold text-slate-700"
+                    className="mb-1.5 block text-xs font-semibold text-slate-800"
                   >
-                    Bank Penyalur <span className="text-red-600">*</span>
+                    Bank Penyalur <span className="text-rose-500">*</span>
                   </label>
                   <select
                     id="kpr-bank-select"
@@ -743,13 +746,13 @@ export function KprSubmissionSection({
                     }}
                     aria-invalid={Boolean(bankError)}
                     aria-describedby={bankError ? "kpr-bank-error" : undefined}
-                    className={`w-full rounded-md border bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 ${
+                    className={`w-full rounded-lg border bg-slate-50 px-3 py-2 text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 ${
                       bankError
-                        ? "border-red-400 focus:ring-red-400/30"
-                        : "border-slate-300 focus:border-teal-600 focus:ring-teal-500/20"
+                        ? "border-rose-400 focus:ring-rose-400/20"
+                        : "border-slate-200 focus:border-teal-600 focus:ring-teal-500/20"
                     }`}
                   >
-                    <option value="">Pilih bank</option>
+                    <option value="">Pilih bank mitra...</option>
                     {masterBanks.map((bank) => {
                       const isAlreadyActive = activeSubmissions.some(
                         (s) => s.bank_id === bank.id
@@ -771,7 +774,7 @@ export function KprSubmissionSection({
                     <p
                       id="kpr-bank-error"
                       role="alert"
-                      className="mt-1 text-xs font-medium text-red-700"
+                      className="mt-1 text-xs font-medium text-rose-700"
                     >
                       {bankError}
                     </p>
@@ -781,9 +784,9 @@ export function KprSubmissionSection({
                 <div>
                   <label
                     htmlFor="kpr-catatan-baru"
-                    className="mb-1 block text-xs font-semibold text-slate-700"
+                    className="mb-1.5 block text-xs font-semibold text-slate-800"
                   >
-                    Catatan Pengajuan (opsional)
+                    Catatan Pengajuan (Opsional)
                   </label>
                   <input
                     id="kpr-catatan-baru"
@@ -791,112 +794,110 @@ export function KprSubmissionSection({
                     value={catatanBaru}
                     onChange={(event) => setCatatanBaru(event.target.value)}
                     placeholder="Misal: berkas lengkap diserahkan ke AO Bank"
-                    className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500/20 placeholder:text-slate-400"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-1">
-                <div className="space-y-1">
-                  <p className="text-xs text-slate-500">
-                    Setelah diajukan, pengajuan bank akan diproses dalam tahap Proses Bank.
-                  </p>
-                  {disabledNew && disabledNewReason && (
-                    <p className="text-xs font-medium text-amber-700">
-                      {disabledNewReason}
-                    </p>
-                  )}
+              {disabledNew && disabledNewReason && (
+                <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-900 flex items-start gap-2">
+                  <span className="font-semibold">{disabledNewReason}</span>
                 </div>
-                <div className="flex items-center gap-2 self-end sm:self-auto">
-                  {showAddForm && activeSubmissions.length > 0 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setShowAddForm(false);
-                        setSelectedBankId("");
-                        setCatatanBaru("");
-                        setBankError(null);
-                      }}
-                      className="h-8.5 text-xs"
-                    >
-                      Batal
-                    </Button>
-                  )}
+              )}
+
+              <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2 pt-2 border-t border-slate-100">
+                {showAddForm && activeSubmissions.length > 0 && (
                   <Button
-                    type="submit"
+                    type="button"
+                    variant="outline"
                     size="sm"
-                    disabled={isPending || disabledNew}
-                    className="h-8.5 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setSelectedBankId("");
+                      setCatatanBaru("");
+                      setBankError(null);
+                    }}
+                    className="h-9 text-xs font-medium border-slate-300 text-slate-700 w-full sm:w-auto"
                   >
-                    {isPending ? (
-                      <>
-                        <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                        Mengajukan...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
-                        Ajukan ke Bank
-                      </>
-                    )}
+                    Batal
                   </Button>
-                </div>
+                )}
+                <Button
+                  type="submit"
+                  size="sm"
+                  disabled={isPending || disabledNew}
+                  className="h-9 px-4 bg-teal-700 text-xs font-semibold text-white hover:bg-teal-800 disabled:opacity-50 shadow-xs w-full sm:w-auto"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                      Mengajukan...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                      Ajukan ke Bank
+                    </>
+                  )}
+                </Button>
               </div>
             </form>
           ) : null}
-        </>
+        </div>
       )}
 
       {/* ─── 3. RIWAYAT PENGAJUAN SEBELUMNYA (DITOLAK / DIBATALKAN) ─── */}
       {showPastList && pastSubmissions.length > 0 && (
-        <div className="space-y-3 rounded-lg border border-slate-200 bg-white p-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-              <History className="h-4 w-4 text-slate-500" />
-              Riwayat Pengajuan Lalu ({pastSubmissions.length})
+        <div className="space-y-3 rounded-xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-2xs">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <h4 className="flex items-center gap-1.5 text-xs font-bold text-slate-800 uppercase tracking-wider">
+              <History className="w-3.5 h-3.5 text-slate-500" />
+              <span>Riwayat Pengajuan Lalu ({pastSubmissions.length})</span>
             </h4>
-            <span className="text-[11px] text-slate-500">
-              Pengajuan yang ditolak atau dibatalkan tetap tersimpan sebagai bukti audit.
+            <span className="text-[11px] text-slate-400">
+              Arsip keputusan perbankan
             </span>
           </div>
 
           <ul className="divide-y divide-slate-100">
             {pastSubmissions.map((item) => (
-              <li key={item.id} className="py-2.5 space-y-1.5 text-xs">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-slate-900">
+              <li key={item.id} className="py-3 space-y-1.5 text-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-bold text-slate-900">
                       {item.bank.nama}
                     </span>
-                    <span className="text-slate-500">
+                    <span className="text-slate-400 text-xs">
                       (Pengajuan #{item.nomor_pengajuan})
                     </span>
                     <span
-                      className={`inline-flex rounded-md border px-2 py-0.5 text-[11px] font-bold ${STATUS_BADGE_STYLE[item.status]
-                        }`}
+                      className={`inline-flex rounded-md border px-2 py-0.5 text-[11px] font-semibold ${
+                        STATUS_BADGE_STYLE[item.status]
+                      }`}
                     >
                       {STATUS_LABEL[item.status]}
                     </span>
                   </div>
-                  <span className="text-slate-500">
+                  <span className="text-slate-400 text-[11px] font-mono">
                     Diajukan: {formatDate(item.tanggal_ajukan)}
                   </span>
                 </div>
 
                 {item.alasan_penolakan && (
-                  <div className="rounded-md border border-rose-200 bg-rose-50/70 p-2 text-rose-900">
+                  <div className="rounded-lg border border-rose-200 bg-rose-50/60 p-2.5 text-rose-900 text-xs">
                     <span className="font-bold">Alasan Penolakan: </span>
                     {item.alasan_penolakan}
                   </div>
                 )}
 
                 {item.logs && item.logs.length > 0 && (
-                  <ul className="space-y-0.5 border-l-2 border-slate-200 pl-2.5 text-slate-600 text-[11px]">
+                  <ul className="space-y-1 border-l-2 border-slate-200 pl-3 text-slate-600 text-[11px] pt-1">
                     {item.logs.map((log) => (
                       <li key={log.id}>
-                        {formatDateTime(log.created_at)}:{" "}
+                        <span className="text-slate-400 font-mono">
+                          {formatDateTime(log.created_at)}
+                        </span>
+                        :{" "}
                         <span className="font-semibold text-slate-800">
                           {STATUS_LABEL[log.status_sesudah]}
                         </span>

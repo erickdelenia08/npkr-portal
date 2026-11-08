@@ -481,6 +481,7 @@ model DokumenTransaksi {
   transaksi_id Int
   jenis        JenisDokumen
   status       StatusDokumen @default(BELUM_LENGKAP)
+  diterima_at  DateTime?     @db.Date
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
