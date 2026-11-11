@@ -11,6 +11,7 @@ import {
   ArrowUpDown,
   RotateCcw,
 } from "lucide-react";
+import { capitalizeWords } from "@/lib/text-manipulate/text-manipulate";
 
 export interface SerializedPembayaran {
   id: number;
@@ -207,15 +208,15 @@ export function TransaksiTable({ data }: TransaksiTableProps) {
     const q = searchQuery.trim().toLowerCase();
     const afterSearch = q
       ? afterStatus.filter((trx) => {
-          return (
-            trx.customer.nama_ktp.toLowerCase().includes(q) ||
-            trx.customer.nik.toLowerCase().includes(q) ||
-            trx.unit.blok.toLowerCase().includes(q) ||
-            trx.unit.tipe.nama_tipe.toLowerCase().includes(q) ||
-            trx.marketing.nama.toLowerCase().includes(q) ||
-            trx.status_transaksi.toLowerCase().includes(q)
-          );
-        })
+        return (
+          trx.customer.nama_ktp.toLowerCase().includes(q) ||
+          trx.customer.nik.toLowerCase().includes(q) ||
+          trx.unit.blok.toLowerCase().includes(q) ||
+          trx.unit.tipe.nama_tipe.toLowerCase().includes(q) ||
+          trx.marketing.nama.toLowerCase().includes(q) ||
+          trx.status_transaksi.toLowerCase().includes(q)
+        );
+      })
       : afterStatus;
 
     // 4. Sorting berdasarkan kolom aktif (tanpa memutasi array asal)
@@ -470,7 +471,8 @@ export function TransaksiTable({ data }: TransaksiTableProps) {
                       <td className="px-4 py-3">
                         <div className="flex flex-col">
                           <span className="md:font-semibold text-zinc-900 text-[13px] text-nowrap">
-                            {trx.customer.nama_ktp}
+                            {/* {trx.customer.nama_ktp} */}
+                            {capitalizeWords(trx.customer.nama_ktp)}
                           </span>
                           <span className="hidden md:block text-[11px] font-mono text-zinc-400 mt-0.5">
                             {trx.customer.no_hp || "—"}

@@ -24,6 +24,7 @@ import {
 } from "@/actions/lead";
 import { LeadTahap } from "@/lib/lead-utils";
 import { CreateLeadForm } from "@/components/leads/CreateLeadForm";
+import { capitalizeWords, truncateText } from "@/lib/text-manipulate/text-manipulate";
 
 interface MarketingUserOption {
   id: number;
@@ -99,7 +100,7 @@ export function ManagerLeadTable({
     }
 
     return (
-      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${style}`}>
+      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border ${style}`}>
         {tahap}
       </span>
     );
@@ -213,26 +214,14 @@ export function ManagerLeadTable({
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => fetchLeads(search, tahapFilter, assignmentFilter, selectedMarketingId)}
-            disabled={isPending}
-            className="p-2 rounded-md border border-zinc-200 bg-white text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 transition-colors disabled:opacity-50"
-            title="Muat Ulang Data"
-          >
-            <RefreshCw className={`w-4 h-4 ${isPending ? "animate-spin" : ""}`} />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium transition-colors shadow-xs"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Tambah Lead</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsCreateModalOpen(true)}
+          className="fixed bottom-6 right-6 z-50 md:static inline-flex items-center gap-2 px-5 py-3 md:px-4 md:py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-medium rounded-full md:rounded-lg shadow-xl md:shadow-sm transition-all active:scale-95 hover:shadow-zinc-900/20"
+        >
+          <Plus className="w-5 h-5 md:w-4 md:h-4" />
+          <span>Tambah Lead</span>
+        </button>
       </div>
 
       {/* Control bar / Filters */}
@@ -326,17 +315,22 @@ export function ManagerLeadTable({
                   return (
                     <tr
                       key={lead.id}
-                      className={`hover:bg-zinc-50/70 transition-colors ${isUnassigned ? "bg-amber-50/30" : ""
+                      className={`text-[11px] sm:text-[13px] hover:bg-zinc-50/70 transition-colors ${isUnassigned ? "bg-amber-50/30" : ""
                         }`}
                     >
                       {/* 1. Prospek & Minat */}
-                      <td className="px-4 py-3">
+                      <td className="pl-3 py-3">
                         <div className="flex flex-col">
                           <Link
                             href={`${basePath}/lead/${lead.id}`}
-                            className="font-semibold text-zinc-900 hover:underline inline-flex items-center gap-1 group text-[13px]"
+                            className="font-semibold text-zinc-900 hover:underline inline-flex items-center gap-1 group text-nowrap"
                           >
-                            <span>{lead.nama}</span>
+                            <span className="hidden md:block">
+                              {capitalizeWords(lead.nama)}
+                            </span>
+                            <span className="block md:hidden">
+                              {truncateText(capitalizeWords(lead.nama), 14)}
+                            </span>
                             <ExternalLink className="w-3 h-3 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                           </Link>
                           {lead.minat_tipe && (
@@ -349,7 +343,7 @@ export function ManagerLeadTable({
 
                       {/* 2. Kontak & WhatsApp */}
                       <td className="px-4 py-3 whitespace-nowrap font-mono text-[11px]">
-                        <a
+                        {lead.no_hp ? <a
                           href={formatWaLink(lead.no_hp, lead.nama)}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -358,7 +352,7 @@ export function ManagerLeadTable({
                         >
                           <MessageCircle className="w-3.5 h-3.5 text-zinc-400 group-hover:text-emerald-600" />
                           <span>{lead.no_hp}</span>
-                        </a>
+                        </a> : "-"}
                       </td>
 
                       {/* 3. Tahap */}
@@ -426,7 +420,7 @@ export function ManagerLeadTable({
                             <button
                               type="button"
                               onClick={() => handleOpenReassign(lead)}
-                              className="px-2 py-1 rounded text-xs font-medium border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 transition-colors"
+                              className="px-2 py-1 rounded text-[11px] font-medium border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 transition-colors"
                             >
                               {isUnassigned ? "Tugaskan" : "Pindah PIC"}
                             </button>

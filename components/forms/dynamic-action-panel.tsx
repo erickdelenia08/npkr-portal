@@ -333,12 +333,12 @@ function DynamicActionPanelInner({
       />
 
       {/* ─── 2. Step View Banner (when viewStep !== activeStep) ─── */}
-      <StepBanner
+      {/* <StepBanner
         viewStep={viewStep}
         activeStep={activeStep}
         steps={steps}
         onReturnToActive={handleReturnToActive}
-      />
+      /> */}
 
       {/* ─── 3. Active View Step Content ─── */}
       {viewStep === "pemberkasan" && (

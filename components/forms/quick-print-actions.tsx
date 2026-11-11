@@ -124,7 +124,7 @@ export function QuickPrintActions({
         size="sm"
         disabled={isPrintingSpr}
         onClick={handlePrintSpr}
-        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
       >
         {isPrintingSpr ? (
           <Loader2 className="w-3.5 h-3.5 text-deep-teal animate-spin" />
@@ -140,7 +140,7 @@ export function QuickPrintActions({
         size="sm"
         disabled={isPrintingKwitansi || !hasPembayaran}
         onClick={handlePrintKwitansi}
-        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 text-xs text-carbon-ink border-mist hover:bg-bone transition-all shadow-subtle disabled:opacity-60"
       >
         {isPrintingKwitansi ? (
           <Loader2 className="w-3.5 h-3.5 text-indigo-600 animate-spin" />

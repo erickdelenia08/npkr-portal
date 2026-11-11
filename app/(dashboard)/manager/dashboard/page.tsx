@@ -54,37 +54,47 @@ export default async function ManagerDashboardPage({
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
       {/* ─── Page Header ─── */}
-      <div className="bg-white p-5 sm:p-6 rounded-2xl border border-mist shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
+      <div className="bg-white p-4 sm:p-5 md:p-6 rounded-2xl border border-mist shadow-subtle flex flex-col md:flex-row md:items-center justify-between gap-5 md:gap-6">
+        {/* Bagian Kiri: Judul, Badge, dan Deskripsi */}
+        <div className="flex flex-col gap-1.5 md:gap-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             <h1 className="text-xl sm:text-2xl font-bold text-carbon-ink tracking-tight">
-              Dashboard Manajemen
+              Dashboard
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-deep-teal border border-teal-200">
+            <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-teal-50 text-deep-teal border border-teal-200 whitespace-nowrap">
               Periode {data.bulanLabel}
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate mt-1">
+          <p className="text-xs sm:text-sm text-slate leading-relaxed line-clamp-2 sm:line-clamp-none mt-0.5">
             Ringkasan metrik eksekutif prospek masuk, konversi survei, closing unit, persetujuan SP3K, pelaksanaan akad, dan ketersediaan inventori.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <MonthPicker currentMonth={currentMonthKey} />
-          <Link
-            href={`/manager/keuangan?bulan=${currentMonthKey}`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-bone text-carbon-ink hover:bg-mist/80 transition-colors border border-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-teal"
-          >
-            <Banknote className="w-3.5 h-3.5 text-deep-teal" />
-            <span>Laporan Keuangan</span>
-          </Link>
-          <Link
-            href={`/manager/laporan?bulan=${currentMonthKey}`}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-deep-teal text-white hover:bg-teal-700 transition-colors shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-teal"
-          >
-            <span>Buka Laporan</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </Link>
+        {/* Bagian Kanan: Filter dan Tombol Aksi */}
+        <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 mt-1 md:mt-0">
+          {/* Wrapper MonthPicker agar bisa menyesuaikan lebar (full di mobile, auto di desktop) */}
+          <div className="w-full sm:w-auto">
+            <MonthPicker currentMonth={currentMonthKey} />
+          </div>
+
+          {/* Grup Tombol - 2 Kolom sejajar di Mobile, Flex row di Desktop */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-2.5 sm:gap-3">
+            <Link
+              href={`/manager/keuangan?bulan=${currentMonthKey}`}
+              className="flex sm:inline-flex justify-center items-center gap-1.5 px-3 py-2.5 sm:py-2 rounded-xl text-xs font-semibold bg-bone text-carbon-ink hover:bg-mist/80 transition-colors border border-mist focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-teal"
+            >
+              <Banknote className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-deep-teal shrink-0" />
+              <span className="truncate">Lap. Keuangan</span>
+            </Link>
+
+            <Link
+              href={`/manager/laporan?bulan=${currentMonthKey}`}
+              className="flex sm:inline-flex justify-center items-center gap-1.5 px-3 py-2.5 sm:py-2 rounded-xl text-xs font-semibold bg-deep-teal text-white hover:bg-teal-700 transition-colors shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-prism-teal"
+            >
+              <span className="truncate">Buka Laporan</span>
+              <ArrowUpRight className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" />
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -298,15 +308,14 @@ export default async function ManagerDashboardPage({
                   </div>
                   <div className="h-2 bg-bone rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full ${
-                        item.status === "AVAILABLE"
-                          ? "bg-emerald-600"
-                          : item.status === "HOLD"
+                      className={`h-full rounded-full ${item.status === "AVAILABLE"
+                        ? "bg-emerald-600"
+                        : item.status === "HOLD"
                           ? "bg-amber-500"
                           : item.status === "BOOKED"
-                          ? "bg-sky-500"
-                          : "bg-slate-400"
-                      }`}
+                            ? "bg-sky-500"
+                            : "bg-slate-400"
+                        }`}
                       style={{ width: `${pct}%` }}
                     />
                   </div>

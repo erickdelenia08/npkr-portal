@@ -253,9 +253,6 @@ export function MasterUnitClient({
             <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-zinc-900">
               Master Unit &amp; Tipe
             </h1>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 font-medium whitespace-nowrap">
-              {summary.total} Unit
-            </span>
           </div>
           <p className="text-[11px] sm:text-xs text-zinc-500 mt-0.5 leading-relaxed">
             Spesifikasi tipe properti dan alokasi blok unit berdasarkan siteplan.
@@ -381,92 +378,76 @@ export function MasterUnitClient({
       {/* ─── Metric Filter Cards: Clean 2x2 Grid on Mobile ─── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         {/* Total */}
-        <button
-          type="button"
-          onClick={() => setStatusFilter("")}
-          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "" || statusFilter === "ALL"
-            ? "border-zinc-900 bg-zinc-50/70"
-            : "border-zinc-200 bg-white hover:border-zinc-300"
+        <div
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all border-zinc-200 bg-white hover:border-zinc-300"
             }`}
         >
           <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
             Total Unit
           </span>
           <div className="mt-1">
-            <span className="text-lg sm:text-xl font-semibold text-zinc-900 font-mono tabular-nums block">
+            <span className="text-lg sm:text-xl font-semibold text-zinc-900 tabular-nums block">
               {summary.total}
             </span>
-            <span className="text-[9px] sm:text-[10px] text-zinc-400 font-mono block truncate mt-0.5">
+            {/* <span className="text-[9px] sm:text-[10px] text-zinc-400 block truncate mt-0.5">
               S:{summary.perKategori.SUBSIDI} • K:{summary.perKategori.KOMERSIL} • V:{summary.perKategori.KAVLING}
-            </span>
+            </span> */}
           </div>
-        </button>
+        </div>
 
         {/* Available */}
-        <button
-          type="button"
-          onClick={() => setStatusFilter(statusFilter === "AVAILABLE" ? "" : "AVAILABLE")}
-          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "AVAILABLE"
-            ? "border-zinc-900 bg-zinc-50/70"
-            : "border-zinc-200 bg-white hover:border-zinc-300"
+        <div
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left  bg-white hover:border-zinc-300"
             }`}
         >
           <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
             Available
           </span>
           <div className="mt-1">
-            <span className="text-lg sm:text-xl font-semibold text-emerald-700 font-mono tabular-nums block">
+            <span className="text-lg sm:text-xl font-semibold text-emerald-700 tabular-nums block">
               {summary.available}
             </span>
             <span className="text-[9px] sm:text-[10px] text-zinc-400 block truncate mt-0.5">
               Siap Dipasarkan
             </span>
           </div>
-        </button>
+        </div>
 
         {/* Proses */}
-        <button
-          type="button"
-          onClick={() => setStatusFilter(statusFilter === "PROSES" ? "" : "PROSES")}
-          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "PROSES"
-            ? "border-zinc-900 bg-zinc-50/70"
-            : "border-zinc-200 bg-white hover:border-zinc-300"
+        <div
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left border-zinc-200 bg-white hover:border-zinc-300"
             }`}
         >
           <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
             Proses
           </span>
           <div className="mt-1">
-            <span className="text-lg sm:text-xl font-semibold text-amber-700 font-mono tabular-nums block">
+            <span className="text-lg sm:text-xl font-semibold text-amber-700 tabular-nums block">
               {summary.proses}
             </span>
             <span className="text-[9px] sm:text-[10px] text-zinc-400 block truncate mt-0.5">
               Hold &amp; Booked
             </span>
           </div>
-        </button>
+        </div>
 
         {/* Sold */}
-        <button
-          type="button"
-          onClick={() => setStatusFilter(statusFilter === "SOLD" ? "" : "SOLD")}
-          className={`p-2.5 sm:p-3.5 rounded-lg border text-left transition-all ${statusFilter === "SOLD"
-            ? "border-zinc-900 bg-zinc-50/70"
-            : "border-zinc-200 bg-white hover:border-zinc-300"
+        <div
+          className={`p-2.5 sm:p-3.5 rounded-lg border text-left border-zinc-200 bg-white hover:border-zinc-300"
             }`}
         >
           <span className="text-[10px] sm:text-[11px] font-medium text-zinc-500 block truncate">
             Terjual (Sold)
           </span>
           <div className="mt-1">
-            <span className="text-lg sm:text-xl font-semibold text-zinc-900 font-mono tabular-nums block">
+            <span className="text-lg sm:text-xl font-semibold text-zinc-900 tabular-nums block">
               {summary.sold}
             </span>
             <span className="text-[9px] sm:text-[10px] text-zinc-400 block truncate mt-0.5">
               Sudah Akad / BAST
             </span>
           </div>
-        </button>
+        </div>
       </div>
 
       {/* ─── Tabs Navigation: Horizontal Scroll on Mobile ─── */}
@@ -481,7 +462,7 @@ export function MasterUnitClient({
               }`}
           >
             <span>Daftar Unit</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-600 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-600">
               {totalUnits}
             </span>
           </button>
@@ -495,7 +476,7 @@ export function MasterUnitClient({
               }`}
           >
             <span>Tipe Properti</span>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-600 font-mono">
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-zinc-100 text-zinc-600">
               {tipeList.length}
             </span>
           </button>

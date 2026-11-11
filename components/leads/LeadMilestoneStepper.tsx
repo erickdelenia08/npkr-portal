@@ -130,7 +130,7 @@ export function LeadMilestoneStepper({ lead }: LeadMilestoneStepperProps) {
                   >
                     {step.label}
                   </p>
-                  <p className="text-[10px] text-slate font-mono">
+                  <p className="hidden md:block text-[10px] text-slate font-mono">
                     {formattedDate ? (
                       formattedDate
                     ) : (

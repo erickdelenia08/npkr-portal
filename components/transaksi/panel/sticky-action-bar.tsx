@@ -27,7 +27,7 @@ export function StickyActionBar({
           </div>
 
           {/* Action buttons (secondary + primary) */}
-          <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-end flex-wrap">
+          <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-start flex-wrap">
             {secondaryAction}
             {children}
           </div>

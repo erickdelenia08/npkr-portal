@@ -19,7 +19,7 @@ import {
   SheetContent,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { PembayaranModal } from "@/components/forms/pembayaran-modal";
+// import { PembayaranModal } from "@/components/forms/pembayaran-modal";
 
 // --------------------------------------------------
 // Plain Serializable Interface for Client Components
@@ -260,9 +260,8 @@ export function TransactionFinancialSummary({
         <div className="space-y-1.5">
           <div className="h-2.5 w-full rounded-full bg-bone overflow-hidden border border-mist/40">
             <div
-              className={`h-full rounded-full transition-all duration-500 ${
-                isLunas ? "bg-emerald-600" : "bg-deep-teal"
-              }`}
+              className={`h-full rounded-full transition-all duration-500 ${isLunas ? "bg-emerald-600" : "bg-deep-teal"
+                }`}
               style={{ width: `${percentPaid}%` }}
             />
           </div>
@@ -312,7 +311,7 @@ export function TransactionFinancialSummary({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 pt-1 flex-wrap">
+        {/* <div className="flex items-center gap-2 pt-1 flex-wrap">
           {canEdit && (
             <PembayaranModal
               transaksiId={transaksiId}
@@ -341,7 +340,7 @@ export function TransactionFinancialSummary({
             <Receipt className="w-3.5 h-3.5 text-deep-teal" />
             <span>Riwayat ({validPayments.length})</span>
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* ─── 2. MOBILE BOTTOM SHEET RIWAYAT PEMBAYARAN (< lg) ─── */}
@@ -372,7 +371,7 @@ export function TransactionFinancialSummary({
                 </p>
               </div>
 
-              {canEdit && (
+              {/* {canEdit && (
                 <PembayaranModal
                   transaksiId={transaksiId}
                   sisaItj={sisaItj}
@@ -388,7 +387,7 @@ export function TransactionFinancialSummary({
                     </Button>
                   }
                 />
-              )}
+              )} */}
             </div>
 
             {/* Filter Chips & Void Toggle */}
@@ -402,11 +401,10 @@ export function TransactionFinancialSummary({
                       key={opt}
                       type="button"
                       onClick={() => setSelectedFilter(opt)}
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all shrink-0 cursor-pointer ${
-                        isSel
-                          ? "bg-deep-teal text-white shadow-2xs"
-                          : "bg-bone text-graphite hover:bg-mist/50 border border-mist/60"
-                      }`}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all shrink-0 cursor-pointer ${isSel
+                        ? "bg-deep-teal text-white shadow-2xs"
+                        : "bg-bone text-graphite hover:bg-mist/50 border border-mist/60"
+                        }`}
                     >
                       {label}
                     </button>
@@ -448,11 +446,10 @@ export function TransactionFinancialSummary({
               filteredPayments.map((bayar) => (
                 <div
                   key={bayar.id}
-                  className={`p-3.5 rounded-xl border transition-all space-y-2 text-xs ${
-                    bayar.isVoid
-                      ? "border-rose-200 bg-rose-50/40 text-slate"
-                      : "border-mist bg-white shadow-2xs"
-                  }`}
+                  className={`p-3.5 rounded-xl border transition-all space-y-2 text-xs ${bayar.isVoid
+                    ? "border-rose-200 bg-rose-50/40 text-slate"
+                    : "border-mist bg-white shadow-2xs"
+                    }`}
                 >
                   {/* Top Row: Tanggal & Nominal */}
                   <div className="flex items-center justify-between gap-2">
@@ -460,11 +457,10 @@ export function TransactionFinancialSummary({
                       {formatDateShort(bayar.tanggal)}
                     </span>
                     <span
-                      className={`font-mono font-bold text-sm ${
-                        bayar.isVoid
-                          ? "line-through text-rose-500"
-                          : "text-carbon-ink"
-                      }`}
+                      className={`font-mono font-bold text-sm ${bayar.isVoid
+                        ? "line-through text-rose-500"
+                        : "text-carbon-ink"
+                        }`}
                     >
                       {formatCurrency(bayar.nominal)}
                     </span>
@@ -627,7 +623,7 @@ export function TransactionPaymentTable({
           </div>
         </div>
 
-        {canEdit && (
+        {/* {canEdit && (
           <PembayaranModal
             transaksiId={transaksiId}
             sisaItj={sisaItj}
@@ -642,7 +638,7 @@ export function TransactionPaymentTable({
               </Button>
             }
           />
-        )}
+        )} */}
       </div>
 
       {/* Filter Row */}
@@ -656,11 +652,10 @@ export function TransactionPaymentTable({
                 key={opt}
                 type="button"
                 onClick={() => setSelectedFilter(opt)}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                  isSel
-                    ? "bg-deep-teal text-white shadow-2xs"
-                    : "bg-white text-graphite hover:bg-bone border border-mist/80"
-                }`}
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer ${isSel
+                  ? "bg-deep-teal text-white shadow-2xs"
+                  : "bg-white text-graphite hover:bg-bone border border-mist/80"
+                  }`}
               >
                 {label}
               </button>
@@ -713,9 +708,8 @@ export function TransactionPaymentTable({
               {filteredPayments.map((bayar) => (
                 <tr
                   key={bayar.id}
-                  className={`hover:bg-bone/30 transition-colors ${
-                    bayar.isVoid ? "opacity-60 bg-rose-50/20" : ""
-                  }`}
+                  className={`hover:bg-bone/30 transition-colors ${bayar.isVoid ? "opacity-60 bg-rose-50/20" : ""
+                    }`}
                 >
                   <td className="px-5 py-3.5 text-slate font-medium whitespace-nowrap">
                     {formatDateShort(bayar.tanggal)}

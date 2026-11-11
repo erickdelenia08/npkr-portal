@@ -74,8 +74,8 @@ export function StepPemberkasan({
     ? statusPernikahan === "MENIKAH"
       ? "Menikah"
       : statusPernikahan === "BELUM_MENIKAH"
-      ? "Belum Menikah"
-      : "Cerai"
+        ? "Belum Menikah"
+        : "Cerai"
     : "Belum Ditentukan";
 
   // Format employment label
@@ -150,16 +150,16 @@ export function StepPemberkasan({
         statusText={
           isViewStepActive ? (
             canAdvance ? (
-              <span className="text-emerald-700 font-medium">
+              <span className="text-emerald-700 font-medium font-light">
                 ✓ Berkas wajib pengajuan lengkap ({docsSummary.pengajuan.total}/{docsSummary.pengajuan.total})
               </span>
             ) : (
-              <span className="text-rose-600 font-medium">
+              <span className="text-rose-600 font-medium font-light">
                 {missingPengajuanCount} berkas wajib pengajuan belum lengkap
               </span>
             )
           ) : (
-            <span className="text-slate">
+            <span className="text-slate font-light">
               Mode pratinjau berkas (posisi transaksi di tahap berikutnya)
             </span>
           )
@@ -174,7 +174,7 @@ export function StepPemberkasan({
               className="text-xs h-9 gap-1.5"
             >
               <SlidersHorizontal className="w-3.5 h-3.5 text-slate" />
-              <span>Opsi Lainnya</span>
+              {/* <span>Opsi Lainnya</span> */}
             </Button>
           ) : null
         }

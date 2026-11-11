@@ -537,6 +537,28 @@ export function StepAkadBast({
         </div>
       )}
 
+
+      <ConfirmDialog
+        open={confirmOpen}
+        pending={isPending}
+        title="Selesaikan Serah Terima (BAST)?"
+        description={
+          <div className="space-y-2 text-xs text-graphite">
+            <p>
+              Setelah BAST disimpan, transaksi dinyatakan{" "}
+              <strong className="text-carbon-ink font-bold">SELESAI</strong> dan tidak dapat diubah lagi.
+            </p>
+            <p>
+              Pastikan serah terima fisik unit dan penandatanganan Berita Acara Serah Terima telah dilakukan bersama konsumen.
+            </p>
+          </div>
+        }
+        confirmLabel="Ya, Selesaikan BAST"
+        tone="default"
+        onConfirm={handleExecuteBast}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
       {/* ─── Sticky Action Bar ─── */}
       <StickyActionBar
         statusText={
@@ -567,7 +589,6 @@ export function StepAkadBast({
                 className="text-xs h-8 text-graphite border-mist gap-1.5"
               >
                 <SlidersHorizontal className="w-3.5 h-3.5 text-steel" />
-                <span>Opsi Lainnya</span>
               </Button>
             )}
           </>
@@ -602,28 +623,7 @@ export function StepAkadBast({
           </Button>
         )}
       </StickyActionBar>
-
-      {/* ─── Confirm Dialog BAST ─── */}
-      <ConfirmDialog
-        open={confirmOpen}
-        pending={isPending}
-        title="Selesaikan Serah Terima (BAST)?"
-        description={
-          <div className="space-y-2 text-xs text-graphite">
-            <p>
-              Setelah BAST disimpan, transaksi dinyatakan{" "}
-              <strong className="text-carbon-ink font-bold">SELESAI</strong> dan tidak dapat diubah lagi.
-            </p>
-            <p>
-              Pastikan serah terima fisik unit dan penandatanganan Berita Acara Serah Terima telah dilakukan bersama konsumen.
-            </p>
-          </div>
-        }
-        confirmLabel="Ya, Selesaikan BAST"
-        tone="default"
-        onConfirm={handleExecuteBast}
-        onCancel={() => setConfirmOpen(false)}
-      />
+      {/* <span className=" fixed -bottom-[0%] w-full h-20 z-999999 bg-yellow-300">anjiirr</span> */}
     </div>
   );
 }

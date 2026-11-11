@@ -163,7 +163,7 @@ export function StepPembayaran({
   return (
     <div className="space-y-5">
       {/* ─── Document Summary Chip ─── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3.5 rounded-xl border border-mist bg-white shadow-2xs">
+      {verifiedDocsCount != totalDocsCount && <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3.5 rounded-xl border border-mist bg-white shadow-2xs">
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-9 h-9 rounded-lg bg-teal-50 text-deep-teal flex items-center justify-center shrink-0">
             <FileText className="w-5 h-5" />
@@ -202,7 +202,7 @@ export function StepPembayaran({
           <FileText className="w-3.5 h-3.5 text-deep-teal" />
           <span>Lengkapi Berkas</span>
         </Button>
-      </div>
+      </div>}
 
       {/* ─── Financial Status Notice (Streamlined) ─── */}
       {!isLunas && (
@@ -315,9 +315,8 @@ export function StepPembayaran({
                 Sisa DP
               </span>
               <span
-                className={`font-mono font-bold text-sm ${
-                  sisaDp > 0 ? "text-rose-600" : "text-emerald-700"
-                }`}
+                className={`font-mono font-bold text-sm ${sisaDp > 0 ? "text-rose-600" : "text-emerald-700"
+                  }`}
               >
                 {formatRupiah(sisaDp)}
               </span>
@@ -403,27 +402,27 @@ export function StepPembayaran({
 
       {/* ─── Sticky Action Bar ─── */}
       <StickyActionBar
-        statusText={
-          isViewStepActive ? (
-            isTahapPelunasan ? (
-              <span className="text-emerald-700 font-medium">
-                ✓ Lunas 100% · Siap Akad AJB
-              </span>
-            ) : isLunas ? (
-              <span className="text-emerald-700 font-medium">
-                ✓ Dana Lunas 100%
-              </span>
-            ) : (
-              <span className="text-rose-600 font-medium">
-                Sisa tagihan: {formatRupiah(sisaPelunasan)}
-              </span>
-            )
-          ) : (
-            <span className="text-slate font-medium">
-              Melihat Langkah 2 · Posisi aktif berbeda
-            </span>
-          )
-        }
+        // statusText={
+        //   isViewStepActive ? (
+        //     isTahapPelunasan ? (
+        //       <span className="text-emerald-700 font-medium">
+        //         ✓ Lunas 100% · Siap Akad AJB
+        //       </span>
+        //     ) : isLunas ? (
+        //       <span className="text-emerald-700 font-medium">
+        //         ✓ Dana Lunas 100%
+        //       </span>
+        //     ) : (
+        //       <span className="text-rose-600 font-medium">
+        //         Sisa tagihan: {formatRupiah(sisaPelunasan)}
+        //       </span>
+        //     )
+        //   ) : (
+        //     <span className="text-slate font-medium">
+        //       Melihat Langkah 2 · Posisi aktif berbeda
+        //     </span>
+        //   )
+        // }
         secondaryAction={
           <>
             {canEdit && !isReadOnlyState && (
@@ -435,7 +434,7 @@ export function StepPembayaran({
                 className="text-xs h-8 text-graphite border-mist gap-1.5"
               >
                 <SlidersHorizontal className="w-3.5 h-3.5 text-steel" />
-                <span>Opsi Lainnya</span>
+                {/* <span>Opsi Lainnya</span> */}
               </Button>
             )}
 

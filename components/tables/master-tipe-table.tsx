@@ -125,7 +125,7 @@ export function MasterTipeTable({
                   >
                     {/* Nama Tipe */}
                     <td className="px-5 py-3.5">
-                      <span className="font-semibold text-carbon-ink text-sm font-mono">
+                      <span className="text-carbon-ink text-xs">
                         {tipe.nama_tipe}
                       </span>
                     </td>
@@ -162,11 +162,10 @@ export function MasterTipeTable({
                     {/* Jumlah Unit Dipakai */}
                     <td className="px-5 py-3.5 text-center">
                       <span
-                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                          unitCount > 0
-                            ? "bg-teal-50 text-deep-teal border border-teal-200"
-                            : "bg-bone text-slate"
-                        }`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${unitCount > 0
+                          ? "bg-teal-50 text-deep-teal border border-teal-200"
+                          : "bg-bone text-slate"
+                          }`}
                       >
                         {unitCount > 0 && <Lock className="w-3 h-3" />}
                         <span>{unitCount} unit</span>

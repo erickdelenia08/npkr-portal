@@ -120,12 +120,8 @@ export async function TransactionDetailView({
     await prisma.bank.createMany({
       data: [
         { nama: "Bank BTN", kode: "BTN" },
-        // { nama: "Bank BTN Syariah", kode: "BTNS" },
-        // { nama: "Bank BSI (Bank Syariah Indonesia)", kode: "BSI" },
-        // { nama: "Bank Mandiri", kode: "MANDIRI" },
         { nama: "Bank BRI", kode: "BRI" },
         { nama: "Bank BNI", kode: "BNI" },
-        // { nama: "Bank BCA", kode: "BCA" },
       ],
       skipDuplicates: true,
     });
@@ -213,21 +209,8 @@ export async function TransactionDetailView({
           </div>
         )}
 
-        {/* Back Navigation Link */}
-        {/* {backHref && (
-          <div>
-            <Link
-              href={backHref}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate hover:text-carbon-ink transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>{backLabel}</span>
-            </Link>
-          </div>
-        )} */}
-
         {/* Header Card */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-mist shadow-subtle flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="bg-white p-4 sm:p-5 rounded-lg border border-mist shadow-subtle flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           {/* Bagian Kiri: Informasi Konsumen, Unit & Status */}
           <div className="space-y-1.5">
             <div className="flex flex-row justify-between sm:items-center gap-2 sm:gap-3">

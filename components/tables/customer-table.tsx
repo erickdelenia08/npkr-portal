@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Search, ChevronRight, Phone, MapPin } from "lucide-react";
 import { SerializedCustomerListItem } from "@/actions/customer.action";
+import { capitalizeWords, truncateText } from "@/lib/text-manipulate/text-manipulate";
 
 interface CustomerTableProps {
   initialCustomers: SerializedCustomerListItem[];
@@ -58,7 +59,7 @@ export function CustomerTable({
   return (
     <div className="space-y-4">
       {/* Metric Tiles */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <div className="p-3.5 rounded-lg border border-zinc-200 bg-white">
           <span className="text-[11px] font-medium text-zinc-500 block">Total Customer</span>
           <span className="text-xl font-semibold text-zinc-900 mt-1 block tabular-nums">
@@ -133,15 +134,20 @@ export function CustomerTable({
                   const isRepeatBuyer = cust.jumlah_unit > 1;
 
                   return (
-                    <tr key={cust.id} className="hover:bg-zinc-50/70 transition-colors text-xs">
+                    <tr key={cust.id} className="hover:bg-zinc-50/70 transition-colors  text-[11px] md:text-xs">
                       {/* Nama & TTL */}
                       <td className="px-4 py-3">
                         <div className="flex flex-col">
                           <Link
                             href={`${basePath}/customer/${cust.id}`}
-                            className="font-medium text-zinc-900 hover:underline text-[13px]"
+                            className="font-medium text-zinc-900 hover:underline text-[11px] sm:text-[13px] text-nowrap"
                           >
-                            {cust.nama_ktp}
+                            <span className="hidden md:block">
+                              {capitalizeWords(cust.nama_ktp)}
+                            </span>
+                            <span className="block md:hidden">
+                              {truncateText(capitalizeWords(cust.nama_ktp), 14)}
+                            </span>
                           </Link>
                           {/* {(cust.tempat_lahir || cust.tgl_lahir) && (
                             <span className="text-[11px] text-zinc-400 mt-0.5">

@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
-  Phone,
   MessageCircle,
   Plus,
   Calendar,
@@ -168,6 +167,7 @@ export function LeadDetailClient({
   };
 
   const waHref = formatWaLink(lead.no_hp, lead.nama);
+  const isDisabled = !lead.no_hp || lead.no_hp.trim() === "";
   const isLost = Boolean(lead.lost_at);
 
   // Follow-up terdekat yang belum lewat; jika tidak ada, tandai yang terakhir sebagai terlewat
@@ -189,27 +189,6 @@ export function LeadDetailClient({
 
   return (
     <div className="space-y-5 pb-28 sm:pb-16 max-w-4xl mx-auto">
-      {/* Breadcrumb & refresh */}
-      {/* <div className="flex items-center justify-between gap-2">
-        <Link
-          href={`${basePath}/lead`}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate hover:text-carbon-ink transition-colors group"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          <span>Kembali ke daftar lead</span>
-        </Link>
-        <button
-          type="button"
-          onClick={handleRefresh}
-          disabled={isPending}
-          aria-label="Segarkan data lead"
-          className="p-1.5 rounded-lg border border-mist bg-white text-slate hover:text-graphite transition-colors disabled:opacity-50 cursor-pointer"
-          title="Segarkan data lead"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${isPending ? "animate-spin" : ""}`} />
-        </button>
-      </div> */}
-
       {/* Banner Lost (terlihat di atas, bukan tersembunyi di bawah halaman) */}
       {isLost && (
         <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800">
@@ -248,8 +227,8 @@ export function LeadDetailClient({
       {/* Profil lead */}
       <div className="bg-white rounded-2xl border border-mist p-5 sm:p-6 shadow-2xs space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div className="flex items-start gap-3.5 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center font-bold text-lg shrink-0">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-12 h-12 rounded-lg bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center font-bold text-lg shrink-0">
               {lead.nama.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
@@ -258,15 +237,15 @@ export function LeadDetailClient({
                   {lead.nama}
                 </h1>
                 <span
-                  className={`inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${getTahapBadge(lead.tahap)}`}
+                  className={`inline-flex px-2.5 py-0.5 rounded-full text-[11px] border ${getTahapBadge(lead.tahap)}`}
                 >
                   {lead.tahap}
                 </span>
               </div>
-              <div className="flex items-center gap-2 mt-1 text-xs font-mono text-slate">
+              {/* <div className="flex items-center gap-2 mt-1 text-xs font-mono text-slate">
                 <Phone className="w-3.5 h-3.5" />
                 <span>{lead.no_hp || "-"}</span>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -388,10 +367,17 @@ export function LeadDetailClient({
       <div className="sm:hidden fixed bottom-0 left-0 right-0 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-white/95 backdrop-blur-md border-t border-mist z-30 shadow-lg">
         <div className={`grid ${canEdit ? "grid-cols-5" : "grid-cols-1"} gap-2 max-w-md mx-auto`}>
           <a
-            href={waHref}
+            href={isDisabled ? undefined : waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className={`${canEdit ? "col-span-2" : "col-span-1"} flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold active:bg-emerald-100 transition-colors`}
+            aria-disabled={isDisabled}
+            onClick={(e) => {
+              if (isDisabled) e.preventDefault();
+            }}
+            className={`${canEdit ? "col-span-2" : "col-span-1"} flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border text-xs font-bold transition-colors ${isDisabled
+              ? "bg-gray-100 text-gray-400 border-gray-200 pointer-events-none cursor-not-allowed"
+              : "bg-emerald-50 text-emerald-700 border-emerald-200 active:bg-emerald-100"
+              }`}
           >
             <MessageCircle className="w-4 h-4" />
             <span>WhatsApp</span>

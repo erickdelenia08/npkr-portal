@@ -389,17 +389,17 @@ export function HandoverTransaksiDialog({
 
   if (isLocked) {
     return (
-      <div className="inline-block" title={lockedReason}>
+      <div className="inline-block w-full" title={lockedReason}>
         {customTrigger || (
           <Button
             type="button"
             variant={buttonVariant}
             size={buttonSize}
             disabled
-            className="inline-flex items-center gap-1.5 text-xs font-semibold opacity-60 cursor-not-allowed"
+            className="inline-flex items-center gap-1.5 text-xs opacity-60 cursor-not-allowed w-full"
           >
             <Lock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Oper PIC (Terkunci)</span>
+            <span>Oper PIC</span>
           </Button>
         )}
       </div>
@@ -408,13 +408,13 @@ export function HandoverTransaksiDialog({
 
   return (
     <>
-      <div onClick={() => setOpen(true)} className="inline-block">
+      <div onClick={() => setOpen(true)} className="inline-block w-full">
         {customTrigger || (
           <Button
             type="button"
             variant={buttonVariant}
             size={buttonSize}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold"
+            className="inline-flex items-center gap-1.5 text-xs w-full"
           >
             <ArrowRightLeft className="w-3.5 h-3.5 text-slate-600" />
             <span>Oper PIC Transaksi</span>

@@ -273,7 +273,7 @@ export function StepProsesBank({
                 className="text-xs h-8 text-graphite border-mist gap-1.5"
               >
                 <SlidersHorizontal className="w-3.5 h-3.5 text-steel" />
-                <span>Opsi Lainnya</span>
+                {/* <span>Opsi Lainnya</span> */}
               </Button>
             )}
 

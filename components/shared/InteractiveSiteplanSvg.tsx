@@ -236,7 +236,7 @@ export function InteractiveSiteplanSvg({
                     x={plot.cx}
                     y={plot.cy + 3}
                     textAnchor="middle"
-                    fontSize={plot.blok.length > 3 ? "8.5" : "9.5"}
+                    fontSize={plot.blok.split('-')[1].length > 1 ? "11" : "12"}
                     fontWeight="700"
                     fontFamily="monospace"
                     fill={
@@ -248,7 +248,7 @@ export function InteractiveSiteplanSvg({
                     }
                     pointerEvents="none"
                   >
-                    {plot.blok}
+                    {plot.blok.split('-')[1]}
                   </text>
                 )}
               </g>

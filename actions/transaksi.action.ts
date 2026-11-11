@@ -495,28 +495,28 @@ export async function verifyDokumenTransaksi(
         select: { nama: true },
       });
 
-      await logActivity(tx, {
-        entityType: "DOKUMEN",
-        entityId: updatedDoc.id,
-        action: status === "LENGKAP" ? "DOC_CHECKED" : "DOC_UNCHECKED",
-        leadId: trx.itj?.lead_id || null,
-        transaksiId: trx.id,
-        tahapDetail: trx.tahap_detail,
-        actorId: adminId,
-        summaryContext: {
-          actorName: actor?.nama,
-          docLabel: jenis.replace(/_/g, " "),
-          blok: trx.unit.blok,
-        },
-        before: {
-          status: existingDoc?.status || "BELUM_LENGKAP",
-          diterima_at: existingDoc?.diterima_at,
-        },
-        after: {
-          status,
-          diterima_at: targetDiterimaAt,
-        },
-      });
+      // await logActivity(tx, {
+      //   entityType: "DOKUMEN",
+      //   entityId: updatedDoc.id,
+      //   action: status === "LENGKAP" ? "DOC_CHECKED" : "DOC_UNCHECKED",
+      //   leadId: trx.itj?.lead_id || null,
+      //   transaksiId: trx.id,
+      //   tahapDetail: trx.tahap_detail,
+      //   actorId: adminId,
+      //   summaryContext: {
+      //     actorName: actor?.nama,
+      //     docLabel: jenis.replace(/_/g, " "),
+      //     blok: trx.unit.blok,
+      //   },
+      //   before: {
+      //     status: existingDoc?.status || "BELUM_LENGKAP",
+      //     diterima_at: existingDoc?.diterima_at,
+      //   },
+      //   after: {
+      //     status,
+      //     diterima_at: targetDiterimaAt,
+      //   },
+      // });
 
       return updatedDoc;
     });
@@ -660,9 +660,9 @@ export async function updateTransactionStatus(
       typeof inputOrId === "object"
         ? inputOrId
         : {
-            transaksiId: inputOrId,
-            ...maybeData,
-          };
+          transaksiId: inputOrId,
+          ...maybeData,
+        };
 
     const { adminId, user } = await requireCanEditTransaksi(rawInput.transaksiId);
 
@@ -987,18 +987,18 @@ export async function getTransaksiByMarketing(
         status_unit: trx.unit.status_unit,
         tipe: trx.unit.tipe
           ? {
-              id: trx.unit.tipe.id,
-              nama_tipe: trx.unit.tipe.nama_tipe,
-              kategori: trx.unit.tipe.kategori,
-            }
+            id: trx.unit.tipe.id,
+            nama_tipe: trx.unit.tipe.nama_tipe,
+            kategori: trx.unit.tipe.kategori,
+          }
           : null,
       },
       itj: trx.itj
         ? {
-            id: trx.itj.id,
-            nominal: Number(trx.itj.nominal),
-            diajukan_at: trx.itj.diajukan_at.toISOString(),
-          }
+          id: trx.itj.id,
+          nominal: Number(trx.itj.nominal),
+          diajukan_at: trx.itj.diajukan_at.toISOString(),
+        }
         : null,
     }));
 

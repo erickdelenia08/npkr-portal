@@ -263,7 +263,7 @@ export function MasterUnitTable({
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Cari nama blok (cth: M-1, F-10, A-1)..."
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal transition-all font-mono"
+            className="w-full pl-9 pr-3 py-2 text-xs rounded-md border border-mist focus:outline-none focus:ring-2 focus:ring-prism-teal/20 focus:border-prism-teal transition-all font-light"
           />
         </div>
 
@@ -457,7 +457,7 @@ export function MasterUnitTable({
 
                       {/* Blok */}
                       <td className="px-5 py-3.5">
-                        <span className="font-mono font-bold text-sm text-carbon-ink">
+                        <span className="text-xs text-carbon-ink">
                           {unit.blok}
                         </span>
                       </td>

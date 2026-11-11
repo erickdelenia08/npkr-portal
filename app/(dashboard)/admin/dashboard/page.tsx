@@ -21,6 +21,7 @@ import {
   getAdminDashboardData,
   AdminDashboardData,
 } from "@/actions/dashboard.admin.action";
+import { capitalizeWords, truncateText } from "@/lib/text-manipulate/text-manipulate";
 
 export const metadata: Metadata = {
   title: "Dashboard Admin (Command Center) | NPKR Portal",
@@ -125,90 +126,90 @@ export default async function AdminDashboardPage() {
       </div> */}
 
       {/* 2. TOP SECTION: 3 LARGE SUMMARY METRIC CARDS */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
         {/* Metric 1: Pending ITJ */}
-        <div className="bg-white p-5 rounded-lg border border-slate-200 flex flex-col justify-between transition-colors hover:border-slate-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-medium text-slate-500 block">
-                ITJ &amp; Booking Baru
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 flex flex-col justify-between transition-all hover:border-slate-300 hover:shadow-sm">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <span className="text-xs font-semibold text-slate-700 block truncate">
+                ITJ & Booking Baru
               </span>
-              <span className="text-xs text-slate-500 mt-1 block">
+              <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 block leading-snug line-clamp-2">
                 Pemesanan unit yang baru masuk
               </span>
             </div>
-            <div className="w-9 h-9 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-              <FileCheck2 className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+              <FileCheck2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-3xl font-semibold tracking-tight tabular-nums text-slate-900">
+          <div className="mt-4 sm:mt-5 flex items-end justify-between gap-2">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight tabular-nums text-slate-900 leading-none">
               {metrics.pendingItjCount}
             </span>
             <Link
               href="/admin/transaksi"
-              className="text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 group"
+              className="text-[10px] sm:text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 group"
             >
               <span>Transaksi</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </div>
 
         {/* Metric 2: Pending Docs */}
-        <div className="bg-white p-5 rounded-lg border border-slate-200 flex flex-col justify-between transition-colors hover:border-slate-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-medium text-slate-500 block">
-                Dokumen Menunggu Cek
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 flex flex-col justify-between transition-all hover:border-slate-300 hover:shadow-sm">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <span className="text-xs font-semibold text-slate-700 block truncate">
+                Menunggu Cek
               </span>
-              <span className="text-xs text-slate-500 mt-1 block">
-                Berkas konsumen &amp; legalitas
+              <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 block leading-snug line-clamp-2">
+                Berkas konsumen & legalitas
               </span>
             </div>
-            <div className="w-9 h-9 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-              <Files className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+              <Files className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-3xl font-semibold tracking-tight tabular-nums text-slate-900">
+          <div className="mt-4 sm:mt-5 flex items-end justify-between gap-2">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight tabular-nums text-slate-900 leading-none">
               {metrics.pendingDocsCount}
             </span>
             <Link
               href="/admin/transaksi"
-              className="text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 group"
+              className="text-[10px] sm:text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 group"
             >
-              <span>Periksa Berkas</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <span>Berkas</span>
+              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </div>
 
-        {/* Metric 3: Active KPR */}
-        <div className="bg-white p-5 rounded-lg border border-slate-200 flex flex-col justify-between transition-colors hover:border-slate-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-medium text-slate-500 block">
+        {/* Metric 3: Active KPR (Full width di Mobile, 1 Kolom di Desktop) */}
+        <div className="col-span-2 sm:col-span-1 bg-white p-4 sm:p-5 rounded-xl border border-slate-200 flex flex-col justify-between transition-all hover:border-slate-300 hover:shadow-sm">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <span className="text-xs font-semibold text-slate-700 block truncate">
                 Proses KPR Berjalan
               </span>
-              <span className="text-xs text-slate-500 mt-1 block">
-                Fase wawancara, OTS &amp; verifikasi
+              <span className="text-[10px] sm:text-xs text-slate-500 mt-0.5 sm:mt-1 block leading-snug line-clamp-2">
+                Fase wawancara, OTS & verifikasi
               </span>
             </div>
-            <div className="w-9 h-9 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
-              <Landmark className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+              <Landmark className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-3xl font-semibold tracking-tight tabular-nums text-slate-900">
+          <div className="mt-4 sm:mt-5 flex items-end justify-between gap-2">
+            <span className="text-2xl sm:text-3xl font-bold tracking-tight tabular-nums text-slate-900 leading-none">
               {metrics.activeKprCount}
             </span>
             <Link
               href="/admin/transaksi"
-              className="text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 group"
+              className="text-[10px] sm:text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 group"
             >
               <span>Pantau Bank</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
         </div>
@@ -225,11 +226,11 @@ export default async function AdminDashboardPage() {
                   <FileCheck2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-semibold text-slate-900">
-                    ITJ &amp; Booking Terkini
+                  <h2 className="text-sm font-semibold text-slate-900 text-nowrap">
+                    ITJ Terkini
                   </h2>
                   <p className="text-xs text-slate-500">
-                    5 pemesanan unit terbaru yang aktif berjalan
+                    5 booking unit terbaru yang aktif berjalan
                   </p>
                 </div>
               </div>
@@ -237,7 +238,7 @@ export default async function AdminDashboardPage() {
                 href="/admin/transaksi"
                 className="text-xs font-medium text-slate-600 hover:text-slate-900 inline-flex items-center gap-1 shrink-0"
               >
-                <span>Lihat Semua Transaksi</span>
+                <span>Lihat Semua</span>
                 <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
@@ -272,19 +273,25 @@ export default async function AdminDashboardPage() {
                         className="hover:bg-slate-50 transition-colors text-xs"
                       >
                         <td className="py-3 px-4">
-                          <span className="font-medium text-slate-900 block">
-                            {itj.leadNama}
+                          <span className="text-slate-900 block text-nowrap">
+                            {/* {itj.leadNama} */}
+                            <span className="hidden md:block">
+                              {capitalizeWords(itj.leadNama)}
+                            </span>
+                            <span className="block md:hidden">
+                              {truncateText(capitalizeWords(itj.leadNama), 14)}
+                            </span>
                           </span>
-                          <span className="text-xs text-slate-500">
+                          {/* <span className="text-xs text-slate-500">
                             {itj.leadNoHp}
-                          </span>
+                          </span> */}
                         </td>
                         <td className="py-3 px-3">
-                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700 text-nowrap">
+                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-[9px] sm:text-xs font-medium text-slate-700 text-nowrap">
                             {itj.unitBlok}
                           </span>
                         </td>
-                        <td className="py-3 px-3 text-right font-medium tabular-nums text-slate-900">
+                        <td className="py-3 px-3 text-right tabular-nums text-slate-900">
                           {formatPrice(itj.nominal)}
                         </td>
                         <td className="py-3 px-3 text-xs text-slate-500 text-nowrap">
@@ -318,10 +325,10 @@ export default async function AdminDashboardPage() {
                 </div>
                 <div>
                   <h2 className="text-sm font-semibold text-slate-900">
-                    Dokumen Menunggu Cek
+                    Dokumen
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Berkas konsumen yang perlu verifikasi keabsahan
+                    Berkas yang belum terkumpul
                   </p>
                 </div>
               </div>
@@ -363,16 +370,22 @@ export default async function AdminDashboardPage() {
                         key={doc.id}
                         className="hover:bg-slate-50 transition-colors text-xs"
                       >
-                        <td className="py-3 px-4 font-medium text-carbon-ink">
-                          {doc.customerNama}
+                        <td className="py-3 px-4 text-carbon-ink text-nowrap">
+                          <span className="hidden md:block">
+                            {capitalizeWords(doc.customerNama)}
+                          </span>
+                          <span className="block md:hidden">
+                            {truncateText(capitalizeWords(doc.customerNama), 12)}
+                          </span>
+
                         </td>
                         <td className="py-3 px-3">
-                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700 text-nowrap">
+                          <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-[10px] md:text-xs font-medium text-slate-700 text-nowrap">
                             {doc.unitBlok}
                           </span>
                         </td>
                         <td className="py-3 px-3 text-graphite">
-                          <span className="font-medium">{doc.jenisLabel}</span>
+                          <span className="">{doc.jenisLabel}</span>
                         </td>
                         <td className="py-3 px-3 text-xs text-slate-500 text-nowrap">
                           {doc.uploadedAt}
@@ -456,20 +469,25 @@ export default async function AdminDashboardPage() {
                           key={kpr.id}
                           className="hover:bg-slate-50 transition-colors text-xs"
                         >
-                          <td className="py-3 px-4 font-bold text-carbon-ink text-nowrap">
+                          <td className="py-3 px-4 font-medium text-carbon-ink text-nowrap">
                             {kpr.bankNama}
                           </td>
-                          <td className="py-3 px-3 font-medium text-graphite">
-                            {kpr.customerNama}
+                          <td className="py-3 px-3 text-graphite text-nowrap">
+                            <span className="hidden md:block">
+                              {capitalizeWords(kpr.customerNama)}
+                            </span>
+                            <span className="block md:hidden">
+                              {truncateText(capitalizeWords(kpr.customerNama), 12)}
+                            </span>
                           </td>
                           <td className="py-3 px-3">
-                            <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono text-xs font-medium text-slate-700 text-nowrap">
+                            <span className="inline-flex rounded bg-slate-100 px-2 py-1 font-mono  text-[10px] md:text-xs font-medium text-slate-700 text-nowrap">
                               {kpr.unitBlok}
                             </span>
                           </td>
                           <td className="py-3 px-3">
                             <span
-                              className={`px-2 py-0.5 rounded-full text-xs font-medium border text-nowrap ${badgeInfo.className}`}
+                              className={`px-2 py-0.5 rounded-full text-[10px] md:text-xs border text-nowrap ${badgeInfo.className}`}
                             >
                               {badgeInfo.label}
                             </span>
